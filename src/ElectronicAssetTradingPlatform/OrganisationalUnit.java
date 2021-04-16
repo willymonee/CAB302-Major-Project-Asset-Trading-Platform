@@ -8,8 +8,12 @@ public class OrganisationalUnit {
     private String organisationalUnitName;
     private int credits;
     private HashSet<Map<Asset,Integer>> organisationalUnitAssets;
-    public OrganisationalUnit() {
 
+
+    public OrganisationalUnit(int ID, String Name, int credits) {
+        organisationalUnitID = ID;
+        organisationalUnitName = Name;
+        this.credits = credits;
     }
 
     /**
