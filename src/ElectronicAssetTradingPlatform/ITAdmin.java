@@ -37,8 +37,8 @@ public class ITAdmin extends User {
      * Create a new asset and add to database
      *
      * @param assetType asset
-     * @param assetName
-     * @param organisationalUnitID
+     * @param assetName string name of asset to add
+     * @param organisationalUnitID int ID of organisational unit the new asset is assigned to
      */
     private void insertAsset(Asset assetType, String assetName, int organisationalUnitID) {
 
