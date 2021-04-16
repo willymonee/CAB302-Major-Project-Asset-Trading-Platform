@@ -12,16 +12,17 @@ public class ITAdmin extends User {
      */
     private void createOrganisationalUnit() {
         // createOrganisationalUnit method
+
     }
 
     /**
-     * Edit the number of credits an organisational unit owns
+     * Edit the number of credits an organisational unit owns manually
      *
-     * @param organisationalUnitID int ID of organisational unit to edit the credits for
+     * @param organisationalUnit int ID of organisational unit to edit the credits for
      * @param credits int new amount of credits to edit for the organisational unit
      */
-    private void editOrganisationalUnitCredits(int organisationalUnitID, int credits) {
-        // editOrganisationalUnit method
+    private void addOrganisationalUnitCredits(OrganisationalUnit organisationalUnit, int credits) {
+        organisationalUnit.editCredits(credits);
     }
 
     /**

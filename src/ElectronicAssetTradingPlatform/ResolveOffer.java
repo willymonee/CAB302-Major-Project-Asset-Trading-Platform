@@ -13,6 +13,15 @@ public class ResolveOffer {
      * @return Returns the matching order ID if there is a match, returns 0 otherwise.
      */
     public int checkMatchedOffer(Offer offer) {
+
         return 0;
+    }
+
+    public void isSold() {
+
+    }
+
+    public void isBought() {
+
     }
 }
