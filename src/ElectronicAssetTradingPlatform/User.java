@@ -26,7 +26,7 @@ public class User {
      * @param password new string for user to change password to
      * @throws Exception throws exception when...
      */
-    private void changePassword(String password) throws Exception {
+    public void changePassword(String password) throws Exception {
         // changePassword method
         throw new Exception();
     }
@@ -35,7 +35,7 @@ public class User {
      * Creates elements of the GUI common in all users’ GUIs, such as the navigation bar and footer
      *
      */
-    private void createGUI() {
+    public void createGUI() {
         // createGUI method
     }
 

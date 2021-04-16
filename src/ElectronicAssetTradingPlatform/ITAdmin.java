@@ -10,7 +10,7 @@ public class ITAdmin extends User {
      * Create a new                                               this needs parameters
      *
      */
-    private void createOrganisationalUnit() {
+    public void createOrganisationalUnit() {
         // createOrganisationalUnit method
     }
 
@@ -20,7 +20,7 @@ public class ITAdmin extends User {
      * @param organisationalUnitID int ID of organisational unit to edit the credits for
      * @param credits int new amount of credits to edit for the organisational unit
      */
-    private void editOrganisationalUnitCredits(int organisationalUnitID, int credits) {
+    public void editOrganisationalUnitCredits(int organisationalUnitID, int credits) {
         // editOrganisationalUnit method
     }
 
@@ -31,7 +31,7 @@ public class ITAdmin extends User {
      * @param organisationalUnitID int ID for new user to be associated with
      * @param userType user type for new user's access level
      */
-    private void createUser(String name, int organisationalUnitID, User userType) {
+    public void createUser(String name, int organisationalUnitID, User userType) {
         // createUser method
     }
 
@@ -42,7 +42,7 @@ public class ITAdmin extends User {
      * @param assetName string name of asset to add
      * @param organisationalUnitID int ID of organisational unit the new asset is assigned to
      */
-    private void insertAsset(Asset assetType, String assetName, int organisationalUnitID) {
+    public void insertAsset(Asset assetType, String assetName, int organisationalUnitID) {
 
     }
 }

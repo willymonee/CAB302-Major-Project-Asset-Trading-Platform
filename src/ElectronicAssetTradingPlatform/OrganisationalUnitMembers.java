@@ -23,7 +23,7 @@ public class OrganisationalUnitMembers extends User {
      * configuration file
      *
      */
-    private void connectDB() {
+    public void connectDB() {
         // connectDB method
     }
 
@@ -31,7 +31,7 @@ public class OrganisationalUnitMembers extends User {
      * Display current offers made by the organisational member's belonging
      * organisational unit
      */
-    private void getUnitOffers() {
+    public void getUnitOffers() {
         // getUnitOffers method
     }
 
@@ -43,7 +43,7 @@ public class OrganisationalUnitMembers extends User {
      * @param quantity int amount of assets placed for buy order
      * @param price int price of asset requested for buy order
      */
-    private void listBuyOrder(Asset assetType, int quantity, int price) {
+    public void listBuyOrder(Asset assetType, int quantity, int price) {
 
     }
 
@@ -54,7 +54,7 @@ public class OrganisationalUnitMembers extends User {
      * @param quantity int amount of assets placed for sell order
      * @param price int price of asset set for sell order
      */
-    private void listSellOrder(Asset assetType, int quantity, int price) {
+    public void listSellOrder(Asset assetType, int quantity, int price) {
 
     }
 
@@ -63,7 +63,7 @@ public class OrganisationalUnitMembers extends User {
      *
      * @param listingID int ID of asset listing for removal
      */
-    private void removeListing(int listingID) {
+    public void removeListing(int listingID) {
 
     }
 
@@ -75,7 +75,7 @@ public class OrganisationalUnitMembers extends User {
      * @param quantity int amount of assets for listing to be relisted for
      * @param price int price of asset requested for listing to relist for
      */
-    private void reList(int listingID, int quantity, int price) {
+    public void reList(int listingID, int quantity, int price) {
 
     }
 
@@ -85,7 +85,7 @@ public class OrganisationalUnitMembers extends User {
      * @param listingID int ID for listing to get the history of the
      *                  organisational unit
      */
-    private void getUnitHistory(int listingID) {
+    public void getUnitHistory(int listingID) {
         // getUnitHistory method
     }
 
@@ -94,7 +94,7 @@ public class OrganisationalUnitMembers extends User {
      *
      * @param assetType asset name to get asset price list for
      */
-    private void getAssetPriceList(Asset assetType) {
+    public void getAssetPriceList(Asset assetType) {
         // getAssetPriceList method
     }
 
@@ -102,7 +102,7 @@ public class OrganisationalUnitMembers extends User {
      * Create a graph of all prices offers were resolved at for the asset
      *
      */
-    private void assetPriceListToGraph() {
+    public void assetPriceListToGraph() {
         // assetPriceListToGraph method
     }
 
