@@ -28,10 +28,12 @@ public class User {
      */
     private void changePassword(String password)  throws Exception {
         // changePassword method
+        throw new Exception();
     }
 
     /**
-     * Creates the common GUI elements in the user's window
+     * Creates elements of the GUI common in all users’ GUIs, such as the navigation bar and footer
+     *
      */
     private void createGUI() {
         // createGUI method

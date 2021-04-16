@@ -98,11 +98,11 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Graph all currently listed prices for the asset
+     * Create a graph of all prices offers were resolved at for the asset
+     *
      */
     private void assetPriceListToGraph() {
 
     }
-
 
 }
