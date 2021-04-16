@@ -75,17 +75,18 @@ public class OrganisationalUnitMembers extends User {
      * @param quantity int amount of assets for listing to be relisted for
      * @param price int price of asset requested for listing to relist for
      */
-    private void relist(int listingID, int quantity, int price) {
+    private void reList(int listingID, int quantity, int price) {
 
     }
 
     /**
      * Get unit history for own organisational unit
      *
-     * @param isSell boolean                                  this needs to be int listingID, or Asset assetType, to confirm if sold yet with return type bool
+     * @param listingID int ID for listing to get the history of the
+     *                  organisational unit
      */
-    private void getUnitHistory(boolean isSell) {
-
+    private void getUnitHistory(int listingID) {
+        // getUnitHistory method
     }
 
     /**
@@ -94,7 +95,7 @@ public class OrganisationalUnitMembers extends User {
      * @param assetType asset name to get asset price list for
      */
     private void getAssetPriceList(Asset assetType) {
-
+        // getAssetPriceList method
     }
 
     /**
@@ -102,7 +103,7 @@ public class OrganisationalUnitMembers extends User {
      *
      */
     private void assetPriceListToGraph() {
-
+        // assetPriceListToGraph method
     }
 
 }

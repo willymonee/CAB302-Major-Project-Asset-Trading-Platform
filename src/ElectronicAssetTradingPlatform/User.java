@@ -26,7 +26,7 @@ public class User {
      * @param password new string for user to change password to
      * @throws Exception throws exception when...
      */
-    private void changePassword(String password)  throws Exception {
+    private void changePassword(String password) throws Exception {
         // changePassword method
         throw new Exception();
     }
