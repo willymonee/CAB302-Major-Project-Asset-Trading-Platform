@@ -28,4 +28,8 @@ public class Asset {
     public boolean isListed() {
         return false;
     }
+
+    public String getAssetName() {
+        return this.name;
+    }
 }
