@@ -20,8 +20,9 @@ public class ITAdmin extends User {
      *
      * @param organisationalUnit int ID of organisational unit to edit the credits for
      * @param credits int new amount of credits to edit for the organisational unit
+     *
      */
-    private void addOrganisationalUnitCredits(OrganisationalUnit organisationalUnit, int credits) {
+    private void addOrganisationalUnitCredits(OrganisationalUnit organisationalUnit, int credits) throws Exception {
         organisationalUnit.editCredits(credits);
     }
 

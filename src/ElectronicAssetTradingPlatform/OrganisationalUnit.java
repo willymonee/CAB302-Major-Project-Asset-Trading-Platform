@@ -35,10 +35,12 @@ public class OrganisationalUnit {
      * This is the base helper function for all other methods elsewhere which add/subtract organisational unit credits
      *
      * @param credits int amount of credits to add (positive int) or remove (negative int)
+     *
+     * @throws Exception exception handling so that net credits cannot be less than zero
      */
-    public void editCredits(int credits) {
-        if (credits < 0 && Math.abs(credits) > this.credits) {
-            // throw an error
+    public void editCredits(int credits) throws Exception {
+        if ( (this.credits += credits) < 0) {           // this code line might be incorrect and may need fixing
+            throw new Exception("Cannot remove more credits than there actually are!");
         }
         else {
             this.credits += credits;
@@ -53,20 +55,21 @@ public class OrganisationalUnit {
      * Otherwise, add onto the existing quantity value in the TreeMap
      *
      * @param asset Asset object which an organisational unit owns/going to own
-     * @param quantity Number of that particular asset to be added (must be greater than 0)
+     * @param quantityToAdd Number of that particular asset to be added (must be greater than 0)
      *
      */
-    public void addAsset(Asset asset, Integer quantity) {
+    public void addAsset(Asset asset, int quantityToAdd) {
         String assetName = asset.getAssetName();
+
         // if the organisation already has any amount of the asset
         if (organisationalUnitAssets.containsKey(assetName)) {
-            Integer currentQuantity = organisationalUnitAssets.get(assetName);
-            Integer newQuantity = currentQuantity + quantity;
-            organisationalUnitAssets.put(assetName, newQuantity);
+            int currentQuantity = organisationalUnitAssets.get(assetName);
+            quantityToAdd += currentQuantity;
+            organisationalUnitAssets.put(assetName, quantityToAdd);
         }
         // if the organisation does not currently have any amount of the asset
         else {
-            organisationalUnitAssets.put(assetName, quantity);
+            organisationalUnitAssets.put(assetName, quantityToAdd);
         }
     }
 
@@ -79,25 +82,26 @@ public class OrganisationalUnit {
      * The asset name should be unique and the quantity removed should not reduce the asset below zero
      *
      * @param asset Asset object which an organisational unit owns
-     * @param quantity Number of that particular asset to be removed (must be less than number owned currently)
+     * @param quantityToRemove Number of that particular asset to be removed (must be less than number owned currently)
      *
-     * @throws // not enough assets owned to be removed
-     * @throws // organisational unit does not have the asset (cannot remove asset that is not owned)
+     * @throws Exception // not enough assets owned to be removed
+     * @throws Exception // organisational unit does not have the asset (cannot remove asset that is not owned)
      */
-    public void removeAsset(Asset asset, Integer quantity) {
+    public void removeAsset(Asset asset, int quantityToRemove) throws Exception {
         String assetName = asset.getAssetName();
-        Integer currentQuantity = organisationalUnitAssets.get(assetName);
+        int currentQuantity = organisationalUnitAssets.get(assetName);
+
         if (organisationalUnitAssets.containsKey(assetName)) {
-            if (quantity <= currentQuantity) {
-                Integer newQuantity = currentQuantity - quantity;
-                organisationalUnitAssets.put(assetName, newQuantity);
+            if (quantityToRemove <= currentQuantity) {
+                quantityToRemove -= currentQuantity;
+                organisationalUnitAssets.put(assetName, quantityToRemove);
             }
             else {
-                // throw some error
+                throw new Exception("Cannot remove more assets than there are currently!"); // this can be refined
             }
         }
         else {
-            // throw some error
+            throw new Exception("Asset does not currently exist!");
         }
     }
 }
