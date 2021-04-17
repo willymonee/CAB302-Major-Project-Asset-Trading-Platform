@@ -6,17 +6,17 @@ package ElectronicAssetTradingPlatform;
  */
 public class Asset {
     private int assetID;
-    private String name;
+    private String assetName;
 
     /**
      * Constructor to initialise an asset with asset ID and name
      *
      * @param assetID int ID for the asset
-     * @param name string for asset name
+     * @param assetName string for asset name
      */
-    public Asset(int assetID, String name) {
+    public Asset(int assetID, String assetName) {
         this.assetID = assetID;
-        this.name = name;
+        this.assetName = assetName;
     }
 
     /**
@@ -34,6 +34,6 @@ public class Asset {
      * @return string name of asset
      */
     public String getAssetName() {
-        return this.name;
+        return this.assetName;
     }
 }

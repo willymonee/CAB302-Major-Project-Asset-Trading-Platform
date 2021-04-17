@@ -16,7 +16,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Edit the number of credits an organisational unit owns manually
+     * Adds the number of credits an organisational unit owns manually
      *
      * @param organisationalUnit int ID of organisational unit to edit the credits for
      * @param credits int new amount of credits to edit for the organisational unit

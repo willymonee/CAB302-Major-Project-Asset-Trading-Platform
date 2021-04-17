@@ -19,12 +19,12 @@ public class OrganisationalUnit {
     /**
      * Constructor for an organisational unit
      *
-     * @param ID ID of an organisational unit
+     * @param id ID of an organisational unit
      * @param Name The organisational unit's name
      * @param credits The number of credits the organisational unit starts with/currently owns when created
      */
-    public OrganisationalUnit(int ID, String Name, int credits) {
-        organisationalUnitID = ID;
+    public OrganisationalUnit(int id, String Name, int credits) {
+        organisationalUnitID = id;
         organisationalUnitName = Name;
         this.credits = credits;
     }
