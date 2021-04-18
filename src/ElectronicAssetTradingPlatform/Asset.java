@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform;
 
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 /**
@@ -17,13 +18,20 @@ public class Asset {
      *
      * @param assetName string for asset name
      */
-    public Asset(String assetName) {
-        if (TradingPlatformAssets.size() == 0) {
-            this.assetID = 1;
+    public Asset(String assetName) throws Exception {
+        if (TradingPlatformAssets.containsValue(assetName)) {
+            throw new Exception("An asset with the same name already exists in the database!");
         }
-        this.assetID = TradingPlatformAssets.lastKey() + 1;
-        this.assetName = assetName;
-        TradingPlatformAssets.put(this.assetID, assetName);
+        try {
+            assetID = TradingPlatformAssets.lastKey() + 1;
+            this.assetName = assetName;
+            TradingPlatformAssets.put(assetID, assetName);
+        }
+        catch (NoSuchElementException e) {
+            assetID = 1;
+            this.assetName = assetName;
+            TradingPlatformAssets.put(assetID, assetName);
+        }
     }
 
     /**
@@ -44,14 +52,5 @@ public class Asset {
         return this.assetName;
     }
 
-
-    /**
-     * Checks if the asset is in the list of created assets
-     *
-     * @return returns false if the asset isn't currently in the TreeMap otherwise true
-     */
-    public boolean checkAssetExists(String name) {
-        return TradingPlatformAssets.containsValue(name);
-    }
 }
 

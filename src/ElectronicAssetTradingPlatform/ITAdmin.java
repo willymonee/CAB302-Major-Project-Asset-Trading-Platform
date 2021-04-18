@@ -58,7 +58,7 @@ public class ITAdmin extends User {
      *
      * @param name string name of the asset type to be added to the database
      */
-    public void createNewAsset(String name) {
+    public void createNewAsset(String name) throws Exception{
         // Add parsed asset name to db
         new Asset(name);
 
