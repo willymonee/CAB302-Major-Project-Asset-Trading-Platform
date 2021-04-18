@@ -19,7 +19,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Adds the number of credits an organisational unit owns manually
+     * Add or remove the number of credits an organisational unit owns manually
      *
      * @param organisationalUnit int ID of organisational unit to edit the credits for
      * @param credits int new amount of credits to edit for the organisational unit
@@ -30,11 +30,12 @@ public class ITAdmin extends User {
 
     /**
      * Edit the assets or quantity of asset an organisational unit owns
+     *
      * @param organisationalUnit int ID of the organisational unit that owns the assets that are to be edited
-     * @param type Asset type to be edited
+     * @param assetName Asset type to be edited
      * @param quantity int quantity of the asset to be changed
      */
-    public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, Asset type, int quantity) throws Exception {
+    public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, Asset assetName, int quantity) throws Exception {
         // Edit or add asset to unit
         // Should check the type exists within the db
         throw new Exception();

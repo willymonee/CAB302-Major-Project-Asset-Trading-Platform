@@ -12,10 +12,9 @@ public class SystemsAdmin extends User{
     /**
      * Constructor for Systems Admin
      *
-     * @param username
-     * @param password
+     * @param username string identifier used to login
+     * @param password string matched with username identifier used to login
      */
-
     public SystemsAdmin(String username, String password) {
         super(username, password);
     }
@@ -23,7 +22,6 @@ public class SystemsAdmin extends User{
     /**
      * Initialise the Database
      */
-
     public void initDB() {
 
     }
