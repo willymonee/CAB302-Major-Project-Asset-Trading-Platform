@@ -12,7 +12,7 @@ public class ITAdmin extends User {
      * @param Name string name of the organisational unit
      * @param credits int credits to be initially assigned to the unit
      */
-    private void createOrganisationalUnit(String Name, int credits) {
+    public void createOrganisationalUnit(String Name, int credits) {
         // createOrganisationalUnit method
         // Create new org unit ID
         // Assign member/s with the new unit ID (or create new user containing the org unit ID)
@@ -24,7 +24,7 @@ public class ITAdmin extends User {
      * @param organisationalUnit int ID of organisational unit to edit the credits for
      * @param credits int new amount of credits to edit for the organisational unit
      */
-    private void editOrganisationalUnitCredits(OrganisationalUnit organisationalUnit, int credits) throws Exception {
+    public void editOrganisationalUnitCredits(OrganisationalUnit organisationalUnit, int credits) throws Exception {
         organisationalUnit.editCredits(credits);
     }
 
@@ -34,7 +34,7 @@ public class ITAdmin extends User {
      * @param type Asset type to be edited
      * @param quantity int quantity of the asset to be changed
      */
-    private void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, Asset type, int quantity) throws Exception {
+    public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, Asset type, int quantity) throws Exception {
         // Edit or add asset to unit
         // Should check the type exists within the db
         throw new Exception();
@@ -47,7 +47,7 @@ public class ITAdmin extends User {
      * @param organisationalUnitID int ID for new user to be associated with
      * @param userType user type for new user's access level
      */
-    private void createUser(String name, int organisationalUnitID, User userType) {
+    public void createUser(String name, int organisationalUnitID, User userType) {
         // createUser method
     }
 
@@ -56,7 +56,7 @@ public class ITAdmin extends User {
      *
      * @param name string name of the asset type to be added to the database
      */
-    private void insertAsset(String name) {
+    public void insertAsset(String name) {
         // Add parsed asset name to db
         // Create new unique ID
     }
