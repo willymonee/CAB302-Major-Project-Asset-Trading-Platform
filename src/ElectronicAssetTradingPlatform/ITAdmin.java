@@ -33,13 +33,13 @@ public class ITAdmin extends User {
      * Edit the assets or quantity of asset an organisational unit owns
      *
      * @param organisationalUnit int ID of the organisational unit that owns the assets that are to be edited
-     * @param asset Asset type to be edited
+     * @param assetName Asset type to be edited
      * @param quantity int quantity of the asset to be changed
      */
-    public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, Asset asset, int quantity) throws Exception {
+    public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, String assetName, int quantity) throws Exception {
         // Edit or add asset to unit
         // Should check the type exists within the db
-        organisationalUnit.addAsset(asset, quantity);
+        organisationalUnit.addAsset(assetName, quantity);
     }
 
     /**

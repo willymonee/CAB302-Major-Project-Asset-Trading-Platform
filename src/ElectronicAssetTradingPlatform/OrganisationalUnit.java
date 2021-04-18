@@ -54,13 +54,11 @@ public class OrganisationalUnit {
      * the asset yet.
      * Otherwise, add onto the existing quantity value in the TreeMap
      *
-     * @param asset Asset object which an organisational unit owns/going to own
+     * @param assetName Asset object which an organisational unit owns/going to own
      * @param quantityToAdd Number of that particular asset to be added (must be greater than 0)
      *
      */
-    public void addAsset(Asset asset, int quantityToAdd) {
-        String assetName = asset.getAssetName();
-
+    public void addAsset(String assetName, int quantityToAdd) {
         // if the organisation already has any amount of the asset
         if (organisationalUnitAssets.containsKey(assetName)) {
             int currentQuantity = organisationalUnitAssets.get(assetName);
@@ -81,14 +79,14 @@ public class OrganisationalUnit {
      *
      * The asset name should be unique and the quantity removed should not reduce the asset below zero
      *
-     * @param asset Asset object which an organisational unit owns
+     * @param assetName String asset which an organisational unit owns
      * @param quantityToRemove Number of that particular asset to be removed (must be less than number owned currently)
      *
      * @throws Exception // not enough assets owned to be removed
      * @throws Exception // organisational unit does not have the asset (cannot remove asset that is not owned)
      */
-    public void removeAsset(Asset asset, int quantityToRemove) throws Exception {
-        String assetName = asset.getAssetName();
+    public void removeAsset(String assetName, int quantityToRemove) throws Exception {
+
         int currentQuantity = organisationalUnitAssets.get(assetName);
 
         if (organisationalUnitAssets.containsKey(assetName)) {
