@@ -58,9 +58,9 @@ public class ITAdmin extends User {
      *
      * @param name string name of the asset type to be added to the database
      */
-    public void createNewAsset(String name) throws Exception{
+    // NOTE IT IS BEST FOR THE ID TO BE AUTOMATICALLY CREATED IN THE ASSET OR ASSET COLLECTION OBJECTS
+    public void createNewAsset(String name, int ID) throws Exception{
         // Add parsed asset name to db
-        new Asset(name);
-
+        AssetCollection.getAssetCollection().addAsset(name, ID);
     }
 }

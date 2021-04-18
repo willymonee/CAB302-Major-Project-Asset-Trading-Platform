@@ -60,6 +60,8 @@ public class OrganisationalUnit {
      */
     public void addAsset(String assetName, int quantityToAdd) {
         // if the organisation already has any amount of the asset
+
+
         if (organisationalUnitAssets.containsKey(assetName)) {
             int currentQuantity = organisationalUnitAssets.get(assetName);
             quantityToAdd += currentQuantity;
@@ -85,10 +87,9 @@ public class OrganisationalUnit {
      * @throws Exception // not enough assets owned to be removed
      * @throws Exception // organisational unit does not have the asset (cannot remove asset that is not owned)
      */
+
     public void removeAsset(String assetName, int quantityToRemove) throws Exception {
-
         int currentQuantity = organisationalUnitAssets.get(assetName);
-
         if (organisationalUnitAssets.containsKey(assetName)) {
             if (quantityToRemove <= currentQuantity) {
                 currentQuantity -= quantityToRemove;

@@ -1,7 +1,10 @@
 package ElectronicAssetTradingPlatform;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
+import java.util.UUID;
 
 /**
  * Asset class creates an asset that belongs to an organisation that can stored, sold or bought
@@ -10,7 +13,7 @@ import java.util.TreeMap;
 public class Asset {
     private int assetID;
     private String assetName;
-    private TreeMap<Integer, String> TradingPlatformAssets = new TreeMap<>();
+
 
     /**
      * Constructor to initialise an asset with asset ID and name
@@ -18,20 +21,9 @@ public class Asset {
      *
      * @param assetName string for asset name
      */
-    public Asset(String assetName) throws Exception {
-        if (TradingPlatformAssets.containsValue(assetName)) {
-            throw new Exception("An asset with the same name already exists in the database!");
-        }
-        try {
-            assetID = TradingPlatformAssets.lastKey() + 1;
-            this.assetName = assetName;
-            TradingPlatformAssets.put(assetID, assetName);
-        }
-        catch (NoSuchElementException e) {
-            assetID = 1;
-            this.assetName = assetName;
-            TradingPlatformAssets.put(assetID, assetName);
-        }
+    public Asset(String assetName, int ID)  {
+        this.assetName = assetName;
+        this.assetID = ID; // change this later to be a unique ID
     }
 
     /**
@@ -52,5 +44,8 @@ public class Asset {
         return this.assetName;
     }
 
+
+
 }
+
 
