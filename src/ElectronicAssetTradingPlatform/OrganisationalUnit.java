@@ -13,7 +13,7 @@ import java.util.TreeMap;
 public class OrganisationalUnit {
     private int organisationalUnitID;
     private String organisationalUnitName;
-    private int credits;
+    private float credits;
     private Map<String,Integer> organisationalUnitAssets = new TreeMap<>();
 
     /**
@@ -23,7 +23,7 @@ public class OrganisationalUnit {
      * @param Name The organisational unit's name
      * @param credits The number of credits the organisational unit starts with/currently owns when created
      */
-    public OrganisationalUnit(int id, String Name, int credits) {
+    public OrganisationalUnit(int id, String Name, float credits) {
         organisationalUnitID = id;
         organisationalUnitName = Name;
         this.credits = credits;
@@ -38,7 +38,7 @@ public class OrganisationalUnit {
      *
      * @throws Exception exception handling so that net credits cannot be less than zero
      */
-    public void editCredits(int credits) throws Exception {
+    public void editCredits(float credits) throws Exception {
         if ( (this.credits += credits) < 0) {           // this code line might be incorrect and may need fixing
             throw new Exception("Cannot remove more credits than there actually are!");
         }
@@ -93,8 +93,8 @@ public class OrganisationalUnit {
 
         if (organisationalUnitAssets.containsKey(assetName)) {
             if (quantityToRemove <= currentQuantity) {
-                quantityToRemove -= currentQuantity;
-                organisationalUnitAssets.put(assetName, quantityToRemove);
+                currentQuantity -= quantityToRemove;
+                organisationalUnitAssets.put(assetName, currentQuantity);
             }
             else {
                 throw new Exception("Cannot remove more assets than there are currently!"); // this can be refined

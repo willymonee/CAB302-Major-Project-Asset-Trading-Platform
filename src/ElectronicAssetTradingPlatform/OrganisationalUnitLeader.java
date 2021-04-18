@@ -2,6 +2,8 @@ package ElectronicAssetTradingPlatform;
 
 /**
  * Class for the organisational unit leaders
+ * Organisanational unit leaders are part of the organisational unit, however they have additional capabilities over
+ * ordinary members.
  */
 public class OrganisationalUnitLeader extends OrganisationalUnitMembers{
     /**

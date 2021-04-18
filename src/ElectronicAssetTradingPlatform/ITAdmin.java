@@ -10,9 +10,9 @@ public class ITAdmin extends User {
      * Create a new organisational unit, assign user/s to it, and update the database
      *
      * @param Name string name of the organisational unit
-     * @param credits int credits to be initially assigned to the unit
+     * @param credits float credits to be initially assigned to the unit
      */
-    public void createOrganisationalUnit(String Name, int credits) {
+    public void createOrganisationalUnit(String Name, float credits) {
         // createOrganisationalUnit method
         // Create new org unit ID
         // Assign member/s with the new unit ID (or create new user containing the org unit ID)
@@ -20,11 +20,12 @@ public class ITAdmin extends User {
 
     /**
      * Add or remove the number of credits an organisational unit owns manually
+     * Prints a success or error message
      *
      * @param organisationalUnit int ID of organisational unit to edit the credits for
      * @param credits int new amount of credits to edit for the organisational unit
      */
-    public void editOrganisationalUnitCredits(OrganisationalUnit organisationalUnit, int credits) throws Exception {
+    public void editOrganisationalUnitCredits(OrganisationalUnit organisationalUnit, float credits) throws Exception {
         organisationalUnit.editCredits(credits);
     }
 
@@ -32,13 +33,13 @@ public class ITAdmin extends User {
      * Edit the assets or quantity of asset an organisational unit owns
      *
      * @param organisationalUnit int ID of the organisational unit that owns the assets that are to be edited
-     * @param assetName Asset type to be edited
+     * @param asset Asset type to be edited
      * @param quantity int quantity of the asset to be changed
      */
-    public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, Asset assetName, int quantity) throws Exception {
+    public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, Asset asset, int quantity) throws Exception {
         // Edit or add asset to unit
         // Should check the type exists within the db
-        throw new Exception();
+        organisationalUnit.addAsset(asset, quantity);
     }
 
     /**
@@ -57,8 +58,9 @@ public class ITAdmin extends User {
      *
      * @param name string name of the asset type to be added to the database
      */
-    public void insertAsset(String name) {
+    public void createNewAsset(String name) {
         // Add parsed asset name to db
-        // Create new unique ID
+        new Asset(name);
+
     }
 }

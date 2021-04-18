@@ -104,7 +104,7 @@ public class OrganisationalUnitMembers extends User {
      * Create a graph of all prices offers were resolved at for the asset
      *
      */
-    public void assetPriceListToGraph() {
+    public void assetPriceGraph() {
         // assetPriceListToGraph method
     }
 
