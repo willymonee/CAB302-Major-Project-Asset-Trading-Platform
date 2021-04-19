@@ -54,7 +54,7 @@ public class ITAdmin extends User {
     public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, String assetName, int quantity) throws Exception {
         // Edit or add asset to unit
         // Should check the type exists within the db
-        organisationalUnit.addAsset(assetName, quantity);
+        organisationalUnit.addAssetToOrg(assetName, quantity);
     }
 
     /**
@@ -74,8 +74,8 @@ public class ITAdmin extends User {
      * @param name string name of the asset type to be added to the database
      */
     // NOTE IT IS BEST FOR THE ID TO BE AUTOMATICALLY CREATED IN THE ASSET OR ASSET COLLECTION OBJECTS
-    public void createNewAsset(String name, int ID) throws Exception{
+    public void createNewAsset(String name) throws Exception{
         // Add parsed asset name to db
-        AssetCollection.getAssetCollection().addAsset(name, ID);
+        AssetCollection.addAssetToCollection(name);
     }
 }

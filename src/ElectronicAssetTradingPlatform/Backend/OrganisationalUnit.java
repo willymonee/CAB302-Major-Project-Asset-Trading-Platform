@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.Backend;
 
+import ElectronicAssetTradingPlatform.Database.AssetCollection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -58,18 +59,19 @@ public class OrganisationalUnit {
      * @param quantityToAdd Number of that particular asset to be added (must be greater than 0)
      *
      */
-    public void addAsset(String assetName, int quantityToAdd) {
+    public void addAssetToOrg(String assetName, int quantityToAdd) {
         // if the organisation already has any amount of the asset
-
-
-        if (organisationalUnitAssets.containsKey(assetName)) {
-            int currentQuantity = organisationalUnitAssets.get(assetName);
-            quantityToAdd += currentQuantity;
+        if (AssetCollection.checkAssetExists(assetName)) {
+            // if the organisation already has any amount of the asset
+            if (organisationalUnitAssets.containsKey(assetName)) {
+                int currentQuantity = organisationalUnitAssets.get(assetName);
+                quantityToAdd += currentQuantity;
+            }
+            // if the organisation does not currently have any amount of the asset
             organisationalUnitAssets.put(assetName, quantityToAdd);
         }
-        // if the organisation does not currently have any amount of the asset
         else {
-            organisationalUnitAssets.put(assetName, quantityToAdd);
+            // asset does not exist in the system please create it
         }
     }
 

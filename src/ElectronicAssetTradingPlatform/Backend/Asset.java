@@ -23,7 +23,7 @@ public class Asset {
      */
     public Asset(String assetName, int ID)  {
         this.assetName = assetName;
-        this.assetID = ID; // change this later to be a unique ID
+        this.assetID = ID;
     }
 
     /**

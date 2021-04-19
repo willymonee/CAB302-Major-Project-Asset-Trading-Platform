@@ -1,47 +1,60 @@
 package ElectronicAssetTradingPlatform.Database;
 
+import java.util.NoSuchElementException;
+import java.util.TreeMap;
+import java.util.Map;
 import ElectronicAssetTradingPlatform.Backend.Asset;
 
-import java.util.TreeMap;
+/**
+ * AssetCollection class creates an object which contains a TreeMap field to store 'Asset' objects and their IDs
+ * The methods in this class pertain to manipulating or interacting with either the TreeMap
+ *
+ */
 
-// U ARE A SINGLETON
 public class AssetCollection {
-    private TreeMap<Integer, Asset> TradingPlatformAssets = new TreeMap<>();
-    private static AssetCollection assetCollection = null;
+    private static TreeMap<Integer, Asset> TradingPlatformAssets = new TreeMap<>();
 
-    // a collection to contain all types of assets
-    private AssetCollection() {
-//        if (TradingPlatformAssets.containsValue(Asset)) {
-//            throw new Exception("An asset with the same name already exists in the database!");
-//        }
-//        try {
-//            assetID = TradingPlatformAssets.lastKey() + 1;
-//            this.assetName = assetName;
-//            TradingPlatformAssets.put(assetID, assetName);
-//        }
-//        catch (NoSuchElementException e) {
-//            assetID = 1;
-//            this.assetName = assetName;
-//            TradingPlatformAssets.put(assetID, assetName);
-//        }
-    }
 
-    public void addAsset(String name, Integer ID) {
-        Asset asset = new Asset(name, ID);
-        TradingPlatformAssets.put(ID, asset);
-    }
+    /**
+     * Constructor to initialise the single AssetCollection object.
+     *
+     */
+    public AssetCollection() { }
 
-    public static AssetCollection getAssetCollection() {
-        if (assetCollection == null) {
-            return new AssetCollection();
+
+
+    /**
+     * Create a new asset object and add it into the AssetCollection object's TreeMap as well as the database.
+     * Primarily used by the IT admin user
+     *
+     */
+    public static void addAssetToCollection(String name) {
+        if(!checkAssetExists(name)) {
+            int uniqueID = TradingPlatformAssets.lastKey() + 1;
+            Asset asset = new Asset(name, uniqueID);
+            TradingPlatformAssets.put(uniqueID, asset);
         }
         else {
-            return assetCollection;
+            // throw error
         }
     }
 
-    public boolean checkAssetExists() {
-        // TradingPlatformAssets.containsValue(Asset);
-        return true;
+
+    /**
+     * Check if the asset is stored in the TradingPlatformAssets via assetName
+     * Method creates an entry set out of the TreeMap and grabs each existing Asset and then its name
+     * then compares it with the queried asset name
+     *
+     * @param queriedAssetName String is the name of the asset you want to check exists in the system
+     *
+     * @return returns true if the asset was found in the collection, false otherwise
+     */
+    public static boolean checkAssetExists(String queriedAssetName) {
+        for (Map.Entry<Integer, Asset> entry: TradingPlatformAssets.entrySet()) {
+            if (entry.getValue().getAssetName().equals(queriedAssetName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
