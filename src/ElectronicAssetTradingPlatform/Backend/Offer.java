@@ -1,7 +1,10 @@
-package ElectronicAssetTradingPlatform;
+package ElectronicAssetTradingPlatform.Backend;
 
 import java.time.LocalDate;
 
+/**
+ * An abstract class that is used to help create trade offers to buy/sell assets
+ */
 public abstract class Offer {
     private int orderID;
     private Asset asset;

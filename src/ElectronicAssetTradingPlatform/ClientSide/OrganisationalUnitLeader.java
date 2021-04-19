@@ -1,11 +1,13 @@
-package ElectronicAssetTradingPlatform;
+package ElectronicAssetTradingPlatform.ClientSide;
+
+import ElectronicAssetTradingPlatform.ClientSide.OrganisationalUnitMembers;
 
 /**
  * Class for the organisational unit leaders
  * Organisanational unit leaders are part of the organisational unit, however they have additional capabilities over
  * ordinary members.
  */
-public class OrganisationalUnitLeader extends OrganisationalUnitMembers{
+public class OrganisationalUnitLeader extends OrganisationalUnitMembers {
     /**
      * Constructor used to set ID to organisational unit to user
      *

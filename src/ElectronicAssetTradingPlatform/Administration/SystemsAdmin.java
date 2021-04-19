@@ -1,4 +1,6 @@
-package ElectronicAssetTradingPlatform;
+package ElectronicAssetTradingPlatform.Administration;
+
+import ElectronicAssetTradingPlatform.Server.User;
 
 /**
  * Class for Systems Admin users allowing for all users with this access level to be able to
@@ -7,7 +9,7 @@ package ElectronicAssetTradingPlatform;
  * same level of access privileges. On top of this they ............ about overlooking network
  * and account security.
  */
-public class SystemsAdmin extends User{
+public class SystemsAdmin extends User {
 
     /**
      * Constructor for Systems Admin

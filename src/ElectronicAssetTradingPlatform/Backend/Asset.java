@@ -1,4 +1,4 @@
-package ElectronicAssetTradingPlatform;
+package ElectronicAssetTradingPlatform.Backend;
 
 import java.util.ArrayList;
 import java.util.HashSet;

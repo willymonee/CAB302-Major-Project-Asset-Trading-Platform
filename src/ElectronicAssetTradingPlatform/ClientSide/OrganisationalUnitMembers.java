@@ -1,7 +1,12 @@
-package ElectronicAssetTradingPlatform;
+package ElectronicAssetTradingPlatform.ClientSide;
+
+import ElectronicAssetTradingPlatform.Backend.Asset;
+import ElectronicAssetTradingPlatform.Server.User;
 
 /**
- *
+ *  OrganisationalUnitMembers class which extends the user class. This class is implemented
+ *  for users who wish to trade their organisational unit's assets by connecting to the server
+ *  and managing unit asset listings via their client side GUI.
  */
 public class OrganisationalUnitMembers extends User {
     private int organisationalUnitID;

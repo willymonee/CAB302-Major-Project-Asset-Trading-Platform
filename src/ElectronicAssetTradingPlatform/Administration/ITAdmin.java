@@ -1,7 +1,22 @@
-package ElectronicAssetTradingPlatform;
+package ElectronicAssetTradingPlatform.Administration;
 
+import ElectronicAssetTradingPlatform.Database.AssetCollection;
+import ElectronicAssetTradingPlatform.Backend.OrganisationalUnit;
+import ElectronicAssetTradingPlatform.Server.User;
+
+/**
+ * ITAdmin class which extends the user class. This class is for the IT administration team
+ * giving them privileges, allowing them to do tasks such as creating and managing new
+ * organisational units, assets and the amount of credits for an organisational unit.
+ */
 public class ITAdmin extends User {
 
+    /**
+     * Constructor for ITAdmin class to login with administration access levels
+     *
+     * @param username string identifier used to login
+     * @param password string matched with username identifier used to login
+     */
     public ITAdmin(String username, String password) {
         super(username, password);
     }

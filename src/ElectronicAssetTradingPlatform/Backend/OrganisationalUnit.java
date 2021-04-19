@@ -1,4 +1,4 @@
-package ElectronicAssetTradingPlatform;
+package ElectronicAssetTradingPlatform.Backend;
 
 import java.util.Map;
 import java.util.TreeMap;

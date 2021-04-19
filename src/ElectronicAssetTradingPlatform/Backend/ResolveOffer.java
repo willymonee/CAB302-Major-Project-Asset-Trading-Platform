@@ -1,4 +1,6 @@
-package ElectronicAssetTradingPlatform;
+package ElectronicAssetTradingPlatform.Backend;
+
+import ElectronicAssetTradingPlatform.Backend.Offer;
 
 /**
  * An extension of the offer class, only available to the server to resolve offers with

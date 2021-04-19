@@ -1,8 +1,7 @@
-package ElectronicAssetTradingPlatform;
+package ElectronicAssetTradingPlatform.Database;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
+import ElectronicAssetTradingPlatform.Backend.Asset;
+
 import java.util.TreeMap;
 
 // U ARE A SINGLETON
