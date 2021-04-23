@@ -1,10 +1,4 @@
-package ElectronicAssetTradingPlatform.Backend;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.TreeMap;
-import java.util.UUID;
+package ElectronicAssetTradingPlatform.Miscellaneous;
 
 /**
  * Asset class creates an asset that belongs to an organisation that can stored, sold or bought

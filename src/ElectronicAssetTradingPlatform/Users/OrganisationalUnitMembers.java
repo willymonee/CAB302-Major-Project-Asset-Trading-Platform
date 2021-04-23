@@ -1,7 +1,6 @@
-package ElectronicAssetTradingPlatform.ClientSide;
+package ElectronicAssetTradingPlatform.Users;
 
-import ElectronicAssetTradingPlatform.Backend.Asset;
-import ElectronicAssetTradingPlatform.Server.User;
+import ElectronicAssetTradingPlatform.Miscellaneous.Asset;
 
 /**
  *  OrganisationalUnitMembers class which extends the user class. This class is implemented

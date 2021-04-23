@@ -1,6 +1,4 @@
-package ElectronicAssetTradingPlatform.ClientSide;
-
-import ElectronicAssetTradingPlatform.ClientSide.OrganisationalUnitMembers;
+package ElectronicAssetTradingPlatform.Users;
 
 /**
  * Class for the organisational unit leaders

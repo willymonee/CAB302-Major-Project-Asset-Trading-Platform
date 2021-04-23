@@ -1,4 +1,4 @@
-package ElectronicAssetTradingPlatform.Server;
+package ElectronicAssetTradingPlatform.Users;
 
 /**
  * Class for the users of the application

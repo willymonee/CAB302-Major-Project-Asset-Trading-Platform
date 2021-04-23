@@ -1,4 +1,4 @@
-package ElectronicAssetTradingPlatform.Backend;
+package ElectronicAssetTradingPlatform.Miscellaneous;
 
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
 import java.util.Map;

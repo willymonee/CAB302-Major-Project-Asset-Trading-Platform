@@ -1,9 +1,8 @@
 package ElectronicAssetTradingPlatform.Database;
 
-import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.Map;
-import ElectronicAssetTradingPlatform.Backend.Asset;
+import ElectronicAssetTradingPlatform.Miscellaneous.Asset;
 
 /**
  * AssetCollection class creates an object which contains a TreeMap field to store 'Asset' objects and their IDs

@@ -1,8 +1,7 @@
-package ElectronicAssetTradingPlatform.Administration;
+package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
-import ElectronicAssetTradingPlatform.Backend.OrganisationalUnit;
-import ElectronicAssetTradingPlatform.Server.User;
+import ElectronicAssetTradingPlatform.Miscellaneous.OrganisationalUnit;
 
 /**
  * ITAdmin class which extends the user class. This class is for the IT administration team

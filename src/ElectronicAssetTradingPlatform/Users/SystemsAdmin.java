@@ -1,6 +1,4 @@
-package ElectronicAssetTradingPlatform.Administration;
-
-import ElectronicAssetTradingPlatform.Server.User;
+package ElectronicAssetTradingPlatform.Users;
 
 /**
  * Class for Systems Admin users allowing for all users with this access level to be able to
