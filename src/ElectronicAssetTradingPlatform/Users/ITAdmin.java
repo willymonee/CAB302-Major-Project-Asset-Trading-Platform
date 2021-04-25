@@ -77,4 +77,35 @@ public class ITAdmin extends User {
         // Add parsed asset name to db
         AssetCollection.addAssetToCollection(name);
     }
+
+    /**
+     * Choose to edit the user's username, user type and organisational unit
+     *
+     * @param username the new username the use will have
+     * @param userType the new user type the user will be
+     * @param organisationalUnit the new organisational unit that the user will be part of
+     */
+    public void editUser(String username, User userType, OrganisationalUnit organisationalUnit ) {
+
+    }
+
+    /**
+     * Edit an organisational unit's name
+     *
+     * @param currentName the current name the organisational unit has
+     * @param newName the new name for the organisational unit
+     */
+    public void editOrganisationalUnitName(String currentName, String newName) {
+
+    }
+
+    /**
+     * Edit an asset's name
+     *
+     * @param currentName the current name the asset has
+     * @param newName the new name for the asset
+     */
+    public void editAssetName(String currentName, String newName) {
+
+    }
 }
