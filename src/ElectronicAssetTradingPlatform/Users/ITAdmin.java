@@ -53,7 +53,7 @@ public class ITAdmin extends User {
     public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, String assetName, int quantity) throws Exception {
         // Edit or add asset to unit
         // Should check the type exists within the db
-        organisationalUnit.addAssetToOrg(assetName, quantity);
+        organisationalUnit.addAsset(assetName, quantity);
     }
 
     /**

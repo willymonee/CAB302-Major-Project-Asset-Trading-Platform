@@ -14,4 +14,9 @@ public class BuyOffer extends Offer{
     public BuyOffer(Asset asset, int quantity, float pricePerUnit, int organisationalUnitID, int userID) {
         super(asset, quantity, pricePerUnit, organisationalUnitID, userID);
     }
+
+    @Override
+    public void resolveOffer() {
+        // Implement resolve offer, use checkMatchedOffer() also?
+    }
 }

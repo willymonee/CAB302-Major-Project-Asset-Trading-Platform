@@ -12,23 +12,23 @@ import java.util.TreeMap;
  */
 
 public class OrganisationalUnit {
-    private int organisationalUnitID;
-    private String organisationalUnitName;
+    private int ID;
+    private String name;
     private float credits;
-    private Map<String,Integer> organisationalUnitAssets;
+    private Map<String,Integer> assetsOwned;
 
     /**
      * Constructor for an organisational unit
      *
      * @param id ID of an organisational unit
-     * @param Name The organisational unit's name
+     * @param name The organisational unit's name
      * @param credits The number of credits the organisational unit starts with/currently owns when created
      */
-    public OrganisationalUnit(int id, String Name, float credits) {
-        organisationalUnitID = id;
-        organisationalUnitName = Name;
+    public OrganisationalUnit(int id, String name, float credits) {
+        ID = id;
+        this.name = name;
         this.credits = credits;
-        organisationalUnitAssets = new TreeMap<>();
+        assetsOwned = new TreeMap<>();
     }
 
     /**
@@ -62,16 +62,16 @@ public class OrganisationalUnit {
      * @param quantityToAdd Number of that particular asset to be added (must be greater than 0)
      *
      */
-    public void addAssetToOrg(String assetName, int quantityToAdd) {
+    public void addAsset(String assetName, int quantityToAdd) {
         // if the organisation already has any amount of the asset
         if (AssetCollection.checkAssetExists(assetName)) {
             // if the organisation already has any amount of the asset
-            if (organisationalUnitAssets.containsKey(assetName)) {
-                int currentQuantity = organisationalUnitAssets.get(assetName);
+            if (assetsOwned.containsKey(assetName)) {
+                int currentQuantity = assetsOwned.get(assetName);
                 quantityToAdd += currentQuantity;
             }
             // if the organisation does not currently have any amount of the asset
-            organisationalUnitAssets.put(assetName, quantityToAdd);
+            assetsOwned.put(assetName, quantityToAdd);
         }
         else {
             // asset does not exist in the system please create it
@@ -95,11 +95,11 @@ public class OrganisationalUnit {
      */
 
     public void removeAsset(String assetName, int quantityToRemove) throws Exception {
-        int currentQuantity = organisationalUnitAssets.get(assetName);
-        if (organisationalUnitAssets.containsKey(assetName)) {
+        int currentQuantity = assetsOwned.get(assetName);
+        if (assetsOwned.containsKey(assetName)) {
             if (quantityToRemove <= currentQuantity) {
                 currentQuantity -= quantityToRemove;
-                organisationalUnitAssets.put(assetName, currentQuantity);
+                assetsOwned.put(assetName, currentQuantity);
             }
             else {
                 throw new Exception("Cannot remove more assets than there are currently!"); // this can be refined
@@ -108,5 +108,17 @@ public class OrganisationalUnit {
         else {
             throw new Exception("Asset does not currently exist!");
         }
+    }
+
+    public float getCredits() {
+        return credits;
+    }
+
+    /**
+     * Getter for the assetsOwned field
+     * @return A map of the asset_name and quantity for this unit's assets
+     */
+    public Map<String, Integer> getAssetsOwned() {
+        return assetsOwned;
     }
 }
