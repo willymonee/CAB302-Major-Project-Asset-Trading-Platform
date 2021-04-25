@@ -15,7 +15,7 @@ public class OrganisationalUnit {
     private int organisationalUnitID;
     private String organisationalUnitName;
     private float credits;
-    private Map<String,Integer> organisationalUnitAssets = new TreeMap<>();
+    private Map<String,Integer> organisationalUnitAssets;
 
     /**
      * Constructor for an organisational unit
@@ -28,6 +28,7 @@ public class OrganisationalUnit {
         organisationalUnitID = id;
         organisationalUnitName = Name;
         this.credits = credits;
+        organisationalUnitAssets = new TreeMap<>();
     }
 
     /**
