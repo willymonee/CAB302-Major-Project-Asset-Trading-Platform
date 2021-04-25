@@ -32,11 +32,22 @@ public class User {
     }
 
     /**
-     * Creates elements of the GUI common in all users’ GUIs, such as the navigation bar and footer
+     * Connect organisational unit member to the server using the supplied
+     * configuration file
      *
      */
-    public void createGUI() {
-        // createGUI method
+    public void connectDB() {
+        // connectDB method
     }
+
+    /*
+     * Helper function to create elements of the GUI common in all users’
+     * GUIs, such as the navigation bar and footer.
+     *
+     * !!!!!!!!!!!!!!! Probably remove - make separate GUI classes specifically for this !!!!!!!!!!!!!!!
+     */
+    /*protected void GUI_nav() {
+        // GUI_nav method
+    }*/
 
 }

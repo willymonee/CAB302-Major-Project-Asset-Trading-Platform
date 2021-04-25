@@ -19,4 +19,12 @@ public class OrganisationalUnitLeader extends OrganisationalUnitMembers {
         super(username, password, organisationalUnitID);
 
     }
+
+    /**
+     *
+     * @param memberID ID of the member to be kicked
+     */
+    public void kickMember(int memberID) {
+
+    }
 }

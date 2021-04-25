@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Miscellaneous.Asset;
+import ElectronicAssetTradingPlatform.Miscellaneous.Offer;
 
 /**
  *  OrganisationalUnitMembers class which extends the user class. This class is implemented
@@ -22,15 +23,6 @@ public class OrganisationalUnitMembers extends User {
     public OrganisationalUnitMembers(String username, String password, int organisationalUnitID) {
         super(username, password);
         this.organisationalUnitID = organisationalUnitID;
-    }
-
-    /**
-     * Connect organisational unit member to the server using the supplied
-     * configuration file
-     *
-     */
-    public void connectDB() {
-        // connectDB method
     }
 
     /**
@@ -86,7 +78,7 @@ public class OrganisationalUnitMembers extends User {
      * @param quantity int amount of assets for listing to be relisted for
      * @param price int price of asset requested for listing to relist for
      */
-    public void reList(int listingID, int quantity, int price) {
+    public void relist(int listingID, int quantity, int price) {
 
     }
 

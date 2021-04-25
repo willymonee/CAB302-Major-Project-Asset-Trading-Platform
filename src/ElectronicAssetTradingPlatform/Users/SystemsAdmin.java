@@ -23,7 +23,7 @@ public class SystemsAdmin extends User {
      * Initialise the Database
      */
     public void initDB() {
-
+        // Might not need - db should be initialised in the server already, not when the admin wants to
     }
 
     /**
