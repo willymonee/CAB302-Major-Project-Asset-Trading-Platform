@@ -3,6 +3,8 @@ package ElectronicAssetTradingPlatform.Users;
 import ElectronicAssetTradingPlatform.Miscellaneous.Asset;
 import ElectronicAssetTradingPlatform.Miscellaneous.Offer;
 
+import java.util.Map;
+
 /**
  *  OrganisationalUnitMembers class which extends the user class. This class is implemented
  *  for users who wish to trade their organisational unit's assets by connecting to the server
@@ -109,4 +111,21 @@ public class OrganisationalUnitMembers extends User {
         // assetPriceListToGraph method
     }
 
+    /**
+     * Gets the assets this user's organisational unit owns
+     *
+     * @return Returns the map of asset_name and quantity
+     */
+    public Map<String,Integer> getUnitAssets() {
+        return null;
+    }
+
+    /**
+     * Gets the amount of credits this user's organisational unit owns
+     *
+     * @return Returns the quantity of credits
+     */
+    public int getUnitCredits() {
+        return 0;
+    }
 }
