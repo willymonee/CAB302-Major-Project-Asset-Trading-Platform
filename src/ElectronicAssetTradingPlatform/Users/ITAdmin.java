@@ -21,7 +21,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Create a new organisational unit, assign user/s to it, and update the database
+     * Create a new organisational unit, assign user/s to it, and update the database [M]
      *
      * @param Name string name of the organisational unit
      * @param credits float credits to be initially assigned to the unit
@@ -33,7 +33,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Add or remove the number of credits an organisational unit owns manually
+     * Add or remove the number of credits an organisational unit owns manually [M]
      * Prints a success or error message
      *
      * @param organisationalUnit int ID of organisational unit to edit the credits for
@@ -44,7 +44,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Edit the assets or quantity of asset an organisational unit owns
+     * Edit the assets or quantity of asset an organisational unit owns [M]
      *
      * @param organisationalUnit int ID of the organisational unit that owns the assets that are to be edited
      * @param assetName Asset type to be edited
@@ -57,7 +57,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Creates a new user
+     * Creates a new user [M]
      *
      * @param name string for name of new user
      * @param organisationalUnitID int ID for new user to be associated with
@@ -68,7 +68,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Create a new asset type and add it to the database
+     * Create a new asset type and add it to the database [M]
      *
      * @param name string name of the asset type to be added to the database
      */
@@ -79,7 +79,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Choose to edit the user's username, user type and organisational unit
+     * Choose to edit the user's username, user type and organisational unit [C]
      *
      * @param username the new username the use will have
      * @param userType the new user type the user will be
@@ -90,7 +90,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Edit an organisational unit's name
+     * Edit an organisational unit's name [C]
      *
      * @param currentName the current name the organisational unit has
      * @param newName the new name for the organisational unit
@@ -100,7 +100,7 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Edit an asset's name
+     * Edit an asset's name [C]
      *
      * @param currentName the current name the asset has
      * @param newName the new name for the asset

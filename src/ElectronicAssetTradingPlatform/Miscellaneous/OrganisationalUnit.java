@@ -35,6 +35,7 @@ public class OrganisationalUnit {
      * Given an integer of credits, add this onto the existing amount of credits an organisational unit owns
      * However, cannot reduce credits by more than the organisational unit owns (can't go negative)
      * This is the base helper function for all other methods elsewhere which add/subtract organisational unit credits
+     * [M]
      *
      * @param credits int amount of credits to add (positive int) or remove (negative int)
      *
@@ -55,6 +56,7 @@ public class OrganisationalUnit {
      * the value into the organisationalUnitAssets' TreeMap collection IF the organisation does not own any amount of
      * the asset yet.
      * Otherwise, add onto the existing quantity value in the TreeMap
+     * [M]
      *
      * @param assetName Asset object which an organisational unit owns/going to own
      * @param quantityToAdd Number of that particular asset to be added (must be greater than 0)
@@ -80,6 +82,7 @@ public class OrganisationalUnit {
      * Given an existing asset object (has been created by IT admins) and a quantity of the asset in integers,
      * reduce the quantity of the asset owned in the organisationalUnitAssets' TreeMap collection, where the asset name
      * is the Key and quantity is the Value.
+     * [M]
      *
      *
      * The asset name should be unique and the quantity removed should not reduce the asset below zero

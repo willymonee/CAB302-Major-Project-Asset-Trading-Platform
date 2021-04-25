@@ -34,16 +34,22 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Display current offers made by the organisational member's belonging
-     * organisational unit
+     * Display current sell offers made by the organisational unit [M]
      */
-    public void getUnitOffers() {
-        // getUnitOffers method
+    public void getcurrentSellOffers() {
+
+    }
+
+    /**
+     * Display current buy offers made by the organisational unit [M]
+     */
+    public void getcurrentBuyOffers() {
+
     }
 
     /**
      * Set up buy order for an organisational unit using ones own
-     * organisational unit's credits
+     * organisational unit's credits [M]
      *
      * @param assetType asset name for buy order
      * @param quantity int amount of assets placed for buy order
@@ -54,7 +60,7 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Set up sell order for own organisational unit's asset using credits
+     * Set up sell order for own organisational unit's asset using credits [M]
      *
      * @param assetType asset name for sell order
      * @param quantity int amount of assets placed for sell order
@@ -65,7 +71,7 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Remove currently listed buy/sell order provided ID of asset listing
+     * Remove currently listed buy/sell order provided ID of asset listing [M]
      *
      * @param listingID int ID of asset listing for removal
      */
@@ -74,8 +80,7 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Relist currently listed buy/sell offer for different amount and/or
-     * price
+     * Relist currently listed buy/sell offer for different amount and/or price [C]
      *
      * @param listingID int ID for asset listing to relist
      * @param quantity int amount of assets for listing to be relisted for
@@ -86,7 +91,7 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Get unit history for own organisational unit
+     * Get unit history for own organisational unit [C]
      *
      * @param listingID int ID for listing to get the history of the
      *                  organisational unit
@@ -96,7 +101,7 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Get all currently listed prices for specified asset name
+     * Get all currently listed prices for specified asset name [S]
      *
      * @param assetType asset name to get asset price list for
      */
@@ -105,7 +110,7 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Create a graph of all prices offers were resolved at for the asset
+     * Create a graph of all prices offers were resolved at for the asset [C]
      *
      */
     public void assetPriceGraph() {

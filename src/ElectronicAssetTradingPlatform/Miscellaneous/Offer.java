@@ -48,6 +48,7 @@ public abstract class Offer {
      * Deduct appropriate amount of credits from the organisational unit based on the pricePerUnit
      * and the quantity bought, as well as add the correct amount of assets bought
      * Also delete the offer if all the requested assets have been sold, otherwise update the offer
+     * [M]
      *
      */
     public void resolveBuyOffer() {
@@ -58,7 +59,7 @@ public abstract class Offer {
      * Add the appropriate amount of credits to the organisational unit based on the pricePerUnit
      * and quantity sold, as well as remove the correct amount of assets sold
      * Also delete the offer if all the requested assets have been purchased
-     *
+     * [M]
      */
     public void resolveSellOffer() {
         // sellOfferResolve

@@ -21,7 +21,7 @@ public class User {
     }
 
     /**
-     * Changes the user's password if certain conditions are met.
+     * Changes the user's password if certain conditions are met. [C]
      *
      * @param password new string for user to change password to
      * @throws Exception throws exception when...
