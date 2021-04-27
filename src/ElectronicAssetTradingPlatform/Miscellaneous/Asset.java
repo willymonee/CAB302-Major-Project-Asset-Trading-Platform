@@ -5,7 +5,6 @@ package ElectronicAssetTradingPlatform.Miscellaneous;
  *
  */
 public class Asset {
-    private int assetID;
     private String assetName;
 
 
@@ -15,9 +14,8 @@ public class Asset {
      *
      * @param assetName string for asset name
      */
-    public Asset(String assetName, int ID)  {
+    public Asset(String assetName)  {
         this.assetName = assetName;
-        this.assetID = ID;
     }
 
     /**

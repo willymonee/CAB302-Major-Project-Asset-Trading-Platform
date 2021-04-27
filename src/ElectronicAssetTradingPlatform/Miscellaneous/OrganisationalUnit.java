@@ -12,7 +12,6 @@ import java.util.TreeMap;
  */
 
 public class OrganisationalUnit {
-    private int ID;
     private String name;
     private float credits;
     private Map<String,Integer> assetsOwned;
@@ -20,12 +19,10 @@ public class OrganisationalUnit {
     /**
      * Constructor for an organisational unit
      *
-     * @param id ID of an organisational unit
      * @param name The organisational unit's name
      * @param credits The number of credits the organisational unit starts with/currently owns when created
      */
-    public OrganisationalUnit(int id, String name, float credits) {
-        ID = id;
+    public OrganisationalUnit(String name, float credits) {
         this.name = name;
         this.credits = credits;
         assetsOwned = new TreeMap<>();

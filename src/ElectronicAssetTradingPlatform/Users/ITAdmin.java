@@ -36,34 +36,34 @@ public class ITAdmin extends User {
      * Add or remove the number of credits an organisational unit owns manually [M]
      * Prints a success or error message
      *
-     * @param organisationalUnit int ID of organisational unit to edit the credits for
+     * @param unitName string organisational unit name that owns the assets that are to be edited
      * @param credits int new amount of credits to edit for the organisational unit
      */
-    public void editOrganisationalUnitCredits(OrganisationalUnit organisationalUnit, float credits) throws Exception {
-        organisationalUnit.editCredits(credits);
+    public void editOrganisationalUnitCredits(String unitName, float credits) throws Exception {
+        //organisationalUnit.editCredits(credits);
     }
 
     /**
      * Edit the assets or quantity of asset an organisational unit owns [M]
      *
-     * @param organisationalUnit int ID of the organisational unit that owns the assets that are to be edited
+     * @param unitName string organisational unit name that owns the assets that are to be edited
      * @param assetName Asset type to be edited
      * @param quantity int quantity of the asset to be changed
      */
-    public void editOrganisationalUnitAssets(OrganisationalUnit organisationalUnit, String assetName, int quantity) throws Exception {
+    public void editOrganisationalUnitAssets(String unitName, String assetName, int quantity) throws Exception {
         // Edit or add asset to unit
         // Should check the type exists within the db
-        organisationalUnit.addAsset(assetName, quantity);
+        //organisationalUnit.addAsset(assetName, quantity);
     }
 
     /**
      * Creates a new user [M]
      *
      * @param name string for name of new user
-     * @param organisationalUnitID int ID for new user to be associated with
+     * @param unitName string organisational unit name for new user to be associated with
      * @param userType user type for new user's access level
      */
-    public void createUser(String name, int organisationalUnitID, User userType) {
+    public void createUser(String name, int unitName, User userType) {
         // createUser method
     }
 

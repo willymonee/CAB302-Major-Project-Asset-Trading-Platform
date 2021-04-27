@@ -30,7 +30,7 @@ public class AssetCollection {
     public static void addAssetToCollection(String name) {
         if(!checkAssetExists(name)) {
             int uniqueID = TradingPlatformAssets.lastKey() + 1;
-            Asset asset = new Asset(name, uniqueID);
+            Asset asset = new Asset(name);
             TradingPlatformAssets.put(uniqueID, asset);
         }
         else {

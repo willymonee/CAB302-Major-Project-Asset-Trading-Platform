@@ -18,13 +18,11 @@ public class OrganisationalUnitMembers extends User {
      *
      * @param username string identifier used to login
      * @param password string matched with username identifier used to login
-     * @param organisationalUnitID int ID matching the organisational unit
-     *                             the organisational member is a part of
+     * @param unitName string name of the organisational unit the member is a part of
      *
      */
-    public OrganisationalUnitMembers(String username, String password, int organisationalUnitID) {
+    public OrganisationalUnitMembers(String username, String password, String unitName) {
         super(username, password);
-        this.organisationalUnitID = organisationalUnitID;
     }
 
     /**

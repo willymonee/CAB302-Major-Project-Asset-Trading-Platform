@@ -11,20 +11,19 @@ public class OrganisationalUnitLeader extends OrganisationalUnitMembers {
      *
      * @param username string identifier used to login
      * @param password string matched with username identifier used to login
-     * @param organisationalUnitID int ID matching the organisational unit
-     *                             the organisational member is a part of
+     * @param unitName string name of the organisational unit the member is a part of
      *
      */
-    public OrganisationalUnitLeader(String username, String password, int organisationalUnitID) {
-        super(username, password, organisationalUnitID);
+    public OrganisationalUnitLeader(String username, String password, String unitName) {
+        super(username, password, unitName);
 
     }
 
     /**
      *
-     * @param memberID ID of the member to be kicked
+     * @param memberName Username of the member to be kicked
      */
-    public void kickMember(int memberID) {
+    public void kickMember(String memberName) {
 
     }
 }
