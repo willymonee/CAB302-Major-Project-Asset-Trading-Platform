@@ -6,6 +6,7 @@ package ElectronicAssetTradingPlatform.Users;
 public class User {
     private String username;
     private String password;
+    protected String userType; // So that children can set their own userType in constructor (safety?)
 
     /**
      * Constructor used for constructing a default user.
@@ -39,6 +40,8 @@ public class User {
     public void connectDB() {
         // connectDB method
     }
+
+    protected String getUsername() {return username;}
 
     /*
      * Helper function to create elements of the GUI common in all users’

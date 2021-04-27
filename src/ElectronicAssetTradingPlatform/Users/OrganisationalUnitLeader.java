@@ -16,7 +16,7 @@ public class OrganisationalUnitLeader extends OrganisationalUnitMembers {
      */
     public OrganisationalUnitLeader(String username, String password, String unitName) {
         super(username, password, unitName);
-
+        this.userType = "Leader";
     }
 
     /**

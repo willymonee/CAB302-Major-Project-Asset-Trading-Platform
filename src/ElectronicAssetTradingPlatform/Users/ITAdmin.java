@@ -18,6 +18,7 @@ public class ITAdmin extends User {
      */
     public ITAdmin(String username, String password) {
         super(username, password);
+        this.userType = "ITAdmin";
     }
 
     /**
@@ -63,7 +64,7 @@ public class ITAdmin extends User {
      * @param unitName string organisational unit name for new user to be associated with
      * @param userType user type for new user's access level
      */
-    public void createUser(String name, int unitName, User userType) {
+    public void createUser(String name, String unitName, String userType) {
         // createUser method
     }
 
@@ -83,9 +84,9 @@ public class ITAdmin extends User {
      *
      * @param username the new username the use will have
      * @param userType the new user type the user will be
-     * @param organisationalUnit the new organisational unit that the user will be part of
+     * @param unitName the organisational unit that the user will be part of
      */
-    public void editUser(String username, User userType, OrganisationalUnit organisationalUnit ) {
+    public void editUser(String username, String userType, String unitName ) {
 
     }
 

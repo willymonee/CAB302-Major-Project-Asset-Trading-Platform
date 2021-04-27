@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Miscellaneous.Asset;
+import ElectronicAssetTradingPlatform.Miscellaneous.BuyOffer;
 import ElectronicAssetTradingPlatform.Miscellaneous.Offer;
 
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Map;
  *  and managing unit asset listings via their client side GUI.
  */
 public class OrganisationalUnitMembers extends User {
-    private int organisationalUnitID;
+    private String organisationalUnitName;
 
     /**
      * Constructor used to set ID to organisational unit to user
@@ -23,6 +24,8 @@ public class OrganisationalUnitMembers extends User {
      */
     public OrganisationalUnitMembers(String username, String password, String unitName) {
         super(username, password);
+        this.userType = "Member";
+        // set org unit name
     }
 
     /**
