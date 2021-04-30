@@ -11,7 +11,7 @@ public class SellOffer extends Offer{
      * @param organisationalUnitName The ID of the organisation whose assets and credits will be affected
      */
     public SellOffer(Asset asset, int quantity, float pricePerUnit, String username, String organisationalUnitName) {
-        super(asset, quantity, pricePerUnit, username, organisationalUnitName);
+        super(asset, quantity, pricePerUnit, username, organisationalUnitName, null);
     }
 
     @Override
