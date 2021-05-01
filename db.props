@@ -1,0 +1,4 @@
+jdbc.url=jdbc:sqlite:test.db
+jdbc.schema=
+jdbc.username=
+jdbc.pw=
