@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ElectronicAssetTradingPlatform"},{"l":"ElectronicAssetTradingPlatform.Database"},{"l":"ElectronicAssetTradingPlatform.GUI"},{"l":"ElectronicAssetTradingPlatform.Miscellaneous"},{"l":"ElectronicAssetTradingPlatform.Users"}];updateSearchResults();
