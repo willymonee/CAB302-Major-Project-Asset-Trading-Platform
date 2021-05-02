@@ -1,4 +1,4 @@
-package ElectronicAssetTradingPlatform.Miscellaneous;
+package ElectronicAssetTradingPlatform.AssetTrading;
 
 import java.util.Date;
 

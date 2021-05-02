@@ -1,8 +1,6 @@
 package ElectronicAssetTradingPlatform.Users;
 
-import ElectronicAssetTradingPlatform.Miscellaneous.Asset;
-import ElectronicAssetTradingPlatform.Miscellaneous.BuyOffer;
-import ElectronicAssetTradingPlatform.Miscellaneous.Offer;
+import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 
 import java.util.Map;
 
