@@ -10,6 +10,8 @@ import java.sql.Statement;
 public class ETPQuery {
     // DB Instance
     private Connection connection;
+
+    // Constructor
     public ETPQuery() {
 
     }

@@ -57,12 +57,4 @@ public class AssetCollection {
         }
         return false;
     }
-
-    // test function
-    public static void main(String[] args) {
-        // write your code here
-        //DriverManager.getConnection();
-        ETPDataSource etp = new ETPDataSource();
-
-    }
 }

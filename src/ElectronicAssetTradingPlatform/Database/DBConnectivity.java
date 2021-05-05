@@ -19,12 +19,12 @@ public class DBConnectivity {
      */
     private DBConnectivity() {
         Properties dbProperties = new Properties();
-        FileInputStream in = null;
+        FileInputStream input = null;
 
         try {
-            in = new FileInputStream("./db.props");
-            dbProperties.load(in);
-            in.close();
+            input = new FileInputStream("./db.props");
+            dbProperties.load(input);
+            input.close();
 
             // Identify database and authentication to connect
             String url = dbProperties.getProperty("jdbc.url");
@@ -57,10 +57,4 @@ public class DBConnectivity {
         }
         return instance;
     }
-
-    public void createDB() {
-
-    }
-
-
 }

@@ -18,8 +18,6 @@ public class ETPDataSource {
                     "Price_per_unit FLOAT NOT NULL" +
                     ");";
 
-    private static final String test = "DROP TABLE MARKETPLACE2";
-
 
     public ETPDataSource() {
         connection = DBConnectivity.getInstance();
@@ -31,7 +29,4 @@ public class ETPDataSource {
         }
     }
 
-    public Connection getConnection() {
-        return this.connection;
-    }
 }
