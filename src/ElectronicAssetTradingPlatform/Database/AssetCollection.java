@@ -5,6 +5,7 @@ import java.util.Map;
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 
 /**
+ * Mock database for Asset Table
  * AssetCollection class creates an object which contains a TreeMap field to store 'Asset' objects and their IDs
  * The methods in this class pertain to manipulating or interacting with either the TreeMap
  *
