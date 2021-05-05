@@ -1,5 +1,6 @@
-package ElectronicAssetTradingPlatform.Miscellaneous;
+package ElectronicAssetTradingPlatform.AssetTrading;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -7,31 +8,32 @@ import java.util.Date;
  */
 public abstract class Offer {
     private int orderID; // might not need, use SQL auto-increment (but it is the only unique value for this class)
-    private Asset asset;
+    private String assetName;
     private int quantity;
     private float pricePerUnit;
     private String username;
     private String organisationalUnitName;
     private Date dateResolved;
+    private Date datePlaced;
 
     /**
      * Constructor for trade offer
      *
-     * @param asset Name of the asset to be bought or sold
+     * @param assetName Name of the asset to be bought or sold
      * @param quantity Quantity of asset
      * @param pricePerUnit Price of the asset
      * @param username The username of the user who made the offer
      * @param organisationalUnitName The name of the organisation whose assets and credits will be affected
-     * @param dateResolved The date the offer was resolved
      */
-    public Offer(Asset asset, int quantity, float pricePerUnit, String username, String organisationalUnitName, Date dateResolved) {
-        this.orderID = 0; // Should be unique - might not need, use SQL auto-increment (but it is the only unique value for this class)
-        this.asset = asset;
+    public Offer(String assetName, int quantity, float pricePerUnit, String username, String organisationalUnitName) {
+        this.assetName = assetName;
         this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
         this.username = username;
         this.organisationalUnitName = organisationalUnitName;
-        this.dateResolved = dateResolved;
+        long millis = System.currentTimeMillis();
+        this.datePlaced = new Date(millis);
+        dateResolved = null;
     }
 
     /**
@@ -45,6 +47,13 @@ public abstract class Offer {
         return 0;
     }
 
+
+    /**
+     *
+     */
+    public int getOfferID() {
+        return this.orderID;
+    }
     /**
      * Deduct or add appropriate amount of credits from the organisational unit based on the pricePerUnit
      * and the quantity bought or sold, as well as add the correct amount of assets bought or sold
@@ -55,6 +64,11 @@ public abstract class Offer {
     public abstract void resolveOffer(); // Implemented by either the sellOffer or buyOffer class
 
     /**
+     * Create a unique ID for sell and buy offers.
+     */
+    public abstract int createUniqueID();
+
+    /**
      * Getter for the quantity field
      *
      * @return The quantity of the asset
@@ -62,6 +76,7 @@ public abstract class Offer {
     protected int getQuantity() {
         return quantity;
     }
+
 
     /**
      * Getter for the price per unit field

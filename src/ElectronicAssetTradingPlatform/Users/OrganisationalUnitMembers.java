@@ -1,8 +1,10 @@
 package ElectronicAssetTradingPlatform.Users;
 
-import ElectronicAssetTradingPlatform.Miscellaneous.Asset;
-import ElectronicAssetTradingPlatform.Miscellaneous.BuyOffer;
-import ElectronicAssetTradingPlatform.Miscellaneous.Offer;
+import ElectronicAssetTradingPlatform.AssetTrading.Asset;
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.Database.MarketBuyOffers;
+import ElectronicAssetTradingPlatform.Database.MarketSellOffers;
 
 import java.util.Map;
 
@@ -25,7 +27,7 @@ public class OrganisationalUnitMembers extends User {
     public OrganisationalUnitMembers(String username, String password, String unitName) {
         super(username, password);
         this.userType = "Member";
-        // set org unit name
+        this.organisationalUnitName = unitName;
     }
 
     /**
@@ -50,8 +52,9 @@ public class OrganisationalUnitMembers extends User {
      * @param quantity int amount of assets placed for buy order
      * @param price int price of asset requested for buy order
      */
-    public void listBuyOrder(Asset assetType, int quantity, int price) {
-
+    public void listBuyOrder(String assetType, int quantity, int price) {
+        BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
+        MarketBuyOffers.MarketBuyOffers.put(offer.getOfferID(), offer);
     }
 
     /**
@@ -61,17 +64,27 @@ public class OrganisationalUnitMembers extends User {
      * @param quantity int amount of assets placed for sell order
      * @param price int price of asset set for sell order
      */
-    public void listSellOrder(Asset assetType, int quantity, int price) {
-
+    public void listSellOrder(String assetType, int quantity, int price) {
+        SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
+        MarketSellOffers.MarketSellOffers.put(offer.getOfferID(), offer);
     }
 
     /**
-     * Remove currently listed buy/sell order provided ID of asset listing [M]
+     * Remove currently listed buy order provided ID of asset listing [M]
      *
      * @param listingID int ID of asset listing for removal
      */
-    public void removeListing(int listingID) {
+    public void removeBuyListing(int listingID) {
+        MarketBuyOffers.MarketBuyOffers.remove(listingID);
+    }
 
+    /**
+     * Remove currently listed sell order provided ID of asset listing [M]
+     *
+     * @param listingID int ID of asset listing for removal
+     */
+    public void removeSellListing(int listingID) {
+        MarketSellOffers.MarketSellOffers.remove(listingID);
     }
 
     /**

@@ -1,7 +1,6 @@
 package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
-import ElectronicAssetTradingPlatform.Miscellaneous.OrganisationalUnit;
 
 /**
  * ITAdmin class which extends the user class. This class is for the IT administration team
@@ -76,6 +75,8 @@ public class ITAdmin extends User {
     // NOTE IT IS BEST FOR THE ID TO BE AUTOMATICALLY CREATED IN THE ASSET OR ASSET COLLECTION OBJECTS
     public void createNewAsset(String name) throws Exception{
         // Add parsed asset name to db
+
+        // add object to the mock database/Asset Collection
         AssetCollection.addAssetToCollection(name);
     }
 
