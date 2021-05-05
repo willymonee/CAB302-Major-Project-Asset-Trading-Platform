@@ -12,7 +12,7 @@ import java.util.Properties;
 public class DBConnectivity {
 
     // Control the instance of a connection
-    private static Connection connection = null;
+    private static Connection instance = null;
 
     /**
      * Constructor to initialise a connection to the database
@@ -33,7 +33,7 @@ public class DBConnectivity {
             String schema = dbProperties.getProperty("jdbc.schema");
 
             // Create the connection
-            connection = DriverManager.getConnection(url + "/" + schema, username, pw);
+            instance = DriverManager.getConnection(url + "/" + schema, username, pw);
         }
 
         // maybe make my own sql exception?
@@ -51,13 +51,16 @@ public class DBConnectivity {
         }
     }
 
-    // test function
-    public static void main(String[] args) {
-        // write your code here
-        //DriverManager.getConnection();
-        new DBConnectivity();
+    public static Connection getInstance() {
+        if (instance == null) {
+            new DBConnectivity();
+        }
+        return instance;
+    }
 
+    public void createDB() {
 
     }
+
 
 }
