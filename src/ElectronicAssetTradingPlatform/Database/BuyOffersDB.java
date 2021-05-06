@@ -29,6 +29,9 @@ public class BuyOffersDB {
         return MarketBuyOffers.size();
     }
 
+    public BuyOffer getOffer(int ID) {
+        return MarketBuyOffers.get(ID);
+    }
 
 
     public static void addBuyOffer(int ID, BuyOffer offer) {
