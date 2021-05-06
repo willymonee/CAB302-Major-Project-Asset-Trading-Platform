@@ -3,7 +3,7 @@ package ElectronicAssetTradingPlatform.Users;
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-import ElectronicAssetTradingPlatform.Database.MarketBuyOffers;
+import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.MarketSellOffers;
 
 import java.util.Map;
@@ -47,14 +47,15 @@ public class OrganisationalUnitMembers extends User {
     /**
      * Set up buy order for an organisational unit using ones own
      * organisational unit's credits [M]
-     *
      * @param assetType asset name for buy order
      * @param quantity int amount of assets placed for buy order
      * @param price int price of asset requested for buy order
      */
-    public void listBuyOrder(String assetType, int quantity, int price) {
+    public void listBuyOrder(String assetType, int quantity, double price) {
+        // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        MarketBuyOffers.MarketBuyOffers.put(offer.getOfferID(), offer);
+        // add offer into DB
+        BuyOffersDB.getBuyOffersDB().addBuyOffer(offer.getBuyOrderID(), offer);
     }
 
     /**
@@ -74,8 +75,8 @@ public class OrganisationalUnitMembers extends User {
      *
      * @param listingID int ID of asset listing for removal
      */
-    public void removeBuyListing(int listingID) {
-        MarketBuyOffers.MarketBuyOffers.remove(listingID);
+    public void removeBuyListing(int listingID, BuyOffersDB buyOffersDB) {
+        //buyOffersDB.removeOffer(listingID);
     }
 
     /**

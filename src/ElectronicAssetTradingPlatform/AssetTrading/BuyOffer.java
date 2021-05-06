@@ -1,6 +1,6 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
-import ElectronicAssetTradingPlatform.Database.MarketBuyOffers;
+import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
 
 import java.util.Date;
 
@@ -11,24 +11,34 @@ public class BuyOffer extends Offer{
 
     /**
      * Constructor for trade offer
-     *
-     * @param asset                  Name of the asset to be bought or sold
+     *  @param asset                  Name of the asset to be bought or sold
      * @param quantity               Quantity of asset
      * @param pricePerUnit           Price of the asset
      * @param username               The ID of the user who made the offer
      * @param organisationalUnitName The ID of the organisation whose assets and credits will be affected
      */
-    public BuyOffer(String asset, int quantity, float pricePerUnit, String username, String organisationalUnitName) {
+    public BuyOffer(String asset, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
         super(asset, quantity, pricePerUnit, username, organisationalUnitName);
         this.orderID = createUniqueID();
     }
 
 
+    public int getBuyOrderID() {
+        return this.orderID;
+    }
+
+    @Override
+    public String displayOffer() {
+        return this.orderID + "\t" + getAssetName() + "\t" + getQuantity()+ "\t $"
+                + getPricePerUnit() + "\t" + getUsername() + "\t" + getUnitName() + "\t" + getDatePlaced();
+    }
+
+    @Override
     public int createUniqueID() {
-        if (MarketBuyOffers.MarketBuyOffers.size() == 0) {
+        if (BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().size() == 0) {
             return 1;
         }
-        return MarketBuyOffers.MarketBuyOffers.lastKey() + 1;
+        return BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().lastKey() + 1;
     }
 
     @Override
@@ -37,4 +47,5 @@ public class BuyOffer extends Offer{
         long millis = System.currentTimeMillis();
         this.dateResolved = new Date(millis);
     }
+
 }

@@ -1,8 +1,6 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
 
-import ElectronicAssetTradingPlatform.Database.MarketSellOffers;
-
 import java.util.Date;
 
 public class SellOffer extends Offer{
@@ -23,11 +21,10 @@ public class SellOffer extends Offer{
         super(asset, quantity, pricePerUnit, username, organisationalUnitName);
     }
 
-    public int createUniqueID() {
-        if (MarketSellOffers.MarketSellOffers.size() == 0) {
-            return 1;
-        }
-        return MarketSellOffers.MarketSellOffers.lastKey() + 1;
+
+    @Override
+    public String displayOffer() {
+        return null;
     }
 
     @Override
@@ -35,5 +32,11 @@ public class SellOffer extends Offer{
         // Implement resolve offer, use checkMatchedOffer() also?
         long millis = System.currentTimeMillis();
         datePlaced = new Date(millis);
+    }
+
+    @Override
+    public int createUniqueID() {
+        //
+        return 0;
     }
 }
