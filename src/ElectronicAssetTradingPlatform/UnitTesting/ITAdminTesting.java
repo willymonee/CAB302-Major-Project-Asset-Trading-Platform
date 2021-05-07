@@ -8,6 +8,8 @@ import ElectronicAssetTradingPlatform.Users.OrganisationalUnitLeader;
 import ElectronicAssetTradingPlatform.Users.SystemsAdmin;
 import org.junit.jupiter.api.*;
 
+import java.sql.SQLException;
+
 public class ITAdminTesting {
     ITAdmin itAdmin;
 
@@ -22,11 +24,9 @@ public class ITAdminTesting {
     // Create new users tests
     @Test
     public void invalidName() {
-        assertThrows(Exception.class, () -> {
-            itAdmin.createUser("", "", "ITAdmin");
-            itAdmin.createUser(" ", "", "ITAdmin");
-            itAdmin.createUser(null, "", "ITAdmin");
-        });
+        assertThrows(Exception.class, () -> itAdmin.createUser("", "", "ITAdmin"));
+        assertThrows(Exception.class, () -> itAdmin.createUser(" ", "", "ITAdmin"));
+        assertThrows(Exception.class, () -> itAdmin.createUser(null, "", "ITAdmin"));
     }
     @Test
     public void invalidUnitName() {
@@ -92,5 +92,11 @@ public class ITAdminTesting {
         assertNotEquals(user1, user2);
         assertNotEquals(user2, user3);
         assertNotEquals(user1, user4);
+    }
+
+    // Edit user tests
+    @Test
+    public void editUser() throws Exception {
+        itAdmin.editUser("user1", "OrganisationalUnitLeader", "Unit1");
     }
 }

@@ -71,10 +71,12 @@ public class ITAdmin extends User {
      * @param name string for name of new user
      * @param unitName string organisational unit name for new user to be associated with
      * @param userType user type for new user's access level
+     * @return
      */
     public Object[] createUser(String name, String unitName, String userType) throws Exception {
         // Check valid parameters
-        if (name == null || userType == null || name.isBlank() || userType.isBlank()) throw new Exception("Empty params"); // Temporary - add custom exception later
+        checkInputEmpty(name);
+        checkInputEmpty(userType);
 
         User newUser;
         // Create new password
@@ -84,11 +86,11 @@ public class ITAdmin extends User {
         switch (userType) {
             case "ITAdmin" -> newUser = new ITAdmin(name, password);
             case "OrganisationalUnitMember" -> {
-                checkUnitName(unitName);
+                checkInputEmpty(unitName);
                 newUser = new OrganisationalUnitMembers(name, password, unitName);
             }
             case "OrganisationalUnitLeader" -> {
-                checkUnitName(unitName);
+                checkInputEmpty(unitName);
                 newUser = new OrganisationalUnitLeader(name, password, unitName);
             }
             case "SystemsAdmin" -> newUser = new SystemsAdmin(name, password);
@@ -112,8 +114,8 @@ public class ITAdmin extends User {
         return password.toString();
     }
 
-    private void checkUnitName(String unitName) throws Exception {
-        if (unitName == null || unitName.isBlank()) throw new Exception("Invalid unit name"); // Temporary - add custom exception later
+    private void checkInputEmpty(String str) throws Exception {
+        if (str == null || str.isBlank()) throw new Exception("Invalid unit name"); // Temporary - add custom exception later
     }
 
     /**
@@ -131,13 +133,32 @@ public class ITAdmin extends User {
 
     /**
      * Choose to edit the user's username, user type and organisational unit [C]
-     *
-     * @param username the new username the use will have
+     *  @param username the new username the use will have
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
+     * @return
      */
-    public void editUser(String username, String userType, String unitName ) {
+    public String[] editUser(String username, String userType, String unitName ) throws Exception {
+        // Check valid input
+        checkInputEmpty(username);
 
+        // Get user with SQL from username
+        String[] mockResult = new String[] {
+                username,
+                "OrganisationalUnitMember",
+                "Unit1"
+        };
+
+        // Set new if changed
+        if (!userType.equals(mockResult[1])) {
+            mockResult[1] = userType;
+        }
+
+        if (!userType.equals(mockResult[2])) {
+            mockResult[2] = unitName;
+        }
+
+        return mockResult;
     }
 
     /**
