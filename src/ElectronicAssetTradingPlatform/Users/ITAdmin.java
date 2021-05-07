@@ -2,12 +2,16 @@ package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
 
+import java.util.Random;
+
 /**
  * ITAdmin class which extends the user class. This class is for the IT administration team
  * giving them privileges, allowing them to do tasks such as creating and managing new
  * organisational units, assets and the amount of credits for an organisational unit.
  */
 public class ITAdmin extends User {
+    private static Random rng; // Create rng with using time as seed
+    private final char[] characters = "abcdefghijklmnopqrstuvwxyz123456789".toCharArray();
 
     /**
      * Constructor for ITAdmin class to login with administration access levels
@@ -18,6 +22,11 @@ public class ITAdmin extends User {
     public ITAdmin(String username, String password) {
         super(username, password);
         this.userType = "ITAdmin";
+
+        // Singleton
+        if (rng == null) {
+            rng = new Random(System.currentTimeMillis());
+        }
     }
 
     /**
@@ -63,8 +72,48 @@ public class ITAdmin extends User {
      * @param unitName string organisational unit name for new user to be associated with
      * @param userType user type for new user's access level
      */
-    public void createUser(String name, String unitName, String userType) {
-        // createUser method
+    public Object[] createUser(String name, String unitName, String userType) throws Exception {
+        // Check valid parameters
+        if (name == null || userType == null || name.isBlank() || userType.isBlank()) throw new Exception("Empty params"); // Temporary - add custom exception later
+
+        User newUser;
+        // Create new password
+        String password = newPassword();
+
+        // Create user
+        switch (userType) {
+            case "ITAdmin" -> newUser = new ITAdmin(name, password);
+            case "OrganisationalUnitMember" -> {
+                checkUnitName(unitName);
+                newUser = new OrganisationalUnitMembers(name, password, unitName);
+            }
+            case "OrganisationalUnitLeader" -> {
+                checkUnitName(unitName);
+                newUser = new OrganisationalUnitLeader(name, password, unitName);
+            }
+            case "SystemsAdmin" -> newUser = new SystemsAdmin(name, password);
+            default -> throw new Exception("Invalid user type"); // Temporary - add custom exception later
+        }
+
+
+        // Add to DB?
+
+
+        return new Object[]{newUser, password}; // For testing
+    }
+
+    private String newPassword() {
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i <= 6; i++) {
+            password.append(characters[rng.nextInt(characters.length)]);
+        }
+
+        return password.toString();
+    }
+
+    private void checkUnitName(String unitName) throws Exception {
+        if (unitName == null || unitName.isBlank()) throw new Exception("Invalid unit name"); // Temporary - add custom exception later
     }
 
     /**
