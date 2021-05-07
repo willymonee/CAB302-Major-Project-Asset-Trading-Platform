@@ -8,22 +8,24 @@ public class ETPDataSource {
     // DB Instance
     private Connection connection;
     // Create Table Queries
-    private static final String createMarketplaceTable =
-            "CREATE TABLE IF NOT EXISTS MARKETPLACE (" +
+    private static final String createSchema =
+            "CREATE TABLE IF NOT EXISTS Marketplace (" +
                     "Offer_ID INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT */ NOT NULL UNIQUE," +
                     /*"Buy_or_Sell ENUM('buy', 'sell') NOT NULL," +*/
                     "Unit_ID INTEGER NOT NULL," +
                     "User_ID INTEGER NOT NULL," +
                     "Asset_type_ID NOT NULL," +
                     "Price_per_unit FLOAT NOT NULL" +
-                    ");";
+                    ");"
+            +
+            "CREATE TABLE IF NOT EXISTS Marketplace_history";
 
 
     public ETPDataSource() {
         connection = DBConnectivity.getInstance();
         try {
             Statement st = connection.createStatement();
-            st.execute(createMarketplaceTable);
+            st.execute(createSchema);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
