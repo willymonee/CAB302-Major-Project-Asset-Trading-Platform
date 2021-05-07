@@ -1,6 +1,5 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -10,7 +9,7 @@ public abstract class Offer {
     private int orderID; // might not need, use SQL auto-increment (but it is the only unique value for this class)
     private String assetName;
     private int quantity;
-    private float pricePerUnit;
+    private double pricePerUnit;
     private String username;
     private String organisationalUnitName;
     private Date dateResolved;
@@ -18,14 +17,13 @@ public abstract class Offer {
 
     /**
      * Constructor for trade offer
-     *
-     * @param assetName Name of the asset to be bought or sold
+     *  @param assetName Name of the asset to be bought or sold
      * @param quantity Quantity of asset
      * @param pricePerUnit Price of the asset
      * @param username The username of the user who made the offer
      * @param organisationalUnitName The name of the organisation whose assets and credits will be affected
      */
-    public Offer(String assetName, int quantity, float pricePerUnit, String username, String organisationalUnitName) {
+    public Offer(String assetName, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
         this.assetName = assetName;
         this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
@@ -35,6 +33,8 @@ public abstract class Offer {
         this.datePlaced = new Date(millis);
         dateResolved = null;
     }
+
+    public abstract String displayOffer();
 
     /**
      * Compare the newly created offer with existing buy and sell orders and
@@ -65,6 +65,7 @@ public abstract class Offer {
 
     /**
      * Create a unique ID for sell and buy offers.
+     * @return
      */
     public abstract int createUniqueID();
 
@@ -83,7 +84,7 @@ public abstract class Offer {
      *
      * @return The price per unit of the asset
      */
-    protected float getPricePerUnit() {
+    protected double getPricePerUnit() {
         return pricePerUnit;
     }
 
@@ -103,5 +104,23 @@ public abstract class Offer {
      */
     protected String getUnitName() {
         return organisationalUnitName;
+    }
+
+    /**
+     * Getter for the assetname field
+     *
+     * @return The assetname of the order
+     */
+    protected String getAssetName() {
+        return assetName;
+    }
+
+    /**
+     * Getter for the datePlaced
+     *
+     * @return The date the order was place
+     */
+    protected Date getDatePlaced() {
+        return datePlaced;
     }
 }
