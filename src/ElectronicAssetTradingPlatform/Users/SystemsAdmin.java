@@ -17,7 +17,7 @@ public class SystemsAdmin extends User {
      */
     public SystemsAdmin(String username, String password) {
         super(username, password);
-        this.userType = "SystemsAdmin";
+        this.userType = UserTypeEnum.SystemsAdmin.toString();
     }
 
     /**
