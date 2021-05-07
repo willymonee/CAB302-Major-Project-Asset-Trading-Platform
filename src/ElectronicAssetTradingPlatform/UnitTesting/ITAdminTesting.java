@@ -57,7 +57,7 @@ public class ITAdminTesting {
     }
     @Test
     public void validOrgMember() throws Exception {
-        assertDoesNotThrow(() -> itAdmin.createUser("newMember", "unit1", "OrganisationalUnitMember"));
+        assertDoesNotThrow(() -> itAdmin.createUser("newMember", "unit1", "OrganisationalUnitMembers"));
 
         assertEquals(itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader")[0].getClass(), OrganisationalUnitLeader.class);
     }

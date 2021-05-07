@@ -82,18 +82,18 @@ public class ITAdmin extends User {
         // Create new password
         String password = newPassword();
 
-        // Create user
-        switch (userType) {
-            case "ITAdmin" -> newUser = new ITAdmin(name, password);
-            case "OrganisationalUnitMember" -> {
+        // Create user - from userType
+        switch (UserTypeEnum.valueOf(userType)) {
+            case ITAdmin -> newUser = new ITAdmin(name, password);
+            case OrganisationalUnitMembers -> {
                 checkInputEmpty(unitName);
                 newUser = new OrganisationalUnitMembers(name, password, unitName);
             }
-            case "OrganisationalUnitLeader" -> {
+            case OrganisationalUnitLeader -> {
                 checkInputEmpty(unitName);
                 newUser = new OrganisationalUnitLeader(name, password, unitName);
             }
-            case "SystemsAdmin" -> newUser = new SystemsAdmin(name, password);
+            case SystemsAdmin -> newUser = new SystemsAdmin(name, password);
             default -> throw new Exception("Invalid user type"); // Temporary - add custom exception later
         }
 
