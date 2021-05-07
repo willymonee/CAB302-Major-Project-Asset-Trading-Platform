@@ -21,7 +21,7 @@ public class ITAdmin extends User {
      */
     public ITAdmin(String username, String password) {
         super(username, password);
-        this.userType = "ITAdmin";
+        this.userType = UserTypeEnum.ITAdmin.toString();
 
         // Singleton
         if (rng == null) {
