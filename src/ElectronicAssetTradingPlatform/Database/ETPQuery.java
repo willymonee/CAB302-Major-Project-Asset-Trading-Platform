@@ -16,6 +16,11 @@ public class ETPQuery {
 
     }
 
+    /**
+     * Allows connection to the database to query any tables within the schema.
+     * @param query SQL Query string
+     * @return true if the statement was executed else false if the statement was not executed.
+     */
     public boolean queryDB(String query) {
         connection = DBConnectivity.getInstance();
         try {
@@ -30,6 +35,14 @@ public class ETPQuery {
             ex.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Hash function to store or get the user's hashed password
+     * @param password The user's login password as a string.
+     */
+    public void hash(String password) {
+
     }
 
 }
