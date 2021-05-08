@@ -38,11 +38,13 @@ public class ETPQuery {
     }
 
     /**
-     * Hash function to store or get the user's hashed password
-     * @param password The user's login password as a string.
+     * Close Connection to the database
      */
-    public void hash(String password) {
-
+    public void close() {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
     }
-
 }

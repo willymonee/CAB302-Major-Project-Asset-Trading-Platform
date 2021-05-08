@@ -1,5 +1,9 @@
 package ElectronicAssetTradingPlatform.Database;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Set;
 import java.util.TreeSet;
 import java.sql.SQLException;
@@ -11,7 +15,7 @@ public class ETPDataSource {
     private static final String marketplaceTable =
             "CREATE TABLE IF NOT EXISTS Marketplace ("
                     + "Offer_ID INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT */ NOT NULL UNIQUE,"
-                    /*"Buy_or_Sell ENUM('buy', 'sell') NOT NULL," +*/
+                    + "Buy_or_Sell TEXT CHECK (buy_or_sell IN ('b', 's')),"
                     + "Unit_ID INTEGER NOT NULL,"
                     + "User_ID INTEGER NOT NULL,"
                     + "Asset_type_ID NOT NULL,"
@@ -24,7 +28,7 @@ public class ETPDataSource {
                     + "Buyer_ID INTEGER NOT NULL,"
                     + "Seller_ID INTEGER NOT NULL,"
                     + "Asset_type_ID INTEGER NOT NULL,"
-                    + "Price_per_unit REAL NOT NULL,"
+                    + "Price_per_unit FLOAT NOT NULL,"
                     + "Quantity INTEGER NOT NULL,"
                     + "Date_fulfilled TEXT NOT NULL"
                     + ");";
@@ -48,7 +52,7 @@ public class ETPDataSource {
             "CREATE TABLE IF NOT EXISTS Organisational_Units ("
                 + "Unit_ID INTEGER UNIQUE,"
                 + "Name VARCHAR(80) UNIQUE NOT NULL,"
-                + "Credits REAL"
+                + "Credits FLOAT"
                 + ");";
 
     private static final String orgUnitAssetsTable =
@@ -58,7 +62,26 @@ public class ETPDataSource {
                 + "Asset_Quantity INTEGER NOT NULL"
                 + ");";
 
+    /* Marketplace Table probably remove or move to users class this because it is not meant to be here
+    private static final String INSERT_OFFER = "INSERT INTO Marketplace (Trade_ID, Buy_or_Sell, "
+                                                + "Unit_ID, User_ID, Asset_type_ID, Price_per_Unit)"
+                                                + "VALUES (?, ?, ?, ?, ?, ?);";
 
+    private static final String GET_OFFER = "SELECT * FROM Marketplace WHERE Trade_ID=?";
+
+    private static final String REMOVE_OFFER = "DELETE FROM Marketplace WHERE Trade_ID=?";
+
+    private PreparedStatement addOffer;
+    private PreparedStatement getOffer;
+    private PreparedStatement removeOffer;
+
+
+     End of Marketplace */
+
+
+    /**
+     * Constructor to build the Database Schema
+     */
     public ETPDataSource() {
         connection = DBConnectivity.getInstance();
         try {
