@@ -3,6 +3,8 @@ package ElectronicAssetTradingPlatform.Database;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -42,6 +44,8 @@ public class BuyOffersDB {
         MarketBuyOffers.remove(ID);
     }
 
+    public static void removeAllBuyOffers() { MarketBuyOffers.clear(); }
+
 
     public static BuyOffersDB getBuyOffersDB() {
         if (buyOffersDB == null) {
@@ -50,6 +54,36 @@ public class BuyOffersDB {
         else {
             return buyOffersDB;
         }
+    }
+
+    @Override
+    public String toString() {
+        Iterator<Map.Entry<Integer, BuyOffer>> entries = MarketBuyOffers.entrySet().iterator();
+        String MarketOffers = "";
+        while (entries.hasNext()) {
+            Map.Entry<Integer, BuyOffer> entry = entries.next();
+            MarketOffers += entry.getValue().toString();
+            if (entries.hasNext()) {
+                MarketOffers += "\n";
+            }
+        }
+        return MarketOffers;
+    }
+
+
+    public String getOrgBuyOffers(String orgName) {
+        Iterator<Map.Entry<Integer, BuyOffer>> entries = MarketBuyOffers.entrySet().iterator();
+        String OrgMarketOffers = "";
+        while (entries.hasNext()) {
+            Map.Entry<Integer, BuyOffer> entry = entries.next();
+            if (entry.getValue().getUnitName() == orgName) {
+                OrgMarketOffers += entry.getValue().toString();
+                if (entries.hasNext()) {
+                    OrgMarketOffers += "\n";
+                }
+            }
+        }
+        return OrgMarketOffers;
     }
 
 }

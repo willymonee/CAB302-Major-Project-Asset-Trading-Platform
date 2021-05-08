@@ -4,7 +4,7 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.SellOffersDB;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class SellOffer extends Offer{
     
@@ -31,9 +31,14 @@ public class SellOffer extends Offer{
     }
 
     @Override
-    public String displayOffer() {
+    public String toString() {
         return this.orderID + "\t" + getAssetName() + "\t" + getQuantity()+ "\t $"
                 + getPricePerUnit() + "\t" + getUsername() + "\t" + getUnitName() + "\t" + getDatePlaced();
+    }
+
+    @Override
+    public int getOfferID() {
+        return this.orderID;
     }
 
     @Override
@@ -44,7 +49,7 @@ public class SellOffer extends Offer{
     }
 
     @Override
-    public int createUniqueID() {
+    protected int createUniqueID() {
         if (SellOffersDB.getSellOffersDB().getMarketSellOffers().size() == 0) {
             return 1;
         }

@@ -1,8 +1,11 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
+import java.util.Iterator;
 
-import java.util.Date;
+import java.sql.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class BuyOffer extends Offer{
     private int orderID;
@@ -23,18 +26,23 @@ public class BuyOffer extends Offer{
     }
 
 
-    public int getBuyOrderID() {
+
+    @Override
+    public int getOfferID() {
         return this.orderID;
+
     }
 
     @Override
-    public String displayOffer() {
+    public String toString() {
         return this.orderID + "\t" + getAssetName() + "\t" + getQuantity()+ "\t $"
                 + getPricePerUnit() + "\t" + getUsername() + "\t" + getUnitName() + "\t" + getDatePlaced();
     }
 
+
+
     @Override
-    public int createUniqueID() {
+    protected int createUniqueID() {
         if (BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().size() == 0) {
             return 1;
         }
@@ -47,5 +55,6 @@ public class BuyOffer extends Offer{
         long millis = System.currentTimeMillis();
         this.dateResolved = new Date(millis);
     }
+
 
 }
