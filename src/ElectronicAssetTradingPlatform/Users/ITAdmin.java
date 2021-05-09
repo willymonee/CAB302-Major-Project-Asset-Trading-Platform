@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
 import ElectronicAssetTradingPlatform.Database.DBConnectivity;
+import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 
 import java.security.SecureRandom;
 import java.sql.Connection;
@@ -75,7 +76,7 @@ public class ITAdmin extends User {
      * @param userType user type for new user's access level
      * @return
      */
-    public Object[] createUser(String name, String unitName, String userType) throws Exception {
+    public void createUser(String name, String unitName, String userType) throws Exception {
         // Check valid parameters
         checkInputEmpty(name);
         checkInputEmpty(userType);
@@ -100,10 +101,9 @@ public class ITAdmin extends User {
         }
 
 
-        // Add to DB?
+        // Add to DB
+        UsersDataSource db = new UsersDataSource();
 
-
-        return new Object[]{newUser, password}; // For testing
     }
 
     /**

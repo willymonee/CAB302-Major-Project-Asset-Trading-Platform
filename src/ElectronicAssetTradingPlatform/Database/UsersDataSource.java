@@ -13,13 +13,15 @@ import java.sql.SQLException;
  */
 public class UsersDataSource {
     private static final String INSERT_USER = "INSERT INTO User_Accounts (User_ID, Username, Password_hash, Salt, User_Type, Unit_ID) VALUES (?, ?, ?, ?, ?, ?);";
-    private static final String GET_USERS = "SELECT Password_hash, User_Type, Unit_ID FROM User_Accounts WHERE Username = ?";
+    private static final String GET_USER = "SELECT Password_hash, User_Type, Unit_ID FROM User_Accounts WHERE Username = ?";
+    private static final String GET_SALT = "SELECT Salt FROM User_Accounts WHERE Username = ?";
 
     private static final String GET_UNIT_NAME = "SELECT Name FROM Organisational_Units WHERE Unit_ID = ?";
     private static final String GET_UNIT_ID = "SELECT Unit_ID FROM Organisational_Units WHERE Name = ?";
 
     PreparedStatement getUserQuery;
     PreparedStatement addUserQuery;
+    PreparedStatement getSaltQuery;
     PreparedStatement getUnitNameQuery;
     PreparedStatement getUnitIDQuery;
 
@@ -30,13 +32,14 @@ public class UsersDataSource {
     public UsersDataSource() throws SQLException {
         connection = DBConnectivity.getInstance();
 
-        getUserQuery = connection.prepareStatement(GET_USERS);
+        getUserQuery = connection.prepareStatement(GET_USER);
         addUserQuery = connection.prepareStatement(INSERT_USER);
+        getSaltQuery = connection.prepareStatement(GET_SALT);
         getUnitNameQuery = connection.prepareStatement(GET_UNIT_NAME);
         getUnitIDQuery = connection.prepareStatement(GET_UNIT_ID);
     }
 
-    public User getUsers(String username) throws SQLException {
+    public User getUser(String username) throws SQLException {
         // Initialise
         getUserQuery.setString(1, username);
 
@@ -89,21 +92,51 @@ public class UsersDataSource {
         addUserQuery.execute();
     }
 
+    public String getSalt(User user) throws SQLException {
+        // Prepare
+        getSaltQuery.setString(1, user.getUsername());
+
+        // Result
+        ResultSet rs = null;
+        rs = getSaltQuery.executeQuery();
+
+        // Return
+        return rs.getString("Salt");
+    }
+
+    public String getSalt(String username) throws SQLException {
+        // Prepare
+        getSaltQuery.setString(1, username);
+
+        // Result
+        ResultSet rs = null;
+        rs = getSaltQuery.executeQuery();
+
+        // Return
+        return rs.getString("Salt");
+    }
+
     private String executeGetUnitName(String unitID) throws SQLException {
+        // Prepare
         getUnitNameQuery.setString(1, unitID);
 
+        // Result
         ResultSet rs = null;
         rs = getUnitNameQuery.executeQuery();
 
+        // Return
         return rs.getString("Name");
     }
 
     private String executeGetUnitID(String unitName) throws SQLException {
+        // Prepare
         getUnitIDQuery.setString(1, unitName);
 
+        // Result
         ResultSet rs = null;
         rs = getUnitIDQuery.executeQuery();
 
+        // Return
         return rs.getString("Unit_ID");
     }
 
