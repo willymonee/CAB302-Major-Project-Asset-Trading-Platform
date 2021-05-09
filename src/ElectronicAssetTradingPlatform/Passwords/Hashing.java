@@ -18,18 +18,21 @@ public class Hashing {
     }
 
     public static boolean compareHashPass(String salt, String password, String storedPwd) {
-        MessageDigest md = null;
+        return Arrays.equals(stringToBytes(storedPwd), createHash(stringToBytes(salt), password));
+    }
 
+    public static byte[] createHash(byte[] salt, String password) {
+        // Hashing password by Sam Millington (9/1/2021) https://www.baeldung.com/java-password-hashing
         try {
-            md = MessageDigest.getInstance("SHA-512");
+            // Config hash function
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt);
+
+            // Generate hash
+            return md.digest(password.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+            return null;
         }
-
-        md.update(stringToBytes(salt));
-
-        byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
-
-        return Arrays.equals(stringToBytes(storedPwd), hash);
     }
 }

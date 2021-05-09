@@ -37,7 +37,7 @@ public class HashingTesting {
     @Test
     public void convertBytes() {
         byte[] test = {0, 1, 2, 3};
-        assertEquals(Hashing.bytesToString(test), "AAECAw==");
+        assertEquals("AAECAw==", Hashing.bytesToString(test));
     }
 
 }
