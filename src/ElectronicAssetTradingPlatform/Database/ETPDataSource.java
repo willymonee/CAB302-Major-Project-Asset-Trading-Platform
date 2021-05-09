@@ -37,7 +37,8 @@ public class ETPDataSource {
             "CREATE TABLE IF NOT EXISTS User_Accounts ("
                 + "User_ID INTEGER /*!40101 AUTO_INCREMENT */ UNIQUE,"
                 + "Username VARCHAR(60) UNIQUE NOT NULL,"
-                + "Password_hash VARCHAR(80) NOT NULL,"
+                + "Password_hash VARCHAR(100) NOT NULL,"
+                + "Salt VARCHAR(60) NOT NULL,"
                 + "User_Type VARCHAR(60) NOT NULL,"
                 + "Unit_ID INTEGER"
                 + ");";
