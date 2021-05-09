@@ -1,8 +1,13 @@
 package ElectronicAssetTradingPlatform.GUI;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class GUI
 {
     public static void loginForm() {
+        // Get input from form
 
     }
     public static void createITAdminGUI() {
