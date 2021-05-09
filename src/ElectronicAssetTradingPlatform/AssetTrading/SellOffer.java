@@ -49,6 +49,11 @@ public class SellOffer extends Offer{
     }
 
     @Override
+    public int checkMatchedOffer() {
+        return 0;
+    }
+
+    @Override
     protected int createUniqueID() {
         if (SellOffersDB.getSellOffersDB().getMarketSellOffers().size() == 0) {
             return 1;

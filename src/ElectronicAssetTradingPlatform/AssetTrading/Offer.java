@@ -75,9 +75,7 @@ public abstract class Offer {
      *
      * @return Returns the matching order ID if there is a match, returns 0 otherwise.
      */
-    public int checkMatchedOffer() {
-        return 0;
-    }
+    public abstract int checkMatchedOffer();
 
 
     // Concrete methods

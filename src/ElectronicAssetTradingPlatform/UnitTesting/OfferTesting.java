@@ -13,12 +13,15 @@ public class OfferTesting {
 
     // declare a member object
     OrganisationalUnitMembers member;
+    OrganisationalUnitMembers otherMember;
     Date date;
 
     @BeforeEach @Test
     public void setUp() {
          // create an organisational unit member
          member = new OrganisationalUnitMembers("Sammy101", "asdf", "Human Resources");
+         otherMember = new OrganisationalUnitMembers("Linax0x", "asdf",
+                "Management");
          // get the current date
         long millis = System.currentTimeMillis();
         date = new Date(millis);
@@ -95,9 +98,6 @@ public class OfferTesting {
         member.listBuyOrder("Table", 10, 5.45);
         member.listBuyOrder("Lamp", 1, 6);
         member.listBuyOrder("Computer", 2, 50.45);
-
-        OrganisationalUnitMembers otherMember = new OrganisationalUnitMembers("Linax0x", "asdf",
-                "Management");
         otherMember.listBuyOrder("Fit Bit", 1, 30);
         otherMember.listBuyOrder("Jar of Cookies", 1, 4);
 
@@ -121,6 +121,25 @@ public class OfferTesting {
         System.out.println(otherMember.getOrgSellOffers());
         assertEquals("5\tHerman Miller Embody Chair\t2\t $600.0\tLinax0x\tManagement\t" + date + "\n" +
                 "6\tPencil Case\t1\t $3.55\tLinax0x\tManagement\t" + date, otherMember.getOrgSellOffers());
+
+    }
+
+    // test checking if there is a corresponding sell offer after creating a buy offer
+    @Test
+    public void checkMatchingSellOffer() {
+        member.listSellOrder("Calculator",1,20);
+
+        otherMember.listBuyOrder("Calculator", 1, 20);
+        System.out.println(BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer());
+
+    }
+
+    @Test
+    public void checkNoMatchingSellOffer() {
+        //member.listSellOrder("Calculator",1,20);
+
+        otherMember.listBuyOrder("Calculator", 1, 20);
+        System.out.println(BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer());
 
     }
 
