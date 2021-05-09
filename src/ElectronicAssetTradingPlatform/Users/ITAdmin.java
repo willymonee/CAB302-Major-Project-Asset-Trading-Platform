@@ -1,8 +1,10 @@
 package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
+import ElectronicAssetTradingPlatform.Database.DBConnectivity;
 
-import java.util.Random;
+import java.security.SecureRandom;
+import java.sql.Connection;
 
 /**
  * ITAdmin class which extends the user class. This class is for the IT administration team
@@ -10,7 +12,7 @@ import java.util.Random;
  * organisational units, assets and the amount of credits for an organisational unit.
  */
 public class ITAdmin extends User {
-    private static Random rng; // Create rng with using time as seed
+    private static SecureRandom rng; // Create rng with using time as seed
     private final char[] characters = "abcdefghijklmnopqrstuvwxyz123456789".toCharArray();
 
     /**
@@ -25,7 +27,7 @@ public class ITAdmin extends User {
 
         // Singleton
         if (rng == null) {
-            rng = new Random(System.currentTimeMillis());
+            rng = new SecureRandom();
         }
     }
 
@@ -79,8 +81,8 @@ public class ITAdmin extends User {
         checkInputEmpty(userType);
 
         User newUser;
-        // Create new password
-        String password = newPassword();
+        // Create new password - length 6
+        String password = newRngText(6);
 
         // Create user - from userType
         switch (UserTypeEnum.valueOf(userType)) {
@@ -102,20 +104,6 @@ public class ITAdmin extends User {
 
 
         return new Object[]{newUser, password}; // For testing
-    }
-
-    private String newPassword() {
-        StringBuilder password = new StringBuilder();
-
-        for (int i = 0; i <= 6; i++) {
-            password.append(characters[rng.nextInt(characters.length)]);
-        }
-
-        return password.toString();
-    }
-
-    private void checkInputEmpty(String str) throws Exception {
-        if (str == null || str.isBlank()) throw new Exception("Invalid unit name"); // Temporary - add custom exception later
     }
 
     /**
@@ -143,11 +131,9 @@ public class ITAdmin extends User {
         checkInputEmpty(username);
 
         // Get user with SQL from username
-        String[] mockResult = new String[] {
-                username,
-                "OrganisationalUnitMember",
-                "Unit1"
-        };
+        /*Connection connection = DBConnectivity.getInstance();
+        connection.
+
 
         // Set new if changed
         if (!userType.equals(mockResult[1])) {
@@ -156,9 +142,9 @@ public class ITAdmin extends User {
 
         if (!userType.equals(mockResult[2])) {
             mockResult[2] = unitName;
-        }
+        }*/
 
-        return mockResult;
+        return null;
     }
 
     /**
@@ -179,5 +165,19 @@ public class ITAdmin extends User {
      */
     public void editAssetName(String currentName, String newName) {
 
+    }
+
+    private String newRngText(int length) {
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i <= length; i++) {
+            password.append(characters[rng.nextInt(characters.length)]);
+        }
+
+        return password.toString();
+    }
+
+    private void checkInputEmpty(String str) throws Exception {
+        if (str == null || str.isBlank()) throw new Exception("Invalid unit name"); // Temporary - add custom exception later
     }
 }
