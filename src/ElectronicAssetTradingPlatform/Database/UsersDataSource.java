@@ -13,7 +13,7 @@ import java.sql.SQLException;
  */
 public class UsersDataSource {
     private static final String INSERT_USER = "INSERT INTO User_Accounts (User_ID, Username, Password_hash, Salt, User_Type, Unit_ID) VALUES (?, ?, ?, ?, ?, ?);";
-    private static final String GET_USER = "SELECT Password_hash, User_Type, Unit_ID FROM User_Accounts WHERE Username = ?";
+    private static final String GET_USER = "SELECT Password_hash, User_Type, Salt, Unit_ID FROM User_Accounts WHERE Username = ?";
     private static final String GET_SALT = "SELECT Salt FROM User_Accounts WHERE Username = ?";
 
     private static final String GET_UNIT_NAME = "SELECT Name FROM Organisational_Units WHERE Unit_ID = ?";
@@ -27,19 +27,17 @@ public class UsersDataSource {
 
     private Connection connection;
 
-    private PreparedStatement getNameList;
-
     public UsersDataSource() throws SQLException {
         connection = DBConnectivity.getInstance();
 
-        getUserQuery = connection.prepareStatement(GET_USER);
         addUserQuery = connection.prepareStatement(INSERT_USER);
+        getUserQuery = connection.prepareStatement(GET_USER);
         getSaltQuery = connection.prepareStatement(GET_SALT);
         getUnitNameQuery = connection.prepareStatement(GET_UNIT_NAME);
         getUnitIDQuery = connection.prepareStatement(GET_UNIT_ID);
     }
 
-    public User getUser(String username) throws SQLException {
+    public User getUser(String username) throws SQLException, User.UserTypeException {
         // Initialise
         getUserQuery.setString(1, username);
 
@@ -48,35 +46,36 @@ public class UsersDataSource {
         rs = getUserQuery.executeQuery();
         // Result
         String passwordHash = rs.getString("Password_hash");
+        String salt = rs.getString("Salt");
         String userType = rs.getString("User_Type");
         String unitID = rs.getString("Unit_ID");
 
         // Get user based on user type
         User queriedUser = null;
         switch (User.UserTypeEnum.valueOf(userType)) {
-            case ITAdmin -> queriedUser = new ITAdmin(username, passwordHash);
+            case ITAdmin -> queriedUser = new ITAdmin(username, passwordHash, salt);
             case OrganisationalUnitMembers -> {
                 String unitName = executeGetUnitName(unitID); // Get unit name
-                queriedUser = new OrganisationalUnitMembers(username, passwordHash, unitName);
+                queriedUser = new OrganisationalUnitMembers(username, passwordHash, salt, unitName);
             }
             case OrganisationalUnitLeader -> {
                 String unitName = executeGetUnitName(unitID); // Get unit name
-                queriedUser = new OrganisationalUnitLeader(username, passwordHash, unitName);
+                queriedUser = new OrganisationalUnitLeader(username, passwordHash, salt, unitName);
             }
-            case SystemsAdmin -> queriedUser = new SystemsAdmin(username, passwordHash);
-            default -> throw new SQLException("Invalid user type"); // Temporary - add custom exception later
+            case SystemsAdmin -> queriedUser = new SystemsAdmin(username, passwordHash, salt);
+            default -> throw new User.UserTypeException("Invalid user type");
         }
 
         return queriedUser;
     }
 
-    public void insertUser(User user, String salt) throws SQLException {
+    public void insertUser(User user) throws SQLException {
         // Initialise
         // User_ID, Username, Password_hash, Salt, User_Type, Unit_ID
         addUserQuery.setString(1, null);
         addUserQuery.setString(2, user.getUsername());
         addUserQuery.setString(3, user.getPassword());
-        addUserQuery.setString(4, salt);
+        addUserQuery.setString(4, user.getSalt());
         addUserQuery.setString(5, user.getUserType());
 
         // Get unit ID
@@ -90,30 +89,6 @@ public class UsersDataSource {
         }
 
         addUserQuery.execute();
-    }
-
-    public String getSalt(User user) throws SQLException {
-        // Prepare
-        getSaltQuery.setString(1, user.getUsername());
-
-        // Result
-        ResultSet rs = null;
-        rs = getSaltQuery.executeQuery();
-
-        // Return
-        return rs.getString("Salt");
-    }
-
-    public String getSalt(String username) throws SQLException {
-        // Prepare
-        getSaltQuery.setString(1, username);
-
-        // Result
-        ResultSet rs = null;
-        rs = getSaltQuery.executeQuery();
-
-        // Return
-        return rs.getString("Salt");
     }
 
     private String executeGetUnitName(String unitID) throws SQLException {

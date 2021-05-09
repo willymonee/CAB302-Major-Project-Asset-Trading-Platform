@@ -15,8 +15,8 @@ public class SystemsAdmin extends User {
      * @param username string identifier used to login
      * @param password string matched with username identifier used to login
      */
-    public SystemsAdmin(String username, String password) {
-        super(username, password);
+    public SystemsAdmin(String username, String password, String salt) {
+        super(username, password, salt);
         this.userType = UserTypeEnum.SystemsAdmin.toString();
     }
 
