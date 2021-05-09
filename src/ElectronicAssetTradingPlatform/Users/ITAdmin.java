@@ -131,7 +131,7 @@ public class ITAdmin extends User {
         checkInputEmpty(username);
 
         // Get user with SQL from username
-        /*Connection connection = DBConnectivity.getInstance();
+        Connection connection = DBConnectivity.getInstance();
         connection.
 
 
@@ -142,7 +142,7 @@ public class ITAdmin extends User {
 
         if (!userType.equals(mockResult[2])) {
             mockResult[2] = unitName;
-        }*/
+        }
 
         return null;
     }

@@ -46,16 +46,6 @@ public class User {
         // connectDB method
     }
 
-    protected String getUsername() {return username;}
-
-    /*
-     * Helper function to create elements of the GUI common in all users’
-     * GUIs, such as the navigation bar and footer.
-     *
-     * !!!!!!!!!!!!!!! Probably remove - make separate GUI classes specifically for this !!!!!!!!!!!!!!!
-     */
-    /*protected void GUI_nav() {
-        // GUI_nav method
-    }*/
-
+    public String getUsername() {return username;}
+    public String getPassword() {return password;}
 }
