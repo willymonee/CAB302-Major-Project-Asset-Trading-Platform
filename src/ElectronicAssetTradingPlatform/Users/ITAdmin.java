@@ -2,12 +2,16 @@ package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
 
+import java.util.Random;
+
 /**
  * ITAdmin class which extends the user class. This class is for the IT administration team
  * giving them privileges, allowing them to do tasks such as creating and managing new
  * organisational units, assets and the amount of credits for an organisational unit.
  */
 public class ITAdmin extends User {
+    private static Random rng; // Create rng with using time as seed
+    private final char[] characters = "abcdefghijklmnopqrstuvwxyz123456789".toCharArray();
 
     /**
      * Constructor for ITAdmin class to login with administration access levels
@@ -18,6 +22,11 @@ public class ITAdmin extends User {
     public ITAdmin(String username, String password) {
         super(username, password);
         this.userType = UserTypeEnum.ITAdmin.toString();
+
+        // Singleton
+        if (rng == null) {
+            rng = new Random(System.currentTimeMillis());
+        }
     }
 
     /**
@@ -62,9 +71,51 @@ public class ITAdmin extends User {
      * @param name string for name of new user
      * @param unitName string organisational unit name for new user to be associated with
      * @param userType user type for new user's access level
+     * @return
      */
-    public void createUser(String name, String unitName, String userType) {
-        // createUser method
+    public Object[] createUser(String name, String unitName, String userType) throws Exception {
+        // Check valid parameters
+        checkInputEmpty(name);
+        checkInputEmpty(userType);
+
+        User newUser;
+        // Create new password
+        String password = newPassword();
+
+        // Create user - from userType
+        switch (UserTypeEnum.valueOf(userType)) {
+            case ITAdmin -> newUser = new ITAdmin(name, password);
+            case OrganisationalUnitMembers -> {
+                checkInputEmpty(unitName);
+                newUser = new OrganisationalUnitMembers(name, password, unitName);
+            }
+            case OrganisationalUnitLeader -> {
+                checkInputEmpty(unitName);
+                newUser = new OrganisationalUnitLeader(name, password, unitName);
+            }
+            case SystemsAdmin -> newUser = new SystemsAdmin(name, password);
+            default -> throw new Exception("Invalid user type"); // Temporary - add custom exception later
+        }
+
+
+        // Add to DB?
+
+
+        return new Object[]{newUser, password}; // For testing
+    }
+
+    private String newPassword() {
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i <= 6; i++) {
+            password.append(characters[rng.nextInt(characters.length)]);
+        }
+
+        return password.toString();
+    }
+
+    private void checkInputEmpty(String str) throws Exception {
+        if (str == null || str.isBlank()) throw new Exception("Invalid unit name"); // Temporary - add custom exception later
     }
 
     /**
@@ -82,13 +133,32 @@ public class ITAdmin extends User {
 
     /**
      * Choose to edit the user's username, user type and organisational unit [C]
-     *
-     * @param username the new username the use will have
+     *  @param username the new username the use will have
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
+     * @return
      */
-    public void editUser(String username, String userType, String unitName ) {
+    public String[] editUser(String username, String userType, String unitName ) throws Exception {
+        // Check valid input
+        checkInputEmpty(username);
 
+        // Get user with SQL from username
+        String[] mockResult = new String[] {
+                username,
+                "OrganisationalUnitMember",
+                "Unit1"
+        };
+
+        // Set new if changed
+        if (!userType.equals(mockResult[1])) {
+            mockResult[1] = userType;
+        }
+
+        if (!userType.equals(mockResult[2])) {
+            mockResult[2] = unitName;
+        }
+
+        return mockResult;
     }
 
     /**
