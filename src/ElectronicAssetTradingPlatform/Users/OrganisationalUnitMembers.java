@@ -142,4 +142,6 @@ public class OrganisationalUnitMembers extends User {
     public int getUnitCredits() {
         return 0;
     }
+
+    public String getUnitName() { return organisationalUnitName; }
 }
