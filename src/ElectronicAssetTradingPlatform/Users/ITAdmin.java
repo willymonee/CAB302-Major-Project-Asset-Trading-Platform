@@ -1,8 +1,13 @@
 package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
+import ElectronicAssetTradingPlatform.Database.DBConnectivity;
+import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Passwords.Hashing;
 
-import java.util.Random;
+import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * ITAdmin class which extends the user class. This class is for the IT administration team
@@ -10,7 +15,7 @@ import java.util.Random;
  * organisational units, assets and the amount of credits for an organisational unit.
  */
 public class ITAdmin extends User {
-    private static Random rng; // Create rng with using time as seed
+    private static SecureRandom rng; // Create rng with using time as seed
     private final char[] characters = "abcdefghijklmnopqrstuvwxyz123456789".toCharArray();
 
     /**
@@ -19,13 +24,13 @@ public class ITAdmin extends User {
      * @param username string identifier used to login
      * @param password string matched with username identifier used to login
      */
-    public ITAdmin(String username, String password) {
-        super(username, password);
+    public ITAdmin(String username, String password, String salt) {
+        super(username, password, salt);
         this.userType = UserTypeEnum.ITAdmin.toString();
 
         // Singleton
         if (rng == null) {
-            rng = new Random(System.currentTimeMillis());
+            rng = new SecureRandom();
         }
     }
 
@@ -73,49 +78,37 @@ public class ITAdmin extends User {
      * @param userType user type for new user's access level
      * @return
      */
-    public Object[] createUser(String name, String unitName, String userType) throws Exception {
+    public User createUser(String name, String unitName, String userType) throws UserTypeException, EmptyFieldException {
         // Check valid parameters
         checkInputEmpty(name);
         checkInputEmpty(userType);
 
-        User newUser;
-        // Create new password
-        String password = newPassword();
+        // Create password - length 8
+        // Hash password
+        byte[] saltBytes = newRngBytes(12);
+        byte[] passwordBytes = Hashing.createHash(saltBytes, newRngText(8));
+
+        // Convert to string
+        String salt = Hashing.bytesToString(saltBytes);
+        String password = Hashing.bytesToString(passwordBytes);
 
         // Create user - from userType
+        User newUser;
         switch (UserTypeEnum.valueOf(userType)) {
-            case ITAdmin -> newUser = new ITAdmin(name, password);
+            case ITAdmin -> newUser = new ITAdmin(name, password, salt);
             case OrganisationalUnitMembers -> {
                 checkInputEmpty(unitName);
-                newUser = new OrganisationalUnitMembers(name, password, unitName);
+                newUser = new OrganisationalUnitMembers(name, password, salt, unitName);
             }
             case OrganisationalUnitLeader -> {
                 checkInputEmpty(unitName);
-                newUser = new OrganisationalUnitLeader(name, password, unitName);
+                newUser = new OrganisationalUnitLeader(name, password, salt, unitName);
             }
-            case SystemsAdmin -> newUser = new SystemsAdmin(name, password);
-            default -> throw new Exception("Invalid user type"); // Temporary - add custom exception later
+            case SystemsAdmin -> newUser = new SystemsAdmin(name, password, salt);
+            default -> throw new UserTypeException("Invalid user type");
         }
 
-
-        // Add to DB?
-
-
-        return new Object[]{newUser, password}; // For testing
-    }
-
-    private String newPassword() {
-        StringBuilder password = new StringBuilder();
-
-        for (int i = 0; i <= 6; i++) {
-            password.append(characters[rng.nextInt(characters.length)]);
-        }
-
-        return password.toString();
-    }
-
-    private void checkInputEmpty(String str) throws Exception {
-        if (str == null || str.isBlank()) throw new Exception("Invalid unit name"); // Temporary - add custom exception later
+        return newUser;
     }
 
     /**
@@ -124,7 +117,7 @@ public class ITAdmin extends User {
      * @param name string name of the asset type to be added to the database
      */
     // NOTE IT IS BEST FOR THE ID TO BE AUTOMATICALLY CREATED IN THE ASSET OR ASSET COLLECTION OBJECTS
-    public void createNewAsset(String name) throws Exception{
+    public void createNewAsset(String name) {
         // Add parsed asset name to db
 
         // add object to the mock database/Asset Collection
@@ -143,11 +136,9 @@ public class ITAdmin extends User {
         checkInputEmpty(username);
 
         // Get user with SQL from username
-        String[] mockResult = new String[] {
-                username,
-                "OrganisationalUnitMember",
-                "Unit1"
-        };
+        /*Connection connection = DBConnectivity.getInstance();
+        connection.
+
 
         // Set new if changed
         if (!userType.equals(mockResult[1])) {
@@ -156,9 +147,9 @@ public class ITAdmin extends User {
 
         if (!userType.equals(mockResult[2])) {
             mockResult[2] = unitName;
-        }
+        }*/
 
-        return mockResult;
+        return null;
     }
 
     /**
@@ -179,5 +170,31 @@ public class ITAdmin extends User {
      */
     public void editAssetName(String currentName, String newName) {
 
+    }
+
+    private String newRngText(int length) {
+        if (length == 0) throw new IndexOutOfBoundsException("Length cannot be 0");
+
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i <= length; i++) {
+            password.append(characters[rng.nextInt(characters.length)]);
+        }
+
+        return password.toString();
+    }
+
+    private byte[] newRngBytes(int length) {
+        if (length == 0) throw new IndexOutOfBoundsException("Length cannot be 0");
+
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[length];
+        random.nextBytes(salt);
+
+        return salt;
+    }
+
+    private void checkInputEmpty(String str) throws EmptyFieldException {
+        if (str == null || str.isBlank()) throw new EmptyFieldException("Invalid input"); // Temporary - add custom exception later
     }
 }

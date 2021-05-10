@@ -17,7 +17,7 @@ public class OfferTesting {
     @BeforeEach @Test
     public void setUpMember() {
         // create an organisational unit member
-         member = new OrganisationalUnitMembers("Sammy101", "asdf", "Human Resources");
+         member = new OrganisationalUnitMembers("Sammy101", "asdf", "salt", "Human Resources");
 
     }
 
