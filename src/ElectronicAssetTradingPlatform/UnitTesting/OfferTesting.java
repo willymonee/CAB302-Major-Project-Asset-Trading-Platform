@@ -118,32 +118,110 @@ public class OfferTesting {
                 "Management");
         otherMember.listSellOrder("Herman Miller Embody Chair", 2, 600);
         otherMember.listSellOrder("Pencil Case", 1, 3.55);
-        System.out.println(otherMember.getOrgSellOffers());
         assertEquals("5\tHerman Miller Embody Chair\t2\t $600.0\tLinax0x\tManagement\t" + date + "\n" +
                 "6\tPencil Case\t1\t $3.55\tLinax0x\tManagement\t" + date, otherMember.getOrgSellOffers());
 
     }
 
-    // test checking if there is a corresponding sell offer after creating a buy offer
+    // test checking if there is a corresponding sell offer after creating a buy offer of equal price
     @Test
     public void checkMatchingSellOffer() {
         member.listSellOrder("Calculator",1,20);
-
         otherMember.listBuyOrder("Calculator", 1, 20);
-        System.out.println(BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer());
+        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+                "Failed to return matching sell offer");
 
     }
 
+    // test checking if there is a corresponding sell offer after creating a buy offer of equal price
     @Test
-    public void checkNoMatchingSellOffer() {
-        //member.listSellOrder("Calculator",1,20);
-
+    public void checkMatchingSellOfferLowerPrice() {
+        member.listSellOrder("Calculator",1,18);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        System.out.println(BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer());
+        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+                "Failed to return matching sell offer");
+    }
+
+    // test returning lowest matching sell offer, given two sell offers
+    @Test
+    public void returnLowestPricedSellOffer() {
+        member.listSellOrder("Calculator",1,18);
+        member.listSellOrder("Calculator",1,17);
+        member.listSellOrder("Calculator",1,20);
+        otherMember.listBuyOrder("Calculator", 1, 20);
+        assertEquals(2, BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+                "Failed to return matching sell offer");
 
     }
 
-    // test adding a buy offer with an asset name that has not been registered
+    // test checking if there is no corresponding sell offer with the same asset name
+    @Test
+    public void checkNoMatchingSellOfferAssetName() {
+        member.listSellOrder("Table", 1, 20);
+        otherMember.listBuyOrder("Calculator", 1, 20);
+        assertEquals(0,BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+                "Failed to check that there were no matching sell offers for the item");
+
+    }
+
+    // test checking if there is no corresponding sell offer with equal or lower price
+    @Test
+    public void checkNoMatchingSellOfferAssetPrice() {
+        member.listSellOrder("Table", 1, 25);
+        otherMember.listBuyOrder("Calculator", 1, 20);
+        assertEquals(0,BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+                "Failed to check that there were no matching sell offers for the item");
+
+    }
+
+    // testing return a buy order ID which matches a sell order of equal price
+    @Test
+    public void returnMatchingBuyOrder() {
+        member.listBuyOrder("iPad", 1, 100);
+        otherMember.listSellOrder("iPad", 1, 100);
+        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+                "Failed to return matching buy offer");
+    }
+
+    // testing return a buy order ID which matches a sell order of equal price
+    @Test
+    public void returnMatchingBuyOrderHigherPrice() {
+        member.listBuyOrder("iPad", 1, 110);
+        otherMember.listSellOrder("iPad", 1, 100);
+        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+                "Failed to return matching buy offer");
+    }
+
+    // testing returning the buy order with the lowest price, but equal or above the sell order,
+    // with other buy orders above the sell offer's price
+    @Test
+    public void returnLowestMatchingBuyOrder() {
+        member.listBuyOrder("iPad", 1, 110);
+        member.listBuyOrder("iPad", 1, 120);
+        member.listBuyOrder("iPad", 1, 105);
+        member.listBuyOrder("iPad", 1, 130);
+        otherMember.listSellOrder("iPad", 1, 100);
+        assertEquals(3, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+                "Failed to return matching buy offer");
+    }
+
+    // testing not returning a buy offer with a different asset type
+    @Test
+    public void returnNoMatchingBuyOrderAsset() {
+        member.listBuyOrder("Fit Bit", 1, 100);
+        otherMember.listSellOrder("iPad", 1, 100);
+        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+                "Returned a matching buy offer, but not meant to");
+    }
+
+    // test not returning a buy offer with a lower price than the sell offer
+    @Test
+    public void returnNoMatchingBuyOrderPrice() {
+        member.listBuyOrder("Fit Bit", 1, 90);
+        otherMember.listSellOrder("iPad", 1, 100);
+        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+                "Returned a matching buy offer, but not meant to");
+    }
 
 
     // test adding a sell offer with an asset name that has not been registered
@@ -152,7 +230,7 @@ public class OfferTesting {
     // test retrieving market buy offers which is empty --> doesn't seem to cause errors but maybe throw an exception
     @Test
     public void returnEmptyMarketBuyOffers() {
-        System.out.println(BuyOffersDB.getBuyOffersDB().toString());
+        // System.out.println(BuyOffersDB.getBuyOffersDB().toString());
     }
 
     // test retrieving market sell offers which is empty
