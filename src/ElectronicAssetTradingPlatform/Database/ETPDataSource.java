@@ -63,22 +63,6 @@ public class ETPDataSource {
                 + "Asset_Quantity INTEGER NOT NULL"
                 + ");";
 
-    /* Marketplace Table probably remove or move to users class this because it is not meant to be here
-    private static final String INSERT_OFFER = "INSERT INTO Marketplace (Trade_ID, Buy_or_Sell, "
-                                                + "Unit_ID, User_ID, Asset_type_ID, Price_per_Unit)"
-                                                + "VALUES (?, ?, ?, ?, ?, ?);";
-
-    private static final String GET_OFFER = "SELECT * FROM Marketplace WHERE Trade_ID=?";
-
-    private static final String REMOVE_OFFER = "DELETE FROM Marketplace WHERE Trade_ID=?";
-
-    private PreparedStatement addOffer;
-    private PreparedStatement getOffer;
-    private PreparedStatement removeOffer;
-
-
-     End of Marketplace */
-
 
     /**
      * Constructor to build the Database Schema
