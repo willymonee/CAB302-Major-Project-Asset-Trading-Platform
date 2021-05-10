@@ -15,8 +15,10 @@ import java.sql.SQLException;
  * organisational units, assets and the amount of credits for an organisational unit.
  */
 public class ITAdmin extends User {
-    private static SecureRandom rng; // Create rng with using time as seed
-    private final char[] characters = "abcdefghijklmnopqrstuvwxyz123456789".toCharArray();
+    private static SecureRandom rng;
+    private static final char[] characters = "abcdefghijklmnopqrstuvwxyz123456789".toCharArray();
+    private static final int SALT_SIZE = 12;
+    private static final int PWD_SIZE = 8;
 
     /**
      * Constructor for ITAdmin class to login with administration access levels
@@ -85,8 +87,8 @@ public class ITAdmin extends User {
 
         // Create password - length 8
         // Hash password
-        byte[] saltBytes = newRngBytes(12);
-        byte[] passwordBytes = Hashing.createHash(saltBytes, newRngText(8));
+        byte[] saltBytes = newRngBytes(SALT_SIZE);
+        byte[] passwordBytes = Hashing.createHash(saltBytes, newRngText(PWD_SIZE));
 
         // Convert to string
         String salt = Hashing.bytesToString(saltBytes);
