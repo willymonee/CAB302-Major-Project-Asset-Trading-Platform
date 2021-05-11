@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.Database;
 
 import ElectronicAssetTradingPlatform.Users.*;
+import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +12,7 @@ import java.sql.SQLException;
 /**
  * Class for retrieving data from the XML file holding the address list.
  */
-public class UsersDataSource {
+public class UsersDataSource extends UnitDataSource{
     private static final String INSERT_USER = "INSERT INTO User_Accounts (User_ID, Username, Password_hash, Salt, User_Type, Unit_ID) VALUES (?, ?, ?, ?, ?, ?);";
     private static final String GET_USER = "SELECT Password_hash, User_Type, Salt, Unit_ID FROM User_Accounts WHERE Username = ?";
     private static final String GET_SALT = "SELECT Salt FROM User_Accounts WHERE Username = ?";
@@ -22,8 +23,8 @@ public class UsersDataSource {
     PreparedStatement getUserQuery;
     PreparedStatement addUserQuery;
     PreparedStatement getSaltQuery;
-    PreparedStatement getUnitNameQuery;
-    PreparedStatement getUnitIDQuery;
+    //PreparedStatement getUnitNameQuery;
+    //PreparedStatement getUnitIDQuery;
 
     private Connection connection;
 
@@ -33,8 +34,8 @@ public class UsersDataSource {
         addUserQuery = connection.prepareStatement(INSERT_USER);
         getUserQuery = connection.prepareStatement(GET_USER);
         getSaltQuery = connection.prepareStatement(GET_SALT);
-        getUnitNameQuery = connection.prepareStatement(GET_UNIT_NAME);
-        getUnitIDQuery = connection.prepareStatement(GET_UNIT_ID);
+        //getUnitNameQuery = connection.prepareStatement(GET_UNIT_NAME);
+        //getUnitIDQuery = connection.prepareStatement(GET_UNIT_ID);
     }
 
     public User getUser(String username) throws SQLException, User.UserTypeException {
@@ -91,29 +92,6 @@ public class UsersDataSource {
         addUserQuery.execute();
     }
 
-    private String executeGetUnitName(String unitID) throws SQLException {
-        // Prepare
-        getUnitNameQuery.setString(1, unitID);
-
-        // Result
-        ResultSet rs = null;
-        rs = getUnitNameQuery.executeQuery();
-
-        // Return
-        return rs.getString("Name");
-    }
-
-    private String executeGetUnitID(String unitName) throws SQLException {
-        // Prepare
-        getUnitIDQuery.setString(1, unitName);
-
-        // Result
-        ResultSet rs = null;
-        rs = getUnitIDQuery.executeQuery();
-
-        // Return
-        return rs.getString("Unit_ID");
-    }
 
     // Close connection
     public void close() throws SQLException {

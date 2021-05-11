@@ -1,11 +1,7 @@
 package ElectronicAssetTradingPlatform.Database;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Set;
-import java.util.TreeSet;
 import java.sql.SQLException;
 
 public class ETPDataSource {
