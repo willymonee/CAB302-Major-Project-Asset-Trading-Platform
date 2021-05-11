@@ -43,19 +43,26 @@ public class MarketplaceDataSource {
 
     public void insertBuyOffer(User user, Asset asset, String assetPrice) {
         try {
+            insertBuyOffer.setString(1, "null");
             insertBuyOffer.setString(2, "b");
             // Get Unit ID
             // switch case for org unit mem, leader and whoever else can create a buy offer
             if (user.getClass() == OrganisationalUnitMembers.class) {
                 UnitDataSource unitDB = new UnitDataSource();
-                String id = unitDB.executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
-                insertBuyOffer.setString(3, id);
+                String unitID = unitDB.executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
+                insertBuyOffer.setString(3, unitID);
             }
-            //insertBuyOffer.setString(4, user); // user id
 
+            else {
+                //
+            }
+            if (user.getClass() == OrganisationalUnitMembers.class) {
+                UnitDataSource unitDB = new UnitDataSource();
+                String userID = unitDB.executeGetUserID(((OrganisationalUnitMembers) user).getUnitName());
+                insertBuyOffer.setString(4, userID);
+            }
             insertBuyOffer.setString(5, asset.getAssetName());
             insertBuyOffer.setString(6, assetPrice);
-
             insertBuyOffer.execute();
 
         } catch (SQLException e) {

@@ -56,7 +56,5 @@ public class UnitDataSource {
         rs = getUserIDQuery.executeQuery();
 
         return rs.getString("User_ID");
-
-        
     }
 }
