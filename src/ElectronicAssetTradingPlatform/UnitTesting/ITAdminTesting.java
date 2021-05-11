@@ -87,11 +87,6 @@ public class ITAdminTesting {
         String user3 = itAdmin2.createUser("bob3", "", "ITAdmin").getPassword();
         String user4 = itAdmin1.createUser("bob4", "", "ITAdmin").getPassword();
 
-        System.out.println(user1);
-        System.out.println(user2);
-        System.out.println(user3);
-        System.out.println(user4);
-
         assertNotEquals(user1, user2);
         assertNotEquals(user2, user3);
         assertNotEquals(user1, user4);
@@ -105,13 +100,16 @@ public class ITAdminTesting {
 
     // Users Data Source test
     @Test
-    public void insertUser() {
+    public void insertLeader() {
         try {
             UsersDataSource db = new UsersDataSource();
-            User user = itAdmin.createUser("newSysAdmin1", "", "SystemsAdmin");
+            User user = itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader");
             db.insertUser(user);
 
-            User dbUser = db.getUser("newSysAdmin1");
+            User dbUser = db.getUser("newLeader");
+
+            System.out.println(user.getUsername());
+            System.out.println(dbUser.getUsername());
 
             assertEquals(user.getUsername(), dbUser.getUsername());
         }
@@ -119,6 +117,63 @@ public class ITAdminTesting {
             if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
                 System.out.println("Incorrect user inputs: maybe they already exist?");
             } else {
+                System.out.println("Error with ITAdminTesting, will fix later");
+                System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
+                e.printStackTrace();
+            }
+        }
+        catch (User.UserTypeException | User.EmptyFieldException e) {
+            e.printStackTrace();
+            assert false;
+        }
+    }
+    @Test
+    public void insertSysAdmin() {
+        try {
+            UsersDataSource db = new UsersDataSource();
+            User user = itAdmin.createUser("newSysAdmin1", "", "SystemsAdmin");
+            db.insertUser(user);
+
+            User dbUser = db.getUser("newSysAdmin1");
+
+            System.out.println(user.getUsername());
+            System.out.println(dbUser.getUsername());
+
+            assertEquals(user.getUsername(), dbUser.getUsername());
+        }
+        catch (SQLException e) {
+            if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
+                System.out.println("Incorrect user inputs: maybe they already exist?");
+            } else {
+                e.printStackTrace();
+                System.out.println("Error with ITAdminTesting, will fix later");
+                System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
+            }
+        }
+        catch (User.UserTypeException | User.EmptyFieldException e) {
+            e.printStackTrace();
+            assert false;
+        }
+    }
+    @Test
+    public void insertITAdmin() {
+        try {
+            UsersDataSource db = new UsersDataSource();
+            User user = itAdmin.createUser("newITAdmin1", "", "ITAdmin");
+            db.insertUser(user);
+
+            User dbUser = db.getUser("newITAdmin1");
+
+            System.out.println(user.getUsername());
+            System.out.println(dbUser.getUsername());
+
+            assertEquals(user.getUsername(), dbUser.getUsername());
+        }
+        catch (SQLException e) {
+            if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
+                System.out.println("Incorrect user inputs: maybe they already exist?");
+            } else {
+                e.printStackTrace();
                 System.out.println("Error with ITAdminTesting, will fix later");
                 System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
             }

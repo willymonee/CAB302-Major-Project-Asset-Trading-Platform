@@ -1,7 +1,6 @@
 package ElectronicAssetTradingPlatform.Database;
 
 import ElectronicAssetTradingPlatform.Users.*;
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,17 +13,15 @@ import java.sql.SQLException;
  */
 public class UsersDataSource extends UnitDataSource{
     private static final String INSERT_USER = "INSERT INTO User_Accounts (User_ID, Username, Password_hash, Salt, User_Type, Unit_ID) VALUES (?, ?, ?, ?, ?, ?);";
-    private static final String GET_USER = "SELECT Password_hash, User_Type, Salt, Unit_ID FROM User_Accounts WHERE Username = ?";
-    private static final String GET_SALT = "SELECT Salt FROM User_Accounts WHERE Username = ?";
-
-    private static final String GET_UNIT_NAME = "SELECT Name FROM Organisational_Units WHERE Unit_ID = ?";
-    private static final String GET_UNIT_ID = "SELECT Unit_ID FROM Organisational_Units WHERE Name = ?";
+    private static final String GET_USER =
+            "SELECT Password_hash, User_Type, Salt, Organisational_Units.Name as Unit_Name " +
+            "FROM User_Accounts " +
+            "LEFT OUTER JOIN Organisational_Units " +
+            "ON User_Accounts.Unit_ID = Organisational_Units.Unit_ID " +
+            "WHERE Username = ?";
 
     PreparedStatement getUserQuery;
     PreparedStatement addUserQuery;
-    PreparedStatement getSaltQuery;
-    //PreparedStatement getUnitNameQuery;
-    //PreparedStatement getUnitIDQuery;
 
     private Connection connection;
 
@@ -33,9 +30,6 @@ public class UsersDataSource extends UnitDataSource{
 
         addUserQuery = connection.prepareStatement(INSERT_USER);
         getUserQuery = connection.prepareStatement(GET_USER);
-        getSaltQuery = connection.prepareStatement(GET_SALT);
-        //getUnitNameQuery = connection.prepareStatement(GET_UNIT_NAME);
-        //getUnitIDQuery = connection.prepareStatement(GET_UNIT_ID);
     }
 
     public User getUser(String username) throws SQLException, User.UserTypeException {
@@ -43,26 +37,19 @@ public class UsersDataSource extends UnitDataSource{
         getUserQuery.setString(1, username);
 
         // Query
-        ResultSet rs = null;
-        rs = getUserQuery.executeQuery();
+        ResultSet rs = getUserQuery.executeQuery();
         // Result
         String passwordHash = rs.getString("Password_hash");
         String salt = rs.getString("Salt");
         String userType = rs.getString("User_Type");
-        String unitID = rs.getString("Unit_ID");
+        String unitName = rs.getString("Unit_Name");
 
         // Get user based on user type
-        User queriedUser = null;
+        User queriedUser;
         switch (User.UserTypeEnum.valueOf(userType)) {
             case ITAdmin -> queriedUser = new ITAdmin(username, passwordHash, salt);
-            case OrganisationalUnitMembers -> {
-                String unitName = executeGetUnitName(unitID); // Get unit name
-                queriedUser = new OrganisationalUnitMembers(username, passwordHash, salt, unitName);
-            }
-            case OrganisationalUnitLeader -> {
-                String unitName = executeGetUnitName(unitID); // Get unit name
-                queriedUser = new OrganisationalUnitLeader(username, passwordHash, salt, unitName);
-            }
+            case OrganisationalUnitMembers -> queriedUser = new OrganisationalUnitMembers(username, passwordHash, salt, unitName);
+            case OrganisationalUnitLeader -> queriedUser = new OrganisationalUnitLeader(username, passwordHash, salt, unitName);
             case SystemsAdmin -> queriedUser = new SystemsAdmin(username, passwordHash, salt);
             default -> throw new User.UserTypeException("Invalid user type");
         }
@@ -72,7 +59,6 @@ public class UsersDataSource extends UnitDataSource{
 
     public void insertUser(User user) throws SQLException {
         // Initialise
-        // User_ID, Username, Password_hash, Salt, User_Type, Unit_ID
         addUserQuery.setString(1, null);
         addUserQuery.setString(2, user.getUsername());
         addUserQuery.setString(3, user.getPassword());
