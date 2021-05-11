@@ -11,7 +11,7 @@ import java.sql.SQLException;
 /**
  * Class for retrieving data from the XML file holding the address list.
  */
-public class UsersDataSource extends UnitDataSource{
+public class UsersDataSource {
     private static final String INSERT_USER = "INSERT INTO User_Accounts (User_ID, Username, Password_hash, Salt, User_Type, Unit_ID) VALUES (?, ?, ?, ?, ?, ?);";
     private static final String GET_USER =
             "SELECT Password_hash, User_Type, Salt, Organisational_Units.Name as Unit_Name " +
@@ -67,7 +67,8 @@ public class UsersDataSource extends UnitDataSource{
 
         // Get unit ID
         if (user.getClass() == OrganisationalUnitMembers.class) {
-            String id = executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
+            UnitDataSource unitDB = new UnitDataSource();
+            String id = unitDB.executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
 
             addUserQuery.setString(6, id);
         }
