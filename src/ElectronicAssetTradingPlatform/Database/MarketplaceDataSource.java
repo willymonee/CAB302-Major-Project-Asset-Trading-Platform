@@ -3,14 +3,13 @@ package ElectronicAssetTradingPlatform.Database;
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MarketplaceDataSource extends UnitDataSource{
+public class MarketplaceDataSource {
     private static final String INSERT_BUYOFFER = "INSERT INTO Marketplace (Trade_ID, Buy_or_Sell, "
             + "Unit_ID, User_ID, Asset_type_ID, Price_per_Unit)"
             + "VALUES (?, ?, ?, ?, ?, ?);";
@@ -46,13 +45,18 @@ public class MarketplaceDataSource extends UnitDataSource{
         try {
             insertBuyOffer.setString(2, "b");
             // Get Unit ID
+            // switch case for org unit mem, leader and whoever else can create a buy offer
             if (user.getClass() == OrganisationalUnitMembers.class) {
-                String id = executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
+                UnitDataSource unitDB = new UnitDataSource();
+                String id = unitDB.executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
                 insertBuyOffer.setString(3, id);
             }
             //insertBuyOffer.setString(4, user); // user id
+
             insertBuyOffer.setString(5, asset.getAssetName());
             insertBuyOffer.setString(6, assetPrice);
+
+            insertBuyOffer.execute();
 
         } catch (SQLException e) {
             e.printStackTrace();
