@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * Class for retrieving data from the XML file holding the address list.
  */
 public class UsersDataSource {
-    private static final String INSERT_USER = "INSERT INTO User_Accounts (User_ID, Username, Password_hash, Salt, User_Type, Unit_ID) VALUES (?, ?, ?, ?, ?, ?);";
+    private static final String INSERT_USER = "INSERT INTO User_Accounts (Username, Password_hash, Salt, User_Type, Unit_ID) VALUES (?, ?, ?, ?, ?);";
     private static final String GET_USER =
             "SELECT Password_hash, User_Type, Salt, Organisational_Units.Name as Unit_Name " +
             "FROM User_Accounts " +
@@ -76,21 +76,20 @@ public class UsersDataSource {
 
     public void insertUser(User user) throws SQLException {
         // Initialise
-        addUserQuery.setString(1, null);
-        addUserQuery.setString(2, user.getUsername());
-        addUserQuery.setString(3, user.getPassword());
-        addUserQuery.setString(4, user.getSalt());
-        addUserQuery.setString(5, user.getUserType());
+        addUserQuery.setString(1, user.getUsername());
+        addUserQuery.setString(2, user.getPassword());
+        addUserQuery.setString(3, user.getSalt());
+        addUserQuery.setString(4, user.getUserType());
 
         // Get unit ID
         if (user.getClass() == OrganisationalUnitMembers.class) {
             UnitDataSource unitDB = new UnitDataSource();
             String id = unitDB.executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
 
-            addUserQuery.setString(6, id);
+            addUserQuery.setString(5, id);
         }
         else {
-            addUserQuery.setString(6, null);
+            addUserQuery.setString(5, null);
         }
 
         addUserQuery.execute();
@@ -99,9 +98,12 @@ public class UsersDataSource {
     public void editUser(String username, String userType, String unitName) throws SQLException {
         // Initialise
         editUserQuery.setString(1, userType);
-        UnitDataSource unitDB = new UnitDataSource();
-        String id = unitDB.executeGetUnitID(unitName);
-        editUserQuery.setString(2, id);
+        String unitID = null;
+        if (unitName != null) {
+            UnitDataSource unitDB = new UnitDataSource();
+            unitID = unitDB.executeGetUnitID(unitName);
+        }
+        editUserQuery.setString(2, unitID);
         editUserQuery.setString(3, username);
 
         editUserQuery.execute();

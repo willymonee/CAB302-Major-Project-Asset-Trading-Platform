@@ -9,6 +9,7 @@ import ElectronicAssetTradingPlatform.Users.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.AfterClass;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -16,14 +17,25 @@ import java.sql.SQLException;
 public class ITAdminTesting {
     // Exception codes: https://sqlite.org/rescode.html
     private static final int CONSTRAINT_EXCEPTION_CODE = 19;
+    /*
+    DELETE FROM User_Accounts;
+    DELETE FROM Organisational_Units;
+    INSERT INTO Organisational_Units (Name, Credits) VALUES ("unit1", "5");
+     */
 
     ITAdmin itAdmin;
+    UsersDataSource db;
 
     @BeforeEach
     @Test
     public void setUpITAdmin() {
         // Recreate db
         ETPDataSource etp = new ETPDataSource();
+        try {
+            db = new UsersDataSource();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         // create an organisational unit member
         itAdmin = new ITAdmin("adminGuy", "pass123", "salt");
 
@@ -91,7 +103,6 @@ public class ITAdminTesting {
     @Test
     public void insertLeader() {
         try {
-            UsersDataSource db = new UsersDataSource();
             User user = itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader");
             db.insertUser(user);
 
@@ -116,7 +127,6 @@ public class ITAdminTesting {
     @Test
     public void insertSysAdmin() {
         try {
-            UsersDataSource db = new UsersDataSource();
             User user = itAdmin.createUser("newSysAdmin1", "", "SystemsAdmin");
             db.insertUser(user);
 
@@ -141,7 +151,6 @@ public class ITAdminTesting {
     @Test
     public void insertITAdmin() {
         try {
-            UsersDataSource db = new UsersDataSource();
             User user = itAdmin.createUser("newITAdmin1", "", "ITAdmin");
             db.insertUser(user);
 
@@ -167,11 +176,16 @@ public class ITAdminTesting {
     // Edit user tests
     @Test
     public void editMember() throws Exception {
-        itAdmin.editUser("newLeader", "OrganisationalUnitLeader", "Unit1");
+        itAdmin.editUser("newLeader", "OrganisationalUnitLeader", "unit1");
 
     }
     @Test
     public void editITAdmin() throws Exception {
-        itAdmin.editUser("newITAdmin1", "ITAdmin", "Unit1");
+        itAdmin.editUser("newITAdmin1", "SystemsAdmin", "unit1");
+    }
+
+    @AfterClass
+    public void close() throws SQLException {
+        db.close();
     }
 }
