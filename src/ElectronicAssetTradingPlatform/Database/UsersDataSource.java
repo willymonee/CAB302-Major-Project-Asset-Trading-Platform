@@ -20,10 +20,23 @@ public class UsersDataSource {
             "ON User_Accounts.Unit_ID = Organisational_Units.Unit_ID " +
             "WHERE Username = ?";
     private static final String EDIT_USER = "UPDATE User_Accounts SET User_Type = ?, Unit_ID = ? WHERE Username = ?";
+    private static final String GET_UNIT_CREDITS =
+            "SELECT Organisational_Units.Credits " +
+            "FROM User_Accounts " +
+            "LEFT OUTER JOIN Organisational_Units " +
+            "ON User_Accounts.Unit_ID = Organisational_Units.Unit_ID " +
+            "WHERE Username = ?";
+    private static final String GET_UNIT_ASSETS =
+            "SELECT Organisational_Units.Credits " +
+                    "FROM User_Accounts " +
+                    "LEFT OUTER JOIN Organisational_Units " +
+                    "ON User_Accounts.Unit_ID = Organisational_Units.Unit_ID " +
+                    "WHERE Username = ?";
 
     PreparedStatement getUserQuery;
     PreparedStatement addUserQuery;
     PreparedStatement editUserQuery;
+    PreparedStatement getUnitCreditsQuery;
 
     private Connection connection;
 
@@ -33,6 +46,7 @@ public class UsersDataSource {
         addUserQuery = connection.prepareStatement(INSERT_USER);
         getUserQuery = connection.prepareStatement(GET_USER);
         editUserQuery = connection.prepareStatement(EDIT_USER);
+        getUnitCreditsQuery = connection.prepareStatement(GET_UNIT_CREDITS);
     }
 
     public User getUser(String username) throws SQLException, User.UserTypeException {
@@ -98,6 +112,7 @@ public class UsersDataSource {
     public void editUser(String username, String userType, String unitName) throws SQLException {
         // Initialise
         editUserQuery.setString(1, userType);
+            // Get unit ID
         String unitID = null;
         if (unitName != null) {
             UnitDataSource unitDB = new UnitDataSource();
@@ -107,6 +122,25 @@ public class UsersDataSource {
         editUserQuery.setString(3, username);
 
         editUserQuery.execute();
+    }
+
+    public float getUnitCredits(String username) throws SQLException {
+        // Initialise
+        getUnitCreditsQuery.setString(1, username);
+
+        // Query
+        ResultSet rs = null;
+        String unitCredits;
+        try {
+            rs = getUnitCreditsQuery.executeQuery();
+
+            // Result
+            unitCredits = rs.getString("Credits");
+        } finally {
+            if (rs != null) rs.close();
+        }
+
+        return Float.parseFloat(unitCredits);
     }
 
     // Close connection

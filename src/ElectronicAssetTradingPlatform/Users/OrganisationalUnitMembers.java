@@ -5,7 +5,9 @@ import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.SellOffersDB;
+import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -139,8 +141,8 @@ public class OrganisationalUnitMembers extends User {
      *
      * @return Returns the quantity of credits
      */
-    public int getUnitCredits() {
-        return 0;
+    public float getUnitCredits() throws SQLException {
+        return new UsersDataSource().getUnitCredits(organisationalUnitName);
     }
 
     public String getUnitName() { return organisationalUnitName; }
