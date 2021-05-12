@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.SellOffersDB;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
@@ -193,8 +194,7 @@ public class OfferTesting {
                 "Failed to return matching buy offer");
     }
 
-    // testing returning the buy order with the lowest price, but equal or above the sell order,
-    // with other buy orders above the sell offer's price
+    // testing returning the buy order that was created first AND is equally priced or above the sell order's price
     @Test
     public void returnLowestMatchingBuyOrder() {
         member.listBuyOrder("iPad", 1, 110);
@@ -202,7 +202,7 @@ public class OfferTesting {
         member.listBuyOrder("iPad", 1, 105);
         member.listBuyOrder("iPad", 1, 130);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(3, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
                 "Failed to return matching buy offer");
     }
 
@@ -224,6 +224,9 @@ public class OfferTesting {
                 "Returned a matching buy offer, but not meant to");
     }
 
+    /**
+     * Resolving matching sell offers to a created buy offer
+     */
     // test reducing the quantities of matching buy and sell offers, when equal quantities
     // expect both offers to be removed
     // testing a private method
@@ -283,11 +286,79 @@ public class OfferTesting {
         member.listBuyOrder("Fit Bit", 3, 100);
         otherMember.listSellOrder("Fit Bit", 2, 100);
         otherMember.listSellOrder("Fit Bit", 2, 100);
+        otherMember.listSellOrder("Coffee Machine", 2, 100);
         BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
         buyOffer.resolveOffer();
         assertTrue(!BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(1) &&
                 !SellOffersDB.getSellOffersDB().getMarketSellOffers().containsKey(1) &&
                 SellOffersDB.getSellOffersDB().getOffer(2).getQuantity() == 1);
+    }
+
+    /**
+     * Resolving matching buy offers to a created sell offer
+     */
+    // test reducing the quantity of an equal amount of sell and buy offers
+    @Test
+    public void matchAndReduceSellToBuyOfferEqual() {
+        member.listBuyOrder("Fit Bit", 1, 100);
+        otherMember.listSellOrder("Fit Bit", 1, 100);
+        SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
+        sellOffer.resolveOffer();
+        assertTrue(!SellOffersDB.getSellOffersDB().getMarketSellOffers().containsKey(1) &&
+                !BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(1));
+    }
+
+    // test reducing the quantities of the sell and buy offer, when the quantity of buy offer is greater
+    @Test
+    public void matchAndReduceSellToBuyOfferMore() {
+        member.listBuyOrder("Fit Bit", 2, 100);
+        otherMember.listSellOrder("Fit Bit", 1, 100);
+        SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
+        sellOffer.resolveOffer();
+        assertTrue(!SellOffersDB.getSellOffersDB().getMarketSellOffers().containsKey(1) &&
+                 BuyOffersDB.getBuyOffersDB().getOffer(1).getQuantity() == 1);
+    }
+
+    // test reducing the quantities of the sell and buy offer, when the quantity of the sell offer is greater
+    @Test
+    public void matchAndReduceSellToBuyOfferLess() {
+        member.listBuyOrder("Fit Bit", 2, 100);
+        otherMember.listSellOrder("Fit Bit", 5, 100);
+        SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
+        sellOffer.resolveOffer();
+        assertTrue(!BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(1) &&
+                SellOffersDB.getSellOffersDB().getOffer(1).getQuantity() == 3);
+    }
+
+    // test reducing the quantities with multiple buy orders, with the quantity ordered from buy offers being greater
+    @Test
+    public void matchAndReduceSellToBuyOffersMore() {
+        member.listBuyOrder("Fit Bit", 2, 100);
+        member.listBuyOrder("Fit Bit", 2, 105);
+        member.listBuyOrder("Fit Bit", 2, 100);
+        otherMember.listSellOrder("Fit Bit", 5, 100);
+        SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
+        sellOffer.resolveOffer();
+        assertTrue(!SellOffersDB.getSellOffersDB().getMarketSellOffers().containsKey(1) &&
+                !BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(1) &&
+                !BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(2) &&
+                BuyOffersDB.getBuyOffersDB().getOffer(3).getQuantity() == 1);
+    }
+
+    // test reducing the quantities with multiple buy orders, with the quantity ordered from buy offers being less
+    @Test
+    public void matchAndReduceSellToBuyOffersLess() {
+        member.listBuyOrder("Fit Bit", 1, 100);
+        member.listBuyOrder("Fit Bit", 1, 105);
+        member.listBuyOrder("Fit Bit", 1, 100);
+        member.listBuyOrder("Fit Bit", 10, 90);
+        otherMember.listSellOrder("Fit Bit", 5, 100);
+        SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
+        sellOffer.resolveOffer();
+        assertTrue(SellOffersDB.getSellOffersDB().getOffer(1).getQuantity() == 2 &&
+                !BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(1) &&
+                !BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(2) &&
+                !BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(3));
     }
 
 
