@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 
 /**
@@ -21,22 +22,23 @@ public class UsersDataSource {
             "WHERE Username = ?";
     private static final String EDIT_USER = "UPDATE User_Accounts SET User_Type = ?, Unit_ID = ? WHERE Username = ?";
     private static final String GET_UNIT_CREDITS =
-            "SELECT Organisational_Units.Credits " +
-            "FROM User_Accounts " +
-            "LEFT OUTER JOIN Organisational_Units " +
-            "ON User_Accounts.Unit_ID = Organisational_Units.Unit_ID " +
-            "WHERE Username = ?";
+            "SELECT Credits " +
+            "FROM  Organisational_Units " +
+            "WHERE name = ?";
     private static final String GET_UNIT_ASSETS =
-            "SELECT Organisational_Units.Credits " +
-                    "FROM User_Accounts " +
-                    "LEFT OUTER JOIN Organisational_Units " +
-                    "ON User_Accounts.Unit_ID = Organisational_Units.Unit_ID " +
-                    "WHERE Username = ?";
+            "SELECT Asset_Types.Name, Asset_Quantity " +
+            "FROM Organisational_Units " +
+            "LEFT OUTER JOIN Organisational_Unit_Assets " +
+                "ON Organisational_Units.Unit_ID = Organisational_Unit_Assets.Unit_ID " +
+            "LEFT OUTER JOIN Asset_Types " +
+                "ON Organisational_Unit_Assets.Asset_ID = Asset_Types.Type_ID " +
+            "WHERE Organisational_Units.Name = ?";
 
     PreparedStatement getUserQuery;
     PreparedStatement addUserQuery;
     PreparedStatement editUserQuery;
     PreparedStatement getUnitCreditsQuery;
+    PreparedStatement getUnitAssetsQuery;
 
     private Connection connection;
 
@@ -47,6 +49,7 @@ public class UsersDataSource {
         getUserQuery = connection.prepareStatement(GET_USER);
         editUserQuery = connection.prepareStatement(EDIT_USER);
         getUnitCreditsQuery = connection.prepareStatement(GET_UNIT_CREDITS);
+        getUnitAssetsQuery = connection.prepareStatement(GET_UNIT_ASSETS);
     }
 
     public User getUser(String username) throws SQLException, User.UserTypeException {
@@ -124,9 +127,9 @@ public class UsersDataSource {
         editUserQuery.execute();
     }
 
-    public float getUnitCredits(String username) throws SQLException {
+    public float getUnitCredits(String unitName) throws SQLException {
         // Initialise
-        getUnitCreditsQuery.setString(1, username);
+        getUnitCreditsQuery.setString(1, unitName);
 
         // Query
         ResultSet rs = null;
@@ -140,7 +143,31 @@ public class UsersDataSource {
             if (rs != null) rs.close();
         }
 
+        // Convert to float
         return Float.parseFloat(unitCredits);
+    }
+
+    public HashMap<String, Integer> getUnitAssets(String unitName) throws SQLException {
+        // Initialise
+        getUnitAssetsQuery.setString(1, unitName);
+
+        // Query
+        ResultSet rs = null;
+        HashMap<String, Integer> unitAssets = new HashMap<>();
+        try {
+            rs = getUnitAssetsQuery.executeQuery();
+
+            // Result
+            while (rs.next()) {
+                String name = rs.getString("Name");
+                Integer quantity = Integer.parseInt(rs.getString("Asset_Quantity"));
+                unitAssets.put(name, quantity);
+            }
+        } finally {
+            if (rs != null) rs.close();
+        }
+
+        return unitAssets;
     }
 
     // Close connection

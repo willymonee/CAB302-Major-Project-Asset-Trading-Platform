@@ -8,7 +8,7 @@ import ElectronicAssetTradingPlatform.Database.SellOffersDB;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 
 import java.sql.SQLException;
-import java.util.Map;
+import java.util.HashMap;
 
 /**
  *  OrganisationalUnitMembers class which extends the user class. This class is implemented
@@ -132,8 +132,8 @@ public class OrganisationalUnitMembers extends User {
      *
      * @return Returns the map of asset_name and quantity
      */
-    public Map<String,Integer> getUnitAssets() {
-        return null;
+    public HashMap<String, Integer> getUnitAssets() throws SQLException {
+        return new UsersDataSource().getUnitAssets(organisationalUnitName);
     }
 
     /**
