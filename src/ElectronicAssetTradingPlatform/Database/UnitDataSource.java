@@ -32,10 +32,16 @@ public class UnitDataSource {
 
         // Result
         ResultSet rs = null;
-        rs = getUnitNameQuery.executeQuery();
+        String unitName;
+        try {
+            rs = getUnitNameQuery.executeQuery();
+            unitName = rs.getString("Name");
+        } finally {
+            if (rs != null) rs.close();
+        }
 
         // Return
-        return rs.getString("Name");
+        return unitName;
     }
 
     public String executeGetUnitID(String unitName) throws SQLException {
@@ -44,10 +50,16 @@ public class UnitDataSource {
 
         // Result
         ResultSet rs = null;
-        rs = getUnitIDQuery.executeQuery();
+        String unitID;
+        try {
+            rs = getUnitIDQuery.executeQuery();
+            unitID = rs.getString("Unit_ID");
+        } finally {
+            if (rs != null) rs.close();
+        }
 
         // Return
-        return rs.getString("Unit_ID");
+        return unitID;
     }
 
     public String executeGetUserID(String username) throws SQLException{
