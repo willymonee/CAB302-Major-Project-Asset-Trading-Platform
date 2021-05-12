@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.SellOffersDB;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
@@ -221,6 +222,72 @@ public class OfferTesting {
         otherMember.listSellOrder("iPad", 1, 100);
         assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
                 "Returned a matching buy offer, but not meant to");
+    }
+
+    // test reducing the quantities of matching buy and sell offers, when equal quantities
+    // expect both offers to be removed
+    // testing a private method
+    @Test
+    public void reduceEqualOfferQuantities() {
+        member.listBuyOrder("Fit Bit", 1, 100);
+        otherMember.listSellOrder("Fit Bit", 1, 100);
+        BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
+        buyOffer.resolveOffer();
+        assertTrue(!SellOffersDB.getSellOffersDB().getMarketSellOffers().containsKey(1) &&
+                !BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(1));
+    }
+
+    // test reducing the quantities of matching buy and sell offers, when the buy offer quantity is greater
+    // expect sell offer to be removed, but buy offer has a reduced quantity
+    // testing a private method
+    @Test
+    public void reduceGreaterBuyOfferQuantities() {
+        member.listBuyOrder("Fit Bit", 3, 100);
+        otherMember.listSellOrder("Fit Bit", 1, 100);
+        BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
+        buyOffer.resolveOffer();
+        assertTrue(!SellOffersDB.getSellOffersDB().getMarketSellOffers().containsKey(1) &&
+                BuyOffersDB.getBuyOffersDB().getOffer(1).getQuantity() == 2);
+
+    }
+
+    // test reducing the quantities of matching buy and sell offers, when the buy offer quantity is greater
+    // expect sell offer to be removed, but buy offer has a reduced quantity
+    // testing a private method
+    @Test
+    public void reduceGreaterSellOfferQuantities() {
+        member.listBuyOrder("Fit Bit", 1, 100);
+        otherMember.listSellOrder("Fit Bit", 3, 100);
+        BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
+        buyOffer.resolveOffer();
+        assertTrue(!BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(1) &&
+                SellOffersDB.getSellOffersDB().getOffer(1).getQuantity() == 2);
+    }
+
+    // test reducing the quantities with multiple sell offers, with more sell quantity than buy
+    @Test
+    public void reduceQuantityMultipleSellOffers() {
+        member.listBuyOrder("Fit Bit", 3, 100);
+        otherMember.listSellOrder("Fit Bit", 1, 100);
+        otherMember.listSellOrder("Fit Bit", 1, 100);
+        BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
+        buyOffer.resolveOffer();
+        assertTrue(!SellOffersDB.getSellOffersDB().getMarketSellOffers().containsKey(1) &&
+                !SellOffersDB.getSellOffersDB().getMarketSellOffers().containsKey(2) &&
+                BuyOffersDB.getBuyOffersDB().getOffer(1).getQuantity() == 1);
+    }
+
+    // test reducing the quantities with multiple sell offers, with more buy quantity than sell
+    @Test
+    public void reduceQuantityMultipleSellOffersGreaterQuantity() {
+        member.listBuyOrder("Fit Bit", 3, 100);
+        otherMember.listSellOrder("Fit Bit", 2, 100);
+        otherMember.listSellOrder("Fit Bit", 2, 100);
+        BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
+        buyOffer.resolveOffer();
+        assertTrue(!BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().containsKey(1) &&
+                !SellOffersDB.getSellOffersDB().getMarketSellOffers().containsKey(1) &&
+                SellOffersDB.getSellOffersDB().getOffer(2).getQuantity() == 1);
     }
 
 

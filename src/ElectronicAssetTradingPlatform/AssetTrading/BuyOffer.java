@@ -28,8 +28,6 @@ public class BuyOffer extends Offer{
         this.orderID = createUniqueID();
     }
 
-
-
     @Override
     public int getOfferID() {
         return this.orderID;
@@ -54,9 +52,49 @@ public class BuyOffer extends Offer{
 
     @Override
     public void resolveOffer() {
-        // Implement resolve offer, use checkMatchedOffer() also?
-        long millis = System.currentTimeMillis();
-        this.dateResolved = new Date(millis);
+        // loop until there is no matching offer OR this.quantity == 0
+        while(checkMatchedOffer() != 0 && this.getQuantity() > 0) {
+            int matchingID = checkMatchedOffer();
+
+            // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
+            reduceOrderQuantities(matchingID);
+
+            // buy offer is fully resolved
+            if (this.getQuantity() <= 0) {
+                long millis = System.currentTimeMillis();
+                this.dateResolved = new Date(millis);
+            }
+        }
+    }
+
+    private void reduceOrderQuantities(int matchingID) {
+        if (matchingID != 0) {
+            SellOffer matchingSellOffer = SellOffersDB.getSellOffersDB().getOffer(matchingID);
+            // if the quantity of buy and sell offers are equal remove them both from the DB
+            if (this.getQuantity() == matchingSellOffer.getQuantity()) {
+                SellOffersDB.removeSellOffer(matchingID);
+                this.setQuantity(0);
+                BuyOffersDB.removeBuyOffer(this.getOfferID());
+                matchingSellOffer.setQuantity(0);
+            }
+            // if the quantity of buy offer is greater than the sell offer, remove the sell offer from DB
+            // and reduce the quantity of the buy offer
+            else if (this.getQuantity() > matchingSellOffer.getQuantity()) {
+                this.setQuantity(this.getQuantity() - matchingSellOffer.getQuantity());
+                // update the database with new quantity
+                BuyOffersDB.addBuyOffer(this.getOfferID(), this);
+                matchingSellOffer.setQuantity(0);
+                SellOffersDB.removeSellOffer(matchingID);
+            }
+            // if the quantity of buy offers is less than the sell offers, remove the buy offer from DB
+            // and reduce the quantity of the sell offer
+            else {
+                matchingSellOffer.setQuantity(matchingSellOffer.getQuantity() - this.getQuantity());
+                SellOffersDB.addSellOffer(matchingID, matchingSellOffer);
+                BuyOffersDB.removeBuyOffer(this.getOfferID());
+                this.setQuantity(0);
+            }
+        }
     }
 
     // function to return sell offers with matching asset name

@@ -80,11 +80,18 @@ public abstract class Offer {
 
     // Concrete methods
     /**
+     * Setter for the quantity field
+     */
+        protected void setQuantity(int newQuantity) {
+            this.quantity = newQuantity;
+        }
+
+    /**
      * Getter for the quantity field
      *
      * @return The quantity of the asset
      */
-    protected int getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
