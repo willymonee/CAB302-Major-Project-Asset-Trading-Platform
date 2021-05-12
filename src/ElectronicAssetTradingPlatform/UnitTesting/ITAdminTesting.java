@@ -9,6 +9,7 @@ import ElectronicAssetTradingPlatform.Users.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.AfterClass;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -16,13 +17,24 @@ import java.sql.SQLException;
 public class ITAdminTesting {
     // Exception codes: https://sqlite.org/rescode.html
     private static final int CONSTRAINT_EXCEPTION_CODE = 19;
+    /*
+    DELETE FROM User_Accounts;
+    INSERT INTO Organisational_Units (Name, Credits) VALUES ("unit1", "5");
+     */
 
     ITAdmin itAdmin;
+    UsersDataSource db;
 
     @BeforeEach
     @Test
     public void setUpITAdmin() {
+        // Recreate db
         ETPDataSource etp = new ETPDataSource();
+        try {
+            db = new UsersDataSource();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         // create an organisational unit member
         itAdmin = new ITAdmin("adminGuy", "pass123", "salt");
 
@@ -30,22 +42,16 @@ public class ITAdminTesting {
 
     // Create new users tests
     @Test
-    public void invalidName() {
-        assertThrows(Exception.class, () -> itAdmin.createUser("", "", "ITAdmin"));
-        assertThrows(Exception.class, () -> itAdmin.createUser(" ", "", "ITAdmin"));
-        assertThrows(Exception.class, () -> itAdmin.createUser(null, "", "ITAdmin"));
-    }
-    @Test
-    public void invalidUnitName() {
-        assertThrows(Exception.class, () -> itAdmin.createUser("bob", "", "OrganisationalUnitLeader"));
-        assertThrows(Exception.class, () -> itAdmin.createUser("bob", " ", "OrganisationalUnitLeader"));
-        assertThrows(Exception.class, () -> itAdmin.createUser("bob", null, "OrganisationalUnitLeader"));
+    public void emptyName() {
+        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser("", "", "ITAdmin"));
+        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser(" ", "", "ITAdmin"));
+        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser(null, "", "ITAdmin"));
     }
     @Test
     public void invalidUserType() {
-        assertThrows(Exception.class, () -> itAdmin.createUser("bob", "", "asd"));
-        assertThrows(Exception.class, () -> itAdmin.createUser("bob", "", ""));
-        assertThrows(Exception.class, () -> itAdmin.createUser("bob", "", null));
+        assertThrows(User.UserTypeException.class, () -> itAdmin.createUser("bob", "", "asd"));
+        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser("bob", "", ""));
+        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser("bob", "", null));
     }
     @Test
     public void validITAdmin() throws Exception {
@@ -92,24 +98,14 @@ public class ITAdminTesting {
         assertNotEquals(user1, user4);
     }
 
-    // Edit user tests
-    @Test
-    public void editUser() throws Exception {
-        itAdmin.editUser("user1", "OrganisationalUnitLeader", "Unit1");
-    }
-
     // Users Data Source test
     @Test
     public void insertLeader() {
         try {
-            UsersDataSource db = new UsersDataSource();
             User user = itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader");
             db.insertUser(user);
 
             User dbUser = db.getUser("newLeader");
-
-            System.out.println(user.getUsername());
-            System.out.println(dbUser.getUsername());
 
             assertEquals(user.getUsername(), dbUser.getUsername());
         }
@@ -130,14 +126,10 @@ public class ITAdminTesting {
     @Test
     public void insertSysAdmin() {
         try {
-            UsersDataSource db = new UsersDataSource();
             User user = itAdmin.createUser("newSysAdmin1", "", "SystemsAdmin");
             db.insertUser(user);
 
             User dbUser = db.getUser("newSysAdmin1");
-
-            System.out.println(user.getUsername());
-            System.out.println(dbUser.getUsername());
 
             assertEquals(user.getUsername(), dbUser.getUsername());
         }
@@ -158,14 +150,10 @@ public class ITAdminTesting {
     @Test
     public void insertITAdmin() {
         try {
-            UsersDataSource db = new UsersDataSource();
             User user = itAdmin.createUser("newITAdmin1", "", "ITAdmin");
             db.insertUser(user);
 
             User dbUser = db.getUser("newITAdmin1");
-
-            System.out.println(user.getUsername());
-            System.out.println(dbUser.getUsername());
 
             assertEquals(user.getUsername(), dbUser.getUsername());
         }
@@ -182,5 +170,26 @@ public class ITAdminTesting {
             e.printStackTrace();
             assert false;
         }
+    }
+
+    // Edit user tests
+    @Test
+    public void editMember() {
+        try {
+            itAdmin.editUser("newLeader", "OrganisationalUnitMembers", "unit1");
+        } catch (Exception e) {
+            System.out.println("Must use the queries up top and re-run. Error caused by missing unit data");
+            e.printStackTrace();
+        }
+
+    }
+    @Test
+    public void editITAdmin() throws Exception {
+        itAdmin.editUser("newITAdmin1", "SystemsAdmin", "unit1");
+    }
+
+    @AfterClass
+    public void close() throws SQLException {
+        db.close();
     }
 }

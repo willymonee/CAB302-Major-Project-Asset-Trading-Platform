@@ -1,12 +1,11 @@
 package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
-import ElectronicAssetTradingPlatform.Database.DBConnectivity;
+import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 
 import java.security.SecureRandom;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -96,18 +95,16 @@ public class ITAdmin extends User {
 
         // Create user - from userType
         User newUser;
-        switch (UserTypeEnum.valueOf(userType)) {
-            case ITAdmin -> newUser = new ITAdmin(name, password, salt);
-            case OrganisationalUnitMembers -> {
-                checkInputEmpty(unitName);
-                newUser = new OrganisationalUnitMembers(name, password, salt, unitName);
+        try {
+            switch (UserTypeEnum.valueOf(userType)) {
+                case ITAdmin -> newUser = new ITAdmin(name, password, salt);
+                case OrganisationalUnitMembers -> newUser = new OrganisationalUnitMembers(name, password, salt, unitName);
+                case OrganisationalUnitLeader ->  newUser = new OrganisationalUnitLeader(name, password, salt, unitName);
+                case SystemsAdmin -> newUser = new SystemsAdmin(name, password, salt);
+                default -> throw new IllegalArgumentException();
             }
-            case OrganisationalUnitLeader -> {
-                checkInputEmpty(unitName);
-                newUser = new OrganisationalUnitLeader(name, password, salt, unitName);
-            }
-            case SystemsAdmin -> newUser = new SystemsAdmin(name, password, salt);
-            default -> throw new UserTypeException("Invalid user type");
+        } catch (IllegalArgumentException e) {
+            throw new UserTypeException("Invalid user type");
         }
 
         return newUser;
@@ -128,30 +125,27 @@ public class ITAdmin extends User {
 
     /**
      * Choose to edit the user's username, user type and organisational unit [C]
-     *  @param username the new username the use will have
+     * @param username the new username the use will have
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
      * @return
      */
-    public String[] editUser(String username, String userType, String unitName ) throws Exception {
+    public void editUser(String username, String userType, String unitName) throws EmptyFieldException, SQLException, UserTypeException {
         // Check valid input
         checkInputEmpty(username);
+        checkInputEmpty(userType);
 
-        // Get user with SQL from username
-        /*Connection connection = DBConnectivity.getInstance();
-        connection.
-
-
-        // Set new if changed
-        if (!userType.equals(mockResult[1])) {
-            mockResult[1] = userType;
+        // Checks complete - query to update db
+        // Clear unit name if IT/SysAdmin
+        try {
+            switch (User.UserTypeEnum.valueOf(userType)) {
+                case ITAdmin, SystemsAdmin -> new UsersDataSource().editUser(username, userType, null);
+                case OrganisationalUnitMembers, OrganisationalUnitLeader -> new UsersDataSource().editUser(username, userType, unitName);
+                default -> throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException e) {
+            throw new UserTypeException("Invalid user type");
         }
-
-        if (!userType.equals(mockResult[2])) {
-            mockResult[2] = unitName;
-        }*/
-
-        return null;
     }
 
     /**
