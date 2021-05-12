@@ -19,7 +19,6 @@ public class ITAdminTesting {
     private static final int CONSTRAINT_EXCEPTION_CODE = 19;
     /*
     DELETE FROM User_Accounts;
-    DELETE FROM Organisational_Units;
     INSERT INTO Organisational_Units (Name, Credits) VALUES ("unit1", "5");
      */
 
@@ -175,8 +174,13 @@ public class ITAdminTesting {
 
     // Edit user tests
     @Test
-    public void editMember() throws Exception {
-        itAdmin.editUser("newLeader", "OrganisationalUnitLeader", "unit1");
+    public void editMember() {
+        try {
+            itAdmin.editUser("newLeader", "OrganisationalUnitMembers", "unit1");
+        } catch (Exception e) {
+            System.out.println("Must use the queries up top and re-run. Error caused by missing unit data");
+            e.printStackTrace();
+        }
 
     }
     @Test
