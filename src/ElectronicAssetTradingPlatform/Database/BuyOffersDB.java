@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.Database;
 
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 
 
 import java.util.Iterator;
@@ -71,12 +72,12 @@ public class BuyOffersDB {
     }
 
 
-    public String getOrgBuyOffers(String orgName) {
+    public String getOrgBuyOffers(String org) {
         Iterator<Map.Entry<Integer, BuyOffer>> entries = MarketBuyOffers.entrySet().iterator();
         String OrgMarketOffers = "";
         while (entries.hasNext()) {
             Map.Entry<Integer, BuyOffer> entry = entries.next();
-            if (entry.getValue().getUnitName() == orgName) {
+            if (entry.getValue().getUnitName() == org) {
                 OrgMarketOffers += entry.getValue().toString();
                 if (entries.hasNext()) {
                     OrgMarketOffers += "\n";

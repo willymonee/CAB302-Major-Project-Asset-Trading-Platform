@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 public class OrganisationalUnit {
     private String name;
-    private float credits;
+    private double credits;
     private Map<String,Integer> assetsOwned;
 
     /**
@@ -38,8 +38,8 @@ public class OrganisationalUnit {
      *
      * @throws Exception exception handling so that net credits cannot be less than zero
      */
-    public void editCredits(float credits) throws Exception {
-        if ( (this.credits += credits) < 0) {           // this code line might be incorrect and may need fixing
+    public void editCredits(double credits) throws Exception {
+        if ((this.credits + credits) < 0) {           // this code line might be incorrect and may need fixing
             throw new Exception("Cannot remove more credits than there actually are!");
         }
         else {
@@ -60,19 +60,15 @@ public class OrganisationalUnit {
      *
      */
     public void addAsset(String assetName, int quantityToAdd) {
-        // if the organisation already has any amount of the asset
-        if (AssetCollection.checkAssetExists(assetName)) {
-            // if the organisation already has any amount of the asset
-            if (assetsOwned.containsKey(assetName)) {
-                int currentQuantity = assetsOwned.get(assetName);
-                quantityToAdd += currentQuantity;
-            }
-            // if the organisation does not currently have any amount of the asset
-            assetsOwned.put(assetName, quantityToAdd);
+        if (assetsOwned.containsKey(assetName)) {
+            assetsOwned.put(assetName, assetsOwned.get(assetName) + quantityToAdd);
         }
         else {
-            // asset does not exist in the system please create it
+            assetsOwned.put(assetName, quantityToAdd);
         }
+
+
+
     }
 
     /**
@@ -107,7 +103,11 @@ public class OrganisationalUnit {
         }
     }
 
-    public float getCredits() {
+    public void removeAllAssets() {
+        assetsOwned.clear();
+    }
+
+    public double getCredits() {
         return credits;
     }
 

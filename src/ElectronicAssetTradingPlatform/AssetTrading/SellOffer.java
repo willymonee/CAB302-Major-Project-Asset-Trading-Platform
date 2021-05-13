@@ -46,7 +46,7 @@ public class SellOffer extends Offer {
     }
 
 
-    @Override
+
     public void resolveOffer() {
         // loop until there is no matching offer OR this.quantity == 0
         while (checkMatchedOffer() != 0 && this.getQuantity() > 0) {

@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.Users;
 
+import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.Database.AssetCollection;
 
 import java.util.Random;
@@ -155,7 +156,7 @@ public class ITAdmin extends User {
         }
 
         if (!userType.equals(mockResult[2])) {
-            mockResult[2] = unitName;
+            mockResult[2] = unitName.toString();
         }
 
         return mockResult;
