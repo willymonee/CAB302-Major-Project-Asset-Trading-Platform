@@ -450,10 +450,7 @@ public class OfferTesting {
         BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
         buyOffer.resolveOffer(management, humanResources);
 
-        System.out.println("Buyer owns: " + management.getAssetsOwned());
-        System.out.println("Seller owns: " + humanResources.getAssetsOwned());
-        System.out.println("Buyer credits: " + management.getCredits());
-        System.out.println("Seller credits: " + humanResources.getCredits());
+
         // 2 Fit Bits are bought and sold @95
         assertTrue(management.getAssetsOwned().get("Fit Bit") == 5 &&
                 humanResources.getAssetsOwned().get("Fit Bit") == 1 &&
@@ -465,4 +462,84 @@ public class OfferTesting {
     /**
      * Resolving trading assets - sell offers to a newly created sell offer
      */
+
+    @Test
+    public void tradeAssetsSelltoBuyOffer() throws Exception {
+        // member - human resources = buyer
+        // otherMember - management = seller
+        humanResources.addAsset("Fit Bit", 3);
+        management.addAsset("Fit Bit", 3);
+        otherMember.listBuyOrder("Fit Bit", 2, 100);
+        member.listSellOrder("Fit Bit", 2, 100);
+        SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
+        sellOffer.resolveOffer(management, humanResources);
+        assertTrue(management.getAssetsOwned().get("Fit Bit") == 5 &&
+                humanResources.getAssetsOwned().get("Fit Bit") == 1 &&
+                management.getCredits() == 800 &&
+                humanResources.getCredits() == 1200);
+    }
+
+    // test trading assets between two organisations when resolving a sell offer - more quantity buy offer than sell offer
+    @Test
+    public void tradeAssetsSelltoGreaterBuyOffer() throws Exception {
+        // member is part of human resources - in this case is a seller
+        // other member is part of management - in this case a buyer
+        humanResources.addAsset("Fit Bit", 3);
+        management.addAsset("Fit Bit", 3);
+        otherMember.listBuyOrder("Fit Bit", 10, 100);
+        member.listSellOrder("Fit Bit", 2, 100);
+
+        SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
+        sellOffer.resolveOffer(management, humanResources);
+
+        assertTrue(management.getAssetsOwned().get("Fit Bit") == 5 &&
+                humanResources.getAssetsOwned().get("Fit Bit") == 1 &&
+                management.getCredits() == 800 &&
+                humanResources.getCredits() == 1200);
+    }
+
+    // test trading assets between two organisations - more quantity sell offer than buy offer
+    @Test
+    public void tradeAssetsGreaterSelltoBuyOffer() throws Exception {
+        // member is part of human resources - in this case is a seller
+        // other member is part of management - in this case a buyer
+        humanResources.addAsset("Fit Bit", 3);
+        management.addAsset("Fit Bit", 3);
+        otherMember.listBuyOrder("Fit Bit", 2, 100);
+        member.listSellOrder("Fit Bit", 3, 100);
+        SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
+        sellOffer.resolveOffer(management, humanResources);
+        assertTrue(management.getAssetsOwned().get("Fit Bit") == 5 &&
+                humanResources.getAssetsOwned().get("Fit Bit") == 1 &&
+                management.getCredits() == 800 &&
+                humanResources.getCredits() == 1200);
+    }
+
+    @Test
+    public void tradeAssetsSellToMultipleBuyOffers() throws Exception {
+        humanResources.addAsset("Fit Bit", 5);
+        management.addAsset("Fit Bit", 3);
+
+        otherMember.listBuyOrder("Fit Bit", 2, 100);
+        otherMember.listBuyOrder("Fit Bit", 2, 95);
+        otherMember.listBuyOrder("Fit Bit", 2, 105);
+
+        member.listSellOrder("Fit Bit", 4, 100);
+
+        SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
+        sellOffer.resolveOffer(management, humanResources);
+
+        System.out.println("Buyer owns: " + management.getAssetsOwned());
+        System.out.println("Seller owns: " + humanResources.getAssetsOwned());
+        System.out.println("Buyer credits: " + management.getCredits());
+        System.out.println("Seller credits: " + humanResources.getCredits());
+
+        // 4 Fit Bits are bought and sold @100
+        assertTrue(management.getAssetsOwned().get("Fit Bit") == 7 &&
+                humanResources.getAssetsOwned().get("Fit Bit") == 1 &&
+                management.getCredits() == 600 &&
+                humanResources.getCredits() == 1400);
+    }
+
+
 }

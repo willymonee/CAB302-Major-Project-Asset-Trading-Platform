@@ -63,7 +63,8 @@ public abstract class Offer {
      * [M]
      *
      */
-    // public abstract void resolveOffer(OrganisationalUnit buyer, OrganisationalUnit seller);
+    //public abstract void resolveOffer(OrganisationalUnit buyer, OrganisationalUnit seller);
+    public abstract void resolveOffer();
 
 
 

@@ -40,23 +40,95 @@ public class SellOffer extends Offer {
                 + getPricePerUnit() + "\t" + getUsername() + "\t" + getUnitName() + "\t" + getDatePlaced();
     }
 
+
+
+
     @Override
     public int getOfferID() {
         return this.orderID;
     }
 
 
-
+    // temporary function delete later
     public void resolveOffer() {
         // loop until there is no matching offer OR this.quantity == 0
         while (checkMatchedOffer() != 0 && this.getQuantity() > 0) {
             int matchingID = checkMatchedOffer();
             // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
             reduceOrderQuantities(matchingID);
-            // buy offer is fully resolved
+            // sell offer is fully resolved
             if (this.getQuantity() <= 0) {
                 long millis = System.currentTimeMillis();
                 this.dateResolved = new Date(millis);
+            }
+        }
+    }
+
+    // overriden function which also exchanges assets between buyer and seller
+    public void resolveOffer(OrganisationalUnit buyer, OrganisationalUnit seller) throws Exception {
+        // loop until there is no matching offer OR this.quantity == 0
+        while(checkMatchedOffer() != 0 && this.getQuantity() > 0) {
+            int matchingID = checkMatchedOffer();
+
+            // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
+            // and trade assets
+            reduceOrderQuantities(matchingID, buyer, seller);
+
+            // sell offer is fully resolved
+            if (this.getQuantity() <= 0) {
+                long millis = System.currentTimeMillis();
+                this.dateResolved = new Date(millis);
+            }
+        }
+    }
+
+    // overridden, function which also exchanges assets between buyer and seller
+    private void reduceOrderQuantities(int matchingID, OrganisationalUnit buyOrg, OrganisationalUnit sellOrg) throws Exception {
+        if (matchingID != 0) {
+            BuyOffer matchingBuyOffer = BuyOffersDB.getBuyOffersDB().getOffer(matchingID);
+            double sellersPrice = this.getPricePerUnit();
+            // if the quantity of buy and sell offers are equal remove them both from the DB
+            if (this.getQuantity() == matchingBuyOffer.getQuantity()) {
+                int quantityTraded = this.getQuantity();
+                buyOrg.addAsset(this.getAssetName(), quantityTraded);
+                sellOrg.removeAsset(this.getAssetName(), quantityTraded);
+                sellOrg.editCredits(sellersPrice * (double)quantityTraded);
+                buyOrg.editCredits(-(sellersPrice * (double)quantityTraded));
+
+
+                SellOffersDB.removeSellOffer(matchingID);
+                this.setQuantity(0);
+                BuyOffersDB.removeBuyOffer(this.getOfferID());
+                matchingBuyOffer.setQuantity(0);
+            }
+            // if the quantity of buy offer is greater than the sell offer, remove the sell offer from DB
+            // and reduce the quantity of the buy offer
+            else if (this.getQuantity() > matchingBuyOffer.getQuantity()) {
+                int quantityTraded = matchingBuyOffer.getQuantity();
+                buyOrg.addAsset(this.getAssetName(), quantityTraded);
+                sellOrg.removeAsset(this.getAssetName(), quantityTraded);
+                sellOrg.editCredits(sellersPrice * (double)quantityTraded);
+                buyOrg.editCredits(-(sellersPrice * (double)quantityTraded));
+
+                this.setQuantity(this.getQuantity() - matchingBuyOffer.getQuantity());
+                // update the database with new quantity
+                SellOffersDB.addSellOffer(this.getOfferID(), this);
+                matchingBuyOffer.setQuantity(0);
+                BuyOffersDB.removeBuyOffer(matchingID);
+            }
+            // if the quantity of buy offers is less than the sell offers, remove the buy offer from DB
+            // and reduce the quantity of the sell offer
+            else {
+                int quantityTraded = this.getQuantity();
+                buyOrg.addAsset(this.getAssetName(), quantityTraded);
+                sellOrg.removeAsset(this.getAssetName(), quantityTraded);
+                sellOrg.editCredits(sellersPrice * (double)quantityTraded);
+                buyOrg.editCredits(-(sellersPrice * (double)quantityTraded));
+
+                matchingBuyOffer.setQuantity(matchingBuyOffer.getQuantity() - this.getQuantity());
+                BuyOffersDB.addBuyOffer(matchingID, matchingBuyOffer);
+                SellOffersDB.removeSellOffer(this.getOfferID());
+                this.setQuantity(0);
             }
         }
     }
