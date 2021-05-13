@@ -32,16 +32,18 @@ public class OrganisationalUnitMembers extends User {
 
     /**
      * Display current sell offers made by the organisational unit [M]
+     * @return
      */
-    public void getcurrentSellOffers() {
+    public String getOrgSellOffers() {
+        return SellOffersDB.getSellOffersDB().getOrgSellOffers(this.organisationalUnitName);
 
     }
 
     /**
      * Display current buy offers made by the organisational unit [M]
      */
-    public void getcurrentBuyOffers() {
-
+    public String getOrgBuyOffers() {
+        return BuyOffersDB.getBuyOffersDB().getOrgBuyOffers(this.organisationalUnitName);
     }
 
     /**
@@ -55,7 +57,7 @@ public class OrganisationalUnitMembers extends User {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // add offer into DB
-        BuyOffersDB.addBuyOffer(offer.getBuyOrderID(), offer);
+        BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
     }
 
     /**

@@ -1,18 +1,16 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * An abstract class that is used to help create trade offers to buy/sell assets
  */
 public abstract class Offer {
-    private int orderID; // might not need, use SQL auto-increment (but it is the only unique value for this class)
     private String assetName;
     private int quantity;
     private double pricePerUnit;
     private String username;
     private String organisationalUnitName;
-    private Date dateResolved;
     private Date datePlaced;
 
     /**
@@ -31,10 +29,45 @@ public abstract class Offer {
         this.organisationalUnitName = organisationalUnitName;
         long millis = System.currentTimeMillis();
         this.datePlaced = new Date(millis);
-        dateResolved = null;
     }
 
-    public abstract String displayOffer();
+    // Abstract methods
+    /**
+     * Getter for Offer ID
+     *
+     * @return The particular offerID of an offer as an integer.
+     */
+    public abstract int getOfferID();
+
+    /**
+     * Create a unique ID for sell and buy offers. The IDs are separate between buy and sell offers e.g.
+     * there can be a sell and buy offer with IDs == 1 at the same time
+     *
+     * @return A unique ID for either sell or buy offers as an integer.
+     */
+    protected abstract int createUniqueID();
+
+    /**
+     * Override the object and covert it into a string.
+     *
+     * @return The object in string format.
+     */
+    public abstract String toString();
+
+
+
+    /**
+     * Deduct or add appropriate amount of credits from the organisational unit based on the pricePerUnit
+     * and the quantity bought or sold, as well as add the correct amount of assets bought or sold
+     * Also delete the offer if all the requested assets have been sold or purchased, otherwise update the offer
+     * [M]
+     *
+     */
+    //public abstract void resolveOffer(OrganisationalUnit buyer, OrganisationalUnit seller);
+    public abstract void resolveOffer();
+
+
+
 
     /**
      * Compare the newly created offer with existing buy and sell orders and
@@ -43,38 +76,23 @@ public abstract class Offer {
      *
      * @return Returns the matching order ID if there is a match, returns 0 otherwise.
      */
-    public int checkMatchedOffer() {
-        return 0;
-    }
+    public abstract int checkMatchedOffer();
 
 
+    // Concrete methods
     /**
-     *
+     * Setter for the quantity field
      */
-    public int getOfferID() {
-        return this.orderID;
-    }
-    /**
-     * Deduct or add appropriate amount of credits from the organisational unit based on the pricePerUnit
-     * and the quantity bought or sold, as well as add the correct amount of assets bought or sold
-     * Also delete the offer if all the requested assets have been sold or purchased, otherwise update the offer
-     * [M]
-     *
-     */
-    public abstract void resolveOffer(); // Implemented by either the sellOffer or buyOffer class
-
-    /**
-     * Create a unique ID for sell and buy offers.
-     * @return
-     */
-    public abstract int createUniqueID();
+        protected void setQuantity(int newQuantity) {
+            this.quantity = newQuantity;
+        }
 
     /**
      * Getter for the quantity field
      *
      * @return The quantity of the asset
      */
-    protected int getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
@@ -102,7 +120,7 @@ public abstract class Offer {
      *
      * @return The organisational unit name whose assets and credits will be affected
      */
-    protected String getUnitName() {
+    public String getUnitName() {
         return organisationalUnitName;
     }
 
