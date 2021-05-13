@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.Base64;
 
 public class Hashing {
-    public static final int SALT_SIZE = 16;
-
     private static byte[] stringToBytes(String str) {
         return Base64.getDecoder().decode(str);
     }

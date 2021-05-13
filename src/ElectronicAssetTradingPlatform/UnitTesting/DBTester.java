@@ -1,4 +1,6 @@
-package ElectronicAssetTradingPlatform.Database;
+package ElectronicAssetTradingPlatform.UnitTesting;
+
+import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 
 public class DBTester {
 

@@ -14,8 +14,8 @@ public class OrganisationalUnitLeader extends OrganisationalUnitMembers {
      * @param unitName string name of the organisational unit the member is a part of
      *
      */
-    public OrganisationalUnitLeader(String username, String password, String unitName) {
-        super(username, password, unitName);
+    public OrganisationalUnitLeader(String username, String password, String salt, String unitName) {
+        super(username, password, salt, unitName);
         this.userType = UserTypeEnum.OrganisationalUnitLeader.toString();
     }
 

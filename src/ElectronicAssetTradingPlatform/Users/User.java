@@ -6,6 +6,7 @@ package ElectronicAssetTradingPlatform.Users;
 public class User {
     private String username;
     private String password;
+    private String salt;
     protected String userType; // So that children can set their own userType in constructor (safety?)
 
     // Available user type enum
@@ -20,10 +21,11 @@ public class User {
      * @param password string matched with username identifier used to login
      *
      */
-    public User(String username, String password) {
+    public User(String username, String password, String salt) {
         // Users constructor
         this.username = username;
         this.password = password;
+        this.salt = salt;
     }
 
     /**
@@ -46,16 +48,21 @@ public class User {
         // connectDB method
     }
 
-    protected String getUsername() {return username;}
+    public String getUsername() {return username;}
+    public String getPassword() {return password;}
+    public String getSalt() {return salt;}
+    public String getUserType() {return userType;}
 
-    /*
-     * Helper function to create elements of the GUI common in all users’
-     * GUIs, such as the navigation bar and footer.
-     *
-     * !!!!!!!!!!!!!!! Probably remove - make separate GUI classes specifically for this !!!!!!!!!!!!!!!
-     */
-    /*protected void GUI_nav() {
-        // GUI_nav method
-    }*/
 
+    public static class UserTypeException extends Exception {
+        public UserTypeException(String message) {
+            super(message);
+        }
+    }
+
+    public static class EmptyFieldException extends Exception {
+        public EmptyFieldException(String message) {
+            super(message);
+        }
+    }
 }

@@ -24,8 +24,8 @@ public class OrganisationalUnitMembers extends User {
      * @param unitName string name of the organisational unit the member is a part of
      *
      */
-    public OrganisationalUnitMembers(String username, String password, String unitName) {
-        super(username, password);
+    public OrganisationalUnitMembers(String username, String password, String salt, String unitName) {
+        super(username, password, salt);
         this.userType = UserTypeEnum.OrganisationalUnitMembers.toString();
         this.organisationalUnitName = unitName;
     }
@@ -144,4 +144,6 @@ public class OrganisationalUnitMembers extends User {
     public int getUnitCredits() {
         return 0;
     }
+
+    public String getUnitName() { return organisationalUnitName; }
 }
