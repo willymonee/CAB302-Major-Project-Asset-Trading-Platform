@@ -129,7 +129,6 @@ public class BuyOffer extends Offer{
                 sellOrg.editCredits(sellersPrice * (double)quantityTraded);
                 buyOrg.editCredits(-(sellersPrice * (double)quantityTraded));
 
-
                 SellOffersDB.removeSellOffer(matchingID);
                 this.setQuantity(0);
                 BuyOffersDB.removeBuyOffer(this.getOfferID());

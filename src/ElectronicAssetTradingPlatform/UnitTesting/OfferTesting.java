@@ -31,8 +31,8 @@ public class OfferTesting {
         humanResources = new OrganisationalUnit("Human Resources", 1000);
         management = new OrganisationalUnit("Management", 1000);
         // create an organisational unit member
-        member = new OrganisationalUnitMembers("Sammy101", "asdf", "Human Resources");
-        otherMember = new OrganisationalUnitMembers("Linax0x", "asdf",
+        member = new OrganisationalUnitMembers("Sammy101", "asdf", "salt","Human Resources");
+        otherMember = new OrganisationalUnitMembers("Linax0x", "salt","asdf",
                 "Management");
         // get the current date
         long millis = System.currentTimeMillis();
@@ -394,6 +394,7 @@ public class OfferTesting {
                 management.getCredits() == 800 &&
                 humanResources.getCredits() == 1200);
     }
+
     /*
         System.out.println("Buyer owns: " + management.getAssetsOwned());
         System.out.println("Seller owns: " + humanResources.getAssetsOwned());
@@ -529,10 +530,6 @@ public class OfferTesting {
         SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
         sellOffer.resolveOffer(management, humanResources);
 
-        System.out.println("Buyer owns: " + management.getAssetsOwned());
-        System.out.println("Seller owns: " + humanResources.getAssetsOwned());
-        System.out.println("Buyer credits: " + management.getCredits());
-        System.out.println("Seller credits: " + humanResources.getCredits());
 
         // 4 Fit Bits are bought and sold @100
         assertTrue(management.getAssetsOwned().get("Fit Bit") == 7 &&
