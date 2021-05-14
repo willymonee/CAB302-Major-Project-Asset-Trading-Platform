@@ -3,10 +3,13 @@ package ElectronicAssetTradingPlatform.Passwords;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 
 public class Hashing {
+    public static final int SALT_SIZE = 12;
+
     private static byte[] stringToBytes(String str) {
         return Base64.getDecoder().decode(str);
     }
@@ -32,5 +35,17 @@ public class Hashing {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static byte[] newRngBytes(int length) {
+        // Check length
+        if (length == 0) throw new IndexOutOfBoundsException("Length cannot be 0");
+
+        // Create random bytes
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[length];
+        random.nextBytes(salt);
+
+        return salt;
     }
 }

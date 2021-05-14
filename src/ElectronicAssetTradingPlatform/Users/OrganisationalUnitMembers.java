@@ -5,8 +5,10 @@ import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.SellOffersDB;
+import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 
-import java.util.Map;
+import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  *  OrganisationalUnitMembers class which extends the user class. This class is implemented
@@ -132,8 +134,8 @@ public class OrganisationalUnitMembers extends User {
      *
      * @return Returns the map of asset_name and quantity
      */
-    public Map<String,Integer> getUnitAssets() {
-        return null;
+    public HashMap<String, Integer> getUnitAssets() throws SQLException {
+        return new UsersDataSource().getUnitAssets(organisationalUnitName);
     }
 
     /**
@@ -141,8 +143,8 @@ public class OrganisationalUnitMembers extends User {
      *
      * @return Returns the quantity of credits
      */
-    public int getUnitCredits() {
-        return 0;
+    public float getUnitCredits() throws SQLException {
+        return new UsersDataSource().getUnitCredits(organisationalUnitName);
     }
 
     public String getUnitName() { return organisationalUnitName; }

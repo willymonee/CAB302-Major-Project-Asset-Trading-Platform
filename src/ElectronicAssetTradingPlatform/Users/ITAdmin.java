@@ -12,9 +12,8 @@ import java.sql.SQLException;
  * organisational units, assets and the amount of credits for an organisational unit.
  */
 public class ITAdmin extends User {
-    private static SecureRandom rng;
+    private static final SecureRandom rng = new SecureRandom();
     private static final char[] characters = "abcdefghijklmnopqrstuvwxyz123456789".toCharArray();
-    private static final int SALT_SIZE = 12;
     private static final int PWD_SIZE = 8;
 
     /**
@@ -26,11 +25,6 @@ public class ITAdmin extends User {
     public ITAdmin(String username, String password, String salt) {
         super(username, password, salt);
         this.userType = UserTypeEnum.ITAdmin.toString();
-
-        // Singleton
-        if (rng == null) {
-            rng = new SecureRandom();
-        }
     }
 
     /**
@@ -75,7 +69,7 @@ public class ITAdmin extends User {
      * @param name string for name of new user
      * @param unitName string organisational unit name for new user to be associated with
      * @param userType user type for new user's access level
-     * @return
+     * @return the newly created user object
      */
     public User createUser(String name, String unitName, String userType) throws UserTypeException, EmptyFieldException {
         // Check valid parameters
@@ -84,7 +78,7 @@ public class ITAdmin extends User {
 
         // Create password - length 8
         // Hash password
-        byte[] saltBytes = newRngBytes(SALT_SIZE);
+        byte[] saltBytes = Hashing.newRngBytes(Hashing.SALT_SIZE);
         byte[] passwordBytes = Hashing.createHash(saltBytes, newRngText(PWD_SIZE));
 
         // Convert to string
@@ -122,11 +116,10 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Choose to edit the user's username, user type and organisational unit [C]
+     * Choose to edit the user's user type and organisational unit [C]
      * @param username the new username the use will have
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
-     * @return
      */
     public void editUser(String username, String userType, String unitName) throws EmptyFieldException, SQLException, UserTypeException {
         // Check valid input
@@ -176,16 +169,6 @@ public class ITAdmin extends User {
         }
 
         return password.toString();
-    }
-
-    private byte[] newRngBytes(int length) {
-        if (length == 0) throw new IndexOutOfBoundsException("Length cannot be 0");
-
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[length];
-        random.nextBytes(salt);
-
-        return salt;
     }
 
     private void checkInputEmpty(String str) throws EmptyFieldException {
