@@ -68,7 +68,7 @@ public class OrganisationalUnitMembers extends User {
      */
     public void listSellOrder(String assetType, int quantity, double price) {
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        SellOffersDB.addSellOffer(offer.getSellOfferID(), offer);
+        SellOffersDB.addSellOffer(offer.getOfferID(), offer);
     }
 
     /**

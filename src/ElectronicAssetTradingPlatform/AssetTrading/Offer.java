@@ -57,27 +57,23 @@ public abstract class Offer {
 
 
     /**
-     * Deduct or add appropriate amount of credits from the organisational unit based on the pricePerUnit
-     * and the quantity bought or sold, as well as add the correct amount of assets bought or sold
-     * Also delete the offer if all the requested assets have been sold or purchased, otherwise update the offer
-     * [M]
-     *
-     */
-    //public abstract void resolveOffer(OrganisationalUnit buyer, OrganisationalUnit seller);
-    public abstract void resolveOffer();
-
-
-
-
-    /**
      * Compare the newly created offer with existing buy and sell orders and
      * resolve matching ones e.g. if the order is a sell order check existing buy orders,
      * if the order is a buy order check existing sell orders).
      *
      * @return Returns the matching order ID if there is a match, returns 0 otherwise.
      */
-    public abstract int checkMatchedOffer();
+    public abstract int getPriceMatchedOffer();
 
+    /**
+     * If there is a matched offer deduct or add appropriate amount of credits from the organisational unit's involved
+     * Also add/remove the correct amount of assets bought or sold to the organisational units
+     * Also update the offer's quantities or alternatively delete the offer when it has been fully resolved
+     * [M]
+     *
+     */
+    //public abstract void resolveOffer(OrganisationalUnit buyer, OrganisationalUnit seller);
+    public abstract void resolveOffer();
 
     // Concrete methods
     /**
@@ -123,6 +119,18 @@ public abstract class Offer {
     public String getUnitName() {
         return organisationalUnitName;
     }
+
+    /**
+     * Get the Organisational Unit object that has the organisational unit name as the offer
+     *
+     * @return Organisational Unit object
+     * TODO
+     */
+    public OrganisationalUnit getUnit() {
+        OrganisationalUnit unit = new OrganisationalUnit("Library", 100);
+        return unit;
+    }
+
 
     /**
      * Getter for the assetname field
