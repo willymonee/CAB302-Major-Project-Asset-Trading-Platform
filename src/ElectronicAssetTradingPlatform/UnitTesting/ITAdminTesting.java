@@ -3,10 +3,7 @@ package ElectronicAssetTradingPlatform.UnitTesting;
 import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
-import ElectronicAssetTradingPlatform.Users.ITAdmin;
-import ElectronicAssetTradingPlatform.Users.OrganisationalUnitLeader;
-import ElectronicAssetTradingPlatform.Users.SystemsAdmin;
-import ElectronicAssetTradingPlatform.Users.User;
+import ElectronicAssetTradingPlatform.Users.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +18,7 @@ public class ITAdminTesting {
     /*
     DELETE FROM User_Accounts;
     INSERT INTO Organisational_Units (Name, Credits) VALUES ("unit1", "5");
+    INSERT INTO Organisational_Units (Name, Credits) VALUES ("unit2", "6");
      */
 
     ITAdmin itAdmin;
@@ -112,13 +110,13 @@ public class ITAdminTesting {
         }
         catch (SQLException e) {
             if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
-                System.out.println("User maybe already exist?");
+                System.out.println("User maybe already exist? - insertLeader()");
             } else {
                 System.out.println("Error with ITAdminTesting, will fix later");
                 System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
                 e.printStackTrace();
+                assert false;
             }
-            assert false;
         }
         catch (User.UserTypeException | User.EmptyFieldException e) {
             e.printStackTrace();
@@ -137,13 +135,13 @@ public class ITAdminTesting {
         }
         catch (SQLException e) {
             if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
-                System.out.println("User maybe already exist?");
+                System.out.println("User maybe already exist? - insertSysAdmin()");
             } else {
                 e.printStackTrace();
                 System.out.println("Error with ITAdminTesting, will fix later");
                 System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
+                assert false;
             }
-            assert false;
         }
         catch (User.UserTypeException | User.EmptyFieldException e) {
             e.printStackTrace();
@@ -162,13 +160,13 @@ public class ITAdminTesting {
         }
         catch (SQLException e) {
             if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
-                System.out.println("User maybe already exist?");
+                System.out.println("User maybe already exist? - insertITAdmin()");
             } else {
                 e.printStackTrace();
                 System.out.println("Error with ITAdminTesting, will fix later");
                 System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
+                assert false;
             }
-            assert false;
         }
         catch (User.UserTypeException | User.EmptyFieldException e) {
             e.printStackTrace();
@@ -180,7 +178,7 @@ public class ITAdminTesting {
     @Test
     public void editMember() {
         try {
-            itAdmin.editUser("newLeader", "OrganisationalUnitMembers", "unit1");
+            itAdmin.editUser("newLeader", "OrganisationalUnitMembers", "unit2");
         } catch (SQLException e) {
             System.out.println("Must use the queries up top and re-run. Error caused by missing unit data");
 
@@ -197,6 +195,18 @@ public class ITAdminTesting {
     public void editITAdmin() {
         assertDoesNotThrow(() -> itAdmin.editUser("newITAdmin1", "SystemsAdmin", "unit1"));
     }
+    @Test
+    public void checkMemberEdit() throws SQLException, User.UserTypeException {
+        User check = new UsersDataSource().getUser("newLeader");
+        assertEquals("OrganisationalUnitMembers", check.getUserType());
+        assertEquals("unit2", ((OrganisationalUnitMembers)check).getUnitName());
+    }
+    @Test
+    public void checkITAdminEdit() throws SQLException, User.UserTypeException {
+        User check = new UsersDataSource().getUser("newITAdmin1");
+        assertEquals("SystemsAdmin", check.getUserType());
+    }
+
 
     // Change password test
     @Test
