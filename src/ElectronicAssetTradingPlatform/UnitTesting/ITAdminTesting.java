@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.UnitTesting;
 
 import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.Users.ITAdmin;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitLeader;
 import ElectronicAssetTradingPlatform.Users.SystemsAdmin;
@@ -111,12 +112,13 @@ public class ITAdminTesting {
         }
         catch (SQLException e) {
             if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
-                System.out.println("Incorrect user inputs: maybe they already exist?");
+                System.out.println("User maybe already exist?");
             } else {
                 System.out.println("Error with ITAdminTesting, will fix later");
                 System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
                 e.printStackTrace();
             }
+            assert false;
         }
         catch (User.UserTypeException | User.EmptyFieldException e) {
             e.printStackTrace();
@@ -135,12 +137,13 @@ public class ITAdminTesting {
         }
         catch (SQLException e) {
             if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
-                System.out.println("Incorrect user inputs: maybe they already exist?");
+                System.out.println("User maybe already exist?");
             } else {
                 e.printStackTrace();
                 System.out.println("Error with ITAdminTesting, will fix later");
                 System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
             }
+            assert false;
         }
         catch (User.UserTypeException | User.EmptyFieldException e) {
             e.printStackTrace();
@@ -159,12 +162,13 @@ public class ITAdminTesting {
         }
         catch (SQLException e) {
             if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
-                System.out.println("Incorrect user inputs: maybe they already exist?");
+                System.out.println("User maybe already exist?");
             } else {
                 e.printStackTrace();
                 System.out.println("Error with ITAdminTesting, will fix later");
                 System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
             }
+            assert false;
         }
         catch (User.UserTypeException | User.EmptyFieldException e) {
             e.printStackTrace();
@@ -177,15 +181,47 @@ public class ITAdminTesting {
     public void editMember() {
         try {
             itAdmin.editUser("newLeader", "OrganisationalUnitMembers", "unit1");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("Must use the queries up top and re-run. Error caused by missing unit data");
+
             e.printStackTrace();
+            assert false;
+        }
+        catch (User.EmptyFieldException | User.UserTypeException e) {
+            e.printStackTrace();
+            assert false;
         }
 
     }
     @Test
-    public void editITAdmin() throws Exception {
-        itAdmin.editUser("newITAdmin1", "SystemsAdmin", "unit1");
+    public void editITAdmin() {
+        assertDoesNotThrow(() -> itAdmin.editUser("newITAdmin1", "SystemsAdmin", "unit1"));
+    }
+
+    // Change password test
+    @Test
+    public void changePwd() {
+        String pwdBefore = itAdmin.getPassword();
+        String saltBefore = itAdmin.getSalt();
+
+        // Change
+        itAdmin.changePassword("newPassword");
+
+        // Check is changed
+        assertNotEquals(pwdBefore, itAdmin.getPassword());
+        assertNotEquals(saltBefore, itAdmin.getSalt());
+    }
+    @Test
+    public void correctPwd() {
+        // Change
+        itAdmin.changePassword("newPassword");
+        assertTrue(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword", itAdmin.getPassword()));
+    }
+    @Test
+    public void incorrectPwd() {
+        // Change
+        itAdmin.changePassword("newPassword");
+        assertFalse(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword1", itAdmin.getPassword()));
     }
 
     @AfterClass

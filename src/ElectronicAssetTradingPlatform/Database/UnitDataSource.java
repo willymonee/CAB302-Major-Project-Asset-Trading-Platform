@@ -65,10 +65,14 @@ public class UnitDataSource {
     public String executeGetUserID(String username) throws SQLException{
         getUserIDQuery.setString(2, username);
         ResultSet rs = null;
-        rs = getUserIDQuery.executeQuery();
+        String userID = null;
+        try {
+            rs = getUserIDQuery.executeQuery();
+            rs.getString("User_ID");
+        } finally {
+            if (rs != null) rs.close();
+        }
 
-        return rs.getString("User_ID");
-
-        
+        return userID;
     }
 }
