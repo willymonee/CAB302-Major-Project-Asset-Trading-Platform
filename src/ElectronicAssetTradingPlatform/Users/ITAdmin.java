@@ -1,7 +1,5 @@
 package ElectronicAssetTradingPlatform.Users;
 
-import ElectronicAssetTradingPlatform.Database.AssetCollection;
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 
@@ -119,7 +117,7 @@ public class ITAdmin extends User {
         // Add parsed asset name to db
 
         // add object to the mock database/Asset Collection
-        AssetCollection.addAssetToCollection(name);
+      
     }
 
     /**

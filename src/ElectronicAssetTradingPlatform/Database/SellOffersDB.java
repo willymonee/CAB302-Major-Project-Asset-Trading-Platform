@@ -1,8 +1,11 @@
 package ElectronicAssetTradingPlatform.Database;
 
 
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -33,6 +36,7 @@ public class SellOffersDB {
         return MarketSellOffers.get(ID);
     }
 
+    public static void removeAllSellOffers() { MarketSellOffers.clear(); }
 
     public static void addSellOffer(int ID, SellOffer offer) {
         MarketSellOffers.put(ID, offer);
@@ -42,6 +46,19 @@ public class SellOffersDB {
         MarketSellOffers.remove(ID);
     }
 
+    @Override
+    public String toString() {
+        Iterator<Map.Entry<Integer, SellOffer>> entries = MarketSellOffers.entrySet().iterator();
+        String MarketOffers = "";
+        while (entries.hasNext()) {
+            Map.Entry<Integer, SellOffer> entry = entries.next();
+            MarketOffers +=  String.format(entry.getValue().toString());
+            if (entries.hasNext()) {
+                MarketOffers += "\n";
+            }
+        }
+        return MarketOffers;
+    }
 
     public static SellOffersDB getSellOffersDB() {
         if (sellOffersDB == null) {
@@ -50,5 +67,20 @@ public class SellOffersDB {
         else {
             return sellOffersDB;
         }
+    }
+
+    public String getOrgSellOffers(String orgName) {
+        Iterator<Map.Entry<Integer, SellOffer>> entries = MarketSellOffers.entrySet().iterator();
+        String OrgMarketOffers = "";
+        while (entries.hasNext()) {
+            Map.Entry<Integer, SellOffer> entry = entries.next();
+            if (entry.getValue().getUnitName() == orgName) {
+                OrgMarketOffers += entry.getValue().toString();
+                if (entries.hasNext()) {
+                    OrgMarketOffers += "\n";
+                }
+            }
+        }
+        return OrgMarketOffers;
     }
 }
