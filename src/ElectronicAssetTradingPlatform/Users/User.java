@@ -61,12 +61,18 @@ public class User {
     public String getUserType() {return userType;}
 
 
+    /**
+     * Exception for when an inputed user type is invalid
+     */
     public static class UserTypeException extends Exception {
         public UserTypeException(String message) {
             super(message);
         }
     }
 
+    /**
+     * Exception for when any mandatory input is empty
+     */
     public static class EmptyFieldException extends Exception {
         public EmptyFieldException(String message) {
             super(message);

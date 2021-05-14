@@ -217,6 +217,8 @@ public class ITAdminTesting {
         // Change
         itAdmin.changePassword("newPassword");
 
+        System.out.println("Salt (changePwd()): " + itAdmin.getSalt());
+
         // Check is changed
         assertNotEquals(pwdBefore, itAdmin.getPassword());
         assertNotEquals(saltBefore, itAdmin.getSalt());

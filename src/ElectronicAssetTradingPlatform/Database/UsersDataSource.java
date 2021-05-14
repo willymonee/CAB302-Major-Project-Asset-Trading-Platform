@@ -21,6 +21,7 @@ public class UsersDataSource {
             "ON User_Accounts.Unit_ID = Organisational_Units.Unit_ID " +
             "WHERE Username = ?";
     private static final String EDIT_USER = "UPDATE User_Accounts SET User_Type = ?, Unit_ID = ? WHERE Username = ?";
+    private static final String EDIT_PASSWORD = "UPDATE User_Accounts SET Password_hash = ?, Salt = ? WHERE Username = ?";
     private static final String GET_UNIT_CREDITS =
             "SELECT Credits " +
             "FROM  Organisational_Units " +
@@ -37,6 +38,7 @@ public class UsersDataSource {
     PreparedStatement getUserQuery;
     PreparedStatement addUserQuery;
     PreparedStatement editUserQuery;
+    PreparedStatement editPasswordQuery;
     PreparedStatement getUnitCreditsQuery;
     PreparedStatement getUnitAssetsQuery;
 
@@ -48,6 +50,7 @@ public class UsersDataSource {
         addUserQuery = connection.prepareStatement(INSERT_USER);
         getUserQuery = connection.prepareStatement(GET_USER);
         editUserQuery = connection.prepareStatement(EDIT_USER);
+        editPasswordQuery = connection.prepareStatement(EDIT_PASSWORD);
         getUnitCreditsQuery = connection.prepareStatement(GET_UNIT_CREDITS);
         getUnitAssetsQuery = connection.prepareStatement(GET_UNIT_ASSETS);
     }
@@ -125,6 +128,15 @@ public class UsersDataSource {
         editUserQuery.setString(3, username);
 
         editUserQuery.execute();
+    }
+
+    public void editUserPassword(String username, String password, String salt) throws SQLException {
+        // Initialise
+        editPasswordQuery.setString(1, password);
+        editPasswordQuery.setString(2, salt);
+        editPasswordQuery.setString(3, username);
+
+        editPasswordQuery.execute();
     }
 
     public float getUnitCredits(String unitName) throws SQLException {

@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * organisational units, assets and the amount of credits for an organisational unit.
  */
 public class ITAdmin extends User {
-    private static SecureRandom rng;
+    private static final SecureRandom rng = new SecureRandom();
     private static final char[] characters = "abcdefghijklmnopqrstuvwxyz123456789".toCharArray();
     private static final int PWD_SIZE = 8;
 
@@ -25,11 +25,6 @@ public class ITAdmin extends User {
     public ITAdmin(String username, String password, String salt) {
         super(username, password, salt);
         this.userType = UserTypeEnum.ITAdmin.toString();
-
-        // Singleton
-        if (rng == null) {
-            rng = new SecureRandom();
-        }
     }
 
     /**
