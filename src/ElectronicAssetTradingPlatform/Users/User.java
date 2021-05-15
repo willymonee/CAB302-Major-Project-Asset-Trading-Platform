@@ -1,5 +1,7 @@
 package ElectronicAssetTradingPlatform.Users;
 
+import ElectronicAssetTradingPlatform.Passwords.Hashing;
+
 /**
  * Class for the users of the application
  */
@@ -31,12 +33,17 @@ public class User {
     /**
      * Changes the user's password if certain conditions are met. [C]
      *
-     * @param password new string for user to change password to
-     * @throws Exception throws exception when...
+     * @param password new string password for the user
      */
-    public void changePassword(String password) throws Exception {
-        // changePassword method
-        throw new Exception();
+    public void changePassword(String password) {
+        // Create salt + hashed password
+        byte[] saltBytes = Hashing.newRngBytes(Hashing.SALT_SIZE);
+        byte[] passwordBytes = Hashing.createHash(saltBytes, password);
+
+        // Store password as string
+        this.password = Hashing.bytesToString(passwordBytes);
+        // Store salt as string
+        this.salt = Hashing.bytesToString(saltBytes);
     }
 
     /**
@@ -54,12 +61,18 @@ public class User {
     public String getUserType() {return userType;}
 
 
+    /**
+     * Exception for when an inputed user type is invalid
+     */
     public static class UserTypeException extends Exception {
         public UserTypeException(String message) {
             super(message);
         }
     }
 
+    /**
+     * Exception for when any mandatory input is empty
+     */
     public static class EmptyFieldException extends Exception {
         public EmptyFieldException(String message) {
             super(message);
