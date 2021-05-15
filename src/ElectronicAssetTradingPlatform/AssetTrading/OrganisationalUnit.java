@@ -67,8 +67,6 @@ public class OrganisationalUnit {
             assetsOwned.put(assetName, quantityToAdd);
         }
 
-
-
     }
 
     /**

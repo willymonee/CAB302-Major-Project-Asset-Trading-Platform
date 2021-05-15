@@ -1,7 +1,10 @@
 package ElectronicAssetTradingPlatform.Users;
 
+import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
+import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
+import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -30,10 +33,18 @@ public class ITAdmin extends User {
     /**
      * Create a new organisational unit, assign user/s to it, and update the database [M]
      *
-     * @param Name string name of the organisational unit
+     * @param name string name of the organisational unit
      * @param credits float credits to be initially assigned to the unit
      */
-    public void createOrganisationalUnit(String Name, float credits) {
+    public OrganisationalUnit createOrganisationalUnit(String name, float credits) throws EmptyFieldException {
+        checkInputEmpty(name);
+
+        OrganisationalUnit orgUnit = new OrganisationalUnit(name, credits);
+
+        // TODO: add confirmation when GUI is implemented and ADD TO DATABASE!!!!
+
+        return orgUnit;
+
         // createOrganisationalUnit method
         // Create new org unit ID
         // Assign member/s with the new unit ID (or create new user containing the org unit ID)
@@ -44,10 +55,16 @@ public class ITAdmin extends User {
      * Prints a success or error message
      *
      * @param unitName string organisational unit name that owns the assets that are to be edited
-     * @param credits int new amount of credits to edit for the organisational unit
+     * @param credits int new amou  nt of credits to edit for the organisational unit
      */
     public void editOrganisationalUnitCredits(String unitName, float credits) throws Exception {
-        //organisationalUnit.editCredits(credits);
+        checkInputEmpty(unitName);
+
+        new UnitDataSource().editUnitCredits(unitName, credits);
+
+        // TODO: add exceptions for non existent unitName, ADD implementation for confirmation when GUI is implemented
+
+
     }
 
     /**
@@ -58,9 +75,14 @@ public class ITAdmin extends User {
      * @param quantity int quantity of the asset to be changed
      */
     public void editOrganisationalUnitAssets(String unitName, String assetName, int quantity) throws Exception {
-        // Edit or add asset to unit
-        // Should check the type exists within the db
-        //organisationalUnit.addAsset(assetName, quantity);
+        checkInputEmpty(unitName);
+        checkInputEmpty(assetName);
+
+        new UnitDataSource().editUnitAssets(unitName, assetName, quantity);
+
+        // TODO: add exceptions for non existent assetName, unitName,
+        //  ADD implemented for confirmation when GUI is implemented
+        //  ALSO ADD AUTO INCREMENTATION TO IDs
     }
 
     /**
@@ -108,16 +130,20 @@ public class ITAdmin extends User {
      * @param name string name of the asset type to be added to the database
      */
     // NOTE IT IS BEST FOR THE ID TO BE AUTOMATICALLY CREATED IN THE ASSET OR ASSET COLLECTION OBJECTS
-    public void createNewAsset(String name) {
-        // Add parsed asset name to db
+    public Asset createNewAsset(String name) throws EmptyFieldException {
+        checkInputEmpty(name);
 
-        // add object to the mock database/Asset Collection
-      
+        Asset asset = new Asset(name);
+
+        return asset;
+
+        // TODO: add confirmation when GUI is implemented and ADD TO DATABASE!!!! ALSO ADD AUTO INCREMENTATION TO IDs
+
     }
 
     /**
      * Choose to edit the user's user type and organisational unit [C]
-     * @param username the new username the use will have
+     * @param username the new username the user will have
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
      */
@@ -145,8 +171,14 @@ public class ITAdmin extends User {
      * @param currentName the current name the organisational unit has
      * @param newName the new name for the organisational unit
      */
-    public void editOrganisationalUnitName(String currentName, String newName) {
+    public void editOrganisationalUnitName(String currentName, String newName) throws EmptyFieldException, SQLException {
+        checkInputEmpty(currentName);
+        checkInputEmpty(newName);
 
+        new UnitDataSource().editUnitName(currentName, newName);
+
+        // TODO: add exceptions for non existent currentName, newName,
+        //  ADD implementation for confirmation when GUI is implemented
     }
 
     /**
@@ -155,9 +187,17 @@ public class ITAdmin extends User {
      * @param currentName the current name the asset has
      * @param newName the new name for the asset
      */
-    public void editAssetName(String currentName, String newName) {
+    public void editAssetName(String currentName, String newName) throws EmptyFieldException, SQLException {
+        checkInputEmpty(currentName);
+        checkInputEmpty(newName);
 
+        new UnitDataSource().editAssetName(currentName, newName);
+
+        // TODO: add exceptions for non existent currentName, newName,
+        //  ADD implementation for confirmation when GUI is implemented
     }
+
+
 
     private String newRngText(int length) {
         if (length == 0) throw new IndexOutOfBoundsException("Length cannot be 0");
