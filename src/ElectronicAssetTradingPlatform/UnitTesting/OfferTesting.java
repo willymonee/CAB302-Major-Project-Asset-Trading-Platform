@@ -13,7 +13,6 @@ import java.sql.Date;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OfferTesting {
-
     // declare a member object
     OrganisationalUnitMembers member;
     OrganisationalUnitMembers otherMember;
@@ -28,9 +27,10 @@ public class OfferTesting {
     @BeforeEach
     @Test
     public void setUp() {
+        // create organisational units
         humanResources = new OrganisationalUnit("Human Resources", 1000);
         management = new OrganisationalUnit("Management", 1000);
-        // create an organisational unit member
+        // create organisational unit members
         member = new OrganisationalUnitMembers("Sammy101", "asdf", "salt","Human Resources");
         otherMember = new OrganisationalUnitMembers("Linax0x", "salt","asdf",
                 "Management");
@@ -40,6 +40,7 @@ public class OfferTesting {
     }
 
     // clear the buy and sell offer databases before each test
+    // also clear assets from organisational units
     @AfterEach
     @Test
     public void clearDataBase() {
@@ -115,7 +116,6 @@ public class OfferTesting {
         member.listBuyOrder("Computer", 2, 50.45);
         otherMember.listBuyOrder("Fit Bit", 1, 30);
         otherMember.listBuyOrder("Jar of Cookies", 1, 4);
-
         // should only return buy offers from otherMember's org unit, and exclude offers made by member
         assertEquals("4\tFit Bit\t1\t $30.0\tLinax0x\tManagement\t" + date + "\n" +
                         "5\tJar of Cookies\t1\t $4.0\tLinax0x\tManagement\t" + date, otherMember.getOrgBuyOffers(),
@@ -138,20 +138,20 @@ public class OfferTesting {
 
     // test checking if there is a corresponding sell offer after creating a buy offer of equal price
     @Test
-    public void checkMatchingSellOffer() {
+    public void returnMatchingSellOffer() {
         member.listSellOrder("Calculator", 1, 20);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Failed to return matching sell offer");
 
     }
 
-    // test checking if there is a corresponding sell offer after creating a buy offer of equal price
+    // test checking if there is a corresponding sell offer after creating a buy offer of higher price
     @Test
-    public void checkMatchingSellOfferLowerPrice() {
+    public void returnMatchingSellOfferLowerPrice() {
         member.listSellOrder("Calculator", 1, 18);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Failed to return matching sell offer");
     }
 
@@ -162,27 +162,26 @@ public class OfferTesting {
         member.listSellOrder("Calculator", 1, 17);
         member.listSellOrder("Calculator", 1, 20);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(2, BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(2, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Failed to return matching sell offer");
-
     }
 
-    // test checking if there is no corresponding sell offer with the same asset name
+    // test to see if getting a matching sell offer fails when the sell offer is a requesting a different asset
     @Test
-    public void checkNoMatchingSellOfferAssetName() {
+    public void returnNoMatchingAssetSellOffer() {
         member.listSellOrder("Table", 1, 20);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(0, BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(0, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Failed to check that there were no matching sell offers for the item");
 
     }
 
-    // test checking if there is no corresponding sell offer with equal or lower price
+    // test to see if getting a matching sell offer fails when the sell offer is higher priced
     @Test
-    public void checkNoMatchingSellOfferAssetPrice() {
+    public void returnNoMatchingPricedSellOffer() {
         member.listSellOrder("Table", 1, 25);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(0, BuyOffersDB.getBuyOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(0, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Failed to check that there were no matching sell offers for the item");
 
     }
@@ -192,20 +191,20 @@ public class OfferTesting {
     public void returnMatchingBuyOrder() {
         member.listBuyOrder("iPad", 1, 100);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Failed to return matching buy offer");
     }
 
-    // testing return a buy order ID which matches a sell order of equal price
+    // test returning a buy order ID which matches a sell order of lower price
     @Test
-    public void returnMatchingBuyOrderHigherPrice() {
+    public void returnMatchingHigherPricedBuyOrder() {
         member.listBuyOrder("iPad", 1, 110);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Failed to return matching buy offer");
     }
 
-    // testing returning the buy order that was created first AND is equally priced or above the sell order's price
+    // test returning the buy order that is lowest priced, then by order it was created
     @Test
     public void returnLowestMatchingBuyOrder() {
         member.listBuyOrder("iPad", 1, 110);
@@ -213,36 +212,36 @@ public class OfferTesting {
         member.listBuyOrder("iPad", 1, 105);
         member.listBuyOrder("iPad", 1, 130);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Failed to return matching buy offer");
     }
 
-    // testing not returning a buy offer with a different asset type
+    // test not returning an buy offer with a different asset
     @Test
-    public void returnNoMatchingBuyOrderAsset() {
+    public void returnNoMatchingAssetBuyOrder() {
         member.listBuyOrder("Fit Bit", 1, 100);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Returned a matching buy offer, but not meant to");
     }
 
     // test not returning a buy offer with a lower price than the sell offer
     @Test
-    public void returnNoMatchingBuyOrderPrice() {
+    public void returnNoMatchingPriceBuyOrder() {
         member.listBuyOrder("Fit Bit", 1, 90);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).checkMatchedOffer(),
+        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
                 "Returned a matching buy offer, but not meant to");
     }
 
     /**
-     * Resolving matching sell offers to a created buy offer
+     * Resolving matching sell offers to a created newly buy offer
      */
     // test reducing the quantities of matching buy and sell offers, when equal quantities
     // expect both offers to be removed
     // testing a private method
     @Test
-    public void reduceEqualOfferQuantities() throws Exception {
+    public void reduceBuyToSellOfferEqualQuantities() throws Exception {
         member.listBuyOrder("Fit Bit", 1, 100);
         otherMember.listSellOrder("Fit Bit", 1, 100);
         BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
@@ -255,7 +254,7 @@ public class OfferTesting {
     // expect sell offer to be removed, but buy offer has a reduced quantity
     // testing a private method
     @Test
-    public void reduceGreaterBuyOfferQuantities() throws Exception {
+    public void reduceGreaterBuyToSellQuantities() throws Exception {
         member.listBuyOrder("Fit Bit", 3, 100);
         otherMember.listSellOrder("Fit Bit", 1, 100);
         BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
@@ -269,7 +268,7 @@ public class OfferTesting {
     // expect sell offer to be removed, but buy offer has a reduced quantity
     // testing a private method
     @Test
-    public void reduceGreaterSellOfferQuantities() throws Exception {
+    public void reduceLowerBuyToSellQuantities() throws Exception {
         member.listBuyOrder("Fit Bit", 1, 100);
         otherMember.listSellOrder("Fit Bit", 3, 100);
         BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
@@ -280,7 +279,7 @@ public class OfferTesting {
 
     // test reducing the quantities with multiple sell offers, with more sell quantity than buy
     @Test
-    public void reduceQuantityMultipleSellOffers() throws Exception {
+    public void reduceBuyToMultipleSellQuantities() throws Exception {
         member.listBuyOrder("Fit Bit", 3, 100);
         otherMember.listSellOrder("Fit Bit", 1, 100);
         otherMember.listSellOrder("Fit Bit", 1, 100);
@@ -291,9 +290,9 @@ public class OfferTesting {
                 BuyOffersDB.getBuyOffersDB().getOffer(1).getQuantity() == 1);
     }
 
-    // test reducing the quantities with multiple sell offers, with more buy quantity than sell
+    // test reducing the quantities with multiple sell offers, with more total sell quantity than buy
     @Test
-    public void reduceQuantityMultipleSellOffersGreaterQuantity() throws Exception {
+    public void  reduceBuyToMultipleGreaterSellQuantities() throws Exception {
         member.listBuyOrder("Fit Bit", 3, 100);
         otherMember.listSellOrder("Fit Bit", 2, 100);
         otherMember.listSellOrder("Fit Bit", 2, 100);
@@ -306,11 +305,11 @@ public class OfferTesting {
     }
 
     /**
-     * Resolving matching buy offers to a created sell offer
+     * Resolving matching buy offers to a newly created sell offer
      */
     // test reducing the quantity of an equal amount of sell and buy offers
     @Test
-    public void matchAndReduceSellToBuyOfferEqual() {
+    public void reduceSellToBuyOfferEqualQuantities() {
         member.listBuyOrder("Fit Bit", 1, 100);
         otherMember.listSellOrder("Fit Bit", 1, 100);
         SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
@@ -321,7 +320,7 @@ public class OfferTesting {
 
     // test reducing the quantities of the sell and buy offer, when the quantity of buy offer is greater
     @Test
-    public void matchAndReduceSellToBuyOfferMore() {
+    public void reduceLowerSellToBuyOfferQuantities() {
         member.listBuyOrder("Fit Bit", 2, 100);
         otherMember.listSellOrder("Fit Bit", 1, 100);
         SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
@@ -332,7 +331,7 @@ public class OfferTesting {
 
     // test reducing the quantities of the sell and buy offer, when the quantity of the sell offer is greater
     @Test
-    public void matchAndReduceSellToBuyOfferLess() {
+    public void reduceGreaterSellToBuyOfferQuantities() {
         member.listBuyOrder("Fit Bit", 2, 100);
         otherMember.listSellOrder("Fit Bit", 5, 100);
         SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
@@ -343,7 +342,7 @@ public class OfferTesting {
 
     // test reducing the quantities with multiple buy orders, with the quantity ordered from buy offers being greater
     @Test
-    public void matchAndReduceSellToBuyOffersMore() {
+    public void reduceSellToMultipleBuyQuantities() {
         member.listBuyOrder("Fit Bit", 2, 100);
         member.listBuyOrder("Fit Bit", 2, 105);
         member.listBuyOrder("Fit Bit", 2, 100);
@@ -358,7 +357,7 @@ public class OfferTesting {
 
     // test reducing the quantities with multiple buy orders, with the quantity ordered from buy offers being less
     @Test
-    public void matchAndReduceSellToBuyOffersLess() {
+    public void reduceSellToMultipleGreaterBuyQuantities() {
         member.listBuyOrder("Fit Bit", 1, 100);
         member.listBuyOrder("Fit Bit", 1, 105);
         member.listBuyOrder("Fit Bit", 1, 100);
@@ -374,6 +373,14 @@ public class OfferTesting {
 
     /**
      * Resolving trading assets - sell offers to a newly created buy offer
+     * Reduce order quantities AND trade assets between buy and sell org
+     */
+
+    /*
+        System.out.println("Buyer owns: " + management.getAssetsOwned());
+        System.out.println("Seller owns: " + humanResources.getAssetsOwned());
+        System.out.println("Buyer credits: " + management.getCredits());
+        System.out.println("Seller credits: " + humanResources.getCredits());
      */
 
     // test trading assets between two organisations - equal quantity buy and sell offers
@@ -394,13 +401,6 @@ public class OfferTesting {
                 management.getCredits() == 800 &&
                 humanResources.getCredits() == 1200);
     }
-
-    /*
-        System.out.println("Buyer owns: " + management.getAssetsOwned());
-        System.out.println("Seller owns: " + humanResources.getAssetsOwned());
-        System.out.println("Buyer credits: " + management.getCredits());
-        System.out.println("Seller credits: " + humanResources.getCredits());
-     */
 
     // test trading assets between two organisations - more quantity buy offer than sell offer
     @Test
@@ -444,13 +444,13 @@ public class OfferTesting {
         humanResources.addAsset("Fit Bit", 3);
         management.addAsset("Fit Bit", 3);
         otherMember.listBuyOrder("Fit Bit", 2, 100);
+        member.listSellOrder("Fit Bit", 2, 105);
         member.listSellOrder("Fit Bit", 1, 100);
         member.listSellOrder("Fit Bit", 1, 95);
         member.listSellOrder("Fit Bit", 1, 95);
 
         BuyOffer buyOffer = BuyOffersDB.getBuyOffersDB().getOffer(1);
         buyOffer.resolveOffer(management, humanResources);
-
 
         // 2 Fit Bits are bought and sold @95
         assertTrue(management.getAssetsOwned().get("Fit Bit") == 5 &&
@@ -462,10 +462,11 @@ public class OfferTesting {
 
     /**
      * Resolving trading assets - sell offers to a newly created sell offer
+     * Reduce order quantities AND trade assets between buy and sell org
      */
 
     @Test
-    public void tradeAssetsSelltoBuyOffer() throws Exception {
+    public void tradeAssetsSellToBuyOffer() throws Exception {
         // member - human resources = buyer
         // otherMember - management = seller
         humanResources.addAsset("Fit Bit", 3);
@@ -482,17 +483,15 @@ public class OfferTesting {
 
     // test trading assets between two organisations when resolving a sell offer - more quantity buy offer than sell offer
     @Test
-    public void tradeAssetsSelltoGreaterBuyOffer() throws Exception {
+    public void tradeAssetsSellToGreaterBuyOffer() throws Exception {
         // member is part of human resources - in this case is a seller
         // other member is part of management - in this case a buyer
         humanResources.addAsset("Fit Bit", 3);
         management.addAsset("Fit Bit", 3);
         otherMember.listBuyOrder("Fit Bit", 10, 100);
         member.listSellOrder("Fit Bit", 2, 100);
-
         SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
         sellOffer.resolveOffer(management, humanResources);
-
         assertTrue(management.getAssetsOwned().get("Fit Bit") == 5 &&
                 humanResources.getAssetsOwned().get("Fit Bit") == 1 &&
                 management.getCredits() == 800 &&
@@ -501,7 +500,7 @@ public class OfferTesting {
 
     // test trading assets between two organisations - more quantity sell offer than buy offer
     @Test
-    public void tradeAssetsGreaterSelltoBuyOffer() throws Exception {
+    public void tradeAssetsGreaterSellToBuyOffer() throws Exception {
         // member is part of human resources - in this case is a seller
         // other member is part of management - in this case a buyer
         humanResources.addAsset("Fit Bit", 3);
@@ -516,21 +515,17 @@ public class OfferTesting {
                 humanResources.getCredits() == 1200);
     }
 
+    // test trading assets between two orgs - with multiple buy offers at different prices
     @Test
     public void tradeAssetsSellToMultipleBuyOffers() throws Exception {
         humanResources.addAsset("Fit Bit", 5);
         management.addAsset("Fit Bit", 3);
-
         otherMember.listBuyOrder("Fit Bit", 2, 100);
         otherMember.listBuyOrder("Fit Bit", 2, 95);
         otherMember.listBuyOrder("Fit Bit", 2, 105);
-
         member.listSellOrder("Fit Bit", 4, 100);
-
         SellOffer sellOffer = SellOffersDB.getSellOffersDB().getOffer(1);
         sellOffer.resolveOffer(management, humanResources);
-
-
         // 4 Fit Bits are bought and sold @100
         assertTrue(management.getAssetsOwned().get("Fit Bit") == 7 &&
                 humanResources.getAssetsOwned().get("Fit Bit") == 1 &&

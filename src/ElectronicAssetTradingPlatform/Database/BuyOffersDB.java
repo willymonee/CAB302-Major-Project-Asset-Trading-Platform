@@ -1,7 +1,7 @@
 package ElectronicAssetTradingPlatform.Database;
 
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
-import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
+
 
 
 import java.util.Iterator;
@@ -28,26 +28,10 @@ public class BuyOffersDB {
         return MarketBuyOffers;
     }
 
-    public int getSize() {
-        return MarketBuyOffers.size();
-    }
 
-    public BuyOffer getOffer(int ID) {
-        return MarketBuyOffers.get(ID);
-    }
-
-
-    public static void addBuyOffer(int ID, BuyOffer offer) {
-        MarketBuyOffers.put(ID, offer);
-    }
-
-    public static void removeBuyOffer(int ID) {
-        MarketBuyOffers.remove(ID);
-    }
-
-    public static void removeAllBuyOffers() { MarketBuyOffers.clear(); }
-
-
+    /**
+     * Retrieve the singleton/create the DB object
+     */
     public static BuyOffersDB getBuyOffersDB() {
         if (buyOffersDB == null) {
             return new BuyOffersDB();
@@ -56,6 +40,42 @@ public class BuyOffersDB {
             return buyOffersDB;
         }
     }
+
+    /**
+     * Get the amount of offers in the DB
+     */
+    public int getSize() {
+        return MarketBuyOffers.size();
+    }
+
+    /**
+     * Retrieve a buy offer from the DB
+     */
+    public BuyOffer getOffer(int ID) {
+        return MarketBuyOffers.get(ID);
+    }
+
+
+    /**
+     * Insert a buy offer into the DB
+     */
+    public static void addBuyOffer(int ID, BuyOffer offer) {
+        MarketBuyOffers.put(ID, offer);
+    }
+
+    /**
+     * Remove an offer from the DB
+     */
+    public static void removeBuyOffer(int ID) {
+        MarketBuyOffers.remove(ID);
+    }
+
+    /**
+     * Remove all offers from the DB
+     */
+    public static void removeAllBuyOffers() { MarketBuyOffers.clear(); }
+
+
 
     @Override
     public String toString() {
@@ -72,6 +92,9 @@ public class BuyOffersDB {
     }
 
 
+    /**
+     * Retrieve buy offers made by a particular organisation
+     */
     public String getOrgBuyOffers(String org) {
         Iterator<Map.Entry<Integer, BuyOffer>> entries = MarketBuyOffers.entrySet().iterator();
         String OrgMarketOffers = "";
@@ -86,5 +109,4 @@ public class BuyOffersDB {
         }
         return OrgMarketOffers;
     }
-
 }
