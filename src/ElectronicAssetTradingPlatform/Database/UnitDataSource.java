@@ -6,10 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Helper Class for any DataSource class that requires to fetch the organisational unit name and/or ID.
+ */
 public class UnitDataSource {
     private static final String GET_UNIT_NAME = "SELECT Name FROM Organisational_Units WHERE Unit_ID = ?";
     private static final String GET_UNIT_ID = "SELECT Unit_ID FROM Organisational_Units WHERE Name = ?";
-    private static final String GET_USER_ID = "SELECT USER_ID FROM User_Accounts WHERE Username = ?";
+    // private static final String GET_USER_ID = "SELECT USER_ID FROM User_Accounts WHERE Username = ?";
 
     PreparedStatement getUnitNameQuery;
     PreparedStatement getUnitIDQuery;
