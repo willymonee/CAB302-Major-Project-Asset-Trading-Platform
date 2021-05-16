@@ -27,6 +27,16 @@ public class MarketplaceTesting {
         asset = new Asset("testAsset");
     }
 
+    /*
+    Preconditions
+    INSERT INTO Organisational_Units VALUES(1, "UnitX", 300.00);
+    INSERT INTO USER_Accounts VALUES(1, "userN", "pw", "salt", "Organisational Unit Member", 1);
+
+    Delete insertions/ mock db entries
+    DELETE FROM Organisational_Units WHERE Unit_ID = 1;
+    DELETE FROM USER_Accounts WHERE Username = "userN";
+    DELETE FROM Marketplace WHERE Unit_ID = 1;
+     */
     @Test
     public void testInsert() {
         if (dataSource == null) {
