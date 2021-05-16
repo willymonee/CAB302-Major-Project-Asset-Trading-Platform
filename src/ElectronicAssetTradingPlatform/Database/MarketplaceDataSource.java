@@ -46,21 +46,32 @@ public class MarketplaceDataSource {
     // Maybe a parameter will not be Asset asset, if it can be achievied via db
     public void insertBuyOffer(User user, Asset asset, String assetPrice) {
         try {
-            insertBuyOffer.setString(1, "null");
+            //insertBuyOffer.setString(1, "");
             insertBuyOffer.setString(2, "b");
             // Get Unit ID
             // switch case for org unit mem, leader and whoever else can create a buy offer
             if (user.getClass() == OrganisationalUnitMembers.class) {
                 UnitDataSource unitDB = new UnitDataSource();
-                String unitID = unitDB.executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
+                System.out.println("test");
+                String unitName = ((OrganisationalUnitMembers) user).getUnitName();
+                String unitID = unitDB.executeGetUnitID(unitName);
+                System.out.println(unitID);
                 insertBuyOffer.setString(3, unitID);
-            }
-
-            if (user.getClass() == OrganisationalUnitMembers.class) {
-                UnitDataSource unitDB = new UnitDataSource();
-                String userID = unitDB.executeGetUserID(((OrganisationalUnitMembers) user).getUnitName());
+                String username = user.getUsername();
+                String userID = unitDB.executeGetUserID(username);
+                System.out.println(userID);
                 insertBuyOffer.setString(4, userID);
             }
+
+            /*
+            if (user.getClass() == OrganisationalUnitMembers.class) {
+                UnitDataSource unitDB = new UnitDataSource();
+                String userID = unitDB.executeGetUserID(user.getUsername());
+                System.out.println(userID);
+                insertBuyOffer.setString(4, userID);
+            }
+            */
+
             /*
             else {
 

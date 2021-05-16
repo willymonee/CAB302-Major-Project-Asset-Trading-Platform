@@ -16,7 +16,7 @@ public class ETPDataSource {
                     + "User_ID INTEGER NOT NULL,"
                     + "Asset_type_ID NOT NULL,"
                     + "Price_per_unit FLOAT NOT NULL,"
-                    + "PRIMARY KEY(User_ID AUTOINCREMENT)"
+                    + "PRIMARY KEY(Offer_ID AUTOINCREMENT)"
                     + ");";
 
     private static final String marketplaceHistoryTable =

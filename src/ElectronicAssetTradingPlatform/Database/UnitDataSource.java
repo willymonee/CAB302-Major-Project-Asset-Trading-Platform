@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class UnitDataSource {
     private static final String GET_UNIT_NAME = "SELECT Name FROM Organisational_Units WHERE Unit_ID = ?";
     private static final String GET_UNIT_ID = "SELECT Unit_ID FROM Organisational_Units WHERE Name = ?";
-    // private static final String GET_USER_ID = "SELECT USER_ID FROM User_Accounts WHERE Username = ?";
+    private static final String GET_USER_ID = "SELECT USER_ID FROM User_Accounts WHERE Username = ?";
 
     PreparedStatement getUnitNameQuery;
     PreparedStatement getUnitIDQuery;
@@ -25,6 +25,7 @@ public class UnitDataSource {
         try {
             getUnitNameQuery = connection.prepareStatement(GET_UNIT_NAME);
             getUnitIDQuery = connection.prepareStatement(GET_UNIT_ID);
+            getUserIDQuery = connection.prepareStatement(GET_USER_ID);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -66,12 +67,12 @@ public class UnitDataSource {
     }
 
     public String executeGetUserID(String username) throws SQLException{
-        getUserIDQuery.setString(2, username);
+        getUserIDQuery.setString(1, username);
         ResultSet rs = null;
-        String userID = null;
+        String userID;
         try {
             rs = getUserIDQuery.executeQuery();
-            rs.getString("User_ID");
+            userID = rs.getString("User_ID");
         } finally {
             if (rs != null) rs.close();
         }
