@@ -16,10 +16,10 @@ import java.util.HashMap;
  */
 public class MarketplaceDataSource {
     private static final String INSERT_BUYOFFER = "INSERT INTO Marketplace (Offer_ID, Buy_or_Sell, "
-            + "Unit_ID, User_ID, Asset_type_ID, Price_per_Unit)"
+            + "Unit_ID, User_ID, Asset_type_ID, Price_per_unit)"
             + "VALUES (?, ?, ?, ?, ?, ?);";
     private static final String INSERT_SELLOFFER = "INSERT INTO Marketplace (Offer_ID, Buy_or_Sell, "
-            + "Unit_ID, User_ID, Asset_type_ID, Price_per_Unit)"
+            + "Unit_ID, User_ID, Asset_type_ID, Price_per_unit)"
             + "VALUES (?, ?, ?, ?, ?, ?);";
     private static final String GET_OFFERS = "SELECT * FROM Marketplace WHERE Buy_or_Sell= ?";
     private static final String RESOLVE_OFFER = "DELETE FROM Marketplace WHERE Offer_ID=?";
@@ -46,7 +46,7 @@ public class MarketplaceDataSource {
     // Maybe a parameter will not be Asset asset, if it can be achievied via db
     public void insertBuyOffer(User user, Asset asset, String assetPrice) {
         try {
-            //insertBuyOffer.setString(1, "");
+            insertBuyOffer.setString(1, "");
             insertBuyOffer.setString(2, "b");
             // Get Unit ID
             // switch case for org unit mem, leader and whoever else can create a buy offer
@@ -54,13 +54,13 @@ public class MarketplaceDataSource {
                 UnitDataSource unitDB = new UnitDataSource();
                 System.out.println("test");
                 String unitName = ((OrganisationalUnitMembers) user).getUnitName();
+                System.out.println(unitName);
                 String unitID = unitDB.executeGetUnitID(unitName);
                 System.out.println(unitID);
                 insertBuyOffer.setString(3, unitID);
-                String username = user.getUsername();
-                String userID = unitDB.executeGetUserID(username);
+                String userID = unitDB.executeGetUserID(user.getUsername());
                 System.out.println(userID);
-                insertBuyOffer.setString(4, userID);
+                insertBuyOffer.setString(4, unitID);
             }
 
             /*
@@ -70,7 +70,8 @@ public class MarketplaceDataSource {
                 System.out.println(userID);
                 insertBuyOffer.setString(4, userID);
             }
-            */
+
+             */
 
             /*
             else {
