@@ -3,8 +3,8 @@ package ElectronicAssetTradingPlatform.Users;
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
-import ElectronicAssetTradingPlatform.Database.SellOffersDB;
+import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
+import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 
 import java.sql.SQLException;

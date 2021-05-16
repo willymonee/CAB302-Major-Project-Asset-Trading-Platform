@@ -1,8 +1,8 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
 
-import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
-import ElectronicAssetTradingPlatform.Database.SellOffersDB;
+import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
+import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -90,10 +90,12 @@ public class SellOffer extends Offer {
      * does not have priority because the trades occur at the sell price).
      * Thus, the returned buy offer will the oldest buy offer which is equally or higher priced
      *
-     * @return int of the buy offer
+     * EVENTUALLY TURN TO A PRIVATE METHOD ONCE TESTING IS COMPLETE
+     *
+     * @return int of the buy offer, int >= 0
      */
     @Override
-    public int getPriceMatchedOffer() {
+    public int getMatchedPriceOffer() {
         ArrayList<BuyOffer> matchingBuyOffers = matchingBuyOffers();
         double sellOfferPrice = getPricePerUnit();
         // assign the first sell offer as the lowest price
@@ -160,7 +162,9 @@ public class SellOffer extends Offer {
      * Then it reduces the 'quantities' of both offers
      * It also adds/removes assets and credits from each organisational unit based on the offers
      *
-     * @param matchingID The ID of the matching buy order
+     * @param matchingID The ID of the matching buy order, int >= 0
+     * @param buyOrg The buyer's Organisational Unit to add assets and remove credits from
+     * @param sellOrg The seller's Organisational Unit to remove assets and add credits to
      */
     // overridden, function which also exchanges assets between buyer and seller
     private void tradeAssetsAndReduceOrders(int matchingID, OrganisationalUnit buyOrg, OrganisationalUnit sellOrg) throws Exception {
@@ -224,8 +228,8 @@ public class SellOffer extends Offer {
      */
     public void resolveOffer() {
         // loop until there is no matching offer OR this.quantity == 0
-        while (getPriceMatchedOffer() != 0 && this.getQuantity() > 0) {
-            int matchingID = getPriceMatchedOffer();
+        while (getMatchedPriceOffer() != 0 && this.getQuantity() > 0) {
+            int matchingID = getMatchedPriceOffer();
             // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
             tradeAssetsAndReduceOrders(matchingID);
             // sell offer is fully resolved
@@ -245,8 +249,8 @@ public class SellOffer extends Offer {
      */
     public void resolveOffer(OrganisationalUnit buyer, OrganisationalUnit seller) throws Exception {
         // loop until there is no matching offer OR this.quantity == 0
-        while(getPriceMatchedOffer() != 0 && this.getQuantity() > 0) {
-            int matchingID = getPriceMatchedOffer();
+        while(getMatchedPriceOffer() != 0 && this.getQuantity() > 0) {
+            int matchingID = getMatchedPriceOffer();
             // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
             // and trade assets
             tradeAssetsAndReduceOrders(matchingID, buyer, seller);
