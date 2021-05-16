@@ -23,12 +23,10 @@ public class UnitDataSource {
     public UnitDataSource() {
         connection = DBConnectivity.getInstance();
         try {
-            getUnitNameQuery = connection.prepareStatement(GET_UNIT_NAME);
-            getUnitIDQuery = connection.prepareStatement(GET_UNIT_ID);
-            getUserIDQuery = connection.prepareStatement(GET_USER_ID);
             // ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY to allow resultSets to be used multiple times
             getUnitNameQuery = connection.prepareStatement(GET_UNIT_NAME, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             getUnitIDQuery = connection.prepareStatement(GET_UNIT_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            getUserIDQuery = connection.prepareStatement(GET_USER_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
