@@ -3,8 +3,8 @@ package ElectronicAssetTradingPlatform.UnitTesting;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
-import ElectronicAssetTradingPlatform.Database.SellOffersDB;
+import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
+import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import org.junit.jupiter.api.*;
 
@@ -141,7 +141,7 @@ public class OfferTesting {
     public void returnMatchingSellOffer() {
         member.listSellOrder("Calculator", 1, 20);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Failed to return matching sell offer");
 
     }
@@ -151,7 +151,7 @@ public class OfferTesting {
     public void returnMatchingSellOfferLowerPrice() {
         member.listSellOrder("Calculator", 1, 18);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(1, BuyOffersDB.getBuyOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Failed to return matching sell offer");
     }
 
@@ -162,7 +162,7 @@ public class OfferTesting {
         member.listSellOrder("Calculator", 1, 17);
         member.listSellOrder("Calculator", 1, 20);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(2, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(2, BuyOffersDB.getBuyOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Failed to return matching sell offer");
     }
 
@@ -171,7 +171,7 @@ public class OfferTesting {
     public void returnNoMatchingAssetSellOffer() {
         member.listSellOrder("Table", 1, 20);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(0, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(0, BuyOffersDB.getBuyOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Failed to check that there were no matching sell offers for the item");
 
     }
@@ -181,7 +181,7 @@ public class OfferTesting {
     public void returnNoMatchingPricedSellOffer() {
         member.listSellOrder("Table", 1, 25);
         otherMember.listBuyOrder("Calculator", 1, 20);
-        assertEquals(0, BuyOffersDB.getBuyOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(0, BuyOffersDB.getBuyOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Failed to check that there were no matching sell offers for the item");
 
     }
@@ -191,7 +191,7 @@ public class OfferTesting {
     public void returnMatchingBuyOrder() {
         member.listBuyOrder("iPad", 1, 100);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Failed to return matching buy offer");
     }
 
@@ -200,7 +200,7 @@ public class OfferTesting {
     public void returnMatchingHigherPricedBuyOrder() {
         member.listBuyOrder("iPad", 1, 110);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Failed to return matching buy offer");
     }
 
@@ -212,7 +212,7 @@ public class OfferTesting {
         member.listBuyOrder("iPad", 1, 105);
         member.listBuyOrder("iPad", 1, 130);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(1, SellOffersDB.getSellOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Failed to return matching buy offer");
     }
 
@@ -221,7 +221,7 @@ public class OfferTesting {
     public void returnNoMatchingAssetBuyOrder() {
         member.listBuyOrder("Fit Bit", 1, 100);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Returned a matching buy offer, but not meant to");
     }
 
@@ -230,7 +230,7 @@ public class OfferTesting {
     public void returnNoMatchingPriceBuyOrder() {
         member.listBuyOrder("Fit Bit", 1, 90);
         otherMember.listSellOrder("iPad", 1, 100);
-        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).getPriceMatchedOffer(),
+        assertEquals(0, SellOffersDB.getSellOffersDB().getOffer(1).getMatchedPriceOffer(),
                 "Returned a matching buy offer, but not meant to");
     }
 

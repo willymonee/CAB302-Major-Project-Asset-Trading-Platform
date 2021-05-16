@@ -63,7 +63,7 @@ public abstract class Offer {
      *
      * @return Returns the matching order ID if there is a match, returns 0 otherwise.
      */
-    public abstract int getPriceMatchedOffer();
+    public abstract int getMatchedPriceOffer();
 
     /**
      * If there is a matched offer deduct or add appropriate amount of credits from the organisational unit's involved
@@ -79,7 +79,7 @@ public abstract class Offer {
     /**
      * Setter for the quantity field
      */
-        protected void setQuantity(int newQuantity) {
+    protected void setQuantity(int newQuantity) {
             this.quantity = newQuantity;
         }
 

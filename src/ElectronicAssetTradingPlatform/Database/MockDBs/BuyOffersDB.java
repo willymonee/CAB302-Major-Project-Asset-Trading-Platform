@@ -1,4 +1,4 @@
-package ElectronicAssetTradingPlatform.Database;
+package ElectronicAssetTradingPlatform.Database.MockDBs;
 
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 
