@@ -1,6 +1,7 @@
 ElectronicAssetTradingPlatform
 ElectronicAssetTradingPlatform.AssetTrading
 ElectronicAssetTradingPlatform.Database
+ElectronicAssetTradingPlatform.Database.MockDBs
 ElectronicAssetTradingPlatform.GUI
 ElectronicAssetTradingPlatform.Passwords
 ElectronicAssetTradingPlatform.UnitTesting
