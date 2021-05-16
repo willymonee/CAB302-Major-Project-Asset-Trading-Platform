@@ -1,7 +1,7 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
-import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
-import ElectronicAssetTradingPlatform.Database.SellOffersDB;
+import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
+import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -86,11 +86,12 @@ public class BuyOffer extends Offer{
      * Takes the matching sell offers and finds the lowest priced sell offer which is equally or lower priced than
      * the buy offer.
      * If two sell offers are equally priced, the offer placed first has priority (this will be the offer queried first)
+     * @TODO turn to a private method after testing
      *
-     * @return int of the sell offer
+     * @return int of the sell offer, int >= 0
      */
     @Override
-    public int getPriceMatchedOffer() {
+    public int getMatchedPriceOffer() {
         ArrayList<SellOffer> matchingSellOffers = getMatchingSellOffers();
         double buyOfferPrice = getPricePerUnit();
         // assign the first sell offer as the lowest price
@@ -163,7 +164,7 @@ public class BuyOffer extends Offer{
      * Then it reduces the 'quantities' of both offers
      * It also adds/removes assets and credits from each organisational unit based on the offers
      *
-     * @param matchingID The ID of the matching sell offer
+     * @param matchingID The ID of the matching sell offer, int >= 0
      */
     private void tradeAssetsAndReduceOrders(int matchingID, OrganisationalUnit buyOrg, OrganisationalUnit sellOrg) throws Exception {
         if (matchingID != 0) {
@@ -221,12 +222,14 @@ public class BuyOffer extends Offer{
      * While there is a matching sell offer and the buy offer has not been resolved
      * Perform a trade between a matching sell offer and buy offer
      *
+     * @param buyer The buyer's Organisational Unit to add assets and remove credits from
+     * @param seller The seller's Organisational Unit to remove assets and add credits to
      */
     public void resolveOffer(OrganisationalUnit buyer, OrganisationalUnit seller) throws Exception {
         // loop until there is no matching offer or the buy offer has been fully resolved
-        while(getPriceMatchedOffer() != 0 && this.getQuantity() > 0) {
+        while(getMatchedPriceOffer() != 0 && this.getQuantity() > 0) {
             // get the matching sell offer and perform the trade
-            int matchingID = getPriceMatchedOffer();
+            int matchingID = getMatchedPriceOffer();
             tradeAssetsAndReduceOrders(matchingID, buyer, seller);
             // buy offer is fully resolved TODO add it somewhere else like resolved offers
             if (this.getQuantity() <= 0) {
@@ -244,8 +247,8 @@ public class BuyOffer extends Offer{
      */
     public void resolveOffer() {
         // loop until there is no matching offer OR this.quantity == 0
-        while(getPriceMatchedOffer() != 0 && this.getQuantity() > 0) {
-            int matchingID = getPriceMatchedOffer();
+        while(getMatchedPriceOffer() != 0 && this.getQuantity() > 0) {
+            int matchingID = getMatchedPriceOffer();
             // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
             tradeAssetsAndReduceOrders(matchingID);
             // buy offer is fully resolved

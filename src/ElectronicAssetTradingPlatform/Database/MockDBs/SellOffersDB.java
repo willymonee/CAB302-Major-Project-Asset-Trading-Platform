@@ -1,7 +1,6 @@
-package ElectronicAssetTradingPlatform.Database;
+package ElectronicAssetTradingPlatform.Database.MockDBs;
 
 
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 
 import java.util.Iterator;
