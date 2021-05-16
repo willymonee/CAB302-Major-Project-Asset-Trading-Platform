@@ -48,7 +48,7 @@ public class UsersDataSource {
         connection = DBConnectivity.getInstance();
 
         addUserQuery = connection.prepareStatement(INSERT_USER);
-        getUserQuery = connection.prepareStatement(GET_USER);
+        getUserQuery = connection.prepareStatement(GET_USER, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         editUserQuery = connection.prepareStatement(EDIT_USER);
         editPasswordQuery = connection.prepareStatement(EDIT_PASSWORD);
         getUnitCreditsQuery = connection.prepareStatement(GET_UNIT_CREDITS);
