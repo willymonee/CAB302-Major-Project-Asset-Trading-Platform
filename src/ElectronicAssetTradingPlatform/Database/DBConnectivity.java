@@ -51,6 +51,10 @@ public class DBConnectivity {
         }
     }
 
+    /**
+     * Create a connection to the database.
+     * @return connection, the instance in which invokes a database connection.
+     */
     public static Connection getInstance() {
         if (instance == null) {
             new DBConnectivity();

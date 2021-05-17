@@ -7,7 +7,6 @@ import ElectronicAssetTradingPlatform.Users.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.AfterClass;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -22,7 +21,7 @@ public class ITAdminTesting {
      */
 
     ITAdmin itAdmin;
-    UsersDataSource db;
+    static UsersDataSource db;
 
     @BeforeEach
     @Test
@@ -236,8 +235,8 @@ public class ITAdminTesting {
         assertFalse(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword1", itAdmin.getPassword()));
     }
 
-    @AfterClass
-    public void close() throws SQLException {
+    @AfterAll
+    public static void dbClose() throws SQLException {
         db.close();
     }
 }
