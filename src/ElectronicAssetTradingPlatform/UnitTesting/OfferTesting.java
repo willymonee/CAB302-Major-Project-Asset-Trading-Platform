@@ -3,12 +3,15 @@ package ElectronicAssetTradingPlatform.UnitTesting;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.Database.ETPDataSource;
+import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import org.junit.jupiter.api.*;
 
 import java.sql.Date;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,8 +24,12 @@ public class OfferTesting {
     OrganisationalUnit humanResources;
     OrganisationalUnit management;
 
+
     // declare date object
     Date date;
+
+    // declared database
+    static MarketplaceDataSource marketDataSource;
 
     @BeforeEach
     @Test
@@ -37,6 +44,10 @@ public class OfferTesting {
         // get the current date
         long millis = System.currentTimeMillis();
         date = new Date(millis);
+
+        //
+        ETPDataSource etp = new ETPDataSource();
+        marketDataSource = new MarketplaceDataSource();
     }
 
     // clear the buy and sell offer databases before each test
@@ -53,6 +64,7 @@ public class OfferTesting {
     // Creating a buy order
     @Test
     public void createBuyOrder() {
+
         member.listBuyOrder("Table", 10, 5.45);
         assertEquals("1\tTable\t10\t $5.45\tSammy101\tHuman Resources\t" + date,
                 BuyOffersDB.getBuyOffersDB().getOffer(1).toString(), "Listing Buy Offer Failed");
@@ -533,5 +545,9 @@ public class OfferTesting {
                 humanResources.getCredits() == 1400);
     }
 
+    @AfterAll
+    public static void closeDB() throws SQLException {
+        marketDataSource.close();
+    }
 
 }

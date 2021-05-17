@@ -1,8 +1,6 @@
 package ElectronicAssetTradingPlatform.Users;
 
-import ElectronicAssetTradingPlatform.AssetTrading.Asset;
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
-import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
@@ -58,8 +56,11 @@ public class OrganisationalUnitMembers extends User {
     public void listBuyOrder(String assetType, int quantity, double price) {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        // add offer into DB
+        // add offer into mock DB
         BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
+        // add offer into ACTUAL DATABASE
+        BuyOfferData.addBuyOffer(offer);
+
     }
 
     /**
@@ -71,6 +72,8 @@ public class OrganisationalUnitMembers extends User {
     public void listSellOrder(String assetType, int quantity, double price) {
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         SellOffersDB.addSellOffer(offer.getOfferID(), offer);
+        // using the actual database
+        SellOfferData.addSellOffer(offer);
     }
 
     /**

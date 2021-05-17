@@ -1,8 +1,11 @@
 package ElectronicAssetTradingPlatform.Database;
 
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,10 +19,10 @@ import java.util.HashMap;
  */
 public class MarketplaceDataSource {
     private static final String INSERT_BUYOFFER = "INSERT INTO Marketplace (Buy_or_Sell, "
-            + "Unit_ID, User_ID, Asset_type_ID, Price_per_unit)"
-            + "VALUES (?, ?, ?, ?, ?);";
-    private static final String INSERT_SELLOFFER = "INSERT INTO Marketplace (Offer_ID, Buy_or_Sell, "
-            + "Unit_ID, User_ID, Asset_type_ID, Price_per_unit)"
+            + "Unit_ID, User_ID, Asset_type_ID, Price_per_unit, Quantity)"
+            + "VALUES (?, ?, ?, ?, ?, ?);";
+    private static final String INSERT_SELLOFFER = "INSERT INTO Marketplace (Buy_or_Sell, "
+            + "Unit_ID, User_ID, Asset_type_ID, Price_per_unit, Quantity)"
             + "VALUES (?, ?, ?, ?, ?, ?);";
     private static final String GET_OFFERS = "SELECT * FROM Marketplace WHERE Buy_or_Sell= ?";
     private static final String RESOLVE_OFFER = "DELETE FROM Marketplace WHERE Offer_ID=?";
@@ -43,74 +46,38 @@ public class MarketplaceDataSource {
         }
     }
 
-    // Maybe a parameter will not be Asset asset, if it can be achievied via db
-    public void insertBuyOffer(User user, Asset asset, String assetPrice) {
+    // Maybe a parameter will not be Asset asset, if it can be achieved via db
+    public void insertBuyOffer(BuyOffer buyOffer) {
         try {
             insertBuyOffer.setString(1, "b");
-            // Get Unit ID
-            // switch case for org unit mem, leader and whoever else can create a buy offer
-            if (user.getClass() == OrganisationalUnitMembers.class) {
-                UnitDataSource unitDB = new UnitDataSource();
-                System.out.println("test");
-                String unitName = ((OrganisationalUnitMembers) user).getUnitName();
-                System.out.println(unitName);
-                String unitID = unitDB.executeGetUnitID(unitName);
-                System.out.println(unitID);
-                insertBuyOffer.setString(2, unitID);
-                String userID = unitDB.executeGetUserID(user.getUsername());
-                System.out.println(userID);
-                insertBuyOffer.setString(3, unitID);
-            }
-
-            /*
-            if (user.getClass() == OrganisationalUnitMembers.class) {
-                UnitDataSource unitDB = new UnitDataSource();
-                String userID = unitDB.executeGetUserID(user.getUsername());
-                System.out.println(userID);
-                insertBuyOffer.setString(4, userID);
-            }
-
-             */
-
-            /*
-            else {
-
-            }
-             */
-            insertBuyOffer.setString(4, asset.getAssetName());
-            insertBuyOffer.setString(5, assetPrice);
+            UnitDataSource unitDB = new UnitDataSource();
+            String unitID = unitDB.executeGetUnitID(buyOffer.getUnitName());
+            insertBuyOffer.setString(2, unitID);
+            String userID = unitDB.executeGetUserID(buyOffer.getUsername());
+            insertBuyOffer.setString(3, userID);
+            insertBuyOffer.setString(4, buyOffer.getAssetName());
+            insertBuyOffer.setString(5, String.valueOf(buyOffer.getPricePerUnit()));
+            insertBuyOffer.setString(6, String.valueOf(buyOffer.getQuantity()));
             insertBuyOffer.execute();
             insertBuyOffer.close();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void insertSellOffer(User user, Asset asset, String assetPrice) {
+    public void insertSellOffer(SellOffer sellOffer) {
         try {
-            insertBuyOffer.setString(1, "null");
-            insertBuyOffer.setString(2, "s");
-            // Get Unit ID
-            // switch case for org unit mem, leader and whoever else can create a buy offer
-            if (user.getClass() == OrganisationalUnitMembers.class) {
-                UnitDataSource unitDB = new UnitDataSource();
-                String unitID = unitDB.executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
-                insertBuyOffer.setString(3, unitID);
-            }
-
-            else {
-                //
-            }
-            if (user.getClass() == OrganisationalUnitMembers.class) {
-                UnitDataSource unitDB = new UnitDataSource();
-                String userID = unitDB.executeGetUserID(((OrganisationalUnitMembers) user).getUnitName());
-                insertBuyOffer.setString(4, userID);
-            }
-            insertBuyOffer.setString(5, asset.getAssetName());
-            insertBuyOffer.setString(6, assetPrice);
-            insertBuyOffer.execute();
-
+            insertSellOffer.setString(1, "s");
+            UnitDataSource unitDB = new UnitDataSource();
+            String unitID = unitDB.executeGetUnitID(sellOffer.getUnitName());
+            insertSellOffer.setString(2, unitID);
+            String userID = unitDB.executeGetUserID(sellOffer.getUsername());
+            insertSellOffer.setString(3, userID);
+            insertSellOffer.setString(4, sellOffer.getAssetName());
+            insertSellOffer.setString(5, String.valueOf(sellOffer.getPricePerUnit()));
+            insertSellOffer.setString(6, String.valueOf(sellOffer.getQuantity()));
+            insertSellOffer.execute();
+            insertSellOffer.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -153,6 +120,10 @@ public class MarketplaceDataSource {
         return sellOffers;
     }
 
+    public void close() throws SQLException {
+        connection.close();
+    }
+
     /* maybe params r unit id, user id, ppu
     public void resolveOffer(User user, Asset asset) {
         try {
@@ -160,6 +131,7 @@ public class MarketplaceDataSource {
             // resolveOffer.setString("1", )
         }
     }
+
     */
 
 

@@ -98,7 +98,7 @@ public abstract class Offer {
      *
      * @return The price per unit of the asset
      */
-    protected double getPricePerUnit() {
+    public double getPricePerUnit() {
         return pricePerUnit;
     }
 
@@ -107,7 +107,7 @@ public abstract class Offer {
      *
      * @return The username of the user who made the offer
      */
-    protected String getUsername() {
+    public String getUsername() {
         return username;
     }
 
@@ -137,7 +137,7 @@ public abstract class Offer {
      *
      * @return The assetname of the order
      */
-    protected String getAssetName() {
+    public String getAssetName() {
         return assetName;
     }
 

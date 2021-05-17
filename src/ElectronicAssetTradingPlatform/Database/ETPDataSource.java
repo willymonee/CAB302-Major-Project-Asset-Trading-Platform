@@ -16,6 +16,7 @@ public class ETPDataSource {
                     + "User_ID INTEGER NOT NULL,"
                     + "Asset_type_ID NOT NULL,"
                     + "Price_per_unit FLOAT NOT NULL,"
+                    + "Quantity INTEGER NOT NULL,"
                     + "PRIMARY KEY(Offer_ID AUTOINCREMENT)"
                     + ");";
 

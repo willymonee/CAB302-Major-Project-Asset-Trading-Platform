@@ -1,28 +1,27 @@
-package ElectronicAssetTradingPlatform.Database.MockDBs;
+package ElectronicAssetTradingPlatform.AssetTrading;
 
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
-
-
+import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
+import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * Mock database class for market buy offers
- */
-public class BuyOffersDB {
+public class BuyOfferData {
     private static TreeMap<Integer, BuyOffer> MarketBuyOffers = new TreeMap<>();
 
     // instantiate DB as null
-    private static BuyOffersDB buyOffersDB = null;
+    private static BuyOfferData buyOfferData = null;
+
+    // database connectivity
+    private static MarketplaceDataSource marketplaceDataSource = new MarketplaceDataSource();
 
     /**
      * Constructor to initialise the single AssetCollection object. This is a private constructor to restrict further
      * creation of it in other classes
      *
      */
-    private BuyOffersDB() { }
+    private BuyOfferData() { }
 
     public TreeMap<Integer, BuyOffer> getMarketBuyOffers() {
         return MarketBuyOffers;
@@ -32,12 +31,12 @@ public class BuyOffersDB {
     /**
      * Retrieve the singleton/create the DB object
      */
-    public static BuyOffersDB getBuyOffersDB() {
-        if (buyOffersDB == null) {
-            return new BuyOffersDB();
+    public static BuyOfferData getBuyOfferData() {
+        if (buyOfferData == null) {
+            return new BuyOfferData();
         }
         else {
-            return buyOffersDB;
+            return buyOfferData;
         }
     }
 
@@ -59,10 +58,9 @@ public class BuyOffersDB {
     /**
      * Insert a buy offer into the DB
      */
-    public static void addBuyOffer(int ID, BuyOffer offer) {
-
-        MarketBuyOffers.put(ID, offer);
-
+    public static void addBuyOffer(BuyOffer offer) {
+        // MarketBuyOffers.put(ID, offer);
+        marketplaceDataSource.insertBuyOffer(offer);
     }
 
     /**

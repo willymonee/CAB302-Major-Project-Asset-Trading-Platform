@@ -1,30 +1,41 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
+import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 
 public class MarketplaceTesting {
 
+    static UsersDataSource usersDataSource;
     Asset asset;
     OrganisationalUnitMembers userA;
-    MarketplaceDataSource dataSource;
+    static MarketplaceDataSource marketplaceDataSource;
+    static UnitDataSource unitDataSource;
 
     @BeforeEach
     @Test
     public void setupMarketplace() {
         ETPDataSource etp = new ETPDataSource();
-        userA = new OrganisationalUnitMembers("userN", "pw", "salt", "UnitX");
-        dataSource = new MarketplaceDataSource();
-        asset = new Asset("testAsset");
+        userA = new OrganisationalUnitMembers("willymon", "pw", "salt", "Human Resources");
+        marketplaceDataSource = new MarketplaceDataSource();
+//        try {
+//            usersDataSource = new UsersDataSource();
+//            usersDataSource.insertUser(userA);
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+
+
+
+
     }
 
     /*
@@ -38,10 +49,25 @@ public class MarketplaceTesting {
     DELETE FROM Marketplace WHERE Unit_ID = 1;
      */
     @Test
-    public void testInsert() {
-        if (dataSource == null) {
-            dataSource = new MarketplaceDataSource();
-        }
-        dataSource.insertBuyOffer(userA, asset, "50");
+    public void testInsertBuyOffer() {
+        // creating a buy offer then adding it into the database
+        //BuyOffer buyOffer = new BuyOffer("Table", 1, 1.50, "willymon", "Human Resources");
+        //marketplaceDataSource.insertBuyOffer(buyOffer);
+
+        // creating a buy offer and adding it into the database through the user
+        userA.listBuyOrder("Table", 10, 5.45);
+
+    }
+
+    @Test
+    public void testInsertSellOffer() {
+        // creating a buy offer and adding it into the database through the user
+        userA.listSellOrder("iPhone 10", 1, 105);
+
+    }
+
+    @AfterAll
+    public static void closeDB() throws SQLException {
+        marketplaceDataSource.close();
     }
 }

@@ -10,9 +10,9 @@ import java.sql.SQLException;
  * Helper Class for any DataSource class that requires to fetch the organisational unit name and/or ID.
  */
 public class UnitDataSource {
-    private static final String GET_UNIT_NAME = "SELECT Name FROM Organisational_Units WHERE Unit_ID = ?";
-    private static final String GET_UNIT_ID = "SELECT Unit_ID FROM Organisational_Units WHERE Name = ?";
-    private static final String GET_USER_ID = "SELECT USER_ID FROM User_Accounts WHERE Username = ?";
+    private static final String GET_UNIT_NAME = "SELECT Name FROM Organisational_Units WHERE Unit_ID =?";
+    private static final String GET_UNIT_ID = "SELECT Unit_ID FROM Organisational_Units WHERE Name =?";
+    private static final String GET_USER_ID = "SELECT USER_ID FROM User_Accounts WHERE Username =?";
 
     PreparedStatement getUnitNameQuery;
     PreparedStatement getUnitIDQuery;
@@ -40,6 +40,7 @@ public class UnitDataSource {
         String unitName;
         try {
             rs = getUnitNameQuery.executeQuery();
+            rs.next();
             unitName = rs.getString("Name");
         } finally {
             if (rs != null) rs.close();
@@ -52,12 +53,12 @@ public class UnitDataSource {
     public String executeGetUnitID(String unitName) throws SQLException {
         // Prepare
         getUnitIDQuery.setString(1, unitName);
-
         // Result
         ResultSet rs = null;
         String unitID;
         try {
             rs = getUnitIDQuery.executeQuery();
+            rs.next();
             unitID = rs.getString("Unit_ID");
         } finally {
             if (rs != null) rs.close();
@@ -73,6 +74,7 @@ public class UnitDataSource {
         String userID;
         try {
             rs = getUserIDQuery.executeQuery();
+            rs.next();
             userID = rs.getString("User_ID");
         } finally {
             if (rs != null) rs.close();
