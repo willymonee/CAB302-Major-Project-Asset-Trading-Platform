@@ -14,7 +14,7 @@ public class ETPDataSource {
                     + "Buy_or_Sell TEXT CHECK (buy_or_sell IN ('b', 's')),"
                     + "Unit_ID INTEGER NOT NULL,"
                     + "User_ID INTEGER NOT NULL,"
-                    + "Asset_type_ID NOT NULL,"
+                    + "Asset_type_ID INTEGER NOT NULL,"
                     + "Price_per_unit FLOAT NOT NULL,"
                     + "PRIMARY KEY(Offer_ID AUTOINCREMENT)"
                     + ");";
