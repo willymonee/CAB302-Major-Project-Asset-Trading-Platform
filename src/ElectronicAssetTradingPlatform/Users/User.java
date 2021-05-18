@@ -2,10 +2,12 @@ package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 
+import java.io.Serializable;
+
 /**
  * Class for the users of the application
  */
-public class User {
+public class User implements Serializable {
     private String username;
     private String password;
     private String salt;
