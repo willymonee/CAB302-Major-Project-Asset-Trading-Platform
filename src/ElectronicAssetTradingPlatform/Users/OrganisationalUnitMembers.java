@@ -138,7 +138,7 @@ public class OrganisationalUnitMembers extends User {
      * @return Returns the map of asset_name and quantity
      */
     public HashMap<String, Integer> getUnitAssets() throws SQLException {
-        return new UsersDataSource().getUnitAssets(organisationalUnitName);
+        return UsersDataSource.getInstance().getUnitAssets(organisationalUnitName);
     }
 
     /**
@@ -147,7 +147,7 @@ public class OrganisationalUnitMembers extends User {
      * @return Returns the quantity of credits
      */
     public float getUnitCredits() throws SQLException {
-        return new UsersDataSource().getUnitCredits(organisationalUnitName);
+        return UsersDataSource.getInstance().getUnitCredits(organisationalUnitName);
     }
 
     public String getUnitName() { return organisationalUnitName; }

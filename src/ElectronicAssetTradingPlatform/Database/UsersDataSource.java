@@ -44,15 +44,26 @@ public class UsersDataSource {
 
     private Connection connection;
 
-    public UsersDataSource() throws SQLException {
+    // Singleton
+    private static class SingletonHolder {
+        private final static UsersDataSource INSTANCE = new UsersDataSource();
+    }
+    public static UsersDataSource getInstance() { return SingletonHolder.INSTANCE; }
+
+    private UsersDataSource() {
         connection = DBConnectivity.getInstance();
 
-        addUserQuery = connection.prepareStatement(INSERT_USER);
-        getUserQuery = connection.prepareStatement(GET_USER, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-        editUserQuery = connection.prepareStatement(EDIT_USER);
-        editPasswordQuery = connection.prepareStatement(EDIT_PASSWORD);
-        getUnitCreditsQuery = connection.prepareStatement(GET_UNIT_CREDITS);
-        getUnitAssetsQuery = connection.prepareStatement(GET_UNIT_ASSETS);
+        try {
+            addUserQuery = connection.prepareStatement(INSERT_USER);
+            getUserQuery = connection.prepareStatement(GET_USER, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            editUserQuery = connection.prepareStatement(EDIT_USER);
+            editPasswordQuery = connection.prepareStatement(EDIT_PASSWORD);
+            getUnitCreditsQuery = connection.prepareStatement(GET_UNIT_CREDITS);
+            getUnitAssetsQuery = connection.prepareStatement(GET_UNIT_ASSETS);
+        } catch (SQLException e) {
+            System.out.println("UsersDataSource constructor error: ");
+            e.printStackTrace();
+        }
     }
 
     public User getUser(String username) throws SQLException, User.UserTypeException {

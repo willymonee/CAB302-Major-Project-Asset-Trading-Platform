@@ -130,8 +130,8 @@ public class ITAdmin extends User {
         // Clear unit name if IT/SysAdmin
         try {
             switch (User.UserTypeEnum.valueOf(userType)) {
-                case ITAdmin, SystemsAdmin -> new UsersDataSource().editUser(username, userType, null);
-                case OrganisationalUnitMembers, OrganisationalUnitLeader -> new UsersDataSource().editUser(username, userType, unitName);
+                case ITAdmin, SystemsAdmin -> UsersDataSource.getInstance().editUser(username, userType, null);
+                case OrganisationalUnitMembers, OrganisationalUnitLeader -> UsersDataSource.getInstance().editUser(username, userType, unitName);
                 default -> throw new IllegalArgumentException();
             }
         } catch (IllegalArgumentException e) {
