@@ -76,8 +76,10 @@ public class UsersDataSource {
         String salt;
         String userType;
         String unitName;
+
         try {
             rs = getUserQuery.executeQuery();
+            rs.next();
 
             // Result
             passwordHash = rs.getString("Password_hash");
@@ -88,21 +90,16 @@ public class UsersDataSource {
             if (rs != null) rs.close();
         }
 
-        // Get user based on user type
-        User queriedUser;
+        // Try get type
+        UsersFactory.UserType type = null;
         try {
-            switch (User.UserTypeEnum.valueOf(userType)) {
-                case ITAdmin -> queriedUser = new ITAdmin(username, passwordHash, salt);
-                case OrganisationalUnitMembers -> queriedUser = new OrganisationalUnitMembers(username, passwordHash, salt, unitName);
-                case OrganisationalUnitLeader -> queriedUser = new OrganisationalUnitLeader(username, passwordHash, salt, unitName);
-                case SystemsAdmin -> queriedUser = new SystemsAdmin(username, passwordHash, salt);
-                default -> throw new IllegalArgumentException();
-            }
-        } catch (IllegalArgumentException e) {
+            type = UsersFactory.UserType.valueOf(userType);
+        }
+        catch (IllegalArgumentException e) {
             throw new User.UserTypeException("Invalid user type");
         }
 
-        return queriedUser;
+        return UsersFactory.CreateUser(username, passwordHash, salt, unitName, type);
     }
 
     public void insertUser(User user) throws SQLException {

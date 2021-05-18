@@ -11,11 +11,6 @@ public class User {
     private String salt;
     protected String userType; // So that children can set their own userType in constructor (safety?)
 
-    // Available user type enum
-    public enum UserTypeEnum {
-        ITAdmin, OrganisationalUnitLeader, OrganisationalUnitMembers, SystemsAdmin
-    }
-
     /**
      * Constructor used for constructing a default user.
      *

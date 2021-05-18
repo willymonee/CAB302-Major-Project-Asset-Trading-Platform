@@ -24,7 +24,7 @@ public class ITAdmin extends User {
      */
     public ITAdmin(String username, String password, String salt) {
         super(username, password, salt);
-        this.userType = UserTypeEnum.ITAdmin.toString();
+        this.userType = UsersFactory.UserType.ITAdmin.toString();
     }
 
     /**
@@ -85,21 +85,16 @@ public class ITAdmin extends User {
         String salt = Hashing.bytesToString(saltBytes);
         String password = Hashing.bytesToString(passwordBytes);
 
-        // Create user - from userType
-        User newUser;
+        // Try get type
+        UsersFactory.UserType type = null;
         try {
-            switch (UserTypeEnum.valueOf(userType)) {
-                case ITAdmin -> newUser = new ITAdmin(name, password, salt);
-                case OrganisationalUnitMembers -> newUser = new OrganisationalUnitMembers(name, password, salt, unitName);
-                case OrganisationalUnitLeader ->  newUser = new OrganisationalUnitLeader(name, password, salt, unitName);
-                case SystemsAdmin -> newUser = new SystemsAdmin(name, password, salt);
-                default -> throw new IllegalArgumentException();
-            }
-        } catch (IllegalArgumentException e) {
-            throw new UserTypeException("Invalid user type");
+            type = UsersFactory.UserType.valueOf(userType);
+        }
+        catch (IllegalArgumentException e) {
+            throw new User.UserTypeException("Invalid user type");
         }
 
-        return newUser;
+        return UsersFactory.CreateUser(name, password, salt, unitName, type);
     }
 
     /**
@@ -129,7 +124,7 @@ public class ITAdmin extends User {
         // Checks complete - query to update db
         // Clear unit name if IT/SysAdmin
         try {
-            switch (User.UserTypeEnum.valueOf(userType)) {
+            switch (UsersFactory.UserType.valueOf(userType)) {
                 case ITAdmin, SystemsAdmin -> UsersDataSource.getInstance().editUser(username, userType, null);
                 case OrganisationalUnitMembers, OrganisationalUnitLeader -> UsersDataSource.getInstance().editUser(username, userType, unitName);
                 default -> throw new IllegalArgumentException();

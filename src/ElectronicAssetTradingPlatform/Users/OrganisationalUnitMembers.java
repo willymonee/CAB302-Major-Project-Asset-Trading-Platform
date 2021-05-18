@@ -26,7 +26,7 @@ public class OrganisationalUnitMembers extends User {
      */
     public OrganisationalUnitMembers(String username, String password, String salt, String unitName) {
         super(username, password, salt);
-        this.userType = UserTypeEnum.OrganisationalUnitMembers.toString();
+        this.userType = UsersFactory.UserType.OrganisationalUnitMembers.toString();
         this.organisationalUnitName = unitName;
     }
 
