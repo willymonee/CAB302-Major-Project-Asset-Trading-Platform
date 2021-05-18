@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 
 /**
@@ -55,7 +56,9 @@ public class MarketplaceDataSource {
             insertBuyOffer.setString(2, unitID);
             String userID = unitDB.executeGetUserID(buyOffer.getUsername());
             insertBuyOffer.setString(3, userID);
-            insertBuyOffer.setString(4, buyOffer.getAssetName());
+
+            int assetID = unitDB.executeGetAssetID(buyOffer.getAssetName());
+            insertBuyOffer.setInt(4, assetID);
             insertBuyOffer.setString(5, String.valueOf(buyOffer.getPricePerUnit()));
             insertBuyOffer.setString(6, String.valueOf(buyOffer.getQuantity()));
             insertBuyOffer.execute();
@@ -73,7 +76,8 @@ public class MarketplaceDataSource {
             insertSellOffer.setString(2, unitID);
             String userID = unitDB.executeGetUserID(sellOffer.getUsername());
             insertSellOffer.setString(3, userID);
-            insertSellOffer.setString(4, sellOffer.getAssetName());
+            int assetID = unitDB.executeGetAssetID(sellOffer.getAssetName());
+            insertSellOffer.setInt(4, assetID);
             insertSellOffer.setString(5, String.valueOf(sellOffer.getPricePerUnit()));
             insertSellOffer.setString(6, String.valueOf(sellOffer.getQuantity()));
             insertSellOffer.execute();
@@ -81,6 +85,37 @@ public class MarketplaceDataSource {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Retrieve buy offers from the database and return them as a TreeMap
+     */
+    public TreeMap<Integer, BuyOffer> getBuyOffers() {
+        TreeMap<Integer, BuyOffer> buyOffers = new TreeMap<>();
+        ResultSet rs = null;
+        try {
+            getOffers.setString(1, "b");
+            rs = getOffers.executeQuery();
+            UnitDataSource unitDB = new UnitDataSource();
+            while(rs.next()) {
+                int orderID = rs.getInt(1);
+                int unitID = rs.getInt(3);
+                int userID = rs.getInt(4);
+                int assetID = rs.getInt(5);
+                double price = rs.getDouble(6);
+                int quantity = rs.getInt(7);
+                String username = unitDB.executeGetUsername(userID);
+                String unitName = unitDB.executeGetUnitName(unitID);
+                String assetName = unitDB.executeGetAssetName(assetID);
+                BuyOffer offer = new BuyOffer(orderID, assetName, quantity, price, username, unitName);
+                buyOffers.put(orderID, offer);
+
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return buyOffers;
     }
 
     // maybe a param can be unit credits BUY/SELL get offers can be merged into 1 method

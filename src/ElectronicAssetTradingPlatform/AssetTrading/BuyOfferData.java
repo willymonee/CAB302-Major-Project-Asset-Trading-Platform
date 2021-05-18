@@ -7,10 +7,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Retrieves and inserts data relating to buy offers to/from the database.
+ * Singleton class
+ */
 public class BuyOfferData {
     private static TreeMap<Integer, BuyOffer> MarketBuyOffers = new TreeMap<>();
 
-    // instantiate DB as null
+    // instantiate as null
     private static BuyOfferData buyOfferData = null;
 
     // database connectivity
@@ -23,13 +27,8 @@ public class BuyOfferData {
      */
     private BuyOfferData() { }
 
-    public TreeMap<Integer, BuyOffer> getMarketBuyOffers() {
-        return MarketBuyOffers;
-    }
-
-
     /**
-     * Retrieve the singleton/create the DB object
+     * Retrieve the singleton/create the BuyOfferData object
      */
     public static BuyOfferData getBuyOfferData() {
         if (buyOfferData == null) {
@@ -37,6 +36,19 @@ public class BuyOfferData {
         }
         else {
             return buyOfferData;
+        }
+    }
+
+    /**
+     * Retreive market buy offers from the database and insert them into the TreeMap
+     */
+    public void getBuyOffers() {
+        TreeMap<Integer, BuyOffer> buyOffers = marketplaceDataSource.getBuyOffers();
+        Iterator<Map.Entry<Integer, BuyOffer>> entries = buyOffers.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<Integer, BuyOffer> entry = entries.next();
+            BuyOffer nextOffer = entry.getValue();
+            MarketBuyOffers.put(nextOffer.getOfferID(), nextOffer);
         }
     }
 
@@ -75,8 +87,14 @@ public class BuyOfferData {
      */
     public static void removeAllBuyOffers() { MarketBuyOffers.clear(); }
 
+    public TreeMap<Integer, BuyOffer> getMarketBuyOffers() {
+        return MarketBuyOffers;
+    }
 
 
+    /**
+     * @return String of all market buy offers stored in BuyOfferData
+     */
     @Override
     public String toString() {
         Iterator<Map.Entry<Integer, BuyOffer>> entries = MarketBuyOffers.entrySet().iterator();

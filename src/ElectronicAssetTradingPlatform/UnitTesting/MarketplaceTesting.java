@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.UnitTesting;
 
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
 import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
@@ -55,15 +56,22 @@ public class MarketplaceTesting {
         //marketplaceDataSource.insertBuyOffer(buyOffer);
 
         // creating a buy offer and adding it into the database through the user
-        userA.listBuyOrder("Table", 10, 5.45);
+        //userA.listBuyOrder("Table", 10, 5.45);
 
     }
 
     @Test
     public void testInsertSellOffer() {
         // creating a buy offer and adding it into the database through the user
-        userA.listSellOrder("iPhone 10", 1, 105);
+        // userA.listSellOrder("iPhone 10", 1, 105);
+    }
 
+    @Test
+    public void testRetrieveBuyOffers() {
+        // retrieve offers from database and store them in a BuyOfferData TreeMap field
+        BuyOfferData.getBuyOfferData().getBuyOffers();
+        // print them out from BuyOfferData
+        System.out.println(BuyOfferData.getBuyOfferData());
     }
 
     @AfterAll

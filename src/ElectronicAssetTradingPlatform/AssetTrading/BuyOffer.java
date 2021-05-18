@@ -25,7 +25,11 @@ public class BuyOffer extends Offer{
      */
     public BuyOffer(String asset, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
         super(asset, quantity, pricePerUnit, username, organisationalUnitName);
-        this.orderID = createUniqueID();
+    }
+
+    public BuyOffer(int orderID, String asset, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
+        super(asset, quantity, pricePerUnit, username, organisationalUnitName);
+        this.orderID = orderID;
     }
 
     /**
