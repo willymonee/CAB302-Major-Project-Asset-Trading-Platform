@@ -62,21 +62,52 @@ public class NetworkServer {
      * @param socket The socket used to communicate with the currently connected client
      */
     private void handleConnection(Socket socket) throws IOException, ClassNotFoundException {
-        try (
-                ObjectInputStream objectInputStream =
-                        new ObjectInputStream(socket.getInputStream())
-        ) {
-            String command = (String) objectInputStream.readObject();
-            switch (command) {
-                case NetworkDataSource.RETRIEVE -> {
-                    try (
-                            ObjectOutputStream objectOutputStream =
-                                    new ObjectOutputStream(socket.getOutputStream())
-                    ) {
-                        objectOutputStream.writeObject(UsersDataSource.getInstance().getUser("willymon"));
-                    } catch (SQLException | User.UserTypeException e) {
-                        e.printStackTrace();
+        try (ObjectInputStream objectInputStream =
+                        new ObjectInputStream(socket.getInputStream())) {
+            // Read: Command, and parameter object
+            NetworkCommands command = (NetworkCommands) objectInputStream.readObject();
+            try {
+                switch (command) {
+                    case RETRIEVE_USER -> {
+                        // Get input
+                        String username = (String) objectInputStream.readObject();
+
+                        User out = UsersDataSource.getInstance().getUser(username);
+
+                        // Write output
+                        try (
+                                ObjectOutputStream objectOutputStream =
+                                        new ObjectOutputStream(socket.getOutputStream())
+                        ) {
+                            objectOutputStream.writeObject(out);
+                        }
                     }
+                    case STORE_USER -> {
+                        // Get input
+                        User user = (User) objectInputStream.readObject();
+
+                        // Save to db
+                        UsersDataSource.getInstance().insertUser(user);
+
+                        // Write success output
+                        try (
+                                ObjectOutputStream objectOutputStream =
+                                        new ObjectOutputStream(socket.getOutputStream())
+                        ) {
+                            objectOutputStream.writeObject("Added user.");
+                        }
+                    }
+                }
+            } catch (SQLException | User.UserTypeException e) {
+                // Get any DB errors
+                e.printStackTrace();
+
+                // Write error output
+                try (
+                        ObjectOutputStream objectOutputStream =
+                                new ObjectOutputStream(socket.getOutputStream())
+                ) {
+                    objectOutputStream.writeObject(e.getMessage());
                 }
             }
         }
