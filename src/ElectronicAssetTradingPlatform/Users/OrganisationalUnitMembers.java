@@ -84,7 +84,7 @@ public class OrganisationalUnitMembers extends User {
      * @param listingID int ID of asset listing for removal
      */
     public void removeBuyOffer(int listingID) {
-        BuyOffersDB.removeBuyOffer(listingID);
+        BuyOfferData.removeOffer(listingID);
     }
 
     /**
@@ -93,7 +93,7 @@ public class OrganisationalUnitMembers extends User {
      * @param listingID int ID of asset listing for removal
      */
     public void removeSellOffer(int listingID) {
-        SellOffersDB.removeSellOffer(listingID);
+        SellOfferData.removeOffer(listingID);
     }
 
     /**

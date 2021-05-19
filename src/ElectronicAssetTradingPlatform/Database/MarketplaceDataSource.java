@@ -28,6 +28,7 @@ public class MarketplaceDataSource {
             + "VALUES (?, ?, ?, ?, ?, ?);";
     private static final String GET_OFFERS = "SELECT * FROM Marketplace WHERE Buy_or_Sell= ?";
     private static final String RESOLVE_OFFER = "DELETE FROM Marketplace WHERE Offer_ID=?";
+    private static final String REMOVE_OFFER = "DELETE FROM Marketplace WHERE Offer_ID=?";
 
 
 
@@ -35,6 +36,7 @@ public class MarketplaceDataSource {
     private PreparedStatement insertSellOffer;
     private PreparedStatement getOffers;
     private PreparedStatement resolveOffer;
+    private PreparedStatement removeOffer;
 
     private Connection connection;
 
@@ -45,8 +47,18 @@ public class MarketplaceDataSource {
             insertSellOffer = connection.prepareStatement(INSERT_SELLOFFER);
             getOffers = connection.prepareStatement(GET_OFFERS);
             resolveOffer = connection.prepareStatement(RESOLVE_OFFER);
+            removeOffer = connection.prepareStatement(REMOVE_OFFER);
         } catch (SQLException error) {
             error.printStackTrace();
+        }
+    }
+
+    public void removeOffer(int offerID) {
+        try {
+            removeOffer.setInt(1, offerID);
+            removeOffer.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 

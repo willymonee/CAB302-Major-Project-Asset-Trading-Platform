@@ -77,6 +77,7 @@ public class BuyOfferData {
      */
     public static void removeOffer(int ID) {
         MarketBuyOffers.remove(ID);
+        marketplaceDataSource.removeOffer(ID);
     }
 
     /**
@@ -132,6 +133,7 @@ public class BuyOfferData {
         TreeMap<Integer, BuyOffer> orgOffers = getOrgOffersMap(unitName);
         Iterator<Map.Entry<Integer, BuyOffer>> buyOffersIter = orgOffers.entrySet().iterator();
         StringBuilder OrgMarketOffers = new StringBuilder();
+        OrgMarketOffers.append(unitName).append("'s Buy Offers: \n");
         while (buyOffersIter.hasNext()) {
             Map.Entry<Integer, BuyOffer> entry = buyOffersIter.next();
             OrgMarketOffers.append(entry.getValue().toString());

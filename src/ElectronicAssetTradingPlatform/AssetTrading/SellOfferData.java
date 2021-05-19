@@ -68,10 +68,11 @@ public class SellOfferData {
     }
 
     /**
-     * Remove a sell offer based on its ID
+     * Remove an offer from the DB
      */
-    public static void removeSellOffer(int ID) {
+    public static void removeOffer(int ID) {
         MarketSellOffers.remove(ID);
+        marketplaceDataSource.removeOffer(ID);
     }
 
     /**
@@ -127,6 +128,7 @@ public class SellOfferData {
         TreeMap<Integer, SellOffer> orgOffers = getOrgOffersMap(unitName);
         Iterator<Map.Entry<Integer, SellOffer>> sellOffersIter = orgOffers.entrySet().iterator();
         StringBuilder OrgMarketOffers = new StringBuilder();
+        OrgMarketOffers.append(unitName).append("'s Sell Offers: \n");
         while (sellOffersIter.hasNext()) {
             Map.Entry<Integer, SellOffer> entry = sellOffersIter.next();
             OrgMarketOffers.append(entry.getValue().toString());

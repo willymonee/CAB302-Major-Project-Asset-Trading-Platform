@@ -75,6 +75,16 @@ public class MarketplaceTesting {
     }
 
     @Test
+    public void removeBuyOffer() {
+        userA.removeBuyOffer(21);
+    }
+
+    @Test
+    public void removeSellOffer() {
+        userA.removeSellOffer(23);
+    }
+
+    @Test
     public void testRetrieveSellOffers() {
         // print them out from SellOfferData
         //System.out.println(SellOfferData.getInstance());
