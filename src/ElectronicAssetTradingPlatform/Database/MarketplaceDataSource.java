@@ -149,41 +149,4 @@ public class MarketplaceDataSource {
         }
         return sellOffers;
     }
-
-
-
-    // maybe a param can be unit credits
-    public HashMap<String, String> getSellOffers(User user) {
-        HashMap<String, String> sellOffers = new HashMap<>();
-        ResultSet rs = null;
-
-        try {
-            rs = getOffers.executeQuery();
-            while(rs.next()) {
-                sellOffers.put(rs.getString("Asset_type_ID"), rs.getString("Price_per_unit"));
-            }
-            rs.close();
-            // maybe stuff about querying user
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return sellOffers;
-    }
-
-    public void close() throws SQLException {
-        connection.close();
-    }
-
-    /* maybe params r unit id, user id, ppu
-    public void resolveOffer(User user, Asset asset) {
-        try {
-            // get the offer id from marketplace
-            // resolveOffer.setString("1", )
-        }
-    }
-
-    */
-
-
-
 }
