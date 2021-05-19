@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Mock database class for market buy offers
+ * Mock database class for market buy offers DEPRECATED
  */
 public class BuyOffersDB {
     private static TreeMap<Integer, BuyOffer> MarketBuyOffers = new TreeMap<>();

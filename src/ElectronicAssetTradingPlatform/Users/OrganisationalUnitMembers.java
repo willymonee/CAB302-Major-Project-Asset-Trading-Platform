@@ -32,7 +32,7 @@ public class OrganisationalUnitMembers extends User {
 
     /**
      * Display current sell offers made by the organisational unit [M]
-     * @return
+     * @return String of the unit's sell offers
      */
     public String getOrgSellOffers() {
         return SellOffersDB.getSellOffersDB().getOrgSellOffers(this.organisationalUnitName);
@@ -41,6 +41,7 @@ public class OrganisationalUnitMembers extends User {
 
     /**
      * Display current buy offers made by the organisational unit [M]
+     * @return String of the unit's buy offers
      */
     public String getOrgBuyOffers() {
         return BuyOffersDB.getBuyOffersDB().getOrgBuyOffers(this.organisationalUnitName);
@@ -57,9 +58,9 @@ public class OrganisationalUnitMembers extends User {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // add offer into mock DB
-        BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
+       // BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
         // add offer into ACTUAL DATABASE
-        BuyOfferData.addBuyOffer(offer);
+        BuyOfferData.addOffer(offer);
 
     }
 

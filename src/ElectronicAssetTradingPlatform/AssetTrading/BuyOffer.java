@@ -27,6 +27,16 @@ public class BuyOffer extends Offer{
         super(asset, quantity, pricePerUnit, username, organisationalUnitName);
     }
 
+
+    /**
+     * Overloaded Constructor for trade offer - used when retrieving offer from DB
+     * @param orderID                The ID of the offer
+     * @param asset                  Name of the asset to be bought or sold
+     * @param quantity               Quantity of asset
+     * @param pricePerUnit           Price of the asset
+     * @param username               The ID of the user who made the offer
+     * @param organisationalUnitName The ID of the organisation whose assets and credits will be affected
+     */
     public BuyOffer(int orderID, String asset, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
         super(asset, quantity, pricePerUnit, username, organisationalUnitName);
         this.orderID = orderID;
@@ -74,10 +84,8 @@ public class BuyOffer extends Offer{
     private ArrayList<SellOffer> getMatchingSellOffers() {
         ArrayList<SellOffer> matchingSellOffers = new ArrayList<>();
         TreeMap<Integer, SellOffer> sellOfferMap = SellOffersDB.getSellOffersDB().getMarketSellOffers();
-        Iterator<Map.Entry<Integer, SellOffer>> entries = sellOfferMap.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<Integer, SellOffer> entry = entries.next();
-            if(entry.getValue().getAssetName() == this.getAssetName()) {
+        for (Map.Entry<Integer, SellOffer> entry : sellOfferMap.entrySet()) {
+            if (entry.getValue().getAssetName().equals(this.getAssetName())) {
                 SellOffer matchingOffer = entry.getValue();
                 matchingSellOffers.add(matchingOffer);
             }
@@ -90,7 +98,7 @@ public class BuyOffer extends Offer{
      * Takes the matching sell offers and finds the lowest priced sell offer which is equally or lower priced than
      * the buy offer.
      * If two sell offers are equally priced, the offer placed first has priority (this will be the offer queried first)
-     * @TODO turn to a private method after testing
+     * TODO turn to a private method after testing
      *
      * @return int of the sell offer, int >= 0
      */

@@ -1,8 +1,8 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOfferData;
 import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
@@ -68,10 +68,15 @@ public class MarketplaceTesting {
 
     @Test
     public void testRetrieveBuyOffers() {
-        // retrieve offers from database and store them in a BuyOfferData TreeMap field
-        BuyOfferData.getBuyOfferData().getBuyOffers();
+        // retrieve offers from database and store them in a BuyOfferData
+        //BuyOfferData.getInstance().getOffersFromDB();
         // print them out from BuyOfferData
-        System.out.println(BuyOfferData.getBuyOfferData());
+        System.out.println(BuyOfferData.getInstance());
+    }
+    @Test
+    public void testRetrieveSellOffers() {
+        // print them out from SellOfferData
+        System.out.println(SellOfferData.getInstance());
     }
 
     @AfterAll

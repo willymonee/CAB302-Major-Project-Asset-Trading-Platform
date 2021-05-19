@@ -15,6 +15,9 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Deprecated Unit Testing used for early implementation of Offers --> See MarketplaceTesting for updated
+ */
 public class OfferTesting {
     // declare a member object
     OrganisationalUnitMembers member;
@@ -28,8 +31,7 @@ public class OfferTesting {
     // declare date object
     Date date;
 
-    // declared database
-    static MarketplaceDataSource marketDataSource;
+
 
     @BeforeEach
     @Test
@@ -45,9 +47,6 @@ public class OfferTesting {
         long millis = System.currentTimeMillis();
         date = new Date(millis);
 
-        //
-        ETPDataSource etp = new ETPDataSource();
-        marketDataSource = new MarketplaceDataSource();
     }
 
     // clear the buy and sell offer databases before each test
@@ -544,10 +543,4 @@ public class OfferTesting {
                 management.getCredits() == 600 &&
                 humanResources.getCredits() == 1400);
     }
-
-    @AfterAll
-    public static void closeDB() throws SQLException {
-        marketDataSource.close();
-    }
-
 }

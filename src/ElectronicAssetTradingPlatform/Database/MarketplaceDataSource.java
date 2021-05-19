@@ -19,6 +19,9 @@ import java.util.TreeMap;
  * Class to handle the Marketplace table in the database, such as insertions, deletions and querying
  */
 public class MarketplaceDataSource {
+    private static final String BUY_OFFER = "b";
+    private static final String SELL_OFFER = "s";
+
     private static final String INSERT_BUYOFFER = "INSERT INTO Marketplace (Buy_or_Sell, "
             + "Unit_ID, User_ID, Asset_type_ID, Price_per_unit, Quantity)"
             + "VALUES (?, ?, ?, ?, ?, ?);";
@@ -27,6 +30,8 @@ public class MarketplaceDataSource {
             + "VALUES (?, ?, ?, ?, ?, ?);";
     private static final String GET_OFFERS = "SELECT * FROM Marketplace WHERE Buy_or_Sell= ?";
     private static final String RESOLVE_OFFER = "DELETE FROM Marketplace WHERE Offer_ID=?";
+
+
 
     private PreparedStatement insertBuyOffer;
     private PreparedStatement insertSellOffer;
@@ -50,7 +55,7 @@ public class MarketplaceDataSource {
     // Maybe a parameter will not be Asset asset, if it can be achieved via db
     public void insertBuyOffer(BuyOffer buyOffer) {
         try {
-            insertBuyOffer.setString(1, "b");
+            insertBuyOffer.setString(1, BUY_OFFER);
             UnitDataSource unitDB = new UnitDataSource();
             String unitID = unitDB.executeGetUnitID(buyOffer.getUnitName());
             insertBuyOffer.setString(2, unitID);
@@ -70,7 +75,7 @@ public class MarketplaceDataSource {
 
     public void insertSellOffer(SellOffer sellOffer) {
         try {
-            insertSellOffer.setString(1, "s");
+            insertSellOffer.setString(1, SELL_OFFER);
             UnitDataSource unitDB = new UnitDataSource();
             String unitID = unitDB.executeGetUnitID(sellOffer.getUnitName());
             insertSellOffer.setString(2, unitID);
@@ -94,7 +99,7 @@ public class MarketplaceDataSource {
         TreeMap<Integer, BuyOffer> buyOffers = new TreeMap<>();
         ResultSet rs = null;
         try {
-            getOffers.setString(1, "b");
+            getOffers.setString(1, BUY_OFFER);
             rs = getOffers.executeQuery();
             UnitDataSource unitDB = new UnitDataSource();
             while(rs.next()) {
@@ -109,37 +114,47 @@ public class MarketplaceDataSource {
                 String assetName = unitDB.executeGetAssetName(assetID);
                 BuyOffer offer = new BuyOffer(orderID, assetName, quantity, price, username, unitName);
                 buyOffers.put(orderID, offer);
-
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
         return buyOffers;
     }
 
-    // maybe a param can be unit credits BUY/SELL get offers can be merged into 1 method
-    public HashMap<String, String> getBuyOffers(User user) {
-        HashMap<String, String> buyOffers = new HashMap<String, String>();
+    /**
+     * Retrieve sell offers from the database and return them as a TreeMap
+     */
+    public TreeMap<Integer, SellOffer> getSellOffers() {
+        TreeMap<Integer, SellOffer> sellOffers = new TreeMap<>();
         ResultSet rs = null;
-
         try {
-            //getBuyOffers.setString(1, "b");
+            getOffers.setString(1, SELL_OFFER);
             rs = getOffers.executeQuery();
+            UnitDataSource unitDB = new UnitDataSource();
             while(rs.next()) {
-                buyOffers.put(rs.getString("Asset_type_ID"), rs.getString("Price_per_unit"));
+                int orderID = rs.getInt(1);
+                int unitID = rs.getInt(3);
+                int userID = rs.getInt(4);
+                int assetID = rs.getInt(5);
+                double price = rs.getDouble(6);
+                int quantity = rs.getInt(7);
+                String username = unitDB.executeGetUsername(userID);
+                String unitName = unitDB.executeGetUnitName(unitID);
+                String assetName = unitDB.executeGetAssetName(assetID);
+                SellOffer offer = new SellOffer(orderID, assetName, quantity, price, username, unitName);
+                sellOffers.put(orderID, offer);
             }
-            rs.close();
-            // maybe stuff about querying user
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
-        return buyOffers;
+        return sellOffers;
     }
+
+
 
     // maybe a param can be unit credits
     public HashMap<String, String> getSellOffers(User user) {
-        HashMap<String, String> sellOffers = new HashMap<String, String>();
+        HashMap<String, String> sellOffers = new HashMap<>();
         ResultSet rs = null;
 
         try {

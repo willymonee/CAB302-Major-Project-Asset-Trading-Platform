@@ -29,6 +29,20 @@ public class SellOffer extends Offer {
         this.orderID = createUniqueID();
     }
 
+    /**
+     * Overloaded Constructor for trade offer - used when retrieving offer from DB
+     * @param orderID                The ID of the offer
+     * @param asset                  Name of the asset to be bought or sold
+     * @param quantity               Quantity of asset
+     * @param pricePerUnit           Price of the asset
+     * @param username               The ID of the user who made the offer
+     * @param organisationalUnitName The ID of the organisation whose assets and credits will be affected
+     */
+    public SellOffer(int orderID, String asset, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
+        super(asset, quantity, pricePerUnit, username, organisationalUnitName);
+        this.orderID = orderID;
+    }
+
 
     /**
      * Getter for the sell offer's ID
@@ -73,10 +87,8 @@ public class SellOffer extends Offer {
     private ArrayList<BuyOffer> matchingBuyOffers() {
         ArrayList<BuyOffer> matchingBuyOffers = new ArrayList<>();
         TreeMap<Integer, BuyOffer> buyOfferMap = BuyOffersDB.getBuyOffersDB().getMarketBuyOffers();
-        Iterator<Map.Entry<Integer, BuyOffer>> entries = buyOfferMap.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<Integer, BuyOffer> entry = entries.next();
-            if (entry.getValue().getAssetName() == this.getAssetName()) {
+        for (Map.Entry<Integer, BuyOffer> entry : buyOfferMap.entrySet()) {
+            if (entry.getValue().getAssetName().equals(this.getAssetName())) {
                 BuyOffer matchingOffer = entry.getValue();
                 matchingBuyOffers.add(matchingOffer);
             }
