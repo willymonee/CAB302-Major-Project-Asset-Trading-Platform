@@ -35,7 +35,8 @@ public class OrganisationalUnitMembers extends User {
      * @return String of the unit's sell offers
      */
     public String getOrgSellOffers() {
-        return SellOffersDB.getSellOffersDB().getOrgSellOffers(this.organisationalUnitName);
+
+        return SellOfferData.getInstance().getOrgOffers(this.organisationalUnitName);
 
     }
 
@@ -44,7 +45,7 @@ public class OrganisationalUnitMembers extends User {
      * @return String of the unit's buy offers
      */
     public String getOrgBuyOffers() {
-        return BuyOffersDB.getBuyOffersDB().getOrgBuyOffers(this.organisationalUnitName);
+        return BuyOfferData.getInstance().getOrgOffers(this.organisationalUnitName);
     }
 
     /**

@@ -1,17 +1,15 @@
 package ElectronicAssetTradingPlatform.Database;
 
-import ElectronicAssetTradingPlatform.AssetTrading.Asset;
+
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
-import ElectronicAssetTradingPlatform.Users.User;
+
 
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 
@@ -52,7 +50,9 @@ public class MarketplaceDataSource {
         }
     }
 
-    // Maybe a parameter will not be Asset asset, if it can be achieved via db
+    /**
+     * Insert a buy offer into the database
+     */
     public void insertBuyOffer(BuyOffer buyOffer) {
         try {
             insertBuyOffer.setString(1, BUY_OFFER);
@@ -61,7 +61,6 @@ public class MarketplaceDataSource {
             insertBuyOffer.setString(2, unitID);
             String userID = unitDB.executeGetUserID(buyOffer.getUsername());
             insertBuyOffer.setString(3, userID);
-
             int assetID = unitDB.executeGetAssetID(buyOffer.getAssetName());
             insertBuyOffer.setInt(4, assetID);
             insertBuyOffer.setString(5, String.valueOf(buyOffer.getPricePerUnit()));
@@ -73,6 +72,9 @@ public class MarketplaceDataSource {
         }
     }
 
+    /**
+     * Insert a sell offer into the database
+     */
     public void insertSellOffer(SellOffer sellOffer) {
         try {
             insertSellOffer.setString(1, SELL_OFFER);
@@ -121,6 +123,7 @@ public class MarketplaceDataSource {
         return buyOffers;
     }
 
+
     /**
      * Retrieve sell offers from the database and return them as a TreeMap
      */
@@ -152,23 +155,7 @@ public class MarketplaceDataSource {
 
 
 
-    // maybe a param can be unit credits
-    public HashMap<String, String> getSellOffers(User user) {
-        HashMap<String, String> sellOffers = new HashMap<>();
-        ResultSet rs = null;
 
-        try {
-            rs = getOffers.executeQuery();
-            while(rs.next()) {
-                sellOffers.put(rs.getString("Asset_type_ID"), rs.getString("Price_per_unit"));
-            }
-            rs.close();
-            // maybe stuff about querying user
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return sellOffers;
-    }
 
     public void close() throws SQLException {
         connection.close();

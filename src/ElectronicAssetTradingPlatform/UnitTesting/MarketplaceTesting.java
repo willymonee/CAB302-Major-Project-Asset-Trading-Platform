@@ -71,12 +71,23 @@ public class MarketplaceTesting {
         // retrieve offers from database and store them in a BuyOfferData
         //BuyOfferData.getInstance().getOffersFromDB();
         // print them out from BuyOfferData
-        System.out.println(BuyOfferData.getInstance());
+        //System.out.println(BuyOfferData.getInstance());
     }
+
     @Test
     public void testRetrieveSellOffers() {
         // print them out from SellOfferData
-        System.out.println(SellOfferData.getInstance());
+        //System.out.println(SellOfferData.getInstance());
+    }
+
+    @Test
+    public void testRetrieveOrgBuyOffers() {
+        System.out.println(userA.getOrgBuyOffers());
+    }
+
+    @Test
+    public void testRetrieveOrgSellOffers() {
+        System.out.println(userA.getOrgSellOffers());
     }
 
     @AfterAll

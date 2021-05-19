@@ -110,20 +110,33 @@ public class BuyOfferData {
     }
 
 
+
     /**
-     * Retrieve buy offers made by a particular organisation
-     * TODO - not implemented yet
+     * Return the buy offers of an organisational unit as a TreeMap
      */
-    public String getOrgOffers(String org) {
-        Iterator<Map.Entry<Integer, BuyOffer>> entries = MarketBuyOffers.entrySet().iterator();
+    private TreeMap<Integer, BuyOffer> getOrgOffersMap(String unitName) {
+        getOffersFromDB();
+        TreeMap<Integer, BuyOffer> orgOffers = new TreeMap<>();
+        for (Map.Entry<Integer, BuyOffer> buyOffer : MarketBuyOffers.entrySet()) {
+            if (buyOffer.getValue().getUnitName().equals(unitName)) {
+                orgOffers.put(buyOffer.getKey(), buyOffer.getValue());
+            }
+        }
+        return orgOffers;
+    }
+
+    /**
+     * Retrieve buy offers made by a particular organisation as a string
+     */
+    public String getOrgOffers(String unitName) {
+        TreeMap<Integer, BuyOffer> orgOffers = getOrgOffersMap(unitName);
+        Iterator<Map.Entry<Integer, BuyOffer>> buyOffersIter = orgOffers.entrySet().iterator();
         StringBuilder OrgMarketOffers = new StringBuilder();
-        while (entries.hasNext()) {
-            Map.Entry<Integer, BuyOffer> entry = entries.next();
-            if (entry.getValue().getUnitName().equals(org)) {
-                OrgMarketOffers.append(entry.getValue().toString());
-                if (entries.hasNext()) {
-                    OrgMarketOffers.append("\n");
-                }
+        while (buyOffersIter.hasNext()) {
+            Map.Entry<Integer, BuyOffer> entry = buyOffersIter.next();
+            OrgMarketOffers.append(entry.getValue().toString());
+            if (buyOffersIter.hasNext()) {
+                OrgMarketOffers.append("\n");
             }
         }
         return OrgMarketOffers.toString();
