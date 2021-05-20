@@ -21,7 +21,13 @@ public abstract class Offer {
      * @param username The username of the user who made the offer
      * @param organisationalUnitName The name of the organisation whose assets and credits will be affected
      */
-    public Offer(String assetName, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
+    public Offer(String assetName, int quantity, double pricePerUnit, String username, String organisationalUnitName)  {
+        if (pricePerUnit <= 0 ) {
+            throw new IllegalArgumentException("Price needs to be greater than 0");
+        }
+        if (quantity <= 0 ) {
+            throw new IllegalArgumentException("Quantity needs to be greater than 0");
+        }
         this.assetName = assetName;
         this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
@@ -127,8 +133,7 @@ public abstract class Offer {
      * TODO
      */
     public OrganisationalUnit getUnit() {
-        OrganisationalUnit unit = new OrganisationalUnit("Library", 100);
-        return unit;
+        return new OrganisationalUnit("Library", 100);
     }
 
 
@@ -149,4 +154,6 @@ public abstract class Offer {
     protected Date getDatePlaced() {
         return datePlaced;
     }
+
+
 }

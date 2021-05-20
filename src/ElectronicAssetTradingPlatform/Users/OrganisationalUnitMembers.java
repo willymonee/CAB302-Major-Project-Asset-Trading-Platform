@@ -14,7 +14,7 @@ import java.util.HashMap;
  *  and managing unit asset listings via their client side GUI.
  */
 public class OrganisationalUnitMembers extends User {
-    private String organisationalUnitName;
+    private final String organisationalUnitName;
 
     /**
      * Constructor used to set ID to organisational unit to user
@@ -32,18 +32,20 @@ public class OrganisationalUnitMembers extends User {
 
     /**
      * Display current sell offers made by the organisational unit [M]
-     * @return
+     * @return String of the unit's sell offers
      */
     public String getOrgSellOffers() {
-        return SellOffersDB.getSellOffersDB().getOrgSellOffers(this.organisationalUnitName);
+
+        return SellOfferData.getInstance().getOrgOffers(this.organisationalUnitName);
 
     }
 
     /**
      * Display current buy offers made by the organisational unit [M]
+     * @return String of the unit's buy offers
      */
     public String getOrgBuyOffers() {
-        return BuyOffersDB.getBuyOffersDB().getOrgBuyOffers(this.organisationalUnitName);
+        return BuyOfferData.getInstance().getOrgOffers(this.organisationalUnitName);
     }
 
     /**
@@ -57,10 +59,9 @@ public class OrganisationalUnitMembers extends User {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // add offer into mock DB
-        BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
+       // BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
         // add offer into ACTUAL DATABASE
-        BuyOfferData.addBuyOffer(offer);
-
+        BuyOfferData.addOffer(offer);
     }
 
     /**
@@ -82,7 +83,7 @@ public class OrganisationalUnitMembers extends User {
      * @param listingID int ID of asset listing for removal
      */
     public void removeBuyOffer(int listingID) {
-        BuyOffersDB.removeBuyOffer(listingID);
+        BuyOfferData.removeOffer(listingID);
     }
 
     /**
@@ -91,7 +92,7 @@ public class OrganisationalUnitMembers extends User {
      * @param listingID int ID of asset listing for removal
      */
     public void removeSellOffer(int listingID) {
-        SellOffersDB.removeSellOffer(listingID);
+        SellOfferData.removeOffer(listingID);
     }
 
     /**

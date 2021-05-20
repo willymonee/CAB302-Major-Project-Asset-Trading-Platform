@@ -10,32 +10,47 @@ import java.util.TreeMap;
 public class SellOfferData {
     private static TreeMap<Integer, SellOffer> MarketSellOffers = new TreeMap<>();
 
-    // local map
-    private static SellOfferData sellOfferData = null;
-
     // database connectivity
-    private static MarketplaceDataSource marketplaceDataSource = new MarketplaceDataSource();
+    // private static MarketplaceDataSource marketplaceDataSource = new MarketplaceDataSource();
 
     /**
-     * Constructor to initialise the single AssetCollection object. This is a private constructor to restrict further
-     * creation of it in other classes
+     * Constructor to initialise the single BuyOfferData object - protected to suppress unauthorised calls
      */
-    private SellOfferData() { }
+    protected SellOfferData() { }
 
-    public TreeMap<Integer, SellOffer> getMarketSellOffers() {
-        return MarketSellOffers;
+    /**
+     * SellOfferDataHolder is loaded on the first execution of SellOfferData.getInstance() or the first access to
+     * SellOfferData.INSTANCE, not before
+     */
+    private static class SellOfferDataHolder {
+        private final static SellOfferData INSTANCE = new SellOfferData();
     }
 
     /**
-     * Retrieve the singleton/create the DB object
+     * Retrieve the INSTANCE of BuyOfferData
      */
-    public static SellOfferData getSellOffersData() {
-        if (sellOfferData == null) {
-            return new SellOfferData();
+    public static SellOfferData getInstance() {
+        return SellOfferDataHolder.INSTANCE;
+    }
+
+    /**
+     * Retrieve market buy offers from the database and insert them into the TreeMap
+     */
+    protected void getOffersFromDB() {
+        TreeMap<Integer, SellOffer> sellOffers = MarketplaceDataSource.getInstance().getSellOffers();
+        for (Map.Entry<Integer, SellOffer> sellOffer : sellOffers.entrySet()) {
+            SellOffer nextOffer = sellOffer.getValue();
+            MarketSellOffers.put(nextOffer.getOfferID(), nextOffer);
         }
-        else {
-            return sellOfferData;
-        }
+    }
+
+    /**
+     * Update SellOfferData's MarketSellOffers field and then return it
+     * @return TreeMap of the current market sell orders
+     */
+    public TreeMap<Integer, SellOffer> getMarketSellOffers() {
+        getOffersFromDB();
+        return MarketSellOffers;
     }
 
     /**
@@ -53,10 +68,11 @@ public class SellOfferData {
     }
 
     /**
-     * Remove a sell offer based on its ID
+     * Remove an offer from the DB
      */
-    public static void removeSellOffer(int ID) {
+    public static void removeOffer(int ID) {
         MarketSellOffers.remove(ID);
+        MarketplaceDataSource.getInstance().removeOffer(ID);
     }
 
     /**
@@ -68,41 +84,58 @@ public class SellOfferData {
      * Add a sell offer to the DB
      */
     public static void addSellOffer(SellOffer offer) {
-        marketplaceDataSource.insertSellOffer(offer);
+        MarketplaceDataSource.getInstance().insertSellOffer(offer);
     }
-
-
-    @Override
-    public String toString() {
-        Iterator<Map.Entry<Integer, SellOffer>> entries = MarketSellOffers.entrySet().iterator();
-        String MarketOffers = "";
-        while (entries.hasNext()) {
-            Map.Entry<Integer, SellOffer> entry = entries.next();
-            MarketOffers +=  String.format(entry.getValue().toString());
-            if (entries.hasNext()) {
-                MarketOffers += "\n";
-            }
-        }
-        return MarketOffers;
-    }
-
 
 
     /**
-     * Retrieve the sell offers created by an organisation given the org's name
+     * Update the market sell offers stored in SellOfferData MarketSellOffers field and return them all as a string
+     * @return String of all market sell offers stored in SellOfferData MarketSellOffers field
      */
-    public String getOrgSellOffers(String orgName) {
-        Iterator<Map.Entry<Integer, SellOffer>> entries = MarketSellOffers.entrySet().iterator();
-        String OrgMarketOffers = "";
-        while (entries.hasNext()) {
-            Map.Entry<Integer, SellOffer> entry = entries.next();
-            if (entry.getValue().getUnitName() == orgName) {
-                OrgMarketOffers += entry.getValue().toString();
-                if (entries.hasNext()) {
-                    OrgMarketOffers += "\n";
-                }
+    @Override
+    public String toString() {
+        getOffersFromDB();
+        Iterator<Map.Entry<Integer, SellOffer>> sellOffersIter = MarketSellOffers.entrySet().iterator();
+        StringBuilder MarketOffers = new StringBuilder("Sell Offers: \n");
+        while (sellOffersIter.hasNext()) {
+            Map.Entry<Integer, SellOffer> sellOffer = sellOffersIter.next();
+            MarketOffers.append(sellOffer.getValue().toString());
+            if (sellOffersIter.hasNext()) {
+                MarketOffers.append("\n");
             }
         }
-        return OrgMarketOffers;
+        return MarketOffers.toString();
+    }
+
+    /**
+     * Return the sell offers of an organisational unit as a TreeMap
+     */
+    private TreeMap<Integer, SellOffer> getOrgOffersMap(String unitName) {
+        getOffersFromDB();
+        TreeMap<Integer, SellOffer> orgOffers = new TreeMap<>();
+        for (Map.Entry<Integer, SellOffer> sellOffer : MarketSellOffers.entrySet()) {
+            if (sellOffer.getValue().getUnitName().equals(unitName)) {
+                orgOffers.put(sellOffer.getKey(), sellOffer.getValue());
+            }
+        }
+        return orgOffers;
+    }
+
+    /**
+     * Retrieve the sell offers created by an organisation given the org's name and return it as a string
+     */
+    public String getOrgOffers(String unitName) {
+        TreeMap<Integer, SellOffer> orgOffers = getOrgOffersMap(unitName);
+        Iterator<Map.Entry<Integer, SellOffer>> sellOffersIter = orgOffers.entrySet().iterator();
+        StringBuilder OrgMarketOffers = new StringBuilder();
+        OrgMarketOffers.append(unitName).append("'s Sell Offers: \n");
+        while (sellOffersIter.hasNext()) {
+            Map.Entry<Integer, SellOffer> entry = sellOffersIter.next();
+            OrgMarketOffers.append(entry.getValue().toString());
+            if (sellOffersIter.hasNext()) {
+                OrgMarketOffers.append("\n");
+            }
+        }
+        return OrgMarketOffers.toString();
     }
 }
