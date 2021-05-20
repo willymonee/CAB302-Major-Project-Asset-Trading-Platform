@@ -11,7 +11,7 @@ public class SellOfferData {
     private static TreeMap<Integer, SellOffer> MarketSellOffers = new TreeMap<>();
 
     // database connectivity
-    private static MarketplaceDataSource marketplaceDataSource = new MarketplaceDataSource();
+    // private static MarketplaceDataSource marketplaceDataSource = new MarketplaceDataSource();
 
     /**
      * Constructor to initialise the single BuyOfferData object - protected to suppress unauthorised calls
@@ -37,7 +37,7 @@ public class SellOfferData {
      * Retrieve market buy offers from the database and insert them into the TreeMap
      */
     protected void getOffersFromDB() {
-        TreeMap<Integer, SellOffer> sellOffers = marketplaceDataSource.getSellOffers();
+        TreeMap<Integer, SellOffer> sellOffers = MarketplaceDataSource.getInstance().getSellOffers();
         for (Map.Entry<Integer, SellOffer> sellOffer : sellOffers.entrySet()) {
             SellOffer nextOffer = sellOffer.getValue();
             MarketSellOffers.put(nextOffer.getOfferID(), nextOffer);
@@ -72,7 +72,7 @@ public class SellOfferData {
      */
     public static void removeOffer(int ID) {
         MarketSellOffers.remove(ID);
-        marketplaceDataSource.removeOffer(ID);
+        MarketplaceDataSource.getInstance().removeOffer(ID);
     }
 
     /**
@@ -84,7 +84,7 @@ public class SellOfferData {
      * Add a sell offer to the DB
      */
     public static void addSellOffer(SellOffer offer) {
-        marketplaceDataSource.insertSellOffer(offer);
+        MarketplaceDataSource.getInstance().insertSellOffer(offer);
     }
 
 

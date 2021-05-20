@@ -14,7 +14,7 @@ import java.util.HashMap;
  *  and managing unit asset listings via their client side GUI.
  */
 public class OrganisationalUnitMembers extends User {
-    private String organisationalUnitName;
+    private final String organisationalUnitName;
 
     /**
      * Constructor used to set ID to organisational unit to user
@@ -62,7 +62,6 @@ public class OrganisationalUnitMembers extends User {
        // BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
         // add offer into ACTUAL DATABASE
         BuyOfferData.addOffer(offer);
-
     }
 
     /**

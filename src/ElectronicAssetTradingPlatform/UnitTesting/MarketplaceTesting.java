@@ -9,6 +9,7 @@ import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
 
@@ -18,7 +19,7 @@ public class MarketplaceTesting {
     static UsersDataSource usersDataSource;
     Asset asset;
     OrganisationalUnitMembers userA;
-    static MarketplaceDataSource marketplaceDataSource;
+    //static MarketplaceDataSource marketplaceDataSource;
     static UnitDataSource unitDataSource;
 
     @BeforeEach
@@ -26,7 +27,7 @@ public class MarketplaceTesting {
     public void setupMarketplace() {
         ETPDataSource etp = new ETPDataSource();
         userA = new OrganisationalUnitMembers("willymon", "pw", "salt", "Human Resources");
-        marketplaceDataSource = new MarketplaceDataSource();
+        // marketplaceDataSource = new MarketplaceDataSource();
 //        try {
 //            usersDataSource = new UsersDataSource();
 //            usersDataSource.insertUser(userA);
@@ -51,43 +52,48 @@ public class MarketplaceTesting {
      */
     @Test
     public void testInsertBuyOffer() {
-        // creating a buy offer then adding it into the database
-        //BuyOffer buyOffer = new BuyOffer("Table", 1, 1.50, "willymon", "Human Resources");
-        //marketplaceDataSource.insertBuyOffer(buyOffer);
-
         // creating a buy offer and adding it into the database through the user
-        //userA.listBuyOrder("Table", 10, 5.45);
+        // userA.listBuyOrder("Table", 1, 50);
+    }
 
+    // test failing to insert a offer when offer quantity is negative
+    @Test
+    public void testFailInsertOfferNegativeQuantity() {
+        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", -1, 50));
+    }
+
+    // test failing to insert a buy offer when offer price is negative
+    @Test
+    public void testFailInsertOfferNegativePrice() {
+        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", 1, -50));
     }
 
     @Test
     public void testInsertSellOffer() {
         // creating a buy offer and adding it into the database through the user
-        // userA.listSellOrder("iPhone 10", 1, 105);
+        //userA.listSellOrder("iPhone 10", 1, 20);
     }
 
     @Test
     public void testRetrieveBuyOffers() {
-        // retrieve offers from database and store them in a BuyOfferData
-        //BuyOfferData.getInstance().getOffersFromDB();
         // print them out from BuyOfferData
         //System.out.println(BuyOfferData.getInstance());
-    }
-
-    @Test
-    public void removeBuyOffer() {
-        userA.removeBuyOffer(21);
-    }
-
-    @Test
-    public void removeSellOffer() {
-        userA.removeSellOffer(23);
     }
 
     @Test
     public void testRetrieveSellOffers() {
         // print them out from SellOfferData
         //System.out.println(SellOfferData.getInstance());
+    }
+
+    @Test
+    public void removeBuyOffer() {
+        //userA.removeBuyOffer(28);
+    }
+
+    @Test
+    public void removeSellOffer() {
+        //userA.removeSellOffer(30);
     }
 
     @Test
@@ -102,6 +108,6 @@ public class MarketplaceTesting {
 
     @AfterAll
     public static void closeDB() throws SQLException {
-        marketplaceDataSource.close();
+        MarketplaceDataSource.getInstance().close();
     }
 }

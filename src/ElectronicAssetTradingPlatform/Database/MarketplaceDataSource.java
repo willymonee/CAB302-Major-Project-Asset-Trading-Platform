@@ -14,7 +14,7 @@ import java.util.TreeMap;
 
 
 /**
- * Class to handle the Marketplace table in the database, such as insertions, deletions and querying
+ * Class to handle the Marketplace table in the database, such as insertions, deletions,querying and resolving trades
  */
 public class MarketplaceDataSource {
     private static final String BUY_OFFER = "b";
@@ -40,7 +40,15 @@ public class MarketplaceDataSource {
 
     private Connection connection;
 
-    public MarketplaceDataSource() {
+    // Singleton
+    private static class MarketPlaceDataHolder {
+        private final static MarketplaceDataSource INSTANCE = new MarketplaceDataSource();
+    }
+
+    // retrieve instance of
+    public static MarketplaceDataSource getInstance() { return MarketPlaceDataHolder.INSTANCE; }
+
+    private MarketplaceDataSource() {
         connection = DBConnectivity.getInstance();
         try {
             insertBuyOffer = connection.prepareStatement(INSERT_BUYOFFER);

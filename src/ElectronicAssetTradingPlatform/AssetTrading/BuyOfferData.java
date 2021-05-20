@@ -15,9 +15,6 @@ import java.util.TreeMap;
 public class BuyOfferData {
     private static TreeMap<Integer, BuyOffer> MarketBuyOffers = new TreeMap<>();
 
-    // database connectivity
-    private static MarketplaceDataSource marketplaceDataSource = new MarketplaceDataSource();
-
     /**
      * Constructor to initialise the single BuyOfferData object - protected to suppress unauthorised calls
      */
@@ -42,7 +39,7 @@ public class BuyOfferData {
      * Retrieve market buy offers from the database and insert them into the TreeMap
      */
     protected void getOffersFromDB() {
-        TreeMap<Integer, BuyOffer> buyOffers = marketplaceDataSource.getBuyOffers();
+        TreeMap<Integer, BuyOffer> buyOffers = MarketplaceDataSource.getInstance().getBuyOffers();
         for (Map.Entry<Integer, BuyOffer> buyOffer : buyOffers.entrySet()) {
             BuyOffer nextOffer = buyOffer.getValue();
             MarketBuyOffers.put(nextOffer.getOfferID(), nextOffer);
@@ -69,7 +66,7 @@ public class BuyOfferData {
      * Insert a buy offer into the DB
      */
     public static void addOffer(BuyOffer offer) {
-        marketplaceDataSource.insertBuyOffer(offer);
+        MarketplaceDataSource.getInstance().insertBuyOffer(offer);
     }
 
     /**
@@ -77,13 +74,9 @@ public class BuyOfferData {
      */
     public static void removeOffer(int ID) {
         MarketBuyOffers.remove(ID);
-        marketplaceDataSource.removeOffer(ID);
+        MarketplaceDataSource.getInstance().removeOffer(ID);
     }
 
-    /**
-     * Remove all offers from the DB
-     */
-    public static void removeAllBuyOffers() { MarketBuyOffers.clear(); }
 
     public TreeMap<Integer, BuyOffer> getMarketBuyOffers() {
         return MarketBuyOffers;
@@ -109,8 +102,6 @@ public class BuyOfferData {
         }
         return MarketOffers.toString();
     }
-
-
 
     /**
      * Return the buy offers of an organisational unit as a TreeMap
