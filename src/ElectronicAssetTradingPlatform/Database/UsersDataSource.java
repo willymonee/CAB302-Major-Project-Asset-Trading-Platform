@@ -96,7 +96,7 @@ public class UsersDataSource {
             type = UsersFactory.UserType.valueOf(userType);
         }
         catch (IllegalArgumentException e) {
-            throw new User.UserTypeException("Invalid user type");
+            throw new User.UserTypeException("Invalid user type in database");
         }
 
         return UsersFactory.CreateUser(username, passwordHash, salt, unitName, type);

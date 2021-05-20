@@ -16,6 +16,8 @@ public class NetworkServer {
     private static final int PORT = 10000;
     private static final int SOCKET_TIMEOUT = 100;
     private AtomicBoolean running = new AtomicBoolean(true);
+    // Exception codes: https://sqlite.org/rescode.html
+    private static final int UNIQUE_CONSTRAINT_EXCEPTION_CODE = 19;
 
     /**
      * Returns the port the server is configured to use
@@ -98,17 +100,18 @@ public class NetworkServer {
                         }
                     }
                 }
-            } catch (SQLException | User.UserTypeException e) {
-                // Get any DB errors
-                e.printStackTrace();
-
+            } catch (SQLException e) {
                 // Write error output
                 try (
                         ObjectOutputStream objectOutputStream =
                                 new ObjectOutputStream(socket.getOutputStream())
                 ) {
-                    objectOutputStream.writeObject(e.getMessage());
+                    if (e.getErrorCode() == UNIQUE_CONSTRAINT_EXCEPTION_CODE)
+                        objectOutputStream.writeObject("It already exists.");
+                    else objectOutputStream.writeObject("It could not be found.");
                 }
+            } catch (User.UserTypeException e) {
+                e.printStackTrace();
             }
         }
     }

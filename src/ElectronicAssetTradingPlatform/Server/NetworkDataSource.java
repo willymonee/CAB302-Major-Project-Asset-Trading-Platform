@@ -47,9 +47,17 @@ public class NetworkDataSource {
     /**
      * Sends command for server to get user
      * Returns queried user
+     *  If an error string was sent instead, throw the error
      */
-    public static User retrieveUser(String username) {
-        return (User) sendCommand(NetworkCommands.RETRIEVE_USER, username);
+    public static User retrieveUser(String username) throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.RETRIEVE_USER, username);
+
+        try {
+            return (User) out;
+        }
+        catch (ClassCastException e) {
+            throw new DatabaseException((String) out);
+        }
     }
 
     /**
@@ -58,5 +66,9 @@ public class NetworkDataSource {
      */
     public static String storeUser(User user) {
         return (String) sendCommand(NetworkCommands.STORE_USER, user);
+    }
+
+    public static class DatabaseException extends Exception {
+        public DatabaseException(String message) { super(message); }
     }
 }
