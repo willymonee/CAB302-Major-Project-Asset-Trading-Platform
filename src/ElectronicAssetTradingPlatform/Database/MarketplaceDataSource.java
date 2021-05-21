@@ -88,7 +88,8 @@ public class MarketplaceDataSource {
             insertBuyOffer.execute();
             insertBuyOffer.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Cannot create buy offer for asset not in the system. " + e.getMessage());
+            //e.printStackTrace();
         }
     }
 
@@ -110,6 +111,7 @@ public class MarketplaceDataSource {
             insertSellOffer.execute();
             insertSellOffer.close();
         } catch (SQLException e) {
+            System.out.println("Cannot create sell offer for asset not in the system. " + e.getMessage());
             e.printStackTrace();
         }
     }

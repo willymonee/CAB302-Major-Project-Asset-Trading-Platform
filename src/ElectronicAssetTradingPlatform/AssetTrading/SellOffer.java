@@ -84,9 +84,11 @@ public class SellOffer extends Offer {
      *
      * @return Array List of matching Buy Offers
      */
-    private ArrayList<BuyOffer> matchingBuyOffers() {
+    public ArrayList<BuyOffer> matchingBuyOffers() {
         ArrayList<BuyOffer> matchingBuyOffers = new ArrayList<>();
-        TreeMap<Integer, BuyOffer> buyOfferMap = BuyOffersDB.getBuyOffersDB().getMarketBuyOffers();
+        // retrieve buy offers from the database
+        TreeMap<Integer, BuyOffer> buyOfferMap = BuyOfferData.getInstance().getMarketBuyOffers();
+        // return buy offers whose asset name are the same as the sell offer's asset name
         for (Map.Entry<Integer, BuyOffer> entry : buyOfferMap.entrySet()) {
             if (entry.getValue().getAssetName().equals(this.getAssetName())) {
                 BuyOffer matchingOffer = entry.getValue();
@@ -110,24 +112,25 @@ public class SellOffer extends Offer {
     public int getMatchedPriceOffer() {
         ArrayList<BuyOffer> matchingBuyOffers = matchingBuyOffers();
         double sellOfferPrice = getPricePerUnit();
-        // assign the first sell offer as the lowest price
         // convert map into entry set to iterate over
-        Iterator<BuyOffer> iter = matchingBuyOffers.iterator();
+        Iterator<BuyOffer> buyOffersIter = matchingBuyOffers.iterator();
         BuyOffer buyOffer;
         double buyOfferPrice;
-        if (iter.hasNext()) {
-            while (iter.hasNext()) {
-                buyOffer = iter.next();
+        if (buyOffersIter.hasNext()) { // check if there exists a buy offer with the same asset name
+            // iterate through the matching buy offers, returning the first buy offer ID whose price is equal or greater
+            // than the sell offer's price
+            while (buyOffersIter.hasNext()) {
+                buyOffer = buyOffersIter.next();
                 buyOfferPrice = buyOffer.getPricePerUnit();
                 if (buyOfferPrice >= sellOfferPrice) {
                     return buyOffer.getOfferID();
                 }
             }
         }
-        else {
+        else { // if no buy offer with matching asset name return 0
             return 0;
         }
-        return 0;
+        return 0; // if no matching buy offer with equal or greater price than sell offer return 0
     }
 
 

@@ -4,6 +4,7 @@ import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
 import com.sun.source.tree.Tree;
 
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -12,6 +13,7 @@ import java.util.TreeMap;
  * Retrieves and inserts data relating to buy offers to/from the database.
  * Singleton class
  */
+
 public class BuyOfferData {
     private static TreeMap<Integer, BuyOffer> MarketBuyOffers = new TreeMap<>();
 
@@ -46,18 +48,11 @@ public class BuyOfferData {
         }
     }
 
-
-    /**
-     * Get the amount of offers in the DB
-     */
-    public int getSize() {
-        return MarketBuyOffers.size();
-    }
-
     /**
      * Retrieve a buy offer from the DB
      */
     public BuyOffer getOffer(int ID) {
+        getOffersFromDB();
         return MarketBuyOffers.get(ID);
     }
 
@@ -65,7 +60,7 @@ public class BuyOfferData {
     /**
      * Insert a buy offer into the DB
      */
-    public static void addOffer(BuyOffer offer) {
+    public static void addOffer(BuyOffer offer)  {
         MarketplaceDataSource.getInstance().insertBuyOffer(offer);
     }
 
@@ -79,6 +74,7 @@ public class BuyOfferData {
 
 
     public TreeMap<Integer, BuyOffer> getMarketBuyOffers() {
+        getOffersFromDB();
         return MarketBuyOffers;
     }
 

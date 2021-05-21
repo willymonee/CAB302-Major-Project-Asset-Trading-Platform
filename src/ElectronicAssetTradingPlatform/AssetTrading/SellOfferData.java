@@ -64,6 +64,7 @@ public class SellOfferData {
      * Return a sell offer from the DB based on its ID
      */
     public SellOffer getOffer(int ID) {
+        getOffersFromDB();
         return MarketSellOffers.get(ID);
     }
 

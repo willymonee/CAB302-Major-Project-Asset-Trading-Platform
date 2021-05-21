@@ -129,16 +129,16 @@ public class UnitDataSource {
     // get asset name from asset ID
     public int executeGetAssetID(String assetName) throws SQLException {
         int assetID;
-        ResultSet rs = null;
         getAssetIDQuery.setString(1, assetName);
-        try {
-            rs = getAssetIDQuery.executeQuery();
+        try (ResultSet rs = getAssetIDQuery.executeQuery()) {
+            if (!rs.isBeforeFirst()) {
+                throw new SQLException("Asset: " + assetName + " is not in the system");
+            }
             rs.next();
             assetID = rs.getInt("Type_ID");
-        } finally {
-            if (rs != null) rs.close();
         }
         return assetID;
     }
+
 
 }

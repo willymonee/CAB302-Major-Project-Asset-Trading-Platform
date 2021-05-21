@@ -81,9 +81,11 @@ public class BuyOffer extends Offer{
      *
      * @return Array List of matching Sell Offers
      */
-    private ArrayList<SellOffer> getMatchingSellOffers() {
+    public ArrayList<SellOffer> getMatchingSellOffers() {
         ArrayList<SellOffer> matchingSellOffers = new ArrayList<>();
-        TreeMap<Integer, SellOffer> sellOfferMap = SellOffersDB.getSellOffersDB().getMarketSellOffers();
+        // retrieve all sell offers from the database
+        TreeMap<Integer, SellOffer> sellOfferMap = SellOfferData.getInstance().getMarketSellOffers();
+        // compare the sell offer's asset name to the buy offer's asset name, adding those which match
         for (Map.Entry<Integer, SellOffer> entry : sellOfferMap.entrySet()) {
             if (entry.getValue().getAssetName().equals(this.getAssetName())) {
                 SellOffer matchingOffer = entry.getValue();
@@ -100,34 +102,36 @@ public class BuyOffer extends Offer{
      * If two sell offers are equally priced, the offer placed first has priority (this will be the offer queried first)
      * TODO turn to a private method after testing
      *
-     * @return int of the sell offer, int >= 0
+     * @return int of the sell offer OR 0 if no sell offer was found with a matching price and asset name
      */
     @Override
     public int getMatchedPriceOffer() {
         ArrayList<SellOffer> matchingSellOffers = getMatchingSellOffers();
         double buyOfferPrice = getPricePerUnit();
-        // assign the first sell offer as the lowest price
         // convert map into entry set to iterate over
-        Iterator<SellOffer> iter = matchingSellOffers.iterator();
+        Iterator<SellOffer> sellOffersIter = matchingSellOffers.iterator();
         SellOffer lowestSellOffer;
         double lowestSellPrice;
-        if (iter.hasNext()) {
-            lowestSellOffer = iter.next();
+        if (sellOffersIter.hasNext()) { // check if there are any sell offers with the same asset name
+            // assign the lowest sell offer and price to the first sell offer
+            lowestSellOffer = sellOffersIter.next();
             lowestSellPrice = lowestSellOffer.getPricePerUnit();
-            while(iter.hasNext()) {
-                SellOffer newOffer = iter.next();
+            // iterate through matching sell offers to see which has the lowest price, updating the lowestSellOffer
+            // and lowestSellPrice if one is found
+            while(sellOffersIter.hasNext()) {
+                SellOffer newOffer = sellOffersIter.next();
                 if (newOffer.getPricePerUnit() < lowestSellPrice) {
                     lowestSellPrice = newOffer.getPricePerUnit();
                     lowestSellOffer = newOffer;
                 }
             }
-            // check if the lowest matching sell offer is equal or less than they buy offer's price
+            // return the sell offer's ID if the lowest matching sell offer is equal or less than they buy offer's price
             if (lowestSellPrice <= buyOfferPrice) {
                 return lowestSellOffer.getOfferID();
-            } else {
+            } else { // otherwise return 0
                 return 0;
             }
-        } else {
+        } else { // return 0 if there are no sell offers with the same asset name
             return 0;
         }
     }
@@ -137,7 +141,6 @@ public class BuyOffer extends Offer{
      * TEMPORARY FUNCTION FOR TESTING DELETE LATER
      * This takes a matching sell offer ID and compares it to the buy offer
      * Then it reduces the 'quantities' of both offers
-     *
      */
     private void tradeAssetsAndReduceOrders(int matchingID) {
         if (matchingID != 0) {

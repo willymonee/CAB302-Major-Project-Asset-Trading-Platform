@@ -21,7 +21,7 @@ public abstract class Offer {
      * @param username The username of the user who made the offer
      * @param organisationalUnitName The name of the organisation whose assets and credits will be affected
      */
-    public Offer(String assetName, int quantity, double pricePerUnit, String username, String organisationalUnitName)  {
+    public Offer(String assetName, int quantity, double pricePerUnit, String username, String organisationalUnitName)   {
         if (pricePerUnit <= 0 ) {
             throw new IllegalArgumentException("Price needs to be greater than 0");
         }

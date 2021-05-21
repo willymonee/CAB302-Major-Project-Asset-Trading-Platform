@@ -62,6 +62,7 @@ public class OrganisationalUnitMembers extends User {
        // BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
         // add offer into ACTUAL DATABASE
         BuyOfferData.addOffer(offer);
+        // check matching offer
     }
 
     /**
