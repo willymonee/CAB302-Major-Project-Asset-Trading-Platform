@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class SellOfferData {
+public class SellOfferData extends OfferData {
     private static TreeMap<Integer, SellOffer> MarketSellOffers = new TreeMap<>();
 
     // database connectivity
@@ -52,6 +52,7 @@ public class SellOfferData {
         getOffersFromDB();
         return MarketSellOffers;
     }
+
 
     /**
      * Return the amount of sell offers in the DB

@@ -13,6 +13,7 @@ public abstract class Offer {
     private String organisationalUnitName;
     private Date datePlaced;
 
+
     /**
      * Constructor for trade offer
      *  @param assetName Name of the asset to be bought or sold
@@ -88,6 +89,7 @@ public abstract class Offer {
     protected void setQuantity(int newQuantity) {
             this.quantity = newQuantity;
         }
+
 
     /**
      * Getter for the quantity field

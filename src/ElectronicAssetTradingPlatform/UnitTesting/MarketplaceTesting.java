@@ -91,32 +91,54 @@ public class MarketplaceTesting {
     // will become deprecated once getMatchingSellOffers() becomes a private method
     @Test
     public void matchBuyOfferAssetToSell() {
-        BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(21);
-        System.out.println(buyOffer.getMatchingSellOffers());
+        //BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(21);
+        //System.out.println(buyOffer.getMatchingSellOffers());
     }
 
     // Temp test to see if return matching buy orders to a particular sell order if they are orders for the same asset
     // will become deprecated once getMatchingBuyOffers() becomes a private method
     @Test
     public void matchSellOfferAssetToBuy() {
-        SellOffer sellOffer = SellOfferData.getInstance().getOffer(25);
-        System.out.println(sellOffer.matchingBuyOffers());
+        //SellOffer sellOffer = SellOfferData.getInstance().getOffer(25);
+        //System.out.println(sellOffer.matchingBuyOffers());
     }
 
     // Temp test to return the ID of a matching sell offer with the lowest price but whose price is equal or less than
     // a particular buy order,
     @Test
     public void matchBuyOfferAssetPriceToSell() {
-        BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(26);
-        System.out.println("A matching sell offer with the best price is: #"+ buyOffer.getMatchedPriceOffer());
+        //BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(26);
+        //System.out.println("A matching sell offer with the best price is: #"+ buyOffer.getMatchedPriceOffer());
     }
 
     // Temp test to return the ID of a matching buy offer whose price is equal or higher than the sell offer prioritising
     // whichever offer was added into the database first
     @Test
     public void matchSellOfferAssetPriceToBuy() {
-        SellOffer sellOffer = SellOfferData.getInstance().getOffer(24);
-        System.out.println("The first buy offer with equal or greater price is: #"+ sellOffer.getMatchedPriceOffer());
+        //SellOffer sellOffer = SellOfferData.getInstance().getOffer(24);
+        //System.out.println("The first buy offer with equal or greater price is: #"+ sellOffer.getMatchedPriceOffer());
+    }
+
+    // Test updating the quantity of a buy offer when it matches against a sell offer
+    @Test
+    public void updateBuyOfferQuantity() {
+        userA.listBuyOrder("iPhone 10", 3, 20);
+
+//        BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(29);
+//        int matchingID = buyOffer.getMatchedPriceOffer();
+//        buyOffer.reduceMatchingOfferQuantities(matchingID);
+
+    }
+
+    // Test updating the quantity of a sell offer
+    @Test
+    public void updateSellOfferQuantity() {
+        //SellOfferData.getInstance().updateOfferQuantity(4, 23);
+        userA.listSellOrder("Table", 3, 1);
+        // doing it manually
+//        SellOffer sellOffer = SellOfferData.getInstance().getOffer(40);
+//        int matchingID = sellOffer.getMatchedPriceOffer();
+//        sellOffer.reduceMatchingOfferQuantities(matchingID);
     }
 
     // test failing to insert a offer when offer quantity is negative
@@ -137,6 +159,8 @@ public class MarketplaceTesting {
     public void testFailInsertOfferAssetNotInSystem() {
         //assertThrows(SQLException.class, () -> userA.listBuyOrder("Robodog", 1,10000));
     }
+
+
 
 
 
