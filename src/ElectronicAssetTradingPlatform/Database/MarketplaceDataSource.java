@@ -29,6 +29,8 @@ public class MarketplaceDataSource {
     private static final String GET_OFFERS = "SELECT * FROM Marketplace WHERE Buy_or_Sell= ?";
     private static final String RESOLVE_OFFER = "DELETE FROM Marketplace WHERE Offer_ID=?";
     private static final String REMOVE_OFFER = "DELETE FROM Marketplace WHERE Offer_ID=?";
+    private static final String UPDATE_OFFER_QUANTITY = "UPDATE Marketplace SET Quantity=? WHERE Offer_ID=?";
+    private static final String GET_PLACED_OFFER_ID = "SELECT MAX(Offer_ID) FROM Marketplace";
 
 
 
@@ -37,6 +39,8 @@ public class MarketplaceDataSource {
     private PreparedStatement getOffers;
     private PreparedStatement resolveOffer;
     private PreparedStatement removeOffer;
+    private PreparedStatement updateOfferQuantity;
+    private PreparedStatement getPlacedOfferID;
 
     private Connection connection;
 
@@ -56,6 +60,8 @@ public class MarketplaceDataSource {
             getOffers = connection.prepareStatement(GET_OFFERS);
             resolveOffer = connection.prepareStatement(RESOLVE_OFFER);
             removeOffer = connection.prepareStatement(REMOVE_OFFER);
+            updateOfferQuantity = connection.prepareStatement(UPDATE_OFFER_QUANTITY);
+            getPlacedOfferID = connection.prepareStatement(GET_PLACED_OFFER_ID);
         } catch (SQLException error) {
             error.printStackTrace();
         }
@@ -64,7 +70,7 @@ public class MarketplaceDataSource {
     public void removeOffer(int offerID) {
         try {
             removeOffer.setInt(1, offerID);
-            removeOffer.executeUpdate();
+            removeOffer.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -86,11 +92,41 @@ public class MarketplaceDataSource {
             insertBuyOffer.setString(5, String.valueOf(buyOffer.getPricePerUnit()));
             insertBuyOffer.setString(6, String.valueOf(buyOffer.getQuantity()));
             insertBuyOffer.execute();
-            insertBuyOffer.close();
+            //insertBuyOffer.close();
         } catch (SQLException e) {
             System.out.println("Cannot create buy offer for asset not in the system. " + e.getMessage());
             //e.printStackTrace();
         }
+    }
+
+    /**
+     * Update the quantity of a buy offer
+     */
+    public void updateOfferQuantity(int newQuantity, int offerID) {
+        try {
+            updateOfferQuantity.setInt(1, newQuantity);
+            updateOfferQuantity.setInt(2, offerID);
+            updateOfferQuantity.execute();
+            //updateOfferQuantity.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Retrieve the ID of the most recently placed offer
+     */
+    public int getPlacedOfferID() {
+        int offerID = 0;
+        ResultSet rs = null;
+        try {
+            rs = getPlacedOfferID.executeQuery();
+            rs.next();
+            offerID = rs.getInt(1);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return offerID;
     }
 
     /**
@@ -109,7 +145,7 @@ public class MarketplaceDataSource {
             insertSellOffer.setString(5, String.valueOf(sellOffer.getPricePerUnit()));
             insertSellOffer.setString(6, String.valueOf(sellOffer.getQuantity()));
             insertSellOffer.execute();
-            insertSellOffer.close();
+            //insertSellOffer.close();
         } catch (SQLException e) {
             System.out.println("Cannot create sell offer for asset not in the system. " + e.getMessage());
             e.printStackTrace();

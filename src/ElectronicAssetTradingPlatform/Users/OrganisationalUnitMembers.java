@@ -58,11 +58,14 @@ public class OrganisationalUnitMembers extends User {
     public void listBuyOrder(String assetType, int quantity, double price) {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        // add offer into mock DB
-       // BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
-        // add offer into ACTUAL DATABASE
+        // add offer into database
         BuyOfferData.addOffer(offer);
-        // check matching offer
+        // retrieve the buy offer's ID from the database and set the buy offer's ID
+        int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
+       offer.setOfferID(buyOfferID);
+       System.out.println("Buy Offer ID is: " + buyOfferID);
+       // look to resolve the offer
+       offer.reduceMatchingOfferQuantities(offer.getMatchedPriceOffer());
     }
 
     /**
@@ -73,9 +76,14 @@ public class OrganisationalUnitMembers extends User {
      */
     public void listSellOrder(String assetType, int quantity, double price) {
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        SellOffersDB.addSellOffer(offer.getOfferID(), offer);
         // using the actual database
         SellOfferData.addSellOffer(offer);
+        // retrieve the sell offer's ID from the database and set the sell offer's ID
+        int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
+        offer.setOfferID(sellOfferID);
+        System.out.println("Sell Offer ID is: " + sellOfferID);
+        // look to resolve the offer
+        offer.reduceMatchingOfferQuantities(offer.getMatchedPriceOffer());
     }
 
     /**

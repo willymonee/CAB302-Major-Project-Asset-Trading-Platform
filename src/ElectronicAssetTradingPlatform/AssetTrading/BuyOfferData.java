@@ -14,7 +14,7 @@ import java.util.TreeMap;
  * Singleton class
  */
 
-public class BuyOfferData {
+public class BuyOfferData extends OfferData {
     private static TreeMap<Integer, BuyOffer> MarketBuyOffers = new TreeMap<>();
 
     /**
@@ -77,6 +77,7 @@ public class BuyOfferData {
         getOffersFromDB();
         return MarketBuyOffers;
     }
+
 
 
     /**
