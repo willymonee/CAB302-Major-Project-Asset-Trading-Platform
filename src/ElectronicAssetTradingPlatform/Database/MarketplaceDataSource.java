@@ -106,8 +106,7 @@ public class MarketplaceDataSource {
         try {
             updateOfferQuantity.setInt(1, newQuantity);
             updateOfferQuantity.setInt(2, offerID);
-            updateOfferQuantity.execute();
-            //updateOfferQuantity.close();
+            updateOfferQuantity.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

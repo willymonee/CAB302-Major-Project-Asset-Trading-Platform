@@ -17,6 +17,8 @@ public class UnitDataSource {
     // delete this statement later just here for testing
     private static final String GET_ASSET_NAME = "SELECT Name FROM Asset_Types WHERE Type_ID =?";
     private static final String GET_ASSET_ID = "SELECT Type_ID FROM Asset_Types WHERE Name=?";
+    private static final String UPDATE_CREDITS = "UPDATE Organisational_Units SET Credits= Credits + ? WHERE Name=?";
+    private static final String UPDATE_ASSETS = "UPDATE Organisational_Unit_Assets SET Asset_Quantity= Asset_Quantity + ? WHERE Unit_ID=? AND Asset_ID=?";
 
 
     PreparedStatement getUnitNameQuery;
@@ -26,6 +28,8 @@ public class UnitDataSource {
     //delete this statement later
     PreparedStatement getAssetNameQuery;
     PreparedStatement getAssetIDQuery;
+    PreparedStatement updateUnitCredits;
+    PreparedStatement updateUnitAssets;
 
     private Connection connection;
 
@@ -39,10 +43,14 @@ public class UnitDataSource {
             getUserNameQuery = connection.prepareStatement(GET_USERNAME, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             getAssetNameQuery = connection.prepareStatement(GET_ASSET_NAME, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             getAssetIDQuery = connection.prepareStatement(GET_ASSET_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            updateUnitCredits = connection.prepareStatement(UPDATE_CREDITS, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+            updateUnitAssets = connection.prepareStatement(UPDATE_ASSETS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
+
     public String executeGetUnitName(int unitID) throws SQLException {
         // Prepare
         getUnitNameQuery.setInt(1, unitID);
@@ -62,6 +70,27 @@ public class UnitDataSource {
         return unitName;
     }
 
+    public void updateUnitCredits(float credits, String orgName) {
+        try {
+            updateUnitCredits.setFloat(1, credits);
+            updateUnitCredits.setString(2, orgName);
+            updateUnitCredits.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void updateUnitAssets(int quantity, int unitID,int assetID ) {
+        try {
+            updateUnitAssets.setInt(1, quantity);
+            updateUnitAssets.setInt(2, unitID);
+            updateUnitAssets.setInt(3, assetID);
+            updateUnitAssets.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public String executeGetUnitID(String unitName) throws SQLException {
         // Prepare
         getUnitIDQuery.setString(1, unitName);
@@ -72,7 +101,8 @@ public class UnitDataSource {
             rs = getUnitIDQuery.executeQuery();
             rs.next();
             unitID = rs.getString("Unit_ID");
-        } finally {
+        }
+        finally {
             if (rs != null) rs.close();
         }
 

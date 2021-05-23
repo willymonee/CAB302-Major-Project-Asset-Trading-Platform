@@ -140,9 +140,8 @@ public class SellOffer extends Offer {
 
 
     /**
-     * This takes a matching buy offer ID and compares it to the buy offer
+     * This takes a matching buy offer ID and compares it to the sell offer
      * Then it reduces the 'quantities' of both offers
-     *
      */
     public void reduceMatchingOfferQuantities(int matchingID) {
         if (matchingID != 0) {

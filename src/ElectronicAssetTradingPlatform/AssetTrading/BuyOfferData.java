@@ -56,6 +56,14 @@ public class BuyOfferData extends OfferData {
         return MarketBuyOffers.get(ID);
     }
 
+    /**
+     * Checks if offer with that ID exists
+     */
+    public boolean offerExists(int ID) {
+        getOffersFromDB();
+        return MarketBuyOffers.containsKey(ID);
+    }
+
 
     /**
      * Insert a buy offer into the DB
