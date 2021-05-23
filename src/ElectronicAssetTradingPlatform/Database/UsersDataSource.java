@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 
 /**
- * Class for retrieving data from the XML file holding the address list.
+ * Class for retrieving data from the db file.
  */
 public class UsersDataSource {
     private static final String INSERT_USER = "INSERT INTO User_Accounts (Username, Password_hash, Salt, User_Type, Unit_ID) VALUES (?, ?, ?, ?, ?);";
@@ -44,12 +44,17 @@ public class UsersDataSource {
 
     private Connection connection;
 
-    // Singleton
+    /**
+     * Singleton of data source
+     */
     private static class SingletonHolder {
         private final static UsersDataSource INSTANCE = new UsersDataSource();
     }
     public static UsersDataSource getInstance() { return SingletonHolder.INSTANCE; }
 
+    /**
+     * Connect to DB and initialise queries
+     */
     private UsersDataSource() {
         connection = DBConnectivity.getInstance();
 
@@ -66,6 +71,14 @@ public class UsersDataSource {
         }
     }
 
+    /**
+     * Gets a user from the database
+     *
+     * @param username string username of user to get
+     * @return the queried user from the database
+     * @throws SQLException Throws database query errors
+     * @throws User.UserTypeException Throws exception when the user type in the database is wrong
+     */
     public User getUser(String username) throws SQLException, User.UserTypeException {
         // Initialise
         getUserQuery.setString(1, username);
@@ -102,6 +115,12 @@ public class UsersDataSource {
         return UsersFactory.CreateUser(username, passwordHash, salt, unitName, type);
     }
 
+    /**
+     * Inserts a user to the database
+     *
+     * @param user User to be inserted to the database
+     * @throws SQLException Throws database query errors
+     */
     public void insertUser(User user) throws SQLException {
         // Initialise
         addUserQuery.setString(1, user.getUsername());
@@ -123,6 +142,14 @@ public class UsersDataSource {
         addUserQuery.execute();
     }
 
+    /**
+     * Edits an existing user in the database
+     *
+     * @param username Username of the user to be edited
+     * @param userType Edited type of the user
+     * @param unitName Edited unit of the user
+     * @throws SQLException Throws database query errors
+     */
     public void editUser(String username, String userType, String unitName) throws SQLException {
         // Initialise
         editUserQuery.setString(1, userType);
@@ -138,6 +165,14 @@ public class UsersDataSource {
         editUserQuery.execute();
     }
 
+    /**
+     * Edits an existing user's password in the database
+     *
+     * @param username Username of the user to be edited
+     * @param password New password of the user
+     * @param salt New salt for the password
+     * @throws SQLException Throws database query errors
+     */
     public void editUserPassword(String username, String password, String salt) throws SQLException {
         // Initialise
         editPasswordQuery.setString(1, password);
@@ -147,6 +182,13 @@ public class UsersDataSource {
         editPasswordQuery.execute();
     }
 
+    /**
+     * Gets the unit's credits
+     *
+     * @param unitName Name of the unit to get from
+     * @return Credits of the unit
+     * @throws SQLException Throws database query errors
+     */
     public float getUnitCredits(String unitName) throws SQLException {
         // Initialise
         getUnitCreditsQuery.setString(1, unitName);
@@ -167,6 +209,13 @@ public class UsersDataSource {
         return Float.parseFloat(unitCredits);
     }
 
+    /**
+     * Gets the unit's assets and its quantities
+     *
+     * @param unitName Name of the unit to get from
+     * @return Assets, and its quantities, of the unit
+     * @throws SQLException Throws database query errors
+     */
     public HashMap<String, Integer> getUnitAssets(String unitName) throws SQLException {
         // Initialise
         getUnitAssetsQuery.setString(1, unitName);
@@ -190,7 +239,11 @@ public class UsersDataSource {
         return unitAssets;
     }
 
-    // Close connection
+    /**
+     * Closes the database connection
+     *
+     * @throws SQLException Throws database query errors
+     */
     public void close() throws SQLException {
         connection.close();
     }

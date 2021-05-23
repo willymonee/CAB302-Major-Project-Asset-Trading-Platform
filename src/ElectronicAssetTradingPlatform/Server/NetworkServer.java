@@ -54,7 +54,7 @@ public class NetworkServer {
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);
-            // The server is no longer running
+            // The server is running
             while (running.get()) {
                 try {
                     final Socket socket = serverSocket.accept();
@@ -84,7 +84,14 @@ public class NetworkServer {
             System.exit(1);
         }
 
-        // Close down the server
+        // The server is no longer running
+
+        // Close down the server and db
+        try {
+            DBConnectivity.getInstance().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         System.exit(0);
     }
 
@@ -94,8 +101,8 @@ public class NetworkServer {
      */
     private void handleConnection(Socket socket) throws IOException, ClassNotFoundException {
         try (ObjectInputStream objectInputStream =
-                        new ObjectInputStream(socket.getInputStream())) {
-            // Read: Command, and parameter object
+                     new ObjectInputStream(socket.getInputStream())) {
+            // Reads Command and parameter object
             NetworkCommands command = (NetworkCommands) objectInputStream.readObject();
             try {
                 /*
@@ -103,42 +110,7 @@ public class NetworkServer {
                  * must be thread-safe in some way. The easiest way to achieve thread safety is to just put a giant
                  * lock around all database operations, in this case with a synchronized block on the database object.
                  */
-                switch (command) {
-                    case RETRIEVE_USER -> {
-                        // Get input
-                        String username = (String) objectInputStream.readObject();
-
-                        User out;
-                        synchronized (database) {
-                            out = UsersDataSource.getInstance().getUser(username);
-                        }
-
-                        // Write output
-                        try (
-                                ObjectOutputStream objectOutputStream =
-                                        new ObjectOutputStream(socket.getOutputStream())
-                        ) {
-                            objectOutputStream.writeObject(out);
-                        }
-                    }
-                    case STORE_USER -> {
-                        // Get input
-                        User user = (User) objectInputStream.readObject();
-
-                        synchronized (database) {
-                            // Save to db
-                            UsersDataSource.getInstance().insertUser(user);
-                        }
-
-                        // Write success output
-                        try (
-                                ObjectOutputStream objectOutputStream =
-                                        new ObjectOutputStream(socket.getOutputStream())
-                        ) {
-                            objectOutputStream.writeObject("Added user.");
-                        }
-                    }
-                }
+                handleCommand(command, objectInputStream, socket);
             } catch (SQLException e) {
                 // Write error output
                 try (
@@ -151,6 +123,53 @@ public class NetworkServer {
                 }
             } catch (User.UserTypeException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Execute the command
+     * @param command NetworkCommand from input stream
+     */
+    private void handleCommand (NetworkCommands command, ObjectInputStream objectInputStream, Socket socket)
+            throws IOException, ClassNotFoundException, SQLException, User.UserTypeException {
+        switch (command) {
+            // Execute db queries based on command
+            case RETRIEVE_USER -> {
+                // Get input
+                String username = (String) objectInputStream.readObject();
+
+                User out;
+                synchronized (database) {
+                    out = UsersDataSource.getInstance().getUser(username);
+
+                    // Write output
+                    try (
+                            ObjectOutputStream objectOutputStream =
+                                    new ObjectOutputStream(socket.getOutputStream())
+                    ) {
+                        objectOutputStream.writeObject(out);
+                        System.out.println("Wrote to socket: " + socket.toString());
+                    }
+                }
+            }
+            case STORE_USER -> {
+                // Get input
+                User user = (User) objectInputStream.readObject();
+
+                synchronized (database) {
+                    // Save to db
+                    UsersDataSource.getInstance().insertUser(user);
+
+                    // Write success output
+                    try (
+                            ObjectOutputStream objectOutputStream =
+                                    new ObjectOutputStream(socket.getOutputStream())
+                    ) {
+                        objectOutputStream.writeObject("Added user.");
+                        System.out.println("Wrote to socket: " + socket.toString());
+                    }
+                }
             }
         }
     }
