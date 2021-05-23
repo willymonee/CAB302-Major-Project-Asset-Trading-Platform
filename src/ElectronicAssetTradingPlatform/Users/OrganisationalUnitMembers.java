@@ -63,9 +63,8 @@ public class OrganisationalUnitMembers extends User {
         // retrieve the buy offer's ID from the database and set the buy offer's ID
         int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
        offer.setOfferID(buyOfferID);
-       System.out.println("Buy Offer ID is: " + buyOfferID);
        // look to resolve the offer
-       offer.reduceMatchingOfferQuantities(offer.getMatchedPriceOffer());
+        offer.resolveOffer();
     }
 
     /**
@@ -81,9 +80,8 @@ public class OrganisationalUnitMembers extends User {
         // retrieve the sell offer's ID from the database and set the sell offer's ID
         int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(sellOfferID);
-        System.out.println("Sell Offer ID is: " + sellOfferID);
         // look to resolve the offer
-        offer.reduceMatchingOfferQuantities(offer.getMatchedPriceOffer());
+        //offer.reduceMatchingOfferQuantities(offer.getMatchedPriceOffer());
     }
 
     /**
