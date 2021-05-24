@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 public class ITAdminGUI extends JFrame {
     private JTextField username;
@@ -21,11 +22,13 @@ public class ITAdminGUI extends JFrame {
     private JButton createUserButton;
 
     ITAdmin loggedInUser;
+    NetworkDataSource data;
 
     /**
      * Constructor sets up user interface, adds listeners and displays.
      */
-    public ITAdminGUI(ITAdmin user) {
+    public ITAdminGUI(ITAdmin user, NetworkDataSource dataSource) {
+        data = dataSource;
         loggedInUser = user;
 
         initCreateUser();
@@ -156,7 +159,7 @@ public class ITAdminGUI extends JFrame {
                 ITAdmin.checkInputEmpty(unitNameIn);
                 ITAdmin.checkInputEmpty(userTypeIn);
                 User user = loggedInUser.createUser(usernameIn, unitNameIn, userTypeIn);
-                output = NetworkDataSource.storeUser(user);
+                output = data.storeUser(user);
             } catch (User.EmptyFieldException | User.UserTypeException e) {
                 // Empty input error
                 output = "Input is empty or invalid, please enter correct details into all fields.";
@@ -184,7 +187,9 @@ public class ITAdminGUI extends JFrame {
         //creating and showing this application's GUI.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new ITAdminGUI(new ITAdmin("test", "test", "test"));
+                NetworkDataSource net = new NetworkDataSource();
+                net.run();
+                new ITAdminGUI(new ITAdmin("test", "test", "test"), net);
             }
         });
     }

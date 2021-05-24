@@ -62,20 +62,16 @@ public class NetworkServer {
 
                     // We have a new connection from a client. Use a runnable and thread to handle
                     // the client. The lambda here wraps the functional interface (Runnable).
-                    final Thread clientThread = new Thread(() -> {
-                        try {
-                            handleConnection(socket);
-                        } catch (IOException | ClassNotFoundException e) {
-                            // We will report an IOException by printing the stack trace, but we
-                            // will not shut down the server. An IOException can happen due to a
-                            // client malfunction (or malicious client)
-                            e.printStackTrace();
-                        }
-                    });
+                    final Thread clientThread = new Thread(() -> handleConnection(socket));
                     clientThread.start();
                 } catch (SocketTimeoutException ignored) {
                     // Do nothing. A timeout is normal- we just want the socket to
                     // occasionally timeout so we can check if the server is still running
+                } catch (Exception e) {
+                    // We will report other exceptions by printing the stack trace, but we
+                    // will not shut down the networkExercise.server. A exception can happen due to a
+                    // client malfunction (or malicious client)
+                    e.printStackTrace();
                 }
             }
         } catch (IOException e) {
@@ -99,31 +95,32 @@ public class NetworkServer {
      * Handles the connection received from ServerSocket
      * @param socket The socket used to communicate with the currently connected client
      */
-    private void handleConnection(Socket socket) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream objectInputStream =
-                     new ObjectInputStream(socket.getInputStream())) {
-            // Reads Command and parameter object
-            NetworkCommands command = (NetworkCommands) objectInputStream.readObject();
-            try {
-                /*
-                 * Remember this is happening on separate threads for each client. Therefore access to the database
-                 * must be thread-safe in some way. The easiest way to achieve thread safety is to just put a giant
-                 * lock around all database operations, in this case with a synchronized block on the database object.
-                 */
-                handleCommand(command, objectInputStream, socket);
-            } catch (SQLException e) {
-                // Write error output
-                try (
-                        ObjectOutputStream objectOutputStream =
-                                new ObjectOutputStream(socket.getOutputStream())
-                ) {
+    private void handleConnection(Socket socket) {
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            while (true) {
+                try {
+                    // Reads Command and parameter object
+                    NetworkCommands command = (NetworkCommands) objectInputStream.readObject();
+                    handleCommand(command, objectInputStream, objectOutputStream, socket);
+                } catch (SocketTimeoutException e) {
+                    /**
+                     * We catch SocketTimeoutExceptions, because that just means the client hasn't sent
+                     * any new requests. We don't want to disconnect them otherwise. Another way to
+                     * check if they're "still there would be with ping/pong commands.
+                     */
+                    continue;
+                } catch (SQLException e) {
                     if (e.getErrorCode() == UNIQUE_CONSTRAINT_EXCEPTION_CODE)
                         objectOutputStream.writeObject("It already exists.");
                     else objectOutputStream.writeObject("It could not be found.");
+                } catch (User.UserTypeException e) {
+                    e.printStackTrace();
                 }
-            } catch (User.UserTypeException e) {
-                e.printStackTrace();
             }
+        } catch (IOException | ClassCastException | ClassNotFoundException e) {
+            System.out.println(String.format("Connection %s closed", socket.toString()));
         }
     }
 
@@ -131,8 +128,13 @@ public class NetworkServer {
      * Execute the command
      * @param command NetworkCommand from input stream
      */
-    private void handleCommand (NetworkCommands command, ObjectInputStream objectInputStream, Socket socket)
+    private void handleCommand (NetworkCommands command, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, Socket socket)
             throws IOException, ClassNotFoundException, SQLException, User.UserTypeException {
+        /*
+         * Remember this is happening on separate threads for each client. Therefore access to the database
+         * must be thread-safe in some way. The easiest way to achieve thread safety is to just put a giant
+         * lock around all database operations, in this case with a synchronized block on the database object.
+         */
         switch (command) {
             // Execute db queries based on command
             case RETRIEVE_USER -> {
@@ -144,13 +146,8 @@ public class NetworkServer {
                     out = UsersDataSource.getInstance().getUser(username);
 
                     // Write output
-                    try (
-                            ObjectOutputStream objectOutputStream =
-                                    new ObjectOutputStream(socket.getOutputStream())
-                    ) {
-                        objectOutputStream.writeObject(out);
-                        System.out.println("Wrote to socket: " + socket.toString());
-                    }
+                    objectOutputStream.writeObject(out);
+                    System.out.println("Wrote to socket: " + socket.toString() + out);
                 }
             }
             case STORE_USER -> {
@@ -162,13 +159,8 @@ public class NetworkServer {
                     UsersDataSource.getInstance().insertUser(user);
 
                     // Write success output
-                    try (
-                            ObjectOutputStream objectOutputStream =
-                                    new ObjectOutputStream(socket.getOutputStream())
-                    ) {
-                        objectOutputStream.writeObject("Added user.");
-                        System.out.println("Wrote to socket: " + socket.toString());
-                    }
+                    objectOutputStream.writeObject("Added user.");
+                    System.out.println("Wrote to socket: " + socket.toString());
                 }
             }
         }
