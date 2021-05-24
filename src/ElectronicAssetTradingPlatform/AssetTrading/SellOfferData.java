@@ -54,12 +54,12 @@ public class SellOfferData extends OfferData {
     }
 
 
-    /**
-     * Return the amount of sell offers in the DB
-     */
-    public int getSize() {
-        return MarketSellOffers.size();
+    public boolean offerExists(int ID) {
+        getOffersFromDB();
+        return MarketSellOffers.containsKey(ID);
     }
+
+
 
     /**
      * Return a sell offer from the DB based on its ID

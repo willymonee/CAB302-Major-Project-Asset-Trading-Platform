@@ -177,7 +177,9 @@ public class BuyOffer extends Offer{
      */
     private void tradeCredits(double credit, String sellOrgName) {
         UnitDataSource unitDataSource = new UnitDataSource();
+        // decrease credits of the buy org
         unitDataSource.updateUnitCredits((float)(-(credit)), this.getUnitName());
+        // increase credits of the sell org
         unitDataSource.updateUnitCredits((float)credit, sellOrgName);
     }
 
@@ -199,7 +201,7 @@ public class BuyOffer extends Offer{
      * Then it exchanges the organisational unit assets
      * When resolving offer should be called before reduceMatchingOfferQuantities
      */
-    public void tradeAssetsAndCredits(int matchingID)  {
+    private void tradeAssetsAndCredits(int matchingID)  {
         if (matchingID != 0) {
             SellOffer matchingSellOffer = SellOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = matchingSellOffer.getQuantity();
@@ -208,12 +210,12 @@ public class BuyOffer extends Offer{
             int assetsExchanged;
             double sellersPrice = matchingSellOffer.getPricePerUnit();
             if (buyOfferQuantity > sellOfferQuantity) {
-                creditsExchanged = sellersPrice * matchingSellOffer.getQuantity();
+                creditsExchanged = sellersPrice * sellOfferQuantity;
                 assetsExchanged = sellOfferQuantity;
             }
             else {
                 assetsExchanged = buyOfferQuantity;
-                creditsExchanged = sellersPrice * this.getQuantity();
+                creditsExchanged = sellersPrice * buyOfferQuantity;
             }
             tradeAssets(assetsExchanged, matchingSellOffer);
             tradeCredits(creditsExchanged, matchingSellOffer.getUnitName());
@@ -222,7 +224,6 @@ public class BuyOffer extends Offer{
 
     /**
      * Resolve the offer
-     *
      */
     public void resolveOffer() {
         // loop until there is either no matching offer OR whilst the offer exists
