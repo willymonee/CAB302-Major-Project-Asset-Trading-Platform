@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
+
 
 public class SellOffer extends Offer {
     private Date dateResolved;
@@ -188,15 +188,16 @@ public class SellOffer extends Offer {
      */
     public void resolveOffer() {
         // loop until there is no matching offer OR this.quantity == 0
-        while (getMatchedPriceOffer() != 0 && SellOfferData.getInstance().offerExists(this.getOfferID())) {
+        boolean sellOfferNotResolved = SellOfferData.getInstance().offerExists(this.getOfferID());
+        while (getMatchedPriceOffer() != 0 && sellOfferNotResolved) {
             int matchingID = getMatchedPriceOffer();
             // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
             tradeAssetsAndCredits(matchingID);
             reduceMatchingOfferQuantities(matchingID);
-            // sell offer is fully resolved
-            if (SellOfferData.getInstance().offerExists(this.getOfferID())) {
+            // probably create a match offer history here whenever assets are traded @Daniel @and notifcation etc.
 
-            }
+            sellOfferNotResolved = SellOfferData.getInstance().offerExists(this.getOfferID());
+
         }
     }
 }

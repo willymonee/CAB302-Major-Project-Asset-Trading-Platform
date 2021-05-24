@@ -191,16 +191,18 @@ public class BuyOffer extends Offer{
      */
     public void resolveOffer() {
         // loop if there is a matching offer and if the offer has not been fully resolved
-        while (getMatchedPriceOffer() != 0 && BuyOfferData.getInstance().offerExists(this.getOfferID())) {
+        boolean buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
+        while (getMatchedPriceOffer() != 0 && buyOfferNotResolved) {
             int matchingID = getMatchedPriceOffer();
             // trade assets and credits of the matching offers
             tradeAssetsAndCredits(matchingID);
             // edit the quantity of the offers
             reduceMatchingOfferQuantities(matchingID);
+            // probably create a match offer history here whenever assets are traded @Daniel
+
             // check if offer has been fully resolved
-            if (!BuyOfferData.getInstance().offerExists(this.getOfferID())) {
-                // OFFER FULLY RESOLVED
-            }
+            buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
+
         }
     }
 }
