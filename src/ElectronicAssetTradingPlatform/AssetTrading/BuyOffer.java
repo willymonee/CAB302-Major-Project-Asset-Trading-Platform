@@ -1,7 +1,4 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
-
-import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
-import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 
 import java.sql.SQLException;
@@ -13,9 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class BuyOffer extends Offer{
-    private int orderID;
     private Date dateResolved;
-
 
     /**
      * Constructor for trade offer
@@ -40,91 +35,51 @@ public class BuyOffer extends Offer{
      * @param organisationalUnitName The ID of the organisation whose assets and credits will be affected
      */
     public BuyOffer(int orderID, String asset, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
-        super(asset, quantity, pricePerUnit, username, organisationalUnitName);
-        this.orderID = orderID;
+        super(orderID, asset, quantity, pricePerUnit, username, organisationalUnitName);
     }
 
-    /**
-     * Getter for the buy offer's ID
-     *
-     * @return the buy offer's ID
-     */
-    @Override
-    public int getOfferID() {
-        return this.orderID;
-    }
-
-    public void setOfferID(int ID) {
-        this.orderID = ID;
-    }
-
-    /**
-     * Converts the buy offer to a string and returns it
-     *
-     * @return Buy Offer object as a string
-     */
-    @Override
-    public String toString() {
-        return this.orderID + "\t" + getAssetName() + "\t" + getQuantity()+ "\t $"
-                + getPricePerUnit() + "\t" + getUsername() + "\t" + getUnitName() + "\t" + getDatePlaced();
-    }
-
-    /**
-     * Creates a unique ID for the buy offer
-     *
-     * @return unique ID as an int
-     */
-    @Override
-    protected int createUniqueID() {
-        if (BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().size() == 0) {
-            return 1;
-        }
-        return BuyOffersDB.getBuyOffersDB().getMarketBuyOffers().lastKey() + 1;
-    }
 
     /**
      * Returns an array list of all sell offers which are offering the same asset (asset name's are the same)
      *
      * @return Array List of matching Sell Offers
      */
-    public ArrayList<SellOffer> getMatchingSellOffers() {
+    private ArrayList<SellOffer> getMatchingSellOffers() {
         ArrayList<SellOffer> matchingSellOffers = new ArrayList<>();
         // retrieve all sell offers from the database
-        TreeMap<Integer, SellOffer> sellOfferMap = SellOfferData.getInstance().getMarketSellOffers();
+        Map<Integer, SellOffer> sellOfferMap = SellOfferData.getInstance().getMarketSellOffers();
         // compare the sell offer's asset name to the buy offer's asset name, adding those which match
-        for (Map.Entry<Integer, SellOffer> entry : sellOfferMap.entrySet()) {
-            if (entry.getValue().getAssetName().equals(this.getAssetName())) {
-                SellOffer matchingOffer = entry.getValue();
+        for (Map.Entry<Integer, SellOffer> sellOffer : sellOfferMap.entrySet()) {
+            if (sameAssetName(this, sellOffer.getValue())) {
+                SellOffer matchingOffer = sellOffer.getValue();
                 matchingSellOffers.add(matchingOffer);
             }
         }
         return matchingSellOffers;
     }
 
-
     /**
      * Takes the matching sell offers and finds the lowest priced sell offer which is equally or lower priced than
      * the buy offer.
      * If two sell offers are equally priced, the offer placed first has priority (this will be the offer queried first)
+     *
      * @return int of the sell offer OR 0 if no sell offer was found with a matching price and asset name
      */
-    @Override
-    public int getMatchedPriceOffer() {
+    private int getMatchedPriceOffer() {
         ArrayList<SellOffer> matchingSellOffers = getMatchingSellOffers();
         double buyOfferPrice = getPricePerUnit();
-        // convert map into entry set to iterate over
         Iterator<SellOffer> sellOffersIter = matchingSellOffers.iterator();
         SellOffer lowestSellOffer;
         double lowestSellPrice;
-        if (sellOffersIter.hasNext()) { // check if there are any sell offers with the same asset name
+        if (sellOffersIter.hasNext()) {
             // assign the lowest sell offer and price to the first sell offer
             lowestSellOffer = sellOffersIter.next();
             lowestSellPrice = lowestSellOffer.getPricePerUnit();
-            // iterate through matching sell offers to see which has the lowest price, updating the lowestSellOffer
-            // and lowestSellPrice if one is found
+            // iterate through matching sell offers to see which has the lowest price
             while(sellOffersIter.hasNext()) {
                 SellOffer newOffer = sellOffersIter.next();
-                if (newOffer.getPricePerUnit() < lowestSellPrice) {
+                double newOfferPrice = newOffer.getPricePerUnit();
+                if (newOfferPrice < lowestSellPrice) {
                     lowestSellPrice = newOffer.getPricePerUnit();
                     lowestSellOffer = newOffer;
                 }
@@ -132,19 +87,21 @@ public class BuyOffer extends Offer{
             // return the sell offer's ID if the lowest matching sell offer is equal or less than they buy offer's price
             if (lowestSellPrice <= buyOfferPrice) {
                 return lowestSellOffer.getOfferID();
-            } else { // otherwise return 0
+            }
+            else { // otherwise return 0
                 return 0;
             }
-        } else { // return 0 if there are no sell offers with the same asset name
+        }
+        else { // return 0 if there are no sell offers with the same asset name
             return 0;
         }
     }
 
     /**
-     * This takes a matching sell offer ID and compares it to the buy offer
+     * Takes a matching sell offer ID and compares it to the buy offer
      * Then it reduces the 'quantities' of both offers
      */
-    public void reduceMatchingOfferQuantities(int matchingID) {
+    private void reduceMatchingOfferQuantities(int matchingID) {
         if (matchingID != 0) {
             SellOffer matchingSellOffer = SellOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = matchingSellOffer.getQuantity();
@@ -155,12 +112,16 @@ public class BuyOffer extends Offer{
                 SellOfferData.removeOffer(matchingID);
                 this.setQuantity(0);
             }
+            // if the quantity specified by the buy offer is greater than the sell offer, remove the sell offer from DB
+            // and reduce the quantity of the buy offer by the quantity of the sell offer
             else if (buyOfferQuantity > sellOfferQuantity) {
                 int updatedBuyQuantity = buyOfferQuantity - sellOfferQuantity;
                 BuyOfferData.getInstance().updateOfferQuantity(updatedBuyQuantity, this.getOfferID());
                 SellOfferData.removeOffer(matchingID);
                 this.setQuantity(updatedBuyQuantity);
             }
+            // if the quantity specified by the buy offers is less than the sell offers, remove the buy offer from DB
+            // and reduce the quantity of the sell offer by the quantity of the buy offer
             else {
                 int updatedSellQuantity = sellOfferQuantity - buyOfferQuantity;
                 SellOfferData.getInstance().updateOfferQuantity(updatedSellQuantity, matchingID);
@@ -169,8 +130,6 @@ public class BuyOffer extends Offer{
             }
         }
     }
-
-
 
     /**
      * Remove credits from the buy org and add credits the sell org
@@ -183,6 +142,9 @@ public class BuyOffer extends Offer{
         unitDataSource.updateUnitCredits((float)credit, sellOrgName);
     }
 
+    /**
+     * Remove assets from the sell org and add them to the buy org
+     */
     private void tradeAssets(int quantity, SellOffer sellOffer)  {
         UnitDataSource unitDataSource = new UnitDataSource();
         try {
@@ -197,9 +159,8 @@ public class BuyOffer extends Offer{
     }
 
     /**
-     * Takes a matching sell offer ID and compares it to the buy offer
-     * Then it exchanges the organisational unit assets
-     * When resolving offer should be called before reduceMatchingOfferQuantities
+     * Exchanges the organisational unit assets and credits with a matching sell offer
+     * @param matchingID - ID of the matching sell offer
      */
     private void tradeAssetsAndCredits(int matchingID)  {
         if (matchingID != 0) {
@@ -209,6 +170,7 @@ public class BuyOffer extends Offer{
             double creditsExchanged;
             int assetsExchanged;
             double sellersPrice = matchingSellOffer.getPricePerUnit();
+            // determine assets and credits to be traded
             if (buyOfferQuantity > sellOfferQuantity) {
                 creditsExchanged = sellersPrice * sellOfferQuantity;
                 assetsExchanged = sellOfferQuantity;
@@ -223,14 +185,17 @@ public class BuyOffer extends Offer{
     }
 
     /**
-     * Resolve the offer
+     * Compares the created buy offer with all sell offers, finding offers with the same asset name and appropriate price
+     * Then proceeds to trade assets and credits, whilst updating the offer quantities or removing them (if fully resolved)
+     * Repeats this process until the buy offer has been fully resolved OR there are no more matching sell offers
      */
     public void resolveOffer() {
-        // loop until there is either no matching offer OR whilst the offer exists
+        // loop if there is a matching offer and if the offer has not been fully resolved
         while (getMatchedPriceOffer() != 0 && BuyOfferData.getInstance().offerExists(this.getOfferID())) {
             int matchingID = getMatchedPriceOffer();
-            // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
+            // trade assets and credits of the matching offers
             tradeAssetsAndCredits(matchingID);
+            // edit the quantity of the offers
             reduceMatchingOfferQuantities(matchingID);
             // check if offer has been fully resolved
             if (!BuyOfferData.getInstance().offerExists(this.getOfferID())) {

@@ -37,7 +37,4 @@ public class MarketplaceHistoryDataSource {
             e.printStackTrace();
         }
     }
-
-
-
 }

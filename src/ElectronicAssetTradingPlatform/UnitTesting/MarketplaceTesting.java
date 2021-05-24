@@ -43,17 +43,17 @@ public class MarketplaceTesting {
     DELETE FROM USER_Accounts WHERE Username = "userN";
     DELETE FROM Marketplace WHERE Unit_ID = 1;
      */
+
     @Test
     public void testInsertBuyOffer() {
         // creating a buy offer and adding it into the database through the user
-        userA.listBuyOrderNoResolve("Table", 1, 1);
+        //userA.listBuyOrderNoResolve("Table", 1, 1);
     }
 
     @Test
     public void testInsertSellOffer() {
         // creating a buy offer and adding it into the database through the user
-        userA.listSellOrderNoResolve("Table", 2, 20);
-        //userB.listSellOrder("Table", 3, 1);
+        //userA.listSellOrderNoResolve("Table", 2, 20);
     }
 
     @Test
@@ -91,6 +91,19 @@ public class MarketplaceTesting {
         //System.out.println(userA.getOrgSellOffers());
     }
 
+    // list a buy offer and look to resolve it
+    @Test
+    public void resolveBuyOffer() {
+        // userB.listBuyOrder("Table", 5, 5);
+    }
+
+    // list a sell offer and look to resolve it
+    @Test
+    public void resolveSellOffer() {
+        // userA.listSellOrder("Table", 3, 3);
+    }
+
+
 
     // test failing to insert a offer when offer quantity is negative
     @Test
@@ -112,17 +125,6 @@ public class MarketplaceTesting {
     }
 
 
-    // list a buy offer and look to resolve it
-    @Test
-    public void resolveBuyOffer() {
-        //userB.listBuyOrder("Table", 8, 5);
-    }
-
-    // list a sell offer and look to resolve it
-    @Test
-    public void resolveSellOffer() {
-        //userA.listSellOrder("Table", 3, 2);
-    }
 
     /**
      * Deprecated tests (methods are private)

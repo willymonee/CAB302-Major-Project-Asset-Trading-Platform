@@ -6,6 +6,7 @@ import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import static java.util.Collections.unmodifiableMap;
 
 public class SellOfferData extends OfferData {
     private static TreeMap<Integer, SellOffer> MarketSellOffers = new TreeMap<>();
@@ -14,7 +15,7 @@ public class SellOfferData extends OfferData {
     // private static MarketplaceDataSource marketplaceDataSource = new MarketplaceDataSource();
 
     /**
-     * Constructor to initialise the single BuyOfferData object - protected to suppress unauthorised calls
+     * Constructor to initialise the single SellOfferData object - protected to suppress unauthorised calls
      */
     protected SellOfferData() { }
 
@@ -27,14 +28,14 @@ public class SellOfferData extends OfferData {
     }
 
     /**
-     * Retrieve the INSTANCE of BuyOfferData
+     * Retrieve the INSTANCE of SellOfferData
      */
     public static SellOfferData getInstance() {
         return SellOfferDataHolder.INSTANCE;
     }
 
     /**
-     * Retrieve market buy offers from the database and insert them into the TreeMap
+     * Retrieve market sell offers from the database and insert them into the TreeMap
      */
     protected void getOffersFromDB() {
         TreeMap<Integer, SellOffer> sellOffers = MarketplaceDataSource.getInstance().getSellOffers();
@@ -46,20 +47,21 @@ public class SellOfferData extends OfferData {
 
     /**
      * Update SellOfferData's MarketSellOffers field and then return it
-     * @return TreeMap of the current market sell orders
+     * @return Unmodifiable Map of the current market sell orders
      */
-    public TreeMap<Integer, SellOffer> getMarketSellOffers() {
+    public Map<Integer, SellOffer> getMarketSellOffers() {
         getOffersFromDB();
-        return MarketSellOffers;
+        return unmodifiableMap(MarketSellOffers) ;
     }
 
-
+    /**
+     * Checks if sell offer with that ID exists
+     */
+    @Override
     public boolean offerExists(int ID) {
         getOffersFromDB();
         return MarketSellOffers.containsKey(ID);
     }
-
-
 
     /**
      * Return a sell offer from the DB based on its ID
@@ -76,11 +78,6 @@ public class SellOfferData extends OfferData {
         MarketSellOffers.remove(ID);
         MarketplaceDataSource.getInstance().removeOffer(ID);
     }
-
-    /**
-     * Remove all sell offers from the DB
-     */
-    public static void removeAllSellOffers() { MarketSellOffers.clear(); }
 
     /**
      * Add a sell offer to the DB
@@ -116,7 +113,8 @@ public class SellOfferData extends OfferData {
         getOffersFromDB();
         TreeMap<Integer, SellOffer> orgOffers = new TreeMap<>();
         for (Map.Entry<Integer, SellOffer> sellOffer : MarketSellOffers.entrySet()) {
-            if (sellOffer.getValue().getUnitName().equals(unitName)) {
+            String sellOfferUnitName = sellOffer.getValue().getUnitName();
+            if (sameOrgUnitName(unitName, sellOfferUnitName)) {
                 orgOffers.put(sellOffer.getKey(), sellOffer.getValue());
             }
         }
