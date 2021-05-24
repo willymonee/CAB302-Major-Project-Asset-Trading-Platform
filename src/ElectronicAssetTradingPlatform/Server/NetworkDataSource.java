@@ -2,11 +2,12 @@ package ElectronicAssetTradingPlatform.Server;
 
 import ElectronicAssetTradingPlatform.Users.User;
 
+import javax.swing.JOptionPane;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
-import java.sql.SQLException;
 
 public class NetworkDataSource extends Thread {
 
@@ -23,21 +24,22 @@ public class NetworkDataSource extends Thread {
         final int PORT = 10000;
 
         try {
-            socket = new Socket(HOSTNAME, PORT);
+            try {
+                socket = new Socket(HOSTNAME, PORT);
+            } catch (ConnectException e) {
+                // Alert user of connection failure
+                JOptionPane.showMessageDialog(null, "Connection failed");
+            }
 
             outputStream = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("hi");
-            System.out.println(outputStream);
             inputStream = new ObjectInputStream(socket.getInputStream());
-            System.out.println("hi2");
-            System.out.println(inputStream);
         } catch (IOException e) {
             // If the networkExercise.server connection fails, we're going to throw exceptions
             // whenever the application actually tries to query anything.
             // But it wasn't written to handle this, so make sure your
             // networkExercise.server is running beforehand!
             e.printStackTrace();
-            System.out.println("Failed to connect to networkExercise.server");
+            System.out.println("Failed to connect to server");
             System.out.println(socket.toString());
         }
     }

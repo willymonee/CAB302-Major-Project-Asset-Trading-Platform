@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 
 public class ITAdminGUI extends JFrame {
     private JTextField username;
@@ -31,7 +30,7 @@ public class ITAdminGUI extends JFrame {
         data = dataSource;
         loggedInUser = user;
 
-        initCreateUser();
+        initUI();
 
         // add listeners to interactive components
         addWindowListener(new ClosingListener());
@@ -47,7 +46,7 @@ public class ITAdminGUI extends JFrame {
     /**
      * Initialise UI
      */
-    private void initCreateUser() {
+    private void initUI() {
         Container contentPane = this.getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
@@ -121,11 +120,7 @@ public class ITAdminGUI extends JFrame {
     }
 
     /**
-     * Handles events for the three buttons on the UI.
-     *
-     * @author Malcolm Corney
-     * @version $Id: Exp $
-     *
+     * Handles events on the UI
      */
     private class ButtonListener implements ActionListener {
 
@@ -140,12 +135,7 @@ public class ITAdminGUI extends JFrame {
         }
 
         /**
-         * When the save button is pressed, check that the name field contains
-         * something. If it does, create a new Person object and attempt to add it
-         * to the data model. Change the fields back to not editable and make the
-         * save button inactive.
-         *
-         * Check the list size to see if the delete button should be enabled.
+         * Create user
          */
         private void createUserPressed() {
             String usernameIn = username.getText();
@@ -170,27 +160,11 @@ public class ITAdminGUI extends JFrame {
     }
 
     /**
-     * Implements the windowClosing method from WindowAdapter/WindowListener to
-     * persist the contents of the data/model.
+     * Closes the app
      */
     private class ClosingListener extends WindowAdapter {
         public void windowClosing(WindowEvent e) {
             System.exit(0);
         }
-    }
-
-    /**
-     * Testing only
-     */
-    public static void main(String[] args) {
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                NetworkDataSource net = new NetworkDataSource();
-                net.run();
-                new ITAdminGUI(new ITAdmin("test", "test", "test"), net);
-            }
-        });
     }
 }
