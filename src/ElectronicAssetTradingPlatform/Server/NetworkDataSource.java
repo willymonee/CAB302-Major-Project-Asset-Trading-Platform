@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.Server;
 
+import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.User;
 
 import javax.swing.JOptionPane;
@@ -89,6 +90,15 @@ public class NetworkDataSource extends Thread {
      */
     public String storeUser(User user) {
         return (String) sendCommand(NetworkCommands.STORE_USER, user);
+    }
+
+    /**
+     * Sends command for server to edit user
+     * Returns error message
+     */
+    public String editUser(String username, String userType, String unitName) {
+        String[] object = new String[]{username, userType, unitName};
+        return (String) sendCommand(NetworkCommands.EDIT_USER, object);
     }
 
     public class DatabaseException extends Exception {

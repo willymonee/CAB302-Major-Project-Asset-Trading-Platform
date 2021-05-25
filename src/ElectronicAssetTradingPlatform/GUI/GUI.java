@@ -2,9 +2,7 @@ package ElectronicAssetTradingPlatform.GUI;
 
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
-import ElectronicAssetTradingPlatform.Users.ITAdmin;
-import ElectronicAssetTradingPlatform.Users.User;
-import ElectronicAssetTradingPlatform.Users.UsersFactory;
+import ElectronicAssetTradingPlatform.Users.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +28,7 @@ public class GUI extends JFrame {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
         contentPane.add(Box.createVerticalStrut(20));
-        contentPane.add(makeCreateUserPanel());
+        contentPane.add(loginForm());
 
         // add listeners to interactive components
         addWindowListener(new ClosingListener());
@@ -43,16 +41,11 @@ public class GUI extends JFrame {
         setVisible(true);
     }
 
-    public static void loginForm() {
-        // Get input from form
-
-    }
-
     /**
      * Makes the Create User form
      * @return JPanel of form
      */
-    public JPanel makeCreateUserPanel() {
+    public JPanel loginForm() {
         JPanel addressPanel = new JPanel();
         GroupLayout layout = new GroupLayout(addressPanel);
         addressPanel.setLayout(layout);
@@ -107,16 +100,19 @@ public class GUI extends JFrame {
     }
 
 
-    public static void createITAdminGUI() {
+    public void iTAdminGUI(ITAdmin user) {
+        new ITAdminGUI(user, data);
+    }
+
+    public void memberGUI(OrganisationalUnitMembers member) {
 
     }
-    public static void memberGUI() {
+
+    public void memberGUI(OrganisationalUnitLeader member) {
 
     }
-    public static void leaderGUI() {
 
-    }
-    public static void systemAdminGUI() {
+    public void systemAdminGUI(SystemsAdmin user) {
 
     }
 
@@ -162,10 +158,15 @@ public class GUI extends JFrame {
                 messaging.setText("Success! Logging in...");
 
                 // Opens appropriate GUI
-                ITAdmin finalUser = (ITAdmin) user;
+                User finalUser = user;
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        new ITAdminGUI( finalUser, data);
+                        switch (UsersFactory.UserType.valueOf(finalUser.getUserType())) {
+                            case ITAdmin -> iTAdminGUI((ITAdmin) finalUser);
+                            case SystemsAdmin -> systemAdminGUI((SystemsAdmin) finalUser);
+                            case OrganisationalUnitLeader -> memberGUI((OrganisationalUnitLeader) finalUser);
+                            case OrganisationalUnitMembers -> memberGUI((OrganisationalUnitMembers) finalUser);
+                        }
                     }
                 });
 
@@ -184,5 +185,20 @@ public class GUI extends JFrame {
         public void windowClosing(WindowEvent e) {
             System.exit(0);
         }
+    }
+
+    /**
+     * Starts the application
+     * @param args inputs
+     */
+    public static void main(String[] args) {
+        // Starts with login
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                NetworkDataSource net = new NetworkDataSource();
+                net.run();
+                new GUI(net);
+            }
+        });
     }
 }

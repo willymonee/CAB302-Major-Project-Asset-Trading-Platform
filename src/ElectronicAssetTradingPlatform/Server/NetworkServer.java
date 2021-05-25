@@ -112,6 +112,7 @@ public class NetworkServer {
                      */
                     continue;
                 } catch (SQLException e) {
+                    e.printStackTrace();
                     if (e.getErrorCode() == UNIQUE_CONSTRAINT_EXCEPTION_CODE)
                         objectOutputStream.writeObject("It already exists.");
                     else objectOutputStream.writeObject("It could not be found.");
@@ -160,6 +161,19 @@ public class NetworkServer {
 
                     // Write success output
                     objectOutputStream.writeObject("Added user.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+            }
+            case EDIT_USER -> {
+                // Get input
+                String[] editedValues = (String[]) objectInputStream.readObject();
+
+                synchronized (database) {
+                    // Save to db
+                    UsersDataSource.getInstance().editUser(editedValues[0], editedValues[1], editedValues[2]);
+
+                    // Write success output
+                    objectOutputStream.writeObject("Edited user.");
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
             }
