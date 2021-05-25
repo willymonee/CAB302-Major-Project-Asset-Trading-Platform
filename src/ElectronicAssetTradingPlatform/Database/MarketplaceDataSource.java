@@ -31,7 +31,6 @@ public class MarketplaceDataSource {
     private static final String UPDATE_OFFER_QUANTITY = "UPDATE Marketplace SET Quantity=? WHERE Offer_ID=?";
     private static final String GET_PLACED_OFFER_ID = "SELECT MAX(Offer_ID) FROM Marketplace";
 
-
     private PreparedStatement insertBuyOffer;
     private PreparedStatement insertSellOffer;
     private PreparedStatement getOffers;

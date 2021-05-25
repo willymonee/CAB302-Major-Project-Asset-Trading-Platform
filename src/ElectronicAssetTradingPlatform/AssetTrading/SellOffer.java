@@ -88,13 +88,12 @@ public class SellOffer extends Offer {
     }
 
 
-
     /**
      * Takes a matching buy offer ID and compares it to the sell offer
      * Then it reduces the 'quantities' of both offers
      */
     private void reduceMatchingOfferQuantities(int matchingID) {
-        if (matchingID != 0) {
+        if (isMatching(matchingID)) {
             BuyOffer matchingBuyOffer = BuyOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = this.getQuantity();
             int buyOfferQuantity = matchingBuyOffer.getQuantity();
@@ -160,7 +159,7 @@ public class SellOffer extends Offer {
      * @param matchingID - ID of the matching buy offer
      */
     private void tradeAssetsAndCredits(int matchingID) {
-        if (matchingID != 0) {
+        if (isMatching(matchingID)) {
             BuyOffer matchingBuyOffer = BuyOfferData.getInstance().getOffer(matchingID);
             int buyOfferQuantity = matchingBuyOffer.getQuantity();
             int  sellOfferQuantity = this.getQuantity();
@@ -189,8 +188,9 @@ public class SellOffer extends Offer {
     public void resolveOffer() {
         // loop until there is no matching offer OR this.quantity == 0
         boolean sellOfferNotResolved = SellOfferData.getInstance().offerExists(this.getOfferID());
-        while (getMatchedPriceOffer() != 0 && sellOfferNotResolved) {
-            int matchingID = getMatchedPriceOffer();
+        int matchingID = getMatchedPriceOffer();
+        while (isMatching(matchingID) && sellOfferNotResolved) {
+            matchingID = getMatchedPriceOffer();
             // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
             tradeAssetsAndCredits(matchingID);
             reduceMatchingOfferQuantities(matchingID);
