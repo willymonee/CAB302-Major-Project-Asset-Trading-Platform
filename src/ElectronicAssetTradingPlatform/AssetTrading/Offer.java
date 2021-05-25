@@ -10,6 +10,7 @@ public abstract class Offer {
     private String username;
     private String organisationalUnitName;
     private int orderID;
+    protected static final int NO_MATCHING_OFFERS = 0;
 
     /**
      * Constructor for trade offer
@@ -148,5 +149,13 @@ public abstract class Offer {
         String buyOfferAssetName = buyOffer.getAssetName();
         String sellOfferAssetName = sellOffer.getAssetName();
         return buyOfferAssetName.equals(sellOfferAssetName);
+    }
+
+    /**
+     * Check if there is a matching offer
+     * @return true if there is a matching ID, false if the ID is equal to 0
+     */
+    protected boolean isMatching(int matchingID) {
+        return matchingID != NO_MATCHING_OFFERS;
     }
 }

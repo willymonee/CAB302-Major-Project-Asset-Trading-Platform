@@ -59,13 +59,13 @@ public class MarketplaceTesting {
     @Test
     public void testRetrieveBuyOffers() {
         // print them out from BuyOfferData
-        //System.out.println(BuyOfferData.getInstance());
+        System.out.println(BuyOfferData.getInstance());
     }
 
     @Test
     public void testRetrieveSellOffers() {
         // print them out from SellOfferData
-        //System.out.println(SellOfferData.getInstance());
+        System.out.println(SellOfferData.getInstance());
     }
 
     @Test
@@ -94,13 +94,13 @@ public class MarketplaceTesting {
     // list a buy offer and look to resolve it
     @Test
     public void resolveBuyOffer() {
-        // userB.listBuyOrder("Table", 5, 5);
+        //userA.listBuyOrder("Table", 3, 5);
     }
 
     // list a sell offer and look to resolve it
     @Test
     public void resolveSellOffer() {
-        // userA.listSellOrder("Table", 3, 3);
+         //userA.listSellOrder("Table", 6, 5);
     }
 
 

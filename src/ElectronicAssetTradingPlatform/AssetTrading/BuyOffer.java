@@ -12,6 +12,7 @@ import java.util.TreeMap;
 public class BuyOffer extends Offer{
     private Date dateResolved;
 
+
     /**
      * Constructor for trade offer
      * @param asset                  Name of the asset to be bought or sold
@@ -88,12 +89,12 @@ public class BuyOffer extends Offer{
             if (lowestSellPrice <= buyOfferPrice) {
                 return lowestSellOffer.getOfferID();
             }
-            else { // otherwise return 0
-                return 0;
+            else {
+                return NO_MATCHING_OFFERS;
             }
         }
-        else { // return 0 if there are no sell offers with the same asset name
-            return 0;
+        else {
+            return NO_MATCHING_OFFERS;
         }
     }
 
@@ -102,7 +103,7 @@ public class BuyOffer extends Offer{
      * Then it reduces the 'quantities' of both offers
      */
     private void reduceMatchingOfferQuantities(int matchingID) {
-        if (matchingID != 0) {
+        if (isMatching(matchingID)) {
             SellOffer matchingSellOffer = SellOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = matchingSellOffer.getQuantity();
             int buyOfferQuantity = this.getQuantity();
@@ -163,7 +164,7 @@ public class BuyOffer extends Offer{
      * @param matchingID - ID of the matching sell offer
      */
     private void tradeAssetsAndCredits(int matchingID)  {
-        if (matchingID != 0) {
+        if (isMatching(matchingID)) {
             SellOffer matchingSellOffer = SellOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = matchingSellOffer.getQuantity();
             int buyOfferQuantity = this.getQuantity();
@@ -192,8 +193,9 @@ public class BuyOffer extends Offer{
     public void resolveOffer() {
         // loop if there is a matching offer and if the offer has not been fully resolved
         boolean buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
-        while (getMatchedPriceOffer() != 0 && buyOfferNotResolved) {
-            int matchingID = getMatchedPriceOffer();
+        int matchingID = getMatchedPriceOffer();
+        while (isMatching(matchingID) && buyOfferNotResolved) {
+            matchingID = getMatchedPriceOffer();
             // trade assets and credits of the matching offers
             tradeAssetsAndCredits(matchingID);
             // edit the quantity of the offers
@@ -202,7 +204,6 @@ public class BuyOffer extends Offer{
 
             // check if offer has been fully resolved
             buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
-
         }
     }
 }
