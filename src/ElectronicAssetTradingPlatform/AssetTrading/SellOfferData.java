@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -10,14 +11,16 @@ import static java.util.Collections.unmodifiableMap;
 
 public class SellOfferData extends OfferData {
     private static TreeMap<Integer, SellOffer> MarketSellOffers = new TreeMap<>();
+    private NetworkDataSource dataSource;
 
-    // database connectivity
-    // private static MarketplaceDataSource marketplaceDataSource = new MarketplaceDataSource();
 
     /**
      * Constructor to initialise the single SellOfferData object - protected to suppress unauthorised calls
      */
-    protected SellOfferData() { }
+    protected SellOfferData() {
+        dataSource = new NetworkDataSource();
+        dataSource.run();
+    }
 
     /**
      * SellOfferDataHolder is loaded on the first execution of SellOfferData.getInstance() or the first access to
@@ -83,7 +86,7 @@ public class SellOfferData extends OfferData {
      * Add a sell offer to the DB
      */
     public void addSellOffer(SellOffer offer) {
-        MarketplaceDataSource.getInstance().insertSellOffer(offer);
+        dataSource.addSellOffer(offer);
     }
 
 

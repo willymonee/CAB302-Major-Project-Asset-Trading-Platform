@@ -87,7 +87,6 @@ public class OrganisationalUnitMembers extends User {
 
     // temp function for testing without resolving
     public void listSellOrderNoResolve(String assetType, int quantity, double price) {
-
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // using the actual database
         SellOfferData.getInstance().addSellOffer(offer);

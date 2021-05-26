@@ -19,7 +19,6 @@ public class MarketplaceTesting {
     OrganisationalUnitMembers userA;
     OrganisationalUnitMembers userB;
     OrganisationalUnit unit;
-    //static MarketplaceDataSource marketplaceDataSource;
     UnitDataSource unitDataSource;
 
 
@@ -47,13 +46,14 @@ public class MarketplaceTesting {
     @Test
     public void testInsertBuyOffer() {
         // creating a buy offer and adding it into the database through the user
-        userA.listBuyOrderNoResolve("Table", 1, 1);
+        userA.listBuyOrderNoResolve("Table", 2, 1);
+
     }
 
     @Test
     public void testInsertSellOffer() {
         // creating a buy offer and adding it into the database through the user
-        //userA.listSellOrderNoResolve("Table", 2, 20);
+        userA.listSellOrderNoResolve("Table", 2, 20);
     }
 
     @Test

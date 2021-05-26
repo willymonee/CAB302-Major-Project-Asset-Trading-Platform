@@ -37,6 +37,7 @@ public class NetworkServer {
      * The connection to the database where everything is stored.
      */
     private Connection database;
+    private MarketplaceDataSource marketPlace;
 
     // Exception codes: https://sqlite.org/rescode.html
     private static final int UNIQUE_CONSTRAINT_EXCEPTION_CODE = 19;
@@ -56,6 +57,7 @@ public class NetworkServer {
     public void start() throws IOException {
         // Connect to the database
         database = DBConnectivity.getInstance();
+        marketPlace = MarketplaceDataSource.getInstance();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);
@@ -196,25 +198,29 @@ public class NetworkServer {
             case ADD_BUY_OFFER -> {
                 // Get input
                 BuyOffer offer =  (BuyOffer) objectInputStream.readObject();
-                synchronized (database) {
+                System.out.println("Buy Offer: " + offer);
+                synchronized (marketPlace) {
                     // add offer to the DB
                     MarketplaceDataSource.getInstance().insertBuyOffer(offer);
                     // write success output
                     objectOutputStream.writeObject("Added buy offer: " + offer);
                     System.out.println("Wrote to socket: " + socket.toString());
+                    MarketplaceDataSource.getInstance().close();
                 }
+
             }
 
             case ADD_SELL_OFFER -> {
                 SellOffer offer = (SellOffer) objectInputStream.readObject();
-                synchronized (database) {
+                System.out.println("Sell Offer: " + offer);
+                synchronized (marketPlace) {
                     // add offer to the DB
-                    SellOfferData.getInstance().addSellOffer(offer);
+                    MarketplaceDataSource.getInstance().insertSellOffer(offer);
                     // write success output
                     objectOutputStream.writeObject("Added buy offer: " + offer);
                     System.out.println("Wrote to socket: " + socket.toString());
+                    MarketplaceDataSource.getInstance().close();
                 }
-
             }
         }
     }

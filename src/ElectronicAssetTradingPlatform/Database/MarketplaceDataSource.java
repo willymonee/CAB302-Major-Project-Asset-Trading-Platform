@@ -92,7 +92,7 @@ public class MarketplaceDataSource {
             insertBuyOffer.setString(5, String.valueOf(buyOffer.getPricePerUnit()));
             insertBuyOffer.setString(6, String.valueOf(buyOffer.getQuantity()));
             insertBuyOffer.execute();
-            //insertBuyOffer.close();
+            insertBuyOffer.close();
         } catch (SQLException e) {
             System.out.println("Cannot create buy offer for asset not in the system. " + e.getMessage());
             //e.printStackTrace();
@@ -116,7 +116,7 @@ public class MarketplaceDataSource {
             insertSellOffer.setString(5, String.valueOf(sellOffer.getPricePerUnit()));
             insertSellOffer.setString(6, String.valueOf(sellOffer.getQuantity()));
             insertSellOffer.execute();
-            //insertSellOffer.close();
+            insertSellOffer.close();
         } catch (SQLException e) {
             System.out.println("Cannot create sell offer for asset not in the system. " + e.getMessage());
             e.printStackTrace();

@@ -113,7 +113,10 @@ public class NetworkDataSource extends Thread {
     /**
      * Sends command for the server to add a new buy offer
      */
-    public String addSellOffer(SellOffer sellOffer) { return (String) sendCommand(NetworkCommands.ADD_SELL_OFFER, sellOffer);}
+    public String addSellOffer(SellOffer sellOffer)
+    {
+        return (String) sendCommand(NetworkCommands.ADD_SELL_OFFER, sellOffer);
+    }
 
     public class DatabaseException extends Exception {
         public DatabaseException(String message) { super(message); }
