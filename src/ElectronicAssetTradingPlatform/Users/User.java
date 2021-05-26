@@ -75,4 +75,8 @@ public class User implements Serializable {
             super(message);
         }
     }
+
+    public static void checkInputEmpty(String str) throws EmptyFieldException {
+        if (str == null || str.isBlank()) throw new EmptyFieldException("Invalid input"); // Temporary - add custom exception later
+    }
 }

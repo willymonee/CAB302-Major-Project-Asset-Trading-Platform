@@ -43,29 +43,29 @@ public class MarketplaceTesting {
     DELETE FROM USER_Accounts WHERE Username = "userN";
     DELETE FROM Marketplace WHERE Unit_ID = 1;
      */
+
     @Test
     public void testInsertBuyOffer() {
         // creating a buy offer and adding it into the database through the user
-        //userA.listBuyOrder("Table", 1, 1);
+        //userA.listBuyOrderNoResolve("Table", 1, 1);
     }
 
     @Test
     public void testInsertSellOffer() {
         // creating a buy offer and adding it into the database through the user
-        //userA.listSellOrder("Table", 2, 20);
-        //userB.listSellOrder("Table", 3, 1);
+        //userA.listSellOrderNoResolve("Table", 2, 20);
     }
 
     @Test
     public void testRetrieveBuyOffers() {
         // print them out from BuyOfferData
-        //System.out.println(BuyOfferData.getInstance());
+        System.out.println(BuyOfferData.getInstance());
     }
 
     @Test
     public void testRetrieveSellOffers() {
         // print them out from SellOfferData
-        //System.out.println(SellOfferData.getInstance());
+        System.out.println(SellOfferData.getInstance());
     }
 
     @Test
@@ -91,6 +91,44 @@ public class MarketplaceTesting {
         //System.out.println(userA.getOrgSellOffers());
     }
 
+    // list a buy offer and look to resolve it
+    @Test
+    public void resolveBuyOffer() {
+        //userA.listBuyOrder("Table", 3, 5);
+    }
+
+    // list a sell offer and look to resolve it
+    @Test
+    public void resolveSellOffer() {
+         //userA.listSellOrder("Table", 6, 5);
+    }
+
+
+
+    // test failing to insert a offer when offer quantity is negative
+    @Test
+    public void testFailInsertOfferNegativeQuantity() {
+        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", -1, 50));
+    }
+
+    // test failing to insert a buy offer when offer price is negative
+    @Test
+    public void testFailInsertOfferNegativePrice() {
+        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", 1, -50));
+    }
+
+    // test failing to insert a buy offer for an asset not in the system
+    // test fails because exception is caught at an earlier stage
+    @Test
+    public void testFailInsertOfferAssetNotInSystem() {
+        //assertThrows(SQLException.class, () -> userA.listBuyOrder("Robodog", 1,10000));
+    }
+
+
+
+    /**
+     * Deprecated tests (methods are private)
+     */
     // Temp test to see if return matching sell orders to a particular buy order if they are orders for the same asset
     // will become deprecated once getMatchingSellOffers() becomes a private method
     @Test
@@ -128,9 +166,9 @@ public class MarketplaceTesting {
     public void updateBuyOfferQuantity() {
         //userA.listBuyOrder("iPhone 10", 3, 20);
 
-//        BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(29);
-//        int matchingID = buyOffer.getMatchedPriceOffer();
-//        buyOffer.reduceMatchingOfferQuantities(matchingID);
+        //BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(29);
+        //int matchingID = buyOffer.getMatchedPriceOffer();
+        //buyOffer.reduceMatchingOfferQuantities(matchingID);
 
     }
 
@@ -139,37 +177,10 @@ public class MarketplaceTesting {
     public void updateSellOfferQuantity() {
         //SellOfferData.getInstance().updateOfferQuantity(4, 23);
         //userA.listSellOrder("Table", 3, 1);
-        // doing it manually
-//        SellOffer sellOffer = SellOfferData.getInstance().getOffer(40);
-//        int matchingID = sellOffer.getMatchedPriceOffer();
-//        sellOffer.reduceMatchingOfferQuantities(matchingID);
-    }
-
-    // test failing to insert a offer when offer quantity is negative
-//    @Test
-//    public void testFailInsertOfferNegativeQuantity() {
-//        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", -1, 50));
-//    }
-
-    // test failing to insert a buy offer when offer price is negative
-//    @Test
-//    public void testFailInsertOfferNegativePrice() {
-//        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", 1, -50));
-//    }
-
-    // test failing to insert a buy offer for an asset not in the system
-    // test fails because exception is caught at an earlier stage
-    @Test
-    public void testFailInsertOfferAssetNotInSystem() {
-        //assertThrows(SQLException.class, () -> userA.listBuyOrder("Robodog", 1,10000));
-    }
-
-
-    @Test
-    public void resolveBuyOffer() {
-        // need to delete offers
-        userA.listBuyOrder("Table", 7, 5);
-        //unitDataSource.updateUnitAssets(-1, 1, 2);
+        //doing it manually
+        //SellOffer sellOffer = SellOfferData.getInstance().getOffer(40);
+        //int matchingID = sellOffer.getMatchedPriceOffer();
+        //sellOffer.reduceMatchingOfferQuantities(matchingID);
     }
 
 
