@@ -20,18 +20,14 @@ public class OrganisationalUnitMembersTesting {
      */
 
     OrganisationalUnitMembers member;
-    UsersDataSource db;
+    static UsersDataSource db;
 
     @BeforeEach
     @Test
     public void setUpITAdmin() {
         // Recreate db
         ETPDataSource etp = new ETPDataSource();
-        try {
-            db = new UsersDataSource();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        db = UsersDataSource.getInstance();
         // create an organisational unit member
         try {
             member = new OrganisationalUnitMembers("member1", "pass123", "salt", "unit1");
@@ -57,8 +53,8 @@ public class OrganisationalUnitMembersTesting {
         assertEquals(test, res);
     }
 
-    @AfterClass
-    public void close() throws SQLException {
+    @AfterAll
+    public static void close() throws SQLException {
         db.close();
     }
 }

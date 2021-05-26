@@ -1,7 +1,5 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
-import java.sql.Date;
-
 /**
  * An abstract class that is used to help create trade offers to buy/sell assets
  */
@@ -11,7 +9,8 @@ public abstract class Offer {
     private double pricePerUnit;
     private String username;
     private String organisationalUnitName;
-    private Date datePlaced;
+    private int orderID;
+    protected static final int NO_MATCHING_OFFERS = 0;
 
     /**
      * Constructor for trade offer
@@ -21,65 +20,79 @@ public abstract class Offer {
      * @param username The username of the user who made the offer
      * @param organisationalUnitName The name of the organisation whose assets and credits will be affected
      */
-    public Offer(String assetName, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
+    public Offer(String assetName, int quantity, double pricePerUnit, String username, String organisationalUnitName)   {
+        if (pricePerUnit <= 0 ) {
+            throw new IllegalArgumentException("Price needs to be greater than 0");
+        }
+        if (quantity <= 0 ) {
+            throw new IllegalArgumentException("Quantity needs to be greater than 0");
+        }
         this.assetName = assetName;
         this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
         this.username = username;
         this.organisationalUnitName = organisationalUnitName;
-        long millis = System.currentTimeMillis();
-        this.datePlaced = new Date(millis);
     }
 
-    // Abstract methods
     /**
-     * Getter for Offer ID
-     *
-     * @return The particular offerID of an offer as an integer.
+     * Overloaded Constructor for trade offer - used when retrieving offer from DB
+     * @param orderID                The ID of the offer
+     * @param assetName                  Name of the asset to be bought or sold
+     * @param quantity               Quantity of asset
+     * @param pricePerUnit           Price of the asset
+     * @param username               The ID of the user who made the offer
+     * @param organisationalUnitName The ID of the organisation whose assets and credits will be affected
      */
-    public abstract int getOfferID();
-
-    /**
-     * Create a unique ID for sell and buy offers. The IDs are separate between buy and sell offers e.g.
-     * there can be a sell and buy offer with IDs == 1 at the same time
-     *
-     * @return A unique ID for either sell or buy offers as an integer.
-     */
-    protected abstract int createUniqueID();
-
-    /**
-     * Override the object and covert it into a string.
-     *
-     * @return The object in string format.
-     */
-    public abstract String toString();
-
-
-
-    /**
-     * Compare the newly created offer with existing buy and sell orders and
-     * resolve matching ones e.g. if the order is a sell order check existing buy orders,
-     * if the order is a buy order check existing sell orders).
-     *
-     * @return Returns the matching order ID if there is a match, returns 0 otherwise.
-     */
-    public abstract int getPriceMatchedOffer();
+    public Offer(int orderID, String assetName, int quantity, double pricePerUnit, String username, String organisationalUnitName)   {
+        if (pricePerUnit <= 0 ) {
+            throw new IllegalArgumentException("Price needs to be greater than 0");
+        }
+        if (quantity <= 0 ) {
+            throw new IllegalArgumentException("Quantity needs to be greater than 0");
+        }
+        this.assetName = assetName;
+        this.quantity = quantity;
+        this.pricePerUnit = pricePerUnit;
+        this.username = username;
+        this.organisationalUnitName = organisationalUnitName;
+        this.orderID = orderID;
+    }
 
     /**
      * If there is a matched offer deduct or add appropriate amount of credits from the organisational unit's involved
      * Also add/remove the correct amount of assets bought or sold to the organisational units
      * Also update the offer's quantities or alternatively delete the offer when it has been fully resolved
-     * [M]
-     *
+     * Repeat this process until the offer has been fully resolved or there are no matching offers
      */
-    //public abstract void resolveOffer(OrganisationalUnit buyer, OrganisationalUnit seller);
     public abstract void resolveOffer();
 
     // Concrete methods
+    @Override
+    public String toString() {
+        return this.orderID + "\t" + getAssetName() + "\t" + getQuantity()+ "\t $"
+                + getPricePerUnit() + "\t" + getUsername() + "\t" + getUnitName();
+    }
+
+    /**
+     * Getter for the offer's ID
+     * @return the offer's ID as an int
+     */
+    public int getOfferID() {
+        return this.orderID;
+    }
+
+    /**
+     * Setter for the offer's ID
+     * @param ID takes an integer and set's the offer's ID to that
+     */
+    public void setOfferID(int ID) {
+        this.orderID = ID;
+    }
+
     /**
      * Setter for the quantity field
      */
-        protected void setQuantity(int newQuantity) {
+    protected void setQuantity(int newQuantity) {
             this.quantity = newQuantity;
         }
 
@@ -98,7 +111,7 @@ public abstract class Offer {
      *
      * @return The price per unit of the asset
      */
-    protected double getPricePerUnit() {
+    public double getPricePerUnit() {
         return pricePerUnit;
     }
 
@@ -107,7 +120,7 @@ public abstract class Offer {
      *
      * @return The username of the user who made the offer
      */
-    protected String getUsername() {
+    public String getUsername() {
         return username;
     }
 
@@ -121,32 +134,28 @@ public abstract class Offer {
     }
 
     /**
-     * Get the Organisational Unit object that has the organisational unit name as the offer
-     *
-     * @return Organisational Unit object
-     * TODO
-     */
-    public OrganisationalUnit getUnit() {
-        OrganisationalUnit unit = new OrganisationalUnit("Library", 100);
-        return unit;
-    }
-
-
-    /**
      * Getter for the assetname field
      *
      * @return The assetname of the order
      */
-    protected String getAssetName() {
+    public String getAssetName() {
         return assetName;
     }
 
     /**
-     * Getter for the datePlaced
-     *
-     * @return The date the order was place
+     * Check if an offer's asset name is the same as another offer's
      */
-    protected Date getDatePlaced() {
-        return datePlaced;
+    protected boolean sameAssetName(BuyOffer buyOffer, SellOffer sellOffer) {
+        String buyOfferAssetName = buyOffer.getAssetName();
+        String sellOfferAssetName = sellOffer.getAssetName();
+        return buyOfferAssetName.equals(sellOfferAssetName);
+    }
+
+    /**
+     * Check if there is a matching offer
+     * @return true if there is a matching ID, false if the ID is equal to 0
+     */
+    protected boolean isMatching(int matchingID) {
+        return matchingID != NO_MATCHING_OFFERS;
     }
 }

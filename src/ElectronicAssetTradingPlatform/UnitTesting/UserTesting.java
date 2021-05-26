@@ -21,18 +21,14 @@ public class UserTesting {
      */
 
     ITAdmin itAdmin;
-    UsersDataSource db;
+    static UsersDataSource db;
 
     @BeforeEach
     @Test
     public void setUpUser() {
         // Recreate db
         ETPDataSource etp = new ETPDataSource();
-        try {
-            db = new UsersDataSource();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        db = UsersDataSource.getInstance();
         // create an organisational unit member
         itAdmin = new ITAdmin("adminGuy", "pass123", "salt");
 
@@ -42,11 +38,11 @@ public class UserTesting {
     public void editPwd() {
         itAdmin.changePassword("newPassword");
 
-        assertDoesNotThrow(() -> new UsersDataSource().editUserPassword(itAdmin.getUsername(), itAdmin.getPassword(), itAdmin.getSalt()));
+        assertDoesNotThrow(() -> UsersDataSource.getInstance().editUserPassword(itAdmin.getUsername(), itAdmin.getPassword(), itAdmin.getSalt()));
 
         ITAdmin adminGuy = null;
         try {
-            adminGuy = (ITAdmin) new UsersDataSource().getUser("adminGuy");
+            adminGuy = (ITAdmin) UsersDataSource.getInstance().getUser("adminGuy");
         } catch (SQLException | User.UserTypeException e) {
             e.printStackTrace();
             assert false;
@@ -59,8 +55,8 @@ public class UserTesting {
         assertTrue(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword", itAdmin.getPassword()));
     }
 
-    @AfterClass
-    public void close() throws SQLException {
+    @AfterAll
+    public static void close() throws SQLException {
         db.close();
     }
 }

@@ -1,7 +1,6 @@
-package ElectronicAssetTradingPlatform.Database;
+package ElectronicAssetTradingPlatform.Database.MockDBs;
 
 
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 
 import java.util.Iterator;
@@ -9,7 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Mock database class for market sell offers
+ * Mock database class for market sell offers DEPRECATED
  */
 public class SellOffersDB {
     private static TreeMap<Integer, SellOffer> MarketSellOffers = new TreeMap<>();

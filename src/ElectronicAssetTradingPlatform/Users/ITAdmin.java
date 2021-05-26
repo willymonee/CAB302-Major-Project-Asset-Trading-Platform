@@ -8,6 +8,8 @@ import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 /**
  * ITAdmin class which extends the user class. This class is for the IT administration team
@@ -27,7 +29,7 @@ public class ITAdmin extends User {
      */
     public ITAdmin(String username, String password, String salt) {
         super(username, password, salt);
-        this.userType = UserTypeEnum.ITAdmin.toString();
+        this.userType = UsersFactory.UserType.ITAdmin.toString();
     }
 
     /**
@@ -101,27 +103,28 @@ public class ITAdmin extends User {
         // Create password - length 8
         // Hash password
         byte[] saltBytes = Hashing.newRngBytes(Hashing.SALT_SIZE);
-        byte[] passwordBytes = Hashing.createHash(saltBytes, newRngText(PWD_SIZE));
+        String passwordRaw = newRngText(PWD_SIZE);
+        byte[] passwordBytes = Hashing.createHash(saltBytes, passwordRaw);
 
         // Convert to string
         String salt = Hashing.bytesToString(saltBytes);
         String password = Hashing.bytesToString(passwordBytes);
 
-        // Create user - from userType
-        User newUser;
+        // Display the raw password for the admin to copy
+        JTextArea text = new JTextArea("Please copy this password down: " + passwordRaw);
+        text.setBackground(null);
+        JOptionPane.showMessageDialog(null, text);
+
+        // Try get type
+        UsersFactory.UserType type = null;
         try {
-            switch (UserTypeEnum.valueOf(userType)) {
-                case ITAdmin -> newUser = new ITAdmin(name, password, salt);
-                case OrganisationalUnitMembers -> newUser = new OrganisationalUnitMembers(name, password, salt, unitName);
-                case OrganisationalUnitLeader ->  newUser = new OrganisationalUnitLeader(name, password, salt, unitName);
-                case SystemsAdmin -> newUser = new SystemsAdmin(name, password, salt);
-                default -> throw new IllegalArgumentException();
-            }
-        } catch (IllegalArgumentException e) {
-            throw new UserTypeException("Invalid user type");
+            type = UsersFactory.UserType.valueOf(userType);
+        }
+        catch (IllegalArgumentException e) {
+            throw new User.UserTypeException("Invalid user type");
         }
 
-        return newUser;
+        return UsersFactory.CreateUser(name, password, salt, unitName, type);
     }
 
     /**
@@ -155,9 +158,9 @@ public class ITAdmin extends User {
         // Checks complete - query to update db
         // Clear unit name if IT/SysAdmin
         try {
-            switch (User.UserTypeEnum.valueOf(userType)) {
-                case ITAdmin, SystemsAdmin -> new UsersDataSource().editUser(username, userType, null);
-                case OrganisationalUnitMembers, OrganisationalUnitLeader -> new UsersDataSource().editUser(username, userType, unitName);
+            switch (UsersFactory.UserType.valueOf(userType)) {
+                case ITAdmin, SystemsAdmin -> UsersDataSource.getInstance().editUser(username, userType, null);
+                case OrganisationalUnitMembers, OrganisationalUnitLeader -> UsersDataSource.getInstance().editUser(username, userType, unitName);
                 default -> throw new IllegalArgumentException();
             }
         } catch (IllegalArgumentException e) {
@@ -209,9 +212,5 @@ public class ITAdmin extends User {
         }
 
         return password.toString();
-    }
-
-    private void checkInputEmpty(String str) throws EmptyFieldException {
-        if (str == null || str.isBlank()) throw new EmptyFieldException("Invalid input"); // Temporary - add custom exception later
     }
 }

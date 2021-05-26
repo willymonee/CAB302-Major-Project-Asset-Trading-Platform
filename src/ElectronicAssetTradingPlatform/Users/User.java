@@ -2,19 +2,16 @@ package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 
+import java.io.Serializable;
+
 /**
  * Class for the users of the application
  */
-public class User {
+public class User implements Serializable {
     private String username;
     private String password;
     private String salt;
     protected String userType; // So that children can set their own userType in constructor (safety?)
-
-    // Available user type enum
-    public enum UserTypeEnum {
-        ITAdmin, OrganisationalUnitLeader, OrganisationalUnitMembers, SystemsAdmin
-    }
 
     /**
      * Constructor used for constructing a default user.
@@ -77,5 +74,9 @@ public class User {
         public EmptyFieldException(String message) {
             super(message);
         }
+    }
+
+    public static void checkInputEmpty(String str) throws EmptyFieldException {
+        if (str == null || str.isBlank()) throw new EmptyFieldException("Invalid input"); // Temporary - add custom exception later
     }
 }

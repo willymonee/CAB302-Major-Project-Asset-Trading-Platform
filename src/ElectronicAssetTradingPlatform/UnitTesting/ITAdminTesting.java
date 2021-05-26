@@ -7,7 +7,6 @@ import ElectronicAssetTradingPlatform.Users.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.AfterClass;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -22,18 +21,14 @@ public class ITAdminTesting {
      */
 
     ITAdmin itAdmin;
-    UsersDataSource db;
+    static UsersDataSource db;
 
     @BeforeEach
     @Test
     public void setUpITAdmin() {
         // Recreate db
         ETPDataSource etp = new ETPDataSource();
-        try {
-            db = new UsersDataSource();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        db = UsersDataSource.getInstance();
         // create an organisational unit member
         itAdmin = new ITAdmin("adminGuy", "pass123", "salt");
 
@@ -196,14 +191,14 @@ public class ITAdminTesting {
         assertDoesNotThrow(() -> itAdmin.editUser("newITAdmin1", "SystemsAdmin", "unit1"));
     }
     @Test
-    public void checkMemberEdit() throws SQLException, User.UserTypeException {
-        User check = new UsersDataSource().getUser("newLeader");
+    public void checkMemberEdit() throws User.UserTypeException, SQLException {
+        User check = UsersDataSource.getInstance().getUser("newLeader");
         assertEquals("OrganisationalUnitMembers", check.getUserType());
         assertEquals("unit2", ((OrganisationalUnitMembers)check).getUnitName());
     }
     @Test
     public void checkITAdminEdit() throws SQLException, User.UserTypeException {
-        User check = new UsersDataSource().getUser("newITAdmin1");
+        User check = UsersDataSource.getInstance().getUser("newITAdmin1");
         assertEquals("SystemsAdmin", check.getUserType());
     }
 
@@ -236,8 +231,8 @@ public class ITAdminTesting {
         assertFalse(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword1", itAdmin.getPassword()));
     }
 
-    @AfterClass
-    public void close() throws SQLException {
+    @AfterAll
+    public static void dbClose() throws SQLException {
         db.close();
     }
 }

@@ -1,10 +1,8 @@
 package ElectronicAssetTradingPlatform.Users;
 
-import ElectronicAssetTradingPlatform.AssetTrading.Asset;
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
-import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-import ElectronicAssetTradingPlatform.Database.BuyOffersDB;
-import ElectronicAssetTradingPlatform.Database.SellOffersDB;
+import ElectronicAssetTradingPlatform.AssetTrading.*;
+import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
+import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 
 import java.sql.SQLException;
@@ -16,7 +14,7 @@ import java.util.HashMap;
  *  and managing unit asset listings via their client side GUI.
  */
 public class OrganisationalUnitMembers extends User {
-    private String organisationalUnitName;
+    private final String organisationalUnitName;
 
     /**
      * Constructor used to set ID to organisational unit to user
@@ -28,24 +26,26 @@ public class OrganisationalUnitMembers extends User {
      */
     public OrganisationalUnitMembers(String username, String password, String salt, String unitName) {
         super(username, password, salt);
-        this.userType = UserTypeEnum.OrganisationalUnitMembers.toString();
+        this.userType = UsersFactory.UserType.OrganisationalUnitMembers.toString();
         this.organisationalUnitName = unitName;
     }
 
     /**
      * Display current sell offers made by the organisational unit [M]
-     * @return
+     * @return String of the unit's sell offers
      */
     public String getOrgSellOffers() {
-        return SellOffersDB.getSellOffersDB().getOrgSellOffers(this.organisationalUnitName);
+
+        return SellOfferData.getInstance().getOrgOffers(this.organisationalUnitName);
 
     }
 
     /**
      * Display current buy offers made by the organisational unit [M]
+     * @return String of the unit's buy offers
      */
     public String getOrgBuyOffers() {
-        return BuyOffersDB.getBuyOffersDB().getOrgBuyOffers(this.organisationalUnitName);
+        return BuyOfferData.getInstance().getOrgOffers(this.organisationalUnitName);
     }
 
     /**
@@ -58,8 +58,13 @@ public class OrganisationalUnitMembers extends User {
     public void listBuyOrder(String assetType, int quantity, double price) {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        // add offer into DB
-        BuyOffersDB.addBuyOffer(offer.getOfferID(), offer);
+        // add offer into database
+        BuyOfferData.addOffer(offer);
+        // retrieve the buy offer's ID from the database and set the buy offer's ID
+        int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
+       offer.setOfferID(buyOfferID);
+       // look to resolve the offer
+        offer.resolveOffer();
     }
 
     /**
@@ -70,7 +75,34 @@ public class OrganisationalUnitMembers extends User {
      */
     public void listSellOrder(String assetType, int quantity, double price) {
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        SellOffersDB.addSellOffer(offer.getOfferID(), offer);
+        // using the actual database
+        SellOfferData.addSellOffer(offer);
+        // retrieve the sell offer's ID from the database and set the sell offer's ID
+        int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
+        offer.setOfferID(sellOfferID);
+        // look to resolve the offer
+        offer.resolveOffer();
+    }
+
+    // temp function for testing without resolving
+    public void listSellOrderNoResolve(String assetType, int quantity, double price) {
+        SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
+        // using the actual database
+        SellOfferData.addSellOffer(offer);
+        // retrieve the sell offer's ID from the database and set the sell offer's ID
+        int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
+        offer.setOfferID(sellOfferID);
+    }
+
+    // tesmp function for testing without resolving
+    public void listBuyOrderNoResolve(String assetType, int quantity, double price) {
+        // create offer
+        BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
+        // add offer into database
+        BuyOfferData.addOffer(offer);
+        // retrieve the buy offer's ID from the database and set the buy offer's ID
+        int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
+        offer.setOfferID(buyOfferID);
     }
 
     /**
@@ -79,7 +111,7 @@ public class OrganisationalUnitMembers extends User {
      * @param listingID int ID of asset listing for removal
      */
     public void removeBuyOffer(int listingID) {
-        BuyOffersDB.removeBuyOffer(listingID);
+        BuyOfferData.removeOffer(listingID);
     }
 
     /**
@@ -88,7 +120,7 @@ public class OrganisationalUnitMembers extends User {
      * @param listingID int ID of asset listing for removal
      */
     public void removeSellOffer(int listingID) {
-        SellOffersDB.removeSellOffer(listingID);
+        SellOfferData.removeOffer(listingID);
     }
 
     /**
@@ -135,7 +167,7 @@ public class OrganisationalUnitMembers extends User {
      * @return Returns the map of asset_name and quantity
      */
     public HashMap<String, Integer> getUnitAssets() throws SQLException {
-        return new UsersDataSource().getUnitAssets(organisationalUnitName);
+        return UsersDataSource.getInstance().getUnitAssets(organisationalUnitName);
     }
 
     /**
@@ -144,7 +176,7 @@ public class OrganisationalUnitMembers extends User {
      * @return Returns the quantity of credits
      */
     public float getUnitCredits() throws SQLException {
-        return new UsersDataSource().getUnitCredits(organisationalUnitName);
+        return UsersDataSource.getInstance().getUnitCredits(organisationalUnitName);
     }
 
     public String getUnitName() { return organisationalUnitName; }

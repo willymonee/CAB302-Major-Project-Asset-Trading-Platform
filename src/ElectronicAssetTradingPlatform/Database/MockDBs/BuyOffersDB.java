@@ -1,4 +1,4 @@
-package ElectronicAssetTradingPlatform.Database;
+package ElectronicAssetTradingPlatform.Database.MockDBs;
 
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Mock database class for market buy offers
+ * Mock database class for market buy offers DEPRECATED
  */
 public class BuyOffersDB {
     private static TreeMap<Integer, BuyOffer> MarketBuyOffers = new TreeMap<>();
@@ -60,7 +60,9 @@ public class BuyOffersDB {
      * Insert a buy offer into the DB
      */
     public static void addBuyOffer(int ID, BuyOffer offer) {
+
         MarketBuyOffers.put(ID, offer);
+
     }
 
     /**

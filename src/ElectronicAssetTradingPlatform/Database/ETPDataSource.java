@@ -10,13 +10,14 @@ public class ETPDataSource {
     // Create Table Queries
     private static final String marketplaceTable =
             "CREATE TABLE IF NOT EXISTS Marketplace ("
-                    + "Offer_ID INTEGER NOT NULL UNIQUE,"
+                    + "Offer_ID INTEGER UNIQUE,"
                     + "Buy_or_Sell TEXT CHECK (buy_or_sell IN ('b', 's')),"
                     + "Unit_ID INTEGER NOT NULL,"
                     + "User_ID INTEGER NOT NULL,"
-                    + "Asset_type_ID NOT NULL,"
+                    + "Asset_type_ID INTEGER NOT NULL,"
                     + "Price_per_unit FLOAT NOT NULL,"
-                    + "PRIMARY KEY(User_ID AUTOINCREMENT)"
+                    + "Quantity INTEGER NOT NULL,"
+                    + "PRIMARY KEY(Offer_ID AUTOINCREMENT)"
                     + ");";
 
     private static final String marketplaceHistoryTable =
