@@ -79,7 +79,7 @@ public class SellOfferData extends OfferData {
      */
     public void removeOffer(int ID) {
         MarketSellOffers.remove(ID);
-        MarketplaceDataSource.getInstance().removeOffer(ID);
+//        MarketplaceDataSource.getInstance().removeOffer(ID);
     }
 
     /**

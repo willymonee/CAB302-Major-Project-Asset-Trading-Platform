@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.ITAdmin;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
@@ -51,7 +52,13 @@ public class ServerDataTesting {
     @Test
     public void testAddBuyOffer() {
         BuyOffer buyOffer = new BuyOffer("iPhone 10", 3, 25, "willymon", "Human Resources");
-        System.out.println(data.addBuyOffer(buyOffer));
+        data.addBuyOffer(buyOffer);
+    }
+
+    @Test
+    public void testAddSellOffer() {
+        SellOffer sellOffer = new SellOffer("iPhone 10", 3, 3, "hana","Management");
+        data2.addSellOffer(sellOffer);
     }
 
     // When testing this - remove the ITAdmin and run this test only

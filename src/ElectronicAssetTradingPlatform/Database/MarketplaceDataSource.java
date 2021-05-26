@@ -46,7 +46,9 @@ public class MarketplaceDataSource {
     }
 
     // retrieve instance of
-    public static MarketplaceDataSource getInstance() { return MarketPlaceDataHolder.INSTANCE; }
+    public static MarketplaceDataSource getInstance() {
+        return MarketPlaceDataHolder.INSTANCE;
+    }
 
     private MarketplaceDataSource() {
         connection = DBConnectivity.getInstance();
@@ -92,10 +94,8 @@ public class MarketplaceDataSource {
             insertBuyOffer.setString(5, String.valueOf(buyOffer.getPricePerUnit()));
             insertBuyOffer.setString(6, String.valueOf(buyOffer.getQuantity()));
             insertBuyOffer.execute();
-            insertBuyOffer.close();
         } catch (SQLException e) {
-            System.out.println("Cannot create buy offer for asset not in the system. " + e.getMessage());
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -116,9 +116,7 @@ public class MarketplaceDataSource {
             insertSellOffer.setString(5, String.valueOf(sellOffer.getPricePerUnit()));
             insertSellOffer.setString(6, String.valueOf(sellOffer.getQuantity()));
             insertSellOffer.execute();
-            insertSellOffer.close();
         } catch (SQLException e) {
-            System.out.println("Cannot create sell offer for asset not in the system. " + e.getMessage());
             e.printStackTrace();
         }
     }

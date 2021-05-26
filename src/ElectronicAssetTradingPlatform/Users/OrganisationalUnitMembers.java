@@ -62,8 +62,8 @@ public class OrganisationalUnitMembers extends User {
         // add offer into database
         BuyOfferData.getInstance().addOffer(offer);
         // retrieve the buy offer's ID from the database and set the buy offer's ID
-        int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
-       offer.setOfferID(buyOfferID);
+        //int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
+       //offer.setOfferID(buyOfferID);
        // look to resolve the offer
         offer.resolveOffer();
     }
@@ -79,8 +79,8 @@ public class OrganisationalUnitMembers extends User {
         // using the actual database
         SellOfferData.getInstance().addSellOffer(offer);
         // retrieve the sell offer's ID from the database and set the sell offer's ID
-        int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
-        offer.setOfferID(sellOfferID);
+        //int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
+        //offer.setOfferID(sellOfferID);
         // look to resolve the offer
         offer.resolveOffer();
     }
@@ -91,8 +91,8 @@ public class OrganisationalUnitMembers extends User {
         // using the actual database
         SellOfferData.getInstance().addSellOffer(offer);
         // retrieve the sell offer's ID from the database and set the sell offer's ID
-        int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
-        offer.setOfferID(sellOfferID);
+        //int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
+        //offer.setOfferID(sellOfferID);
     }
 
     // tesmp function for testing without resolving
@@ -102,8 +102,8 @@ public class OrganisationalUnitMembers extends User {
         // add offer into database
          BuyOfferData.getInstance().addOffer(offer);
         // retrieve the buy offer's ID from the database and set the buy offer's ID
-        int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
-        offer.setOfferID(buyOfferID);
+        //int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
+       // offer.setOfferID(buyOfferID);
     }
 
     /**
