@@ -21,14 +21,14 @@ public class ITAdminTesting {
      */
 
     ITAdmin itAdmin;
-    static UsersDataSource db;
+//    static UsersDataSource db;
 
     @BeforeEach
     @Test
     public void setUpITAdmin() {
         // Recreate db
-        ETPDataSource etp = new ETPDataSource();
-        db = UsersDataSource.getInstance();
+//        ETPDataSource etp = new ETPDataSource();
+//        db = UsersDataSource.getInstance();
         // create an organisational unit member
         itAdmin = new ITAdmin("adminGuy", "pass123", "salt");
 
@@ -91,8 +91,8 @@ public class ITAdminTesting {
         assertNotEquals(user2, user3);
         assertNotEquals(user1, user4);
     }
-
-    // Users Data Source test
+/*
+    // START DB TESTS
     @Test
     public void insertLeader() {
         try {
@@ -171,20 +171,6 @@ public class ITAdminTesting {
 
     // Edit user tests
     @Test
-    public void editMember() {
-        try {
-            itAdmin.editUser("newLeader", "OrganisationalUnitMembers", "unit2");
-        } catch (User.EmptyFieldException | User.UserTypeException e) {
-            e.printStackTrace();
-            assert false;
-        }
-
-    }
-    @Test
-    public void editITAdmin() {
-        assertDoesNotThrow(() -> itAdmin.editUser("newITAdmin1", "SystemsAdmin", "unit1"));
-    }
-    @Test
     public void checkMemberEdit() throws User.UserTypeException, SQLException {
         User check = UsersDataSource.getInstance().getUser("newLeader");
         assertEquals("OrganisationalUnitMembers", check.getUserType());
@@ -194,6 +180,30 @@ public class ITAdminTesting {
     public void checkITAdminEdit() throws SQLException, User.UserTypeException {
         User check = UsersDataSource.getInstance().getUser("newITAdmin1");
         assertEquals("SystemsAdmin", check.getUserType());
+    }
+    // END DB TESTS
+*/
+    // Edit user tests
+    @Test
+    public void editMemberCheckUnitName() {
+        try {
+            String[] out = itAdmin.editUser("newLeader", "OrganisationalUnitMembers", "unit2");
+            assertNotNull(out[2]);
+        } catch (User.EmptyFieldException | User.UserTypeException e) {
+            e.printStackTrace();
+            assert false;
+        }
+
+    }
+    @Test
+    public void editITAdminCheckUnitName() {
+        try {
+            String[] out = itAdmin.editUser("newITAdmin1", "SystemsAdmin", "unit1");
+            assertNull(out[2]);
+        } catch (User.EmptyFieldException | User.UserTypeException e) {
+            e.printStackTrace();
+            assert false;
+        }
     }
 
 
@@ -225,8 +235,8 @@ public class ITAdminTesting {
         assertFalse(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword1", itAdmin.getPassword()));
     }
 
-    @AfterAll
-    public static void dbClose() throws SQLException {
-        db.close();
-    }
+//    @AfterAll
+//    public static void dbClose() throws SQLException {
+//        db.close();
+//    }
 }
