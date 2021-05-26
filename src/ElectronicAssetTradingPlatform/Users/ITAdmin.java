@@ -5,6 +5,8 @@ import ElectronicAssetTradingPlatform.Passwords.Hashing;
 
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 /**
  * ITAdmin class which extends the user class. This class is for the IT administration team
@@ -79,11 +81,17 @@ public class ITAdmin extends User {
         // Create password - length 8
         // Hash password
         byte[] saltBytes = Hashing.newRngBytes(Hashing.SALT_SIZE);
-        byte[] passwordBytes = Hashing.createHash(saltBytes, newRngText(PWD_SIZE));
+        String passwordRaw = newRngText(PWD_SIZE);
+        byte[] passwordBytes = Hashing.createHash(saltBytes, passwordRaw);
 
         // Convert to string
         String salt = Hashing.bytesToString(saltBytes);
         String password = Hashing.bytesToString(passwordBytes);
+
+        // Display the raw password for the admin to copy
+        JTextArea text = new JTextArea("Please copy this password down: " + passwordRaw);
+        text.setBackground(null);
+        JOptionPane.showMessageDialog(null, text);
 
         // Try get type
         UsersFactory.UserType type = null;
@@ -164,9 +172,5 @@ public class ITAdmin extends User {
         }
 
         return password.toString();
-    }
-
-    public static void checkInputEmpty(String str) throws EmptyFieldException {
-        if (str == null || str.isBlank()) throw new EmptyFieldException("Invalid input"); // Temporary - add custom exception later
     }
 }

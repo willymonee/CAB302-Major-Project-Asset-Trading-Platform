@@ -1,13 +1,10 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
-import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
-import com.sun.source.tree.Tree;
-
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Retrieves and inserts data relating to buy offers to/from the database.
@@ -49,6 +46,15 @@ public class BuyOfferData extends OfferData {
     }
 
     /**
+     * Return all market buy offers in a TreeMap
+     * @return Unmodifiable Map of all market buy offers
+     */
+    public Map<Integer, BuyOffer> getMarketBuyOffers() {
+        getOffersFromDB();
+        return unmodifiableMap(MarketBuyOffers);
+    }
+
+    /**
      * Retrieve a buy offer from the DB
      */
     public BuyOffer getOffer(int ID) {
@@ -57,8 +63,9 @@ public class BuyOfferData extends OfferData {
     }
 
     /**
-     * Checks if offer with that ID exists
+     * Checks if buy offer with that ID exists
      */
+    @Override
     public boolean offerExists(int ID) {
         getOffersFromDB();
         return MarketBuyOffers.containsKey(ID);
@@ -68,9 +75,7 @@ public class BuyOfferData extends OfferData {
     /**
      * Insert a buy offer into the DB
      */
-    public static void addOffer(BuyOffer offer)  {
-        MarketplaceDataSource.getInstance().insertBuyOffer(offer);
-    }
+    public static void addOffer(BuyOffer offer)  { MarketplaceDataSource.getInstance().insertBuyOffer(offer); }
 
     /**
      * Remove an offer from the DB
@@ -80,21 +85,12 @@ public class BuyOfferData extends OfferData {
         MarketplaceDataSource.getInstance().removeOffer(ID);
     }
 
-
-    public TreeMap<Integer, BuyOffer> getMarketBuyOffers() {
-        getOffersFromDB();
-        return MarketBuyOffers;
-    }
-
-
-
     /**
      * Update the market buy offers stored in BuyOfferData MarketBuyOffers field and return them all as a string
      * @return String of all market buy offers stored in BuyOfferData MarketBuyOffers field
      */
     @Override
     public String toString() {
-        // update MarketBuyOffers field from database
         getOffersFromDB();
         Iterator<Map.Entry<Integer, BuyOffer>> buyOffersIter = MarketBuyOffers.entrySet().iterator();
         StringBuilder MarketOffers = new StringBuilder("Buy Offers: \n");
@@ -115,7 +111,8 @@ public class BuyOfferData extends OfferData {
         getOffersFromDB();
         TreeMap<Integer, BuyOffer> orgOffers = new TreeMap<>();
         for (Map.Entry<Integer, BuyOffer> buyOffer : MarketBuyOffers.entrySet()) {
-            if (buyOffer.getValue().getUnitName().equals(unitName)) {
+            String buyOfferUnitName = buyOffer.getValue().getUnitName();
+            if (sameOrgUnitName(unitName, buyOfferUnitName )) {
                 orgOffers.put(buyOffer.getKey(), buyOffer.getValue());
             }
         }
@@ -125,6 +122,7 @@ public class BuyOfferData extends OfferData {
     /**
      * Retrieve buy offers made by a particular organisation as a string
      */
+    @Override
     public String getOrgOffers(String unitName) {
         TreeMap<Integer, BuyOffer> orgOffers = getOrgOffersMap(unitName);
         Iterator<Map.Entry<Integer, BuyOffer>> buyOffersIter = orgOffers.entrySet().iterator();

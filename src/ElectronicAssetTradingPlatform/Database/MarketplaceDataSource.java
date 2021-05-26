@@ -27,17 +27,13 @@ public class MarketplaceDataSource {
             + "Unit_ID, User_ID, Asset_type_ID, Price_per_unit, Quantity)"
             + "VALUES (?, ?, ?, ?, ?, ?);";
     private static final String GET_OFFERS = "SELECT * FROM Marketplace WHERE Buy_or_Sell= ?";
-    private static final String RESOLVE_OFFER = "DELETE FROM Marketplace WHERE Offer_ID=?";
     private static final String REMOVE_OFFER = "DELETE FROM Marketplace WHERE Offer_ID=?";
     private static final String UPDATE_OFFER_QUANTITY = "UPDATE Marketplace SET Quantity=? WHERE Offer_ID=?";
     private static final String GET_PLACED_OFFER_ID = "SELECT MAX(Offer_ID) FROM Marketplace";
 
-
-
     private PreparedStatement insertBuyOffer;
     private PreparedStatement insertSellOffer;
     private PreparedStatement getOffers;
-    private PreparedStatement resolveOffer;
     private PreparedStatement removeOffer;
     private PreparedStatement updateOfferQuantity;
     private PreparedStatement getPlacedOfferID;
@@ -58,7 +54,6 @@ public class MarketplaceDataSource {
             insertBuyOffer = connection.prepareStatement(INSERT_BUYOFFER);
             insertSellOffer = connection.prepareStatement(INSERT_SELLOFFER);
             getOffers = connection.prepareStatement(GET_OFFERS);
-            resolveOffer = connection.prepareStatement(RESOLVE_OFFER);
             removeOffer = connection.prepareStatement(REMOVE_OFFER);
             updateOfferQuantity = connection.prepareStatement(UPDATE_OFFER_QUANTITY);
             getPlacedOfferID = connection.prepareStatement(GET_PLACED_OFFER_ID);
@@ -67,6 +62,10 @@ public class MarketplaceDataSource {
         }
     }
 
+    /**
+     * Remove an offer from the database
+     * @param offerID of the offer to be removed
+     */
     public void removeOffer(int offerID) {
         try {
             removeOffer.setInt(1, offerID);
@@ -78,6 +77,7 @@ public class MarketplaceDataSource {
 
     /**
      * Insert a buy offer into the database
+     * @param buyOffer buy offer to be added
      */
     public void insertBuyOffer(BuyOffer buyOffer) {
         try {
@@ -100,36 +100,8 @@ public class MarketplaceDataSource {
     }
 
     /**
-     * Update the quantity of a buy offer
-     */
-    public void updateOfferQuantity(int newQuantity, int offerID) {
-        try {
-            updateOfferQuantity.setInt(1, newQuantity);
-            updateOfferQuantity.setInt(2, offerID);
-            updateOfferQuantity.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Retrieve the ID of the most recently placed offer
-     */
-    public int getPlacedOfferID() {
-        int offerID = 0;
-        ResultSet rs = null;
-        try {
-            rs = getPlacedOfferID.executeQuery();
-            rs.next();
-            offerID = rs.getInt(1);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return offerID;
-    }
-
-    /**
      * Insert a sell offer into the database
+     * @param sellOffer to be added
      */
     public void insertSellOffer(SellOffer sellOffer) {
         try {
@@ -150,6 +122,39 @@ public class MarketplaceDataSource {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Update the quantity of an offer
+     * @param newQuantity quantity to set the offer
+     * @param offerID of the offer to be updated
+     */
+    public void updateOfferQuantity(int newQuantity, int offerID) {
+        try {
+            updateOfferQuantity.setInt(1, newQuantity);
+            updateOfferQuantity.setInt(2, offerID);
+            updateOfferQuantity.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Retrieve the ID of the most recently placed offer
+     * @return ID of the offer
+     */
+    public int getPlacedOfferID() {
+        int offerID = 0;
+        ResultSet rs = null;
+        try {
+            rs = getPlacedOfferID.executeQuery();
+            rs.next();
+            offerID = rs.getInt(1);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return offerID;
+    }
+
 
     /**
      * Retrieve buy offers from the database and return them as a TreeMap
@@ -210,24 +215,10 @@ public class MarketplaceDataSource {
         return sellOffers;
     }
 
-
-
-
-
+    /**
+     * Closes the connection to the db
+     */
     public void close() throws SQLException {
         connection.close();
     }
-
-    /* maybe params r unit id, user id, ppu
-    public void resolveOffer(User user, Asset asset) {
-        try {
-            // get the offer id from marketplace
-            // resolveOffer.setString("1", )
-        }
-    }
-
-    */
-
-
-
 }

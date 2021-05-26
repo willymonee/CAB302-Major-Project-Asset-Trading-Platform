@@ -81,7 +81,28 @@ public class OrganisationalUnitMembers extends User {
         int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(sellOfferID);
         // look to resolve the offer
-        //offer.reduceMatchingOfferQuantities(offer.getMatchedPriceOffer());
+        offer.resolveOffer();
+    }
+
+    // temp function for testing without resolving
+    public void listSellOrderNoResolve(String assetType, int quantity, double price) {
+        SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
+        // using the actual database
+        SellOfferData.addSellOffer(offer);
+        // retrieve the sell offer's ID from the database and set the sell offer's ID
+        int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
+        offer.setOfferID(sellOfferID);
+    }
+
+    // tesmp function for testing without resolving
+    public void listBuyOrderNoResolve(String assetType, int quantity, double price) {
+        // create offer
+        BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
+        // add offer into database
+        BuyOfferData.addOffer(offer);
+        // retrieve the buy offer's ID from the database and set the buy offer's ID
+        int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
+        offer.setOfferID(buyOfferID);
     }
 
     /**

@@ -38,6 +38,7 @@ public class MarketplaceHistoryDataSource {
         }
     }
 
+
     public void getTradesByDate() {
 
     }
@@ -45,10 +46,6 @@ public class MarketplaceHistoryDataSource {
         Will need to display or create graph for each unique asset in the database
         and the quantity would come into play um.
     */
-
-
-
-
 
 
 
