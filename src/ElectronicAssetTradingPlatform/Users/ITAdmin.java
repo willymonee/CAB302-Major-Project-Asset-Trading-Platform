@@ -43,6 +43,8 @@ public class ITAdmin extends User {
 
         OrganisationalUnit orgUnit = new OrganisationalUnit(name, credits);
 
+
+
         // TODO: add confirmation when GUI is implemented and ADD TO DATABASE!!!!
 
         return orgUnit;
@@ -62,7 +64,7 @@ public class ITAdmin extends User {
     public void editOrganisationalUnitCredits(String unitName, float credits) throws Exception {
         checkInputEmpty(unitName);
 
-        new UnitDataSource().editUnitCredits(unitName, credits);
+
 
         // TODO: add exceptions for non existent unitName, ADD implementation for confirmation when GUI is implemented
 
@@ -80,7 +82,7 @@ public class ITAdmin extends User {
         checkInputEmpty(unitName);
         checkInputEmpty(assetName);
 
-        new UnitDataSource().editUnitAssets(unitName, assetName, quantity);
+        //new UnitDataSource().editUnitAssets(unitName, assetName, quantity);
 
         // TODO: add exceptions for non existent assetName, unitName,
         //  ADD implemented for confirmation when GUI is implemented
@@ -133,12 +135,12 @@ public class ITAdmin extends User {
      * @param name string name of the asset type to be added to the database
      */
     // NOTE IT IS BEST FOR THE ID TO BE AUTOMATICALLY CREATED IN THE ASSET OR ASSET COLLECTION OBJECTS
-    public Asset createNewAsset(String name) throws EmptyFieldException {
+    public void createNewAsset(String name) throws EmptyFieldException {
         checkInputEmpty(name);
 
-        Asset asset = new Asset(name);
+        //Asset asset = new Asset(name);
 
-        return asset;
+        //return asset;
 
         // TODO: add confirmation when GUI is implemented and ADD TO DATABASE!!!! ALSO ADD AUTO INCREMENTATION TO IDs
 
@@ -178,7 +180,7 @@ public class ITAdmin extends User {
         checkInputEmpty(currentName);
         checkInputEmpty(newName);
 
-        new UnitDataSource().editUnitName(currentName, newName);
+        //new UnitDataSource().editUnitName(currentName, newName);
 
         // TODO: add exceptions for non existent currentName, newName,
         //  ADD implementation for confirmation when GUI is implemented
@@ -194,7 +196,7 @@ public class ITAdmin extends User {
         checkInputEmpty(currentName);
         checkInputEmpty(newName);
 
-        new UnitDataSource().editAssetName(currentName, newName);
+        //new UnitDataSource().editAssetName(currentName, newName);
 
         // TODO: add exceptions for non existent currentName, newName,
         //  ADD implementation for confirmation when GUI is implemented
