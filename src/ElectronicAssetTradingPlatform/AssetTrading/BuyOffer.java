@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,7 +10,7 @@ import java.sql.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class BuyOffer extends Offer{
+public class BuyOffer extends Offer  {
     private Date dateResolved;
 
 
@@ -109,8 +110,8 @@ public class BuyOffer extends Offer{
             int buyOfferQuantity = this.getQuantity();
             // if the quantity specified by matching buy and sell offers are equal remove them both from the DB
             if (buyOfferQuantity == sellOfferQuantity) {
-                BuyOfferData.removeOffer(this.getOfferID());
-                SellOfferData.removeOffer(matchingID);
+                BuyOfferData.getInstance().removeOffer(this.getOfferID());
+                SellOfferData.getInstance().removeOffer(matchingID);
                 this.setQuantity(0);
             }
             // if the quantity specified by the buy offer is greater than the sell offer, remove the sell offer from DB
@@ -118,7 +119,7 @@ public class BuyOffer extends Offer{
             else if (buyOfferQuantity > sellOfferQuantity) {
                 int updatedBuyQuantity = buyOfferQuantity - sellOfferQuantity;
                 BuyOfferData.getInstance().updateOfferQuantity(updatedBuyQuantity, this.getOfferID());
-                SellOfferData.removeOffer(matchingID);
+                SellOfferData.getInstance().removeOffer(matchingID);
                 this.setQuantity(updatedBuyQuantity);
             }
             // if the quantity specified by the buy offers is less than the sell offers, remove the buy offer from DB
@@ -126,7 +127,7 @@ public class BuyOffer extends Offer{
             else {
                 int updatedSellQuantity = sellOfferQuantity - buyOfferQuantity;
                 SellOfferData.getInstance().updateOfferQuantity(updatedSellQuantity, matchingID);
-                BuyOfferData.removeOffer(this.getOfferID());
+                BuyOfferData.getInstance().removeOffer(this.getOfferID());
                 this.setQuantity(0);
             }
         }

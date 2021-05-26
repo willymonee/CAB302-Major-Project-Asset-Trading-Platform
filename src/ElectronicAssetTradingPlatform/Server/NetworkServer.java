@@ -1,6 +1,11 @@
 package ElectronicAssetTradingPlatform.Server;
 
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOfferData;
 import ElectronicAssetTradingPlatform.Database.DBConnectivity;
+import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.User;
 
@@ -97,12 +102,16 @@ public class NetworkServer {
      */
     private void handleConnection(Socket socket) {
         try {
+
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+
             while (true) {
                 try {
                     // Reads Command and parameter object
                     NetworkCommands command = (NetworkCommands) objectInputStream.readObject();
+                    if (command == null) {
+                    }
                     handleCommand(command, objectInputStream, objectOutputStream, socket);
                 } catch (SocketTimeoutException e) {
                     /**
@@ -128,6 +137,12 @@ public class NetworkServer {
     /**
      * Execute the command
      * @param command NetworkCommand from input stream
+     * @param socket socket for the client
+     * @param objectInputStream input stream to read objects from
+     * @param objectOutputStream output stream to write objects to
+     * @throws IOException if the client has disconnected
+     * @throws ClassNotFoundException if the client sends an invalid object
+     * @throws User.UserTypeException if the user is an invalid user type for the specified command
      */
     private void handleCommand (NetworkCommands command, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, Socket socket)
             throws IOException, ClassNotFoundException, SQLException, User.UserTypeException {
@@ -175,7 +190,31 @@ public class NetworkServer {
                     // Write success output
                     objectOutputStream.writeObject("Edited user.");
                     System.out.println("Wrote to socket: " + socket.toString());
+                    System.out.println("Wrote to socket: " + socket.toString());
                 }
+            }
+            case ADD_BUY_OFFER -> {
+                // Get input
+                BuyOffer offer =  (BuyOffer) objectInputStream.readObject();
+                synchronized (database) {
+                    // add offer to the DB
+                    MarketplaceDataSource.getInstance().insertBuyOffer(offer);
+                    // write success output
+                    objectOutputStream.writeObject("Added buy offer: " + offer);
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+            }
+
+            case ADD_SELL_OFFER -> {
+                SellOffer offer = (SellOffer) objectInputStream.readObject();
+                synchronized (database) {
+                    // add offer to the DB
+                    SellOfferData.getInstance().addSellOffer(offer);
+                    // write success output
+                    objectOutputStream.writeObject("Added buy offer: " + offer);
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+
             }
         }
     }

@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.ITAdmin;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
@@ -24,41 +25,47 @@ public class ServerDataTesting {
         data2.run();
     }
 
+//    @Test
+//    public void testGetUser() throws SQLException, NetworkDataSource.DatabaseException {
+//        OrganisationalUnitMembers user = (OrganisationalUnitMembers) data.retrieveUser("willymon");
+//
+//        System.out.println("Gotten: " + user.getUsername() + user.getPassword() + user.getUserType() + user.getUnitCredits());
+//    }
+//
+//    @Test
+//    public void testStoreUser() throws NetworkDataSource.DatabaseException {
+//        ITAdmin userStore = new ITAdmin("name", "pass", "salt");
+//        System.out.println(data.storeUser(userStore));
+//
+//        ITAdmin user = (ITAdmin) data.retrieveUser("name");
+//        assertEquals("name", user.getUsername());
+//        assertEquals("pass", user.getPassword());
+//        assertEquals("ITAdmin", user.getUserType());
+//    }
+//
+//    @Test
+//    public void testInvalidGetUser() {
+//        assertThrows(NetworkDataSource.DatabaseException.class, () -> data.retrieveUser("joe1920c"));
+//    }
+
     @Test
-    public void testGetUser() throws SQLException, NetworkDataSource.DatabaseException {
-        OrganisationalUnitMembers user = (OrganisationalUnitMembers) data.retrieveUser("willymon");
-
-        System.out.println("Gotten: " + user.getUsername() + user.getPassword() + user.getUserType() + user.getUnitCredits());
-    }
-
-    @Test
-    public void testStoreUser() throws NetworkDataSource.DatabaseException {
-        ITAdmin userStore = new ITAdmin("name", "pass", "salt");
-        System.out.println(data.storeUser(userStore));
-
-        ITAdmin user = (ITAdmin) data.retrieveUser("name");
-        assertEquals("name", user.getUsername());
-        assertEquals("pass", user.getPassword());
-        assertEquals("ITAdmin", user.getUserType());
-    }
-
-    @Test
-    public void testInvalidGetUser() {
-        assertThrows(NetworkDataSource.DatabaseException.class, () -> data.retrieveUser("joe1920c"));
+    public void testAddBuyOffer() {
+        BuyOffer buyOffer = new BuyOffer("iPhone 10", 3, 25, "willymon", "Human Resources");
+        System.out.println(data.addBuyOffer(buyOffer));
     }
 
     // When testing this - remove the ITAdmin and run this test only
     @Test
     public void testThreadedServer() throws InterruptedException {
-        ThreadedServerRunnable test1 = new ThreadedServerRunnable(data);
-        ThreadedServerRunnable test2 = new ThreadedServerRunnable(data2);
-        test1.start();
-        test2.start();
-        Thread.sleep(5000);
-        test1.finish();
-        test2.finish();
-        test1.join();
-        test2.join();
+//        ThreadedServerRunnable test1 = new ThreadedServerRunnable(data);
+//        ThreadedServerRunnable test2 = new ThreadedServerRunnable(data2);
+//        test1.start();
+//        test2.start();
+//        Thread.sleep(5000);
+//        test1.finish();
+//        test2.finish();
+//        test1.join();
+//        test2.join();
     }
 
     private static class ThreadedServerRunnable extends Thread {

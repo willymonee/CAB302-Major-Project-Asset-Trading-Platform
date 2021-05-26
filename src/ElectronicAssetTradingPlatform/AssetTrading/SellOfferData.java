@@ -74,7 +74,7 @@ public class SellOfferData extends OfferData {
     /**
      * Remove an offer from the DB
      */
-    public static void removeOffer(int ID) {
+    public void removeOffer(int ID) {
         MarketSellOffers.remove(ID);
         MarketplaceDataSource.getInstance().removeOffer(ID);
     }
@@ -82,7 +82,7 @@ public class SellOfferData extends OfferData {
     /**
      * Add a sell offer to the DB
      */
-    public static void addSellOffer(SellOffer offer) {
+    public void addSellOffer(SellOffer offer) {
         MarketplaceDataSource.getInstance().insertSellOffer(offer);
     }
 

@@ -1,9 +1,11 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
+import java.io.Serializable;
+
 /**
  * An abstract class that is used to help create trade offers to buy/sell assets
  */
-public abstract class Offer {
+public abstract class Offer implements Serializable {
     private String assetName;
     private int quantity;
     private double pricePerUnit;

@@ -99,8 +99,8 @@ public class SellOffer extends Offer {
             int buyOfferQuantity = matchingBuyOffer.getQuantity();
             // if the quantity of buy and sell offers are equal remove them both from the DB
             if (sellOfferQuantity == buyOfferQuantity) {
-                BuyOfferData.removeOffer(this.getOfferID());
-                SellOfferData.removeOffer(matchingID);
+                BuyOfferData.getInstance().removeOffer(this.getOfferID());
+                SellOfferData.getInstance().removeOffer(matchingID);
                 this.setQuantity(0);
             }
             // if the quantity specified by the buy offer is greater than the sell offer, remove the sell offer from DB
@@ -109,7 +109,7 @@ public class SellOffer extends Offer {
                 int updatedSellQuantity = sellOfferQuantity - buyOfferQuantity;
                 // update the database with new quantity
                 SellOfferData.getInstance().updateOfferQuantity(updatedSellQuantity, this.getOfferID());
-                BuyOfferData.removeOffer(matchingID);
+                BuyOfferData.getInstance().removeOffer(matchingID);
                 this.setQuantity(updatedSellQuantity);
             }
             // if the quantity specified by the buy offers is less than the sell offers, remove the buy offer from DB
@@ -117,7 +117,7 @@ public class SellOffer extends Offer {
             else {
                 int updatedBuyQuantity = buyOfferQuantity - sellOfferQuantity;
                 BuyOfferData.getInstance().updateOfferQuantity(updatedBuyQuantity, matchingID);
-                SellOfferData.removeOffer(this.getOfferID());
+                SellOfferData.getInstance().removeOffer(this.getOfferID());
                 this.setQuantity(0);
             }
         }

@@ -1,5 +1,7 @@
 package ElectronicAssetTradingPlatform.Server;
 
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.User;
 
@@ -100,6 +102,18 @@ public class NetworkDataSource extends Thread {
         String[] object = new String[]{username, userType, unitName};
         return (String) sendCommand(NetworkCommands.EDIT_USER, object);
     }
+
+    /**
+     * Sends command for the server to add a new buy offer
+     */
+    public String addBuyOffer(BuyOffer buyOffer) {
+        return (String) sendCommand(NetworkCommands.ADD_BUY_OFFER, buyOffer);
+    }
+
+    /**
+     * Sends command for the server to add a new buy offer
+     */
+    public String addSellOffer(SellOffer sellOffer) { return (String) sendCommand(NetworkCommands.ADD_SELL_OFFER, sellOffer);}
 
     public class DatabaseException extends Exception {
         public DatabaseException(String message) { super(message); }
