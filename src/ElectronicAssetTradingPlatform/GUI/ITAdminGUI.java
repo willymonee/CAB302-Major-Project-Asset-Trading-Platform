@@ -78,7 +78,7 @@ public class ITAdminGUI extends JFrame {
     private JPanel goToButtonsPanel() {
         JPanel displayPanel = new JPanel();
         // Create a 4x2 grid layout
-        GridLayout layout = new GridLayout(4,2);
+        GridLayout layout = new GridLayout(0,2);
         displayPanel.setLayout(layout);
 
         goToCreateAsset = new JButton("CREATE Asset");
