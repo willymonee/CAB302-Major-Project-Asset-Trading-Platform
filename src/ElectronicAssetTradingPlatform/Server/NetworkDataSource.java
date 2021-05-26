@@ -110,7 +110,7 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.EDIT_PASSWORD, strings);
     }
 
-    public class DatabaseException extends Exception {
+    public static class DatabaseException extends Exception {
         public DatabaseException(String message) { super(message); }
     }
 }

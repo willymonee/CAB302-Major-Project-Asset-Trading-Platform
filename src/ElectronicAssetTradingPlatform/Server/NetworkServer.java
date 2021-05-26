@@ -115,7 +115,7 @@ public class NetworkServer {
                     e.printStackTrace();
                     if (e.getErrorCode() == UNIQUE_CONSTRAINT_EXCEPTION_CODE)
                         objectOutputStream.writeObject("It already exists.");
-                    else objectOutputStream.writeObject("It could not be found.");
+                    else objectOutputStream.writeObject("It could not be found: " + e.getMessage());
                 } catch (User.UserTypeException e) {
                     e.printStackTrace();
                 }

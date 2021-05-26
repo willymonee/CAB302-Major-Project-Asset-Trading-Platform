@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.GUI;
 
+import ElectronicAssetTradingPlatform.GUI.ITAdmin.ITAdminGUI;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
