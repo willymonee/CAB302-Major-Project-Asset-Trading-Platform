@@ -38,6 +38,19 @@ public class MarketplaceHistoryDataSource {
         }
     }
 
+    public void getTradesByDate() {
+
+    }
+    /*  When displaying the graph, im guessing x axis is date and y axis is price per unit
+        Will need to display or create graph for each unique asset in the database
+        and the quantity would come into play um.
+    */
+
+
+
+
+
+
 
 
 }
