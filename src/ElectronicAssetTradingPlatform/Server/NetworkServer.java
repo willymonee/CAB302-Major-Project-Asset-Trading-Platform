@@ -177,6 +177,19 @@ public class NetworkServer {
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
             }
+            case EDIT_PASSWORD -> {
+                // Get input
+                String[] editedValues = (String[]) objectInputStream.readObject();
+
+                synchronized (database) {
+                    // Save to db
+                    UsersDataSource.getInstance().editUserPassword(editedValues[0], editedValues[1], editedValues[2]);
+
+                    // Write success output
+                    objectOutputStream.writeObject("Password has changed.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+            }
         }
     }
 

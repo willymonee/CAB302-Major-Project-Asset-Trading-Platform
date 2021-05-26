@@ -124,7 +124,7 @@ public class ITAdmin extends User {
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
      */
-    public void editUser(String username, String userType, String unitName) throws EmptyFieldException, SQLException, UserTypeException {
+    public String[] editUser(String username, String userType, String unitName) throws EmptyFieldException, UserTypeException {
         // Check valid input
         checkInputEmpty(username);
         checkInputEmpty(userType);
@@ -133,8 +133,12 @@ public class ITAdmin extends User {
         // Clear unit name if IT/SysAdmin
         try {
             switch (UsersFactory.UserType.valueOf(userType)) {
-                case ITAdmin, SystemsAdmin -> UsersDataSource.getInstance().editUser(username, userType, null);
-                case OrganisationalUnitMembers, OrganisationalUnitLeader -> UsersDataSource.getInstance().editUser(username, userType, unitName);
+                case ITAdmin, SystemsAdmin -> {
+                    return new String[] {username, userType, null};
+                }
+                case OrganisationalUnitMembers, OrganisationalUnitLeader -> {
+                    return new String[] {username, userType, unitName};
+                }
                 default -> throw new IllegalArgumentException();
             }
         } catch (IllegalArgumentException e) {

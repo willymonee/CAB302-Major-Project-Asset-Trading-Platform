@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.GUI;
 
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.ITAdmin;
+import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Users.UsersFactory;
 
@@ -26,6 +27,7 @@ public class ITAdminGUI extends JFrame {
     private JButton goToEditAssetName;
     private JButton goToEditUser;
     private JButton goToEditOrgUnitName;
+    private JButton goToChangePassword;
 
     /**
      * Creates IT Admin Main Menu
@@ -48,10 +50,11 @@ public class ITAdminGUI extends JFrame {
         goToEditAssetName.addActionListener(new ButtonListener());
         goToEditUser.addActionListener(new ButtonListener());
         goToEditOrgUnitName.addActionListener(new ButtonListener());
+        goToChangePassword.addActionListener(new ButtonListener());
 
         // decorate the frame and make it visible
         setTitle("Welcome, ITAdmin");
-        setMinimumSize(new Dimension(600, 800));
+        setMinimumSize(new Dimension(600, 400));
         pack();
         setVisible(true);
     }
@@ -74,15 +77,9 @@ public class ITAdminGUI extends JFrame {
      */
     private JPanel goToButtonsPanel() {
         JPanel displayPanel = new JPanel();
-        GroupLayout layout = new GroupLayout(displayPanel);
+        // Create a 4x2 grid layout
+        GridLayout layout = new GridLayout(4,2);
         displayPanel.setLayout(layout);
-
-        // Turn on automatically adding gaps between components
-        layout.setAutoCreateGaps(true);
-
-        // Turn on automatically creating gaps between components that touch
-        // the edge of the container and the container.
-        layout.setAutoCreateContainerGaps(true);
 
         goToCreateAsset = new JButton("CREATE Asset");
         goToCreateOrgUnit = new JButton("CREATE Organisational Unit");
@@ -92,38 +89,18 @@ public class ITAdminGUI extends JFrame {
         goToEditOrgCredits = new JButton("EDIT Organisational Unit's Credits");
         goToEditOrgUnitName = new JButton("EDIT Organisational Unit's Name");
         goToEditUser = new JButton("EDIT Existing User");
+        goToChangePassword = new JButton("Change my password");
 
-        // Create a sequential group for the horizontal axis.
-        GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
 
-        hGroup.addGroup(layout.createParallelGroup()
-                .addComponent(goToCreateUser)
-                .addComponent(goToCreateOrgUnit)
-                .addComponent(goToCreateAsset)
-                .addComponent(goToEditUser));
-        hGroup.addGroup(layout.createParallelGroup()
-                .addComponent(goToEditOrgAssets)
-                .addComponent(goToEditOrgCredits)
-                .addComponent(goToEditAssetName)
-                .addComponent(goToEditOrgUnitName));
-        layout.setHorizontalGroup(hGroup);
-
-        // Create a sequential group for the vertical axis.
-        GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-
-        vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(goToCreateUser)
-                .addComponent(goToEditOrgAssets));
-        vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(goToCreateOrgUnit)
-                .addComponent(goToEditOrgCredits));
-        vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(goToCreateAsset)
-                .addComponent(goToEditAssetName));
-        vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(goToEditUser)
-                .addComponent(goToEditOrgUnitName));
-        layout.setVerticalGroup(vGroup);
+        displayPanel.add(goToCreateUser);
+        displayPanel.add(goToEditOrgUnitName);
+        displayPanel.add(goToCreateOrgUnit);
+        displayPanel.add(goToEditOrgCredits);
+        displayPanel.add(goToCreateAsset);
+        displayPanel.add(goToEditAssetName);
+        displayPanel.add(goToEditUser);
+        displayPanel.add(goToEditOrgAssets);
+        displayPanel.add(goToChangePassword);
 
         return displayPanel;
     }
@@ -153,6 +130,8 @@ public class ITAdminGUI extends JFrame {
                 new EditOrgUnitNameGUI();
             } else if (goToEditUser.equals(source)) {
                 new EditUserGUI();
+            } else if (goToChangePassword.equals(source)) {
+                new ChangePasswordGUI(data, loggedInUser);
             }
         }
     }
@@ -171,7 +150,7 @@ public class ITAdminGUI extends JFrame {
         private JComboBox userType;
         private JTextField unitName;
         private JTextArea messaging;
-        private JButton createUserButton;
+        private JButton editUserButton;
 
         /**
          * Constructor sets up user interface, adds listeners and displays.
@@ -181,10 +160,10 @@ public class ITAdminGUI extends JFrame {
 
             // add listeners to interactive components
             addWindowListener(new ClosingListener());
-            createUserButton.addActionListener(new ButtonListener());
+            editUserButton.addActionListener(new ButtonListener());
 
             // decorate the frame and make it visible
-            setTitle("Welcome, ITAdmin");
+            setTitle("EDIT Existing User");
             setMinimumSize(new Dimension(400, 300));
             pack();
             setVisible(true);
@@ -229,7 +208,7 @@ public class ITAdminGUI extends JFrame {
             messaging.setEditable(false);
             messaging.setLineWrap(true);
             messaging.setWrapStyleWord(true);
-            createUserButton = new JButton("Create");
+            editUserButton = new JButton("Edit");
 
             // Create a sequential group for the horizontal axis.
             GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
@@ -242,7 +221,7 @@ public class ITAdminGUI extends JFrame {
                     .addComponent(username)
                     .addComponent(userType)
                     .addComponent(unitName)
-                    .addComponent(createUserButton, Alignment.CENTER)
+                    .addComponent(editUserButton, Alignment.CENTER)
                     .addComponent(messaging, Alignment.CENTER));
             layout.setHorizontalGroup(hGroup);
 
@@ -259,7 +238,7 @@ public class ITAdminGUI extends JFrame {
                     .addComponent(unitNameLabel)
                     .addComponent(unitName));
             vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(createUserButton));
+                    .addComponent(editUserButton));
             vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(messaging));
             layout.setVerticalGroup(vGroup);
@@ -277,7 +256,7 @@ public class ITAdminGUI extends JFrame {
              */
             public void actionPerformed(ActionEvent e) {
                 JButton source = (JButton) e.getSource();
-                if (source == createUserButton) {
+                if (source == editUserButton) {
                     editUserPressed();
                 }
             }
@@ -296,13 +275,17 @@ public class ITAdminGUI extends JFrame {
                     ITAdmin.checkInputEmpty(usernameIn);
                     ITAdmin.checkInputEmpty(userTypeIn);
 
-                    output = data.editUser(usernameIn, userTypeIn, unitNameIn);
-                } catch (User.EmptyFieldException e) {
+                    String[] params = loggedInUser.editUser(usernameIn, userTypeIn, unitNameIn);
+
+                    output = data.editUser(params[0], params[1], params[2]);
+                } catch (User.EmptyFieldException | User.UserTypeException e) {
                     // Empty input error
                     output = "Input is empty or invalid, please enter correct details into all fields.";
                 }
 
                 messaging.setText(output);
+
+                displayDBUser(usernameIn);
             }
         }
 
@@ -334,7 +317,7 @@ public class ITAdminGUI extends JFrame {
             createUserButton.addActionListener(new ButtonListener());
 
             // decorate the frame and make it visible
-            setTitle("Welcome, ITAdmin");
+            setTitle("CREATE User");
             setMinimumSize(new Dimension(400, 300));
             pack();
             setVisible(true);
@@ -454,6 +437,8 @@ public class ITAdminGUI extends JFrame {
                 }
 
                 messaging.setText(output);
+
+                displayDBUser(usernameIn);
             }
         }
 
@@ -473,4 +458,32 @@ public class ITAdminGUI extends JFrame {
     private class EditOrgAssetsGUI extends JFrame {}
     private class EditOrgCreditsGUI extends JFrame {}
     private class EditOrgUnitNameGUI extends JFrame {}
+
+    private void displayDBUser(String username) {
+        try {
+            User outUser = data.retrieveUser(username);
+
+            // Attempt to get unit name
+            String outUserUnitName = "";
+            try {
+                outUserUnitName = ((OrganisationalUnitMembers) outUser).getUnitName();
+            } catch (ClassCastException ignored) {}
+
+            // Popup the newly created user
+            String[] columnNames = {"Username", "User Type", "Unit Name"};
+            Object[][] data = {
+                    {outUser.getUsername(), outUser.getUserType(), outUserUnitName}
+            };
+
+            JTable table = new JTable(data, columnNames);
+            JLabel label = new JLabel("Showing user \'" + outUser.getUsername() + "\' from database");
+
+            Container pane = new Container();
+            pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+            pane.add(label);
+            pane.add(table);
+
+            JOptionPane.showMessageDialog(null, pane);
+        } catch (NetworkDataSource.DatabaseException ignore) {}
+    }
 }

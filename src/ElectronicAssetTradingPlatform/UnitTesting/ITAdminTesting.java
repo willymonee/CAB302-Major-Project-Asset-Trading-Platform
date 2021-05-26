@@ -174,13 +174,7 @@ public class ITAdminTesting {
     public void editMember() {
         try {
             itAdmin.editUser("newLeader", "OrganisationalUnitMembers", "unit2");
-        } catch (SQLException e) {
-            System.out.println("Must use the queries up top and re-run. Error caused by missing unit data");
-
-            e.printStackTrace();
-            assert false;
-        }
-        catch (User.EmptyFieldException | User.UserTypeException e) {
+        } catch (User.EmptyFieldException | User.UserTypeException e) {
             e.printStackTrace();
             assert false;
         }
