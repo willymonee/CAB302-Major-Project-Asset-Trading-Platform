@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.SQLException;
 import java.util.Objects;
 
 class EditUserGUI extends JFrame {
@@ -154,6 +155,8 @@ class EditUserGUI extends JFrame {
             } catch (User.EmptyFieldException | User.UserTypeException e) {
                 // Empty input error
                 output = "Input is empty or invalid, please enter correct details into all fields.";
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
 
             messaging.setText(output);

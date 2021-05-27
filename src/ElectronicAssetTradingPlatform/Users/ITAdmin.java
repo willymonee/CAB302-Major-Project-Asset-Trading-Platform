@@ -1,6 +1,5 @@
 package ElectronicAssetTradingPlatform.Users;
 
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
@@ -177,8 +176,9 @@ public class ITAdmin extends User {
      * @param username the new username the user will have
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
+     * @return
      */
-    public void editUser(String username, String userType, String unitName) throws EmptyFieldException, SQLException, UserTypeException {
+    public String[] editUser(String username, String userType, String unitName) throws EmptyFieldException, SQLException, UserTypeException {
         // Check valid input
         checkInputEmpty(username);
         checkInputEmpty(userType);
@@ -194,6 +194,7 @@ public class ITAdmin extends User {
         } catch (IllegalArgumentException e) {
             throw new UserTypeException("Invalid user type");
         }
+        return new String[0];
     }
 
     /**
