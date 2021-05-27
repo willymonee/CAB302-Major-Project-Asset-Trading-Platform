@@ -34,16 +34,29 @@ public class OrganisationalUnit {
      * This is the base helper function for all other methods elsewhere which add/subtract organisational unit credits
      * [M]
      *
-     * @param credits int amount of credits to add (positive int) or remove (negative int)
+     * @param credits float amount of credits to add (positive int) or remove (negative int)
+     *
+     */
+    public void addCredits(float credits){
+        this.credits += credits;
+    }
+
+    /**
+     * Given an integer of credits, add this onto the existing amount of credits an organisational unit owns
+     * However, cannot reduce credits by more than the organisational unit owns (can't go negative)
+     * This is the base helper function for all other methods elsewhere which add/subtract organisational unit credits
+     * [M]
+     *
+     * @param credits float amount of credits to add (positive int) or remove (negative int)
      *
      * @throws Exception exception handling so that net credits cannot be less than zero
      */
-    public void editCredits(int credits) throws Exception {
+    public void removeCredits(float credits) throws Exception {
         if (this.credits + credits < 0) {
             throw new Exception("Cannot remove more credits than there actually are!");
         }
         else {
-            this.credits += credits;
+            this.credits -= credits;
         }
     }
 
@@ -102,12 +115,20 @@ public class OrganisationalUnit {
 
     }
 
+    public void editName(String name) {
+        this.name = name;
+    }
+
     public void removeAllAssets() {
         assetsOwned.clear();
     }
 
     public double getCredits() {
         return credits;
+    }
+
+    public String getUnitName() {
+        return name;
     }
 
     /**
