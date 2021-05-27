@@ -1,20 +1,13 @@
-package ElectronicAssetTradingPlatform.GUI;
+package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
-import ElectronicAssetTradingPlatform.Users.User;
-import ElectronicAssetTradingPlatform.Users.UsersFactory;
 
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.ChangeEvent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Objects;
 
 public class OrgUnitMemGUI extends JFrame {
 
@@ -51,22 +44,12 @@ public class OrgUnitMemGUI extends JFrame {
 
         // Button listeners
         addWindowListener(new ClosingListener());
-        /*
-        goToBuyMenu.addChangeListener();
-        goToSellMenu.addChangeListener();
-        goToOrgUnitMenu.addChangeListener();
-        goToAccountMenu.addChangeListener();
-        */
-
-
 
         setTitle("Test Title");
         setMinimumSize(new Dimension(WIDTH, HEIGHT));
         pack();
         setVisible(true);
 
-
-        //goToBuyMenu.addActionListener();
     }
 
     /**
@@ -75,9 +58,7 @@ public class OrgUnitMemGUI extends JFrame {
     private void initUI() {
         Container contentPane = this.getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-
         contentPane.add(Box.createVerticalStrut(20));
-       // //contentPane.add(goToButtonsPanel());
         contentPane.add(buttonPanel());
     }
 
@@ -85,6 +66,9 @@ public class OrgUnitMemGUI extends JFrame {
         JTabbedPane menuTabs = new JTabbedPane();
         //CardLayout buttonLayout = new CardLayout();
         //displayPanel.setLayout(buttonLayout);
+
+
+        // BuyTabGUi buyCard = new BuyTabGUI();
         JPanel buyCard = new JPanel() {
 
             public Dimension getSize() {
@@ -93,9 +77,6 @@ public class OrgUnitMemGUI extends JFrame {
                 return size;
             }
 
-            public void test() {
-                System.out.println("buy card");
-            }
         };
 
         JPanel sellCard = new JPanel();
@@ -123,8 +104,5 @@ public class OrgUnitMemGUI extends JFrame {
             }
         });
         JFrame.setDefaultLookAndFeelDecorated(true);
-        //FramesAndPanels swing = new FramesAndPanels("BorderLayout");
-        //swing.createGUI();
-
     }
 }
