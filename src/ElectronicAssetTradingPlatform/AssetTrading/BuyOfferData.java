@@ -37,7 +37,6 @@ public class BuyOfferData extends OfferData {
      * Retrieve the INSTANCE of BuyOfferData
      */
     public static BuyOfferData getInstance() {
-
         return BuyOfferDataHolder.INSTANCE;
     }
 
@@ -52,6 +51,7 @@ public class BuyOfferData extends OfferData {
             MarketBuyOffers.put(nextOffer.getOfferID(), nextOffer);
         }
     }
+
 
     /**
      * Return all market buy offers in a TreeMap

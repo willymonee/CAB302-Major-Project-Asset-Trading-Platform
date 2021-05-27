@@ -62,10 +62,26 @@ public class OrganisationalUnitMembers extends User {
         // add offer into database
         BuyOfferData.getInstance().addOffer(offer);
         // retrieve the buy offer's ID from the database and set the buy offer's ID
-        //int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
-       //offer.setOfferID(buyOfferID);
-       // look to resolve the offer
-        offer.resolveOffer();
+//        int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
+//        offer.setOfferID(buyOfferID);
+        // look to resolve the offer
+        int matchingID = offer.getMatchedPriceOffer();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        System.out.println(matchingID);
+        //offer.tradeAssetsAndCredits(matchingID); // this is probably where the issues LIE
+        //offer.reduceMatchingOfferQuantities(matchingID);
+        SellOfferData.getInstance().removeOffer(233);
+        System.out.println(SellOfferData.getInstance());
+        System.out.println(offer.getMatchedPriceOffer());
+
+
+
+
+        //offer.resolveOffer();
     }
 
     /**
@@ -79,8 +95,8 @@ public class OrganisationalUnitMembers extends User {
         // using the actual database
         SellOfferData.getInstance().addSellOffer(offer);
         // retrieve the sell offer's ID from the database and set the sell offer's ID
-        //int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
-        //offer.setOfferID(sellOfferID);
+        int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
+        offer.setOfferID(sellOfferID);
         // look to resolve the offer
         offer.resolveOffer();
     }

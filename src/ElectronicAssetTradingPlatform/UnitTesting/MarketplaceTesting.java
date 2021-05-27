@@ -5,6 +5,7 @@ import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,13 +60,13 @@ public class MarketplaceTesting {
     @Test
     public void testRetrieveBuyOffers() {
         // print them out from BuyOfferData
-        System.out.println(BuyOfferData.getInstance());
+        //System.out.println(BuyOfferData.getInstance());
     }
 
     @Test
     public void testRetrieveSellOffers() {
         // print them out from SellOfferData
-        System.out.println(SellOfferData.getInstance());
+        //System.out.println(SellOfferData.getInstance());
     }
 
     @Test
@@ -93,9 +94,14 @@ public class MarketplaceTesting {
     // list a buy offer and look to resolve it
     @Test
     public void resolveBuyOffer() {
-        BuyOfferData.getInstance().updateOfferQuantity(1, 32);
-        BuyOfferData.getInstance().updateOfferQuantity(3, 45);
-        //userA.listBuyOrder("Table", 3, 5);
+        //BuyOfferData.getInstance().updateOfferQuantity(1, 32);
+        //BuyOfferData.getInstance().updateOfferQuantity(3, 45);
+        userA.listBuyOrder("Table", 2, 25);
+        //userB.listSellOrderNoResolve("Table", 2, 25);
+
+
+        //SellOfferData.getInstance().removeOffer(228);
+        //System.out.println(SellOfferData.getInstance());
     }
 
     // list a sell offer and look to resolve it
@@ -108,13 +114,13 @@ public class MarketplaceTesting {
     // test failing to insert a offer when offer quantity is negative
     @Test
     public void testFailInsertOfferNegativeQuantity() {
-        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", -1, 50));
+        //assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", -1, 50));
     }
 
     // test failing to insert a buy offer when offer price is negative
     @Test
     public void testFailInsertOfferNegativePrice() {
-        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", 1, -50));
+        //assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", 1, -50));
     }
 
     // test failing to insert a buy offer for an asset not in the system

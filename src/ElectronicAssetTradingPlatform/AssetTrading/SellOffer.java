@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.sql.Date;
 import java.sql.SQLException;
@@ -129,11 +130,12 @@ public class SellOffer extends Offer {
      * @param buyOrgName the matching buy offer's org unit name
      */
     private void tradeCredits(double credit, String buyOrgName) {
-        UnitDataSource unitDataSource = new UnitDataSource();
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
         // increase credits of the sell org
-        unitDataSource.updateUnitCredits((float)credit, this.getUnitName());
+        dataSource.editCredits(credit, this.getUnitName());
         // decrease credits of the buy org
-        unitDataSource.updateUnitCredits((float)-(credit), buyOrgName);
+        dataSource.editCredits(-(credit), buyOrgName);
     }
 
     /**
@@ -190,6 +192,7 @@ public class SellOffer extends Offer {
         boolean sellOfferNotResolved = SellOfferData.getInstance().offerExists(this.getOfferID());
         int matchingID = getMatchedPriceOffer();
         while (isMatching(matchingID) && sellOfferNotResolved) {
+
             matchingID = getMatchedPriceOffer();
             // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
             tradeAssetsAndCredits(matchingID);

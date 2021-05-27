@@ -18,8 +18,7 @@ public class SellOfferData extends OfferData {
      * Constructor to initialise the single SellOfferData object - protected to suppress unauthorised calls
      */
     protected SellOfferData() {
-        dataSource = new NetworkDataSource();
-        dataSource.run();
+
     }
 
     /**
@@ -42,6 +41,8 @@ public class SellOfferData extends OfferData {
      */
     protected void getOffersFromDB() {
         //TreeMap<Integer, SellOffer> sellOffers = MarketplaceDataSource.getInstance().getSellOffers();
+        dataSource = new NetworkDataSource();
+        dataSource.run();
         TreeMap<Integer, SellOffer> sellOffers = dataSource.getSellOffers();
         for (Map.Entry<Integer, SellOffer> sellOffer : sellOffers.entrySet()) {
             SellOffer nextOffer = sellOffer.getValue();
@@ -80,6 +81,8 @@ public class SellOfferData extends OfferData {
      * Add a sell offer to the DB
      */
     public void addSellOffer(SellOffer offer) {
+        dataSource = new NetworkDataSource();
+        dataSource.run();
         dataSource.addSellOffer(offer);
     }
 

@@ -103,6 +103,19 @@ public class UnitDataSource {
         }
     }
 
+    public void updateUnitAssets(int quantity, String unitName, String assetName ) {
+        try {
+            updateUnitAssets.setInt(1, quantity);
+            int unitID = Integer.parseInt(executeGetUnitID(unitName));
+            updateUnitAssets.setInt(2, unitID);
+            int assetID = executeGetAssetID(assetName);
+            updateUnitAssets.setInt(3, assetID);
+            updateUnitAssets.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public String executeGetUnitID(String unitName) throws SQLException {
         // Prepare
         getUnitIDQuery.setString(1, unitName);

@@ -108,7 +108,31 @@ public class NetworkDataSource extends Thread {
 
             // Get output
             // Read the object
-            System.out.println("before reading back");
+            return inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // Print the exception, but no need for a fatal error
+            // if the connection with the server happens to be down
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Query the database through the server - 3 parameters
+     */
+    private Object sendCommand(NetworkCommands command, Object param, Object param2, Object param3) {
+        try {
+            // Write the command type and param
+            outputStream.writeObject(command);
+            outputStream.writeObject(param);
+            outputStream.writeObject(param2);
+            outputStream.writeObject(param3);
+
+            // Separate output and input streams
+            outputStream.flush();
+
+            // Get output
+            // Read the object
             return inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             // Print the exception, but no need for a fatal error
@@ -212,6 +236,20 @@ public class NetworkDataSource extends Thread {
     public String updateOfferQuantity(int newQuantity, int offerID) {
         Object out = sendCommand(NetworkCommands.UPDATE_OFFER, newQuantity, offerID);
         return (String) out;
+    }
+
+    /**
+     * Sends command to update the credits an organisation unit has
+     */
+    public String editCredits(double credits, String orgName) {
+        return (String) sendCommand(NetworkCommands.UPDATE_CREDITS, credits,orgName);
+    }
+
+    /**
+     * Sends command to update the assets of an organisational unit
+     */
+    public String editAssets(int quantity, String orgName, String assetName) {
+        return (String) sendCommand(NetworkCommands.UPDATE_ASSETS, quantity, orgName, assetName );
     }
 
     public class DatabaseException extends Exception {

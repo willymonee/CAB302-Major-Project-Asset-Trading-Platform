@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -67,7 +68,7 @@ public class BuyOffer extends Offer  {
      *
      * @return int of the sell offer OR 0 if no sell offer was found with a matching price and asset name
      */
-    private int getMatchedPriceOffer() {
+    public int getMatchedPriceOffer() {
         ArrayList<SellOffer> matchingSellOffers = getMatchingSellOffers();
         double buyOfferPrice = getPricePerUnit();
         Iterator<SellOffer> sellOffersIter = matchingSellOffers.iterator();
@@ -103,7 +104,7 @@ public class BuyOffer extends Offer  {
      * Takes a matching sell offer ID and compares it to the buy offer
      * Then it reduces the 'quantities' of both offers
      */
-    private void reduceMatchingOfferQuantities(int matchingID) {
+    public void reduceMatchingOfferQuantities(int matchingID) {
         if (isMatching(matchingID)) {
             SellOffer matchingSellOffer = SellOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = matchingSellOffer.getQuantity();
@@ -112,6 +113,7 @@ public class BuyOffer extends Offer  {
             if (buyOfferQuantity == sellOfferQuantity) {
                 BuyOfferData.getInstance().removeOffer(this.getOfferID());
                 SellOfferData.getInstance().removeOffer(matchingID);
+                System.out.println("removing buy and sell offer");
                 this.setQuantity(0);
             }
             // if the quantity specified by the buy offer is greater than the sell offer, remove the sell offer from DB
@@ -120,6 +122,7 @@ public class BuyOffer extends Offer  {
                 int updatedBuyQuantity = buyOfferQuantity - sellOfferQuantity;
                 BuyOfferData.getInstance().updateOfferQuantity(updatedBuyQuantity, this.getOfferID());
                 SellOfferData.getInstance().removeOffer(matchingID);
+                System.out.println("reducing buy and removing sell offer");
                 this.setQuantity(updatedBuyQuantity);
             }
             // if the quantity specified by the buy offers is less than the sell offers, remove the buy offer from DB
@@ -128,6 +131,7 @@ public class BuyOffer extends Offer  {
                 int updatedSellQuantity = sellOfferQuantity - buyOfferQuantity;
                 SellOfferData.getInstance().updateOfferQuantity(updatedSellQuantity, matchingID);
                 BuyOfferData.getInstance().removeOffer(this.getOfferID());
+                System.out.println("removing buy and reducing sell offer");
                 this.setQuantity(0);
             }
         }
@@ -136,35 +140,34 @@ public class BuyOffer extends Offer  {
     /**
      * Remove credits from the buy org and add credits the sell org
      */
-    private void tradeCredits(double credit, String sellOrgName) {
-        UnitDataSource unitDataSource = new UnitDataSource();
-        // decrease credits of the buy org
-        unitDataSource.updateUnitCredits((float)(-(credit)), this.getUnitName());
-        // increase credits of the sell org
-        unitDataSource.updateUnitCredits((float)credit, sellOrgName);
+    public void tradeCredits(double credit, String sellOrgName) {
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        // increase credits of sell org
+        dataSource.editCredits(credit, sellOrgName);
+        // decrease credits of buy org
+        dataSource.editCredits(-(credit), this.getUnitName());
     }
 
     /**
      * Remove assets from the sell org and add them to the buy org
+     * TODO add asset to buy org unit if they don't have that asset yet - once david has an add asset to buy org
      */
     private void tradeAssets(int quantity, SellOffer sellOffer)  {
-        UnitDataSource unitDataSource = new UnitDataSource();
-        try {
-            int buyOrgID = Integer.parseInt(unitDataSource.executeGetUnitID(this.getUnitName()));
-            int assetID = unitDataSource.executeGetAssetID(this.getAssetName());
-            int sellOrgID = Integer.parseInt(unitDataSource.executeGetUnitID(sellOffer.getUnitName()));
-            unitDataSource.updateUnitAssets(quantity, buyOrgID, assetID);
-            unitDataSource.updateUnitAssets(-(quantity), sellOrgID, assetID);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        // remove assets for a unit
+        dataSource.editAssets(quantity, this.getUnitName(), this.getAssetName());
+        // add assets to a unit
+        dataSource.editAssets(-(quantity), sellOffer.getUnitName(), sellOffer.getAssetName());
     }
 
     /**
      * Exchanges the organisational unit assets and credits with a matching sell offer
      * @param matchingID - ID of the matching sell offer
+     *
      */
-    private void tradeAssetsAndCredits(int matchingID)  {
+    public void tradeAssetsAndCredits(int matchingID)  {
         if (isMatching(matchingID)) {
             SellOffer matchingSellOffer = SellOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = matchingSellOffer.getQuantity();
@@ -196,6 +199,7 @@ public class BuyOffer extends Offer  {
         boolean buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
         int matchingID = getMatchedPriceOffer();
         while (isMatching(matchingID) && buyOfferNotResolved) {
+
             matchingID = getMatchedPriceOffer();
             // trade assets and credits of the matching offers
             tradeAssetsAndCredits(matchingID);
@@ -205,6 +209,13 @@ public class BuyOffer extends Offer  {
 
             // check if offer has been fully resolved
             buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
+            System.out.println("Matching offer" + matchingID);
+            System.out.println(buyOfferNotResolved);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

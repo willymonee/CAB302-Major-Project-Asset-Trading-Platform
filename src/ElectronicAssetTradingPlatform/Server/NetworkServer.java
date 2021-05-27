@@ -6,6 +6,7 @@ import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOfferData;
 import ElectronicAssetTradingPlatform.Database.DBConnectivity;
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
+import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.User;
 
@@ -244,6 +245,7 @@ public class NetworkServer {
             case GET_PLACED_OFFER -> {
                 synchronized (database) {
                     objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getPlacedOfferID());
+
                 }
                 objectOutputStream.flush();
                 System.out.println("Retrieved placed offer ID and sent to client");
@@ -252,6 +254,7 @@ public class NetworkServer {
                 int newQuantity = (int) objectInputStream.readObject();
                 int ID = (int) objectInputStream.readObject();
                 synchronized (database) {
+                    MarketplaceDataSource.getInstance().open();
                     MarketplaceDataSource.getInstance().updateOfferQuantity(newQuantity ,ID);
                 }
                 objectOutputStream.writeObject("Updated offer quantity");
@@ -270,6 +273,28 @@ public class NetworkServer {
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
             }
+            case UPDATE_CREDITS -> {
+                double credits = (double) objectInputStream.readObject();
+                String orgName = (String) objectInputStream.readObject();
+                synchronized (database) {
+                    UnitDataSource unitDataSource = new UnitDataSource();
+                    unitDataSource.updateUnitCredits((float) credits, orgName);
+                }
+                objectOutputStream.writeObject("Updated unit credits");
+                System.out.println("Updated unit credits");
+            }
+            case UPDATE_ASSETS -> {
+                int quantity = (int) objectInputStream.readObject();
+                String orgName = (String) objectInputStream.readObject();
+                String assetName = (String) objectInputStream.readObject();
+                synchronized (database) {
+                    UnitDataSource unitDataSource = new UnitDataSource();
+                    unitDataSource.updateUnitAssets(quantity, orgName, assetName);
+                }
+                objectOutputStream.writeObject("Updated org assets");
+                System.out.println("Updated org assets");
+            }
+
         }
     }
 

@@ -214,6 +214,23 @@ public class MarketplaceDataSource {
     }
 
     /**
+     * Re-opens the connection to the db
+     */
+    public void open() {
+        connection = DBConnectivity.getInstance();
+        try {
+            insertBuyOffer = connection.prepareStatement(INSERT_BUYOFFER);
+            insertSellOffer = connection.prepareStatement(INSERT_SELLOFFER);
+            getOffers = connection.prepareStatement(GET_OFFERS);
+            removeOffer = connection.prepareStatement(REMOVE_OFFER);
+            updateOfferQuantity = connection.prepareStatement(UPDATE_OFFER_QUANTITY);
+            getPlacedOfferID = connection.prepareStatement(GET_PLACED_OFFER_ID);
+        } catch (SQLException error) {
+            error.printStackTrace();
+        }
+    }
+
+    /**
      * Closes the connection to the db
      */
     public void close() throws SQLException {
