@@ -41,13 +41,7 @@ public class ITAdmin extends User {
     public OrganisationalUnit createOrganisationalUnit(String name, float credits) throws EmptyFieldException {
         checkInputEmpty(name);
 
-        OrganisationalUnit orgUnit = new OrganisationalUnit(name, credits);
-
-
-
-        // TODO: add confirmation when GUI is implemented and ADD TO DATABASE!!!!
-
-        return orgUnit;
+        return new OrganisationalUnit(name, credits);
 
         // createOrganisationalUnit method
         // Create new org unit ID
@@ -61,14 +55,31 @@ public class ITAdmin extends User {
      * @param unitName string organisational unit name that owns the assets that are to be edited
      * @param credits int new amou  nt of credits to edit for the organisational unit
      */
-    public void editOrganisationalUnitCredits(String unitName, float credits) throws Exception {
-        checkInputEmpty(unitName);
+    public OrganisationalUnit addOrganisationalUnitCredits(OrganisationalUnit unitName, float credits) throws Exception {
+        checkInputEmpty(unitName.getUnitName()); // these might be redundant
 
-        UnitDataSource unitDataSource = new UnitDataSource();
+        unitName.addCredits(credits); // passed by value
+
+        return unitName;
+
+        // TODO: add exceptions for non existent unitName, ADD implementation for confirmation when GUI is implemented
 
 
+    }
 
+    /**
+     * Add or remove the number of credits an organisational unit owns manually [M]
+     * Prints a success or error message
+     *
+     * @param unitName string organisational unit name that owns the assets that are to be edited
+     * @param credits int new amou  nt of credits to edit for the organisational unit
+     */
+    public OrganisationalUnit removeOrganisationalUnitCredits(OrganisationalUnit unitName, float credits) throws Exception {
+        checkInputEmpty(unitName.getUnitName()); // these might be redundant
 
+        unitName.removeCredits(credits); // passed by value
+
+        return unitName;
 
         // TODO: add exceptions for non existent unitName, ADD implementation for confirmation when GUI is implemented
 
@@ -82,15 +93,31 @@ public class ITAdmin extends User {
      * @param assetName Asset type to be edited
      * @param quantity int quantity of the asset to be changed
      */
-    public void editOrganisationalUnitAssets(String unitName, String assetName, int quantity) throws Exception {
-        checkInputEmpty(unitName);
+    public OrganisationalUnit addOrganisationalUnitAssets(OrganisationalUnit unitName, String assetName, int quantity) throws Exception {
+        checkInputEmpty(unitName.getUnitName()); // these might be redundant
         checkInputEmpty(assetName);
 
-        //new UnitDataSource().editUnitAssets(unitName, assetName, quantity);
+        unitName.addAsset(assetName, quantity);
 
-        // TODO: add exceptions for non existent assetName, unitName,
-        //  ADD implemented for confirmation when GUI is implemented
-        //  ALSO ADD AUTO INCREMENTATION TO IDs
+        return unitName;
+
+    }
+
+    /**
+     * Edit the assets or quantity of asset an organisational unit owns [M]
+     *
+     * @param unitName string organisational unit name that owns the assets that are to be edited
+     * @param assetName Asset type to be edited
+     * @param quantity int quantity of the asset to be changed
+     */
+    public OrganisationalUnit removeOrganisationalUnitAssets(OrganisationalUnit unitName, String assetName, int quantity) throws Exception {
+        checkInputEmpty(unitName.getUnitName()); // these might be redundant
+        checkInputEmpty(assetName);
+
+        unitName.removeAsset(assetName, quantity);
+
+        return unitName;
+
     }
 
     /**
@@ -138,15 +165,10 @@ public class ITAdmin extends User {
      *
      * @param name string name of the asset type to be added to the database
      */
-    // NOTE IT IS BEST FOR THE ID TO BE AUTOMATICALLY CREATED IN THE ASSET OR ASSET COLLECTION OBJECTS
-    public void createNewAsset(String name) throws EmptyFieldException {
+    public Asset createNewAsset(String name) throws EmptyFieldException {
         checkInputEmpty(name);
 
-        //Asset asset = new Asset(name);
-
-        //return asset;
-
-        // TODO: add confirmation when GUI is implemented and ADD TO DATABASE!!!! ALSO ADD AUTO INCREMENTATION TO IDs
+        return new Asset(name);
 
     }
 
@@ -156,7 +178,7 @@ public class ITAdmin extends User {
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
      */
-    public String[] editUser(String username, String userType, String unitName) throws EmptyFieldException, UserTypeException {
+    public void editUser(String username, String userType, String unitName) throws EmptyFieldException, SQLException, UserTypeException {
         // Check valid input
         checkInputEmpty(username);
         checkInputEmpty(userType);
@@ -165,12 +187,8 @@ public class ITAdmin extends User {
         // Clear unit name if IT/SysAdmin
         try {
             switch (UsersFactory.UserType.valueOf(userType)) {
-                case ITAdmin, SystemsAdmin -> {
-                    return new String[] {username, userType, null};
-                }
-                case OrganisationalUnitMembers, OrganisationalUnitLeader -> {
-                    return new String[] {username, userType, unitName};
-                }
+                case ITAdmin, SystemsAdmin -> UsersDataSource.getInstance().editUser(username, userType, null);
+                case OrganisationalUnitMembers, OrganisationalUnitLeader -> UsersDataSource.getInstance().editUser(username, userType, unitName);
                 default -> throw new IllegalArgumentException();
             }
         } catch (IllegalArgumentException e) {
@@ -181,33 +199,32 @@ public class ITAdmin extends User {
     /**
      * Edit an organisational unit's name [C]
      *
-     * @param currentName the current name the organisational unit has
+     * @param unitName the current name the organisational unit has
      * @param newName the new name for the organisational unit
      */
-    public void editOrganisationalUnitName(String currentName, String newName) throws EmptyFieldException, SQLException {
-        checkInputEmpty(currentName);
+    public OrganisationalUnit editOrganisationalUnitName(OrganisationalUnit unitName, String newName) throws EmptyFieldException {
+        checkInputEmpty(unitName.getUnitName()); // these might be redundant
         checkInputEmpty(newName);
 
-        //new UnitDataSource().editUnitName(currentName, newName);
+        unitName.editName(newName);
 
-        // TODO: add exceptions for non existent currentName, newName,
-        //  ADD implementation for confirmation when GUI is implemented
+        return unitName;
+
     }
 
     /**
      * Edit an asset's name [C]
      *
-     * @param currentName the current name the asset has
+     * @param assetName the current name the asset has
      * @param newName the new name for the asset
      */
-    public void editAssetName(String currentName, String newName) throws EmptyFieldException, SQLException {
-        checkInputEmpty(currentName);
+    public Asset editAssetName(Asset assetName, String newName) throws EmptyFieldException {
+        checkInputEmpty(assetName.getAssetName()); // these might be redundant
         checkInputEmpty(newName);
 
-        //new UnitDataSource().editAssetName(currentName, newName);
+        assetName.editAssetName(newName);
 
-        // TODO: add exceptions for non existent currentName, newName,
-        //  ADD implementation for confirmation when GUI is implemented
+        return assetName;
     }
 
 
