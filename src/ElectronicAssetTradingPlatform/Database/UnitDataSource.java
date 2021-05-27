@@ -82,7 +82,7 @@ public class UnitDataSource {
         }
     }
 
-    public void updateUnitAssets(int quantity, int unitID,int assetID ) {
+    public void updateUnitAssets(int quantity, int unitID, int assetID ) {
         try {
             updateUnitAssets.setInt(1, quantity);
             updateUnitAssets.setInt(2, unitID);
