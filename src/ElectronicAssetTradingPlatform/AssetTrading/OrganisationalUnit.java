@@ -34,16 +34,29 @@ public class OrganisationalUnit {
      * This is the base helper function for all other methods elsewhere which add/subtract organisational unit credits
      * [M]
      *
-     * @param credits int amount of credits to add (positive int) or remove (negative int)
+     * @param credits float amount of credits to add (positive int) or remove (negative int)
+     *
+     */
+    public void addCredits(float credits){
+        this.credits += credits;
+    }
+
+    /**
+     * Given an integer of credits, add this onto the existing amount of credits an organisational unit owns
+     * However, cannot reduce credits by more than the organisational unit owns (can't go negative)
+     * This is the base helper function for all other methods elsewhere which add/subtract organisational unit credits
+     * [M]
+     *
+     * @param credits float amount of credits to add (positive int) or remove (negative int)
      *
      * @throws Exception exception handling so that net credits cannot be less than zero
      */
-    public void editCredits(double credits) throws Exception {
-        if ((this.credits + credits) < 0) {           // this code line might be incorrect and may need fixing
+    public void removeCredits(float credits) throws Exception {
+        if (this.credits + credits < 0) {
             throw new Exception("Cannot remove more credits than there actually are!");
         }
         else {
-            this.credits += credits;
+            this.credits -= credits;
         }
     }
 
@@ -60,15 +73,7 @@ public class OrganisationalUnit {
      *
      */
     public void addAsset(String assetName, int quantityToAdd) {
-        if (assetsOwned.containsKey(assetName)) {
-            assetsOwned.put(assetName, assetsOwned.get(assetName) + quantityToAdd);
-        }
-        else {
-            assetsOwned.put(assetName, quantityToAdd);
-        }
-
-
-
+        assetsOwned.put(assetName, assetsOwned.getOrDefault(assetName, 0) + quantityToAdd);
     }
 
     /**
@@ -87,20 +92,31 @@ public class OrganisationalUnit {
      * @throws Exception // organisational unit does not have the asset (cannot remove asset that is not owned)
      */
 
-    public void removeAsset(String assetName, int quantityToRemove) throws Exception {
-        int currentQuantity = assetsOwned.get(assetName);
-        if (assetsOwned.containsKey(assetName)) {
-            if (quantityToRemove <= currentQuantity) {
-                currentQuantity -= quantityToRemove;
-                assetsOwned.put(assetName, currentQuantity);
-            }
-            else {
-                throw new Exception("Cannot remove more assets than there are currently!"); // this can be refined
-            }
+    public void removeAsset(String assetName, int quantityToRemove) throws Exception { // TODO: MAKE EXCEPTION FILE FOR THIS
+        int currentQuantity;
+
+        try {
+            currentQuantity = assetsOwned.get(assetName);
+
+        }
+        catch (NullPointerException NPE) {
+            throw new Exception("ASSET DOES NOT EXIST HELLO? "); // TODO: THROW NEW EXCEPTION FOR THIS FROM MADE EXCEPTIONS
+        }
+
+        if (currentQuantity > quantityToRemove) {
+            assetsOwned.put(assetName, currentQuantity - quantityToRemove);
+        }
+        else if (quantityToRemove == currentQuantity) {
+            assetsOwned.remove(assetName);
         }
         else {
-            throw new Exception("Asset does not currently exist!");
+            throw new Exception("Cannot remove more assets that owned!"); // TODO ADD EXCEPTION WHEN MADE
         }
+
+    }
+
+    public void editName(String name) {
+        this.name = name;
     }
 
     public void removeAllAssets() {
@@ -111,6 +127,10 @@ public class OrganisationalUnit {
         return credits;
     }
 
+    public String getUnitName() {
+        return name;
+    }
+
     /**
      * Getter for the assetsOwned field
      * @return A map of the asset_name and quantity for this unit's assets
@@ -118,4 +138,6 @@ public class OrganisationalUnit {
     public Map<String, Integer> getAssetsOwned() {
         return assetsOwned;
     }
+
 }
+

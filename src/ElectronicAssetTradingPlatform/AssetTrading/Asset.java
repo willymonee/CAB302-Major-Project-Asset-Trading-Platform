@@ -39,6 +39,10 @@ public class Asset {
         return this.assetName;
     }
 
+    public void editAssetName(String name) {
+        this.assetName = name;
+    }
+
 
 
 }
