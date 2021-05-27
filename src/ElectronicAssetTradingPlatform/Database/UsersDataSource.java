@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.Database;
 
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 
 import java.sql.Connection;
@@ -92,17 +93,21 @@ public class UsersDataSource {
 
         try {
             rs = getUserQuery.executeQuery();
+            if (rs.isClosed()) throw new SQLException("User not found: " + username);
             rs.next();
+
 
             // Result
             passwordHash = rs.getString("Password_hash");
             salt = rs.getString("Salt");
             userType = rs.getString("User_Type");
             unitName = rs.getString("Unit_Name");
+            System.out.println("HI2");
         } finally {
             if (rs != null) rs.close();
         }
 
+        System.out.println("HI3");
         // Try get type
         UsersFactory.UserType type = null;
         try {
@@ -150,15 +155,20 @@ public class UsersDataSource {
      * @param unitName Edited unit of the user
      * @throws SQLException Throws database query errors
      */
-    public void editUser(String username, String userType, String unitName) throws SQLException {
+    public void editUser(String username, String userType, String unitName) throws SQLException, User.UserTypeException {
+        // Check user is in database
+        getUser(username);
+
         // Initialise
         editUserQuery.setString(1, userType);
+
             // Get unit ID
         String unitID = null;
         if (unitName != null) {
             UnitDataSource unitDB = new UnitDataSource();
             unitID = unitDB.executeGetUnitID(unitName);
         }
+
         editUserQuery.setString(2, unitID);
         editUserQuery.setString(3, username);
 

@@ -72,52 +72,6 @@ public class NetworkDataSource extends Thread {
     }
 
     /**
-     * Query the database through the server - no sending a parameter
-     */
-    private Object sendCommand(NetworkCommands command) {
-        try {
-            // Write the command type
-            outputStream.writeObject(command);
-
-            // Separate output and input streams
-            outputStream.flush();
-
-            // Get output
-            // Read the object
-            return inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            // Print the exception, but no need for a fatal error
-            // if the connection with the server happens to be down
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Query the database through the server
-     */
-    private Object sendCommand(NetworkCommands command, Object param, Object param2) {
-        try {
-            // Write the command type and param
-            outputStream.writeObject(command);
-            outputStream.writeObject(param);
-            outputStream.writeObject(param2);
-
-            // Separate output and input streams
-            outputStream.flush();
-
-            // Get output
-            // Read the object
-            return inputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            // Print the exception, but no need for a fatal error
-            // if the connection with the server happens to be down
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
      * Sends command for server to get user
      * Returns queried user
      *  If an error string was sent instead, throw the error
@@ -148,6 +102,15 @@ public class NetworkDataSource extends Thread {
     public String editUser(String username, String userType, String unitName) {
         String[] object = new String[]{username, userType, unitName};
         return (String) sendCommand(NetworkCommands.EDIT_USER, object);
+    }
+
+    /**
+     * Sends command for server to change user password
+     * Returns error message
+     */
+    public String editPassword(String username, String password, String salt) {
+        String[] strings = new String[]{username, password, salt};
+        return (String) sendCommand(NetworkCommands.EDIT_PASSWORD, strings);
     }
 
     /**

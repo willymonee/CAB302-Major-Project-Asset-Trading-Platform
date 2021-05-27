@@ -1,5 +1,7 @@
 package ElectronicAssetTradingPlatform.Database;
 
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
+
 import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -109,6 +111,7 @@ public class UnitDataSource {
         String unitID;
         try {
             rs = getUnitIDQuery.executeQuery();
+            if (rs.isClosed()) throw new SQLException("Unit not found: " + unitName);
             rs.next();
             unitID = rs.getString("Unit_ID");
         }

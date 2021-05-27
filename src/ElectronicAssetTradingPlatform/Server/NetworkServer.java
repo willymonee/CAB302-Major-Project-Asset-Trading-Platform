@@ -125,7 +125,7 @@ public class NetworkServer {
                     e.printStackTrace();
                     if (e.getErrorCode() == UNIQUE_CONSTRAINT_EXCEPTION_CODE)
                         objectOutputStream.writeObject("It already exists.");
-                    else objectOutputStream.writeObject("It could not be found.");
+                    else objectOutputStream.writeObject("It could not be found: " + e.getMessage());
                 } catch (User.UserTypeException e) {
                     e.printStackTrace();
                 }
@@ -257,6 +257,19 @@ public class NetworkServer {
                     MarketplaceDataSource.getInstance().updateOfferQuantity(newQuantity ,ID);
                 }
                 System.out.println("Updated offer quantity on behalf of client");
+            }
+            case EDIT_PASSWORD -> {
+                // Get input
+                String[] editedValues = (String[]) objectInputStream.readObject();
+
+                synchronized (database) {
+                    // Save to db
+                    UsersDataSource.getInstance().editUserPassword(editedValues[0], editedValues[1], editedValues[2]);
+
+                    // Write success output
+                    objectOutputStream.writeObject("Password has changed.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
             }
         }
     }
