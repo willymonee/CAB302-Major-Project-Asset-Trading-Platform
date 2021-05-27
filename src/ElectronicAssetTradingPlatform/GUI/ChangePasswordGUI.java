@@ -136,7 +136,7 @@ public class ChangePasswordGUI extends JFrame {
                 loggedInUser.changePassword(newPasswordText);
 
                 String output = "";
-                output = data.editPassword(loggedInUser.getUsername(), loggedInUser.getPassword(), loggedInUser.getSalt());
+                output = data.editPassword(loggedInUser);
 
                 messaging.setText(output);
             } else {

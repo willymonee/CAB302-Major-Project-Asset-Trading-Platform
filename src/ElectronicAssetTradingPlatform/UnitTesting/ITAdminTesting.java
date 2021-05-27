@@ -187,9 +187,10 @@ public class ITAdminTesting {
     @Test
     public void editMemberCheckUnitName() {
         try {
-            String[] out = itAdmin.editUser("newLeader", "OrganisationalUnitMembers", "unit2");
-            assertNotNull(out[2]);
-        } catch (User.EmptyFieldException | User.UserTypeException e) {
+            ITAdmin user = new ITAdmin("newLeader", "pass", "salt");
+            OrganisationalUnitMembers out = (OrganisationalUnitMembers)itAdmin.editUser(user, "OrganisationalUnitMembers", "unit2");
+            assertEquals("unit2", out.getUnitName());
+        } catch (Exception e) {
             e.printStackTrace();
             assert false;
         }
@@ -198,9 +199,9 @@ public class ITAdminTesting {
     @Test
     public void editITAdminCheckUnitName() {
         try {
-            String[] out = itAdmin.editUser("newITAdmin1", "SystemsAdmin", "unit1");
-            assertNull(out[2]);
-        } catch (User.EmptyFieldException | User.UserTypeException e) {
+            ITAdmin user = new ITAdmin("newITAdmin1", "pass", "salt");
+            SystemsAdmin out = (SystemsAdmin) itAdmin.editUser(user, "SystemsAdmin", "unit1");
+        } catch (Exception e) {
             e.printStackTrace();
             assert false;
         }
