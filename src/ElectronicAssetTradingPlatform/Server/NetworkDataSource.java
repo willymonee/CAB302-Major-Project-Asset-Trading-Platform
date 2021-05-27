@@ -72,6 +72,53 @@ public class NetworkDataSource extends Thread {
     }
 
     /**
+     * Query the database through the server - No param
+     */
+    private Object sendCommand(NetworkCommands command) {
+        try {
+            // Write the command type and param
+            outputStream.writeObject(command);
+
+            // Separate output and input streams
+            outputStream.flush();
+
+            // Get output
+            // Read the object
+            return inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // Print the exception, but no need for a fatal error
+            // if the connection with the server happens to be down
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Query the database through the server - 2 parameters
+     */
+    private Object sendCommand(NetworkCommands command, Object param, Object param2) {
+        try {
+            // Write the command type and param
+            outputStream.writeObject(command);
+            outputStream.writeObject(param);
+            outputStream.writeObject(param2);
+
+            // Separate output and input streams
+            outputStream.flush();
+
+            // Get output
+            // Read the object
+            System.out.println("before reading back");
+            return inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // Print the exception, but no need for a fatal error
+            // if the connection with the server happens to be down
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Sends command for server to get user
      * Returns queried user
      *  If an error string was sent instead, throw the error
@@ -162,8 +209,9 @@ public class NetworkDataSource extends Thread {
     /**
      * Sends command to update the quantity of a selected offer in the DB
      */
-    public int updateOfferQuantity(int newQuantity, int offerID) {
-        return (int) sendCommand(NetworkCommands.UPDATE_OFFER, newQuantity, offerID);
+    public String updateOfferQuantity(int newQuantity, int offerID) {
+        Object out = sendCommand(NetworkCommands.UPDATE_OFFER, newQuantity, offerID);
+        return (String) out;
     }
 
     public class DatabaseException extends Exception {

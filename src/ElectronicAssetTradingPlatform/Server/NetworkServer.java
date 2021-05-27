@@ -232,14 +232,14 @@ public class NetworkServer {
                     objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getBuyOffers());
                 }
                 objectOutputStream.flush();
-                System.out.println("Retrieved by buy offers and sent to client" + socket.toString());
+                System.out.println("Retrieved buy offers and sent to client" + socket.toString());
             }
             case GET_SELL_OFFERS -> {
                 synchronized (database) {
                     objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getSellOffers());
                 }
                 objectOutputStream.flush();
-                System.out.println("Retrieved by sell offers and sent to client" + socket.toString());
+                System.out.println("Retrieved sell offers and sent to client" + socket.toString());
             }
             case GET_PLACED_OFFER -> {
                 synchronized (database) {
@@ -250,12 +250,11 @@ public class NetworkServer {
             }
             case UPDATE_OFFER -> {
                 int newQuantity = (int) objectInputStream.readObject();
-                System.out.println("New quantity:" + newQuantity);
                 int ID = (int) objectInputStream.readObject();
-                System.out.println("ID:" + ID);
                 synchronized (database) {
                     MarketplaceDataSource.getInstance().updateOfferQuantity(newQuantity ,ID);
                 }
+                objectOutputStream.writeObject("Updated offer quantity");
                 System.out.println("Updated offer quantity on behalf of client");
             }
             case EDIT_PASSWORD -> {

@@ -37,8 +37,9 @@ public abstract class OfferData {
      * @param ID is the ID of the offer you want to change the quantity of
      */
     public void updateOfferQuantity(int quantity, int ID) {
-        getOffersFromDB();
-        MarketplaceDataSource.getInstance().updateOfferQuantity(quantity, ID);
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        dataSource.updateOfferQuantity(quantity,ID);
     }
 
     /**
