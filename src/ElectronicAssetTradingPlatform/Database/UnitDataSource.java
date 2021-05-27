@@ -80,6 +80,16 @@ public class UnitDataSource {
         }
     }
 
+    public void updateUnitCredits(float credits, int ID) {
+        try {
+            updateUnitCredits.setFloat(1, credits);
+            updateUnitCredits.setInt(2, ID);
+            updateUnitCredits.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public void updateUnitAssets(int quantity, int unitID,int assetID ) {
         try {
             updateUnitAssets.setInt(1, quantity);

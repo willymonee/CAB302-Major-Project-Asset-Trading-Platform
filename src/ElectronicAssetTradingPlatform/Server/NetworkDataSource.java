@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.TreeMap;
 
 public class NetworkDataSource extends Thread {
 
@@ -55,6 +56,52 @@ public class NetworkDataSource extends Thread {
             // Write the command type and param
             outputStream.writeObject(command);
             outputStream.writeObject(param);
+
+            // Separate output and input streams
+            outputStream.flush();
+
+            // Get output
+            // Read the object
+            return inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // Print the exception, but no need for a fatal error
+            // if the connection with the server happens to be down
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Query the database through the server - no sending a parameter
+     */
+    private Object sendCommand(NetworkCommands command) {
+        try {
+            // Write the command type
+            outputStream.writeObject(command);
+
+            // Separate output and input streams
+            outputStream.flush();
+
+            // Get output
+            // Read the object
+            return inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // Print the exception, but no need for a fatal error
+            // if the connection with the server happens to be down
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Query the database through the server
+     */
+    private Object sendCommand(NetworkCommands command, Object param, Object param2) {
+        try {
+            // Write the command type and param
+            outputStream.writeObject(command);
+            outputStream.writeObject(param);
+            outputStream.writeObject(param2);
 
             // Separate output and input streams
             outputStream.flush();
@@ -123,6 +170,37 @@ public class NetworkDataSource extends Thread {
      */
     public String removeOffer(int ID) {
         return (String) sendCommand(NetworkCommands.REMOVE_OFFER, ID);
+    }
+
+    /**
+     * Sends command to server to retrieve all buy offers from the database
+     */
+    public TreeMap<Integer, BuyOffer> getBuyOffers() {
+        Object out = sendCommand(NetworkCommands.GET_BUY_OFFERS);
+        return (TreeMap<Integer, BuyOffer>) out;
+    }
+
+    /**
+     * Sends command to server to retrieve all sell offers from the database
+     */
+    public TreeMap<Integer, SellOffer> getSellOffers() {
+        Object out = sendCommand(NetworkCommands.GET_SELL_OFFERS);
+        return (TreeMap<Integer, SellOffer>) out;
+    }
+
+    /** Sends command to server to retrieve the ID of the most recently placed offer from the DB
+     *
+     */
+    public int getPlacedOffer() {
+        Object out = sendCommand(NetworkCommands.GET_PLACED_OFFER);
+        return (int) out;
+    }
+
+    /**
+     * Sends command to update the quantity of a selected offer in the DB
+     */
+    public int updateOfferQuantity(int newQuantity, int offerID) {
+        return (int) sendCommand(NetworkCommands.UPDATE_OFFER, newQuantity, offerID);
     }
 
     public class DatabaseException extends Exception {

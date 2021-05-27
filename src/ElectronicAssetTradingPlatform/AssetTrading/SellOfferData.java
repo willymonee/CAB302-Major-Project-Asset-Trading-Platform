@@ -41,7 +41,8 @@ public class SellOfferData extends OfferData {
      * Retrieve market sell offers from the database and insert them into the TreeMap
      */
     protected void getOffersFromDB() {
-        TreeMap<Integer, SellOffer> sellOffers = MarketplaceDataSource.getInstance().getSellOffers();
+        //TreeMap<Integer, SellOffer> sellOffers = MarketplaceDataSource.getInstance().getSellOffers();
+        TreeMap<Integer, SellOffer> sellOffers = dataSource.getSellOffers();
         for (Map.Entry<Integer, SellOffer> sellOffer : sellOffers.entrySet()) {
             SellOffer nextOffer = sellOffer.getValue();
             MarketSellOffers.put(nextOffer.getOfferID(), nextOffer);

@@ -224,8 +224,39 @@ public class NetworkServer {
                     // remove offer from DB
                     MarketplaceDataSource.getInstance().removeOffer(ID);
                     objectOutputStream.writeObject("Removed offer: #" + ID);
-                    System.out.println("Wrote to socket:" + socket.toString());
                 }
+                System.out.println("Wrote to socket:" + socket.toString());
+            }
+            case GET_BUY_OFFERS -> {
+                synchronized (database) {
+                    objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getBuyOffers());
+                }
+                objectOutputStream.flush();
+                System.out.println("Retrieved by buy offers and sent to client" + socket.toString());
+            }
+            case GET_SELL_OFFERS -> {
+                synchronized (database) {
+                    objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getSellOffers());
+                }
+                objectOutputStream.flush();
+                System.out.println("Retrieved by sell offers and sent to client" + socket.toString());
+            }
+            case GET_PLACED_OFFER -> {
+                synchronized (database) {
+                    objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getPlacedOfferID());
+                }
+                objectOutputStream.flush();
+                System.out.println("Retrieved placed offer ID and sent to client");
+            }
+            case UPDATE_OFFER -> {
+                int newQuantity = (int) objectInputStream.readObject();
+                System.out.println("New quantity:" + newQuantity);
+                int ID = (int) objectInputStream.readObject();
+                System.out.println("ID:" + ID);
+                synchronized (database) {
+                    MarketplaceDataSource.getInstance().updateOfferQuantity(newQuantity ,ID);
+                }
+                System.out.println("Updated offer quantity on behalf of client");
             }
         }
     }

@@ -46,7 +46,9 @@ public abstract class OfferData {
      * @return int of the most recently placed offer ID
      */
     public int getPlacedOfferID() {
-        return MarketplaceDataSource.getInstance().getPlacedOfferID();
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        return dataSource.getPlacedOffer();
     }
 
     /**
