@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 public abstract class OfferData {
     /**
@@ -20,6 +21,15 @@ public abstract class OfferData {
      * @return String of offers
      */
     public abstract String getOrgOffers(String unitName);
+
+    /**
+     * Remove an offer from the DB
+     */
+    public void removeOffer(int ID) {
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        dataSource.removeOffer(ID);
+    }
 
     /**
      * Given a quantity and offer, edit the offer's quantity by that amount

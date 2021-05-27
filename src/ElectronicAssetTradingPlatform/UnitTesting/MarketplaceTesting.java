@@ -46,14 +46,14 @@ public class MarketplaceTesting {
     @Test
     public void testInsertBuyOffer() {
         // creating a buy offer and adding it into the database through the user
-        userA.listBuyOrderNoResolve("Table", 2, 1);
+        //userA.listBuyOrderNoResolve("Table", 2, 1);
 
     }
 
     @Test
     public void testInsertSellOffer() {
         // creating a buy offer and adding it into the database through the user
-        userA.listSellOrderNoResolve("Table", 2, 20);
+        //userA.listSellOrderNoResolve("Table", 2, 20);
     }
 
     @Test
@@ -71,12 +71,11 @@ public class MarketplaceTesting {
     @Test
     public void removeBuyOffer() {
         //userA.removeBuyOffer(31);
-
     }
 
     @Test
     public void removeSellOffer() {
-        //userA.removeSellOffer(26);
+        userA.removeSellOffer(36);
     }
 
     // retrieve buy offers from a user's organisational unit

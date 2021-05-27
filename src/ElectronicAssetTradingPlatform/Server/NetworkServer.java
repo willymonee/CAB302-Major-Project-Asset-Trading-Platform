@@ -197,7 +197,6 @@ public class NetworkServer {
             case ADD_BUY_OFFER -> {
                 // Get input
                 BuyOffer offer =  (BuyOffer) objectInputStream.readObject();
-                System.out.println("Buy Offer: " + offer);
                 synchronized (database) {
                     // add offer to the DB
                     MarketplaceDataSource.getInstance().insertBuyOffer(offer);
@@ -208,10 +207,8 @@ public class NetworkServer {
                 }
 
             }
-
             case ADD_SELL_OFFER -> {
                 SellOffer offer = (SellOffer) objectInputStream.readObject();
-                System.out.println("Sell Offer: " + offer);
                 synchronized (database) {
                     // add offer to the DB
                     MarketplaceDataSource.getInstance().insertSellOffer(offer);
@@ -219,6 +216,15 @@ public class NetworkServer {
                     objectOutputStream.writeObject("Added buy offer: " + offer);
                     System.out.println("Wrote to socket: " + socket.toString());
 
+                }
+            }
+            case REMOVE_OFFER -> {
+                int ID = (int) objectInputStream.readObject();
+                synchronized (database) {
+                    // remove offer from DB
+                    MarketplaceDataSource.getInstance().removeOffer(ID);
+                    objectOutputStream.writeObject("Removed offer: #" + ID);
+                    System.out.println("Wrote to socket:" + socket.toString());
                 }
             }
         }

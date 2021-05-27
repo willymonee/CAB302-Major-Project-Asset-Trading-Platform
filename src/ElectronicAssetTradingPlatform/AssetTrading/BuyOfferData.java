@@ -88,13 +88,7 @@ public class BuyOfferData extends OfferData {
         dataSource.addBuyOffer(offer);
     }
 
-    /**
-     * Remove an offer from the DB
-     */
-    public void removeOffer(int ID) {
-        MarketBuyOffers.remove(ID);
-        MarketplaceDataSource.getInstance().removeOffer(ID);
-    }
+
 
     /**
      * Update the market buy offers stored in BuyOfferData MarketBuyOffers field and return them all as a string

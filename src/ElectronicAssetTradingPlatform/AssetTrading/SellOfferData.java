@@ -74,13 +74,6 @@ public class SellOfferData extends OfferData {
         return MarketSellOffers.get(ID);
     }
 
-    /**
-     * Remove an offer from the DB
-     */
-    public void removeOffer(int ID) {
-        MarketSellOffers.remove(ID);
-//        MarketplaceDataSource.getInstance().removeOffer(ID);
-    }
 
     /**
      * Add a sell offer to the DB

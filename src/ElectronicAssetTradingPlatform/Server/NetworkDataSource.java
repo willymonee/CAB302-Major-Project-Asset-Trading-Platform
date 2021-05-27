@@ -118,6 +118,13 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.ADD_SELL_OFFER, sellOffer);
     }
 
+    /**
+     * Sends command to server to remove a buy offer
+     */
+    public String removeOffer(int ID) {
+        return (String) sendCommand(NetworkCommands.REMOVE_OFFER, ID);
+    }
+
     public class DatabaseException extends Exception {
         public DatabaseException(String message) { super(message); }
     }

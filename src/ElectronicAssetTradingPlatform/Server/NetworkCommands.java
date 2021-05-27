@@ -5,5 +5,6 @@ public enum NetworkCommands {
     STORE_USER,
     EDIT_USER,
     ADD_BUY_OFFER,
-    ADD_SELL_OFFER
+    ADD_SELL_OFFER,
+    REMOVE_OFFER
 }
