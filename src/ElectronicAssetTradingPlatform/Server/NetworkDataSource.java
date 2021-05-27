@@ -103,9 +103,9 @@ public class NetworkDataSource extends Thread {
      * Sends command for server to change user password
      * Returns error message
      */
-    public String editPassword(String username, String password, String salt) {
-        String[] strings = new String[]{username, password, salt};
-        return (String) sendCommand(NetworkCommands.EDIT_PASSWORD, strings);
+    public String editPassword(User thisUser) {
+        String str = (String) sendCommand(NetworkCommands.EDIT_PASSWORD, thisUser);
+        return str;
     }
 
     public static class DatabaseException extends Exception {

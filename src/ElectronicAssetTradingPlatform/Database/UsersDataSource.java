@@ -102,12 +102,10 @@ public class UsersDataSource {
             salt = rs.getString("Salt");
             userType = rs.getString("User_Type");
             unitName = rs.getString("Unit_Name");
-            System.out.println("HI2");
         } finally {
             if (rs != null) rs.close();
         }
 
-        System.out.println("HI3");
         // Try get type
         UsersFactory.UserType type = null;
         try {

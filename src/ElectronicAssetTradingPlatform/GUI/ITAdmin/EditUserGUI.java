@@ -149,9 +149,9 @@ class EditUserGUI extends JFrame {
                 ITAdmin.checkInputEmpty(userTypeIn);
 
                 User userToBeEdited = data.retrieveUser(usernameIn);
-                User params = loggedInUser.editUser(userToBeEdited, userTypeIn, unitNameIn);
+                User outUser = loggedInUser.editUser(userToBeEdited, userTypeIn, unitNameIn);
 
-                output = data.editUser(params.getUsername(), params[1], params[2]);
+                output = data.editUser(outUser);
             } catch (NetworkDataSource.DatabaseException e) {
                 output = e.getMessage();
             } catch (User.EmptyFieldException | User.UserTypeException e) {
