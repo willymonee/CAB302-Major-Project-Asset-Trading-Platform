@@ -8,6 +8,7 @@ import ElectronicAssetTradingPlatform.Users.UsersFactory;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,14 +20,21 @@ public class OrgUnitMemGUI extends JFrame {
 
     public static final int WIDTH = 300;
     public static final int HEIGHT = 200;
+    final static int extraWindowWidth = 100;
+
+    private final static String buyTab = "BUY";
+    private final static String sellTab = "SELL";
+    private final static String orgUnitTab = "ORG UNIT";
+    private final static String accountTab = "ACCOUNT";
+
 
     OrganisationalUnitMembers loggedInUser;
     NetworkDataSource data;
 
-    private JButton goToBuyMenu;
-    private JButton goToSellMenu;
-    private JButton goToOrgUnitMenu;
-    private JButton goToAccountMenu;
+    private JTabbedPane goToBuyMenu;
+    private JTabbedPane goToSellMenu;
+    private JTabbedPane goToOrgUnitMenu;
+    private JTabbedPane goToAccountMenu;
 
     /**
      * Creates Organisational Unit Member Main Menu
@@ -43,10 +51,13 @@ public class OrgUnitMemGUI extends JFrame {
 
         // Button listeners
         addWindowListener(new ClosingListener());
-        goToBuyMenu.addActionListener(new ButtonListener());
-        goToSellMenu.addActionListener(new ButtonListener());
-        goToOrgUnitMenu.addActionListener(new ButtonListener());
-        goToAccountMenu.addActionListener(new ButtonListener());
+        /*
+        goToBuyMenu.addChangeListener();
+        goToSellMenu.addChangeListener();
+        goToOrgUnitMenu.addChangeListener();
+        goToAccountMenu.addChangeListener();
+        */
+
 
 
         setTitle("Test Title");
@@ -70,58 +81,38 @@ public class OrgUnitMemGUI extends JFrame {
         contentPane.add(buttonPanel());
     }
 
-    private JPanel buttonPanel() {
-        JPanel displayPanel = new JPanel();
-        FlowLayout buttonLayout = new FlowLayout();
-        displayPanel.setLayout(buttonLayout);
+    private JTabbedPane buttonPanel() {
+        JTabbedPane menuTabs = new JTabbedPane();
+        //CardLayout buttonLayout = new CardLayout();
+        //displayPanel.setLayout(buttonLayout);
+        JPanel buyCard = new JPanel() {
+
+            public Dimension getSize() {
+                Dimension size = super.getSize();
+                size.width += extraWindowWidth;
+                return size;
+            }
+
+            public void test() {
+                System.out.println("buy card");
+            }
+        };
+
+        JPanel sellCard = new JPanel();
+        JPanel orgUnitCard = new JPanel();
+        JPanel accountCard = new JPanel();
+
+        menuTabs.add("BUY", buyCard);
+        menuTabs.add("SELL", sellCard);
+        menuTabs.add("ORG UNIT", orgUnitCard);
+        menuTabs.add("ACCOUNT", accountCard);
 
 
-        // Create the Buttons that are to be placed in the Panel
-
-        goToBuyMenu = new JButton("BUY");
-        goToSellMenu = new JButton("SELL");
-        goToOrgUnitMenu = new JButton("ORG UNIT");
-        goToAccountMenu = new JButton("ACCOUNT");
-
-
-
-        displayPanel.add(goToBuyMenu);
-        displayPanel.add(goToSellMenu);
-        displayPanel.add(goToOrgUnitMenu);
-        displayPanel.add(goToAccountMenu);
-
-        // Default landing page
-        goToBuyMenu.setEnabled(true);
-
-        return displayPanel;
+        return menuTabs;
     }
 
     private class ClosingListener extends WindowAdapter {
         public void windowClosing(WindowEvent e) { dispose(); }
-    }
-
-    private class ButtonListener implements ActionListener {
-
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JButton source = (JButton) e.getSource();
-            if (goToBuyMenu.equals(source)) {
-                System.out.println("Buy");
-            }
-            else if (goToSellMenu.equals(source)) {
-                System.out.println("Sell");
-            }
-
-            else if (goToOrgUnitMenu.equals(source)) {
-                System.out.println("Org Unit");
-            }
-
-            else if (goToAccountMenu.equals(source)) {
-                System.out.println("account");
-            }
-
-        }
     }
 
     public static void main(String[] args) {
