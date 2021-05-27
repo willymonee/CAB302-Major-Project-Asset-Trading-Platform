@@ -1,8 +1,6 @@
 package ElectronicAssetTradingPlatform.Database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class MarketplaceHistoryDataSource {
     //SQLITE Default Date format: yyyy-MM-dd HH:mm:ss
@@ -39,12 +37,15 @@ public class MarketplaceHistoryDataSource {
     }
 
 
-    public void getTradesByDate() {
-
+    // Some data structure to store multiple values
+    public void getTradesByDate(Date date) throws SQLException {
+        ResultSet rs = null;
+        getTradesByDate.setString(1, date.toString());
     }
     /*  When displaying the graph, im guessing x axis is date and y axis is price per unit
         Will need to display or create graph for each unique asset in the database
         and the quantity would come into play um.
+        Worst case scenario just display a table of data lmaooo, i guess just rip some columns straight out db
     */
 
 
