@@ -97,11 +97,20 @@ public class NetworkDataSource extends Thread {
      * Returns error message
      */
     public String editUser(String username, String userType, String unitName) {
-        String[] object = new String[]{username, userType, unitName};
-        return (String) sendCommand(NetworkCommands.EDIT_USER, object);
+        String[] strings = new String[]{username, userType, unitName};
+        return (String) sendCommand(NetworkCommands.EDIT_USER, strings);
     }
 
-    public class DatabaseException extends Exception {
+    /**
+     * Sends command for server to change user password
+     * Returns error message
+     */
+    public String editPassword(String username, String password, String salt) {
+        String[] strings = new String[]{username, password, salt};
+        return (String) sendCommand(NetworkCommands.EDIT_PASSWORD, strings);
+    }
+
+    public static class DatabaseException extends Exception {
         public DatabaseException(String message) { super(message); }
     }
 }
