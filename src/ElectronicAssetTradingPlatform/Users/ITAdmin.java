@@ -1,13 +1,12 @@
 package ElectronicAssetTradingPlatform.Users;
 
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
-import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
@@ -154,7 +153,7 @@ public class ITAdmin extends User {
             type = UsersFactory.UserType.valueOf(userType);
         }
         catch (IllegalArgumentException e) {
-            throw new User.UserTypeException("Invalid user type");
+            throw new UserTypeException("Invalid user type");
         }
 
         return UsersFactory.CreateUser(name, password, salt, unitName, type);

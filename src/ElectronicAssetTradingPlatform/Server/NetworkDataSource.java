@@ -1,7 +1,6 @@
 package ElectronicAssetTradingPlatform.Server;
 
-import ElectronicAssetTradingPlatform.Database.UsersDataSource;
-import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Users.User;
 
 import javax.swing.JOptionPane;
@@ -108,7 +107,4 @@ public class NetworkDataSource extends Thread {
         return str;
     }
 
-    public static class DatabaseException extends Exception {
-        public DatabaseException(String message) { super(message); }
-    }
 }

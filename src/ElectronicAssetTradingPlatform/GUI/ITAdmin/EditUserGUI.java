@@ -1,9 +1,10 @@
 package ElectronicAssetTradingPlatform.GUI.ITAdmin;
 
+import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
-import ElectronicAssetTradingPlatform.Users.ITAdmin;
-import ElectronicAssetTradingPlatform.Users.User;
-import ElectronicAssetTradingPlatform.Users.UsersFactory;
+import ElectronicAssetTradingPlatform.Users.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -152,9 +153,9 @@ class EditUserGUI extends JFrame {
                 User outUser = loggedInUser.editUser(userToBeEdited, userTypeIn, unitNameIn);
 
                 output = data.editUser(outUser);
-            } catch (NetworkDataSource.DatabaseException e) {
+            } catch (DatabaseException e) {
                 output = e.getMessage();
-            } catch (User.EmptyFieldException | User.UserTypeException e) {
+            } catch (EmptyFieldException | UserTypeException e) {
                 // Empty input error
                 output = "Input is empty or invalid, please enter correct details into all fields.";
             }

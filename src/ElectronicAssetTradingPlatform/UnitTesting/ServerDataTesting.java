@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.ITAdmin;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
@@ -8,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 public class ServerDataTesting {
@@ -25,14 +25,14 @@ public class ServerDataTesting {
     }
 
     @Test
-    public void testGetUser() throws SQLException, NetworkDataSource.DatabaseException {
+    public void testGetUser() throws SQLException, DatabaseException {
         OrganisationalUnitMembers user = (OrganisationalUnitMembers) data.retrieveUser("willymon");
 
         System.out.println("Gotten: " + user.getUsername() + user.getPassword() + user.getUserType() + user.getUnitCredits());
     }
 
     @Test
-    public void testStoreUser() throws NetworkDataSource.DatabaseException {
+    public void testStoreUser() throws DatabaseException {
         ITAdmin userStore = new ITAdmin("name", "pass", "salt");
         System.out.println(data.storeUser(userStore));
 
@@ -44,7 +44,7 @@ public class ServerDataTesting {
 
     @Test
     public void testInvalidGetUser() {
-        assertThrows(NetworkDataSource.DatabaseException.class, () -> data.retrieveUser("joe1920c"));
+        assertThrows(DatabaseException.class, () -> data.retrieveUser("joe1920c"));
     }
 
     // When testing this - remove the ITAdmin and run this test only
@@ -79,7 +79,7 @@ public class ServerDataTesting {
 
                     OrganisationalUnitMembers user = (OrganisationalUnitMembers) data.retrieveUser("willymon");
                     System.out.println("Gotten: " + user.getUsername() + user.getPassword());
-                } catch (NetworkDataSource.DatabaseException e) {
+                } catch (DatabaseException e) {
                     e.printStackTrace();
                 }
                 try {

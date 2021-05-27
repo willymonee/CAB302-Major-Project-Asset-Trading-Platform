@@ -4,6 +4,7 @@ import ElectronicAssetTradingPlatform.Database.DBConnectivity;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
+import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -117,7 +118,7 @@ public class NetworkServer {
                     if (e.getErrorCode() == UNIQUE_CONSTRAINT_EXCEPTION_CODE)
                         objectOutputStream.writeObject("It already exists.");
                     else objectOutputStream.writeObject("It could not be found: " + e.getMessage());
-                } catch (User.UserTypeException e) {
+                } catch (UserTypeException e) {
                     e.printStackTrace();
                 }
             }
@@ -131,7 +132,7 @@ public class NetworkServer {
      * @param command NetworkCommand from input stream
      */
     private void handleCommand (NetworkCommands command, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, Socket socket)
-            throws IOException, ClassNotFoundException, SQLException, User.UserTypeException {
+            throws IOException, ClassNotFoundException, SQLException, UserTypeException {
         /*
          * Remember this is happening on separate threads for each client. Therefore access to the database
          * must be thread-safe in some way. The easiest way to achieve thread safety is to just put a giant
