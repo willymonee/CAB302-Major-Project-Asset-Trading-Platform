@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.Server;
 
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 
 import javax.swing.JOptionPane;
@@ -96,10 +97,7 @@ public class NetworkDataSource extends Thread {
      * Sends command for server to edit user
      * Returns error message
      */
-    public String editUser(String username, String userType, String unitName) {
-        String[] strings = new String[]{username, userType, unitName};
-        return (String) sendCommand(NetworkCommands.EDIT_USER, strings);
-    }
+    public String editUser(User user) { return (String) sendCommand(NetworkCommands.EDIT_USER, user); }
 
     /**
      * Sends command for server to change user password

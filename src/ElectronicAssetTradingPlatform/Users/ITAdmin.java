@@ -120,24 +120,24 @@ public class ITAdmin extends User {
 
     /**
      * Choose to edit the user's user type and organisational unit [C]
-     * @param username the new username the use will have
+     * @param user the user to be edited
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
      */
-    public String[] editUser(String username, String userType, String unitName) throws EmptyFieldException, UserTypeException {
+    public User editUser(User user, String userType, String unitName) throws EmptyFieldException, UserTypeException {
         // Check valid input
-        checkInputEmpty(username);
         checkInputEmpty(userType);
 
         // Checks complete - query to update db
         // Clear unit name if IT/SysAdmin
         try {
-            switch (UsersFactory.UserType.valueOf(userType)) {
+            UsersFactory.UserType type = UsersFactory.UserType.valueOf(userType);
+            switch (type) {
                 case ITAdmin, SystemsAdmin -> {
-                    return new String[] {username, userType, null};
+                    return UsersFactory.CreateUser(user.getUsername(), user.getPassword(), user.getSalt(), null, type);
                 }
                 case OrganisationalUnitMembers, OrganisationalUnitLeader -> {
-                    return new String[] {username, userType, unitName};
+                    return UsersFactory.CreateUser(user.getUsername(), user.getPassword(), user.getSalt(), unitName, type);
                 }
                 default -> throw new IllegalArgumentException();
             }
