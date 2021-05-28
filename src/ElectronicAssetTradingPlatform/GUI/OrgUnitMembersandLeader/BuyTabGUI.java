@@ -49,9 +49,14 @@ public class BuyTabGUI extends JPanel {
         }
     }
 
-    private TreeMap<Integer, BuyOffer> getUnitBuyOffers() {
+    private TreeMap<Integer, BuyOffer> getUnitBuyOffers() throws Exception{
         buyOffers = null;
         buyOffers = BuyOfferData.getInstance().getOrgOffersMap(loggedInMember.getUnitName());
+
+        if (buyOffers == null) {
+            throw new Exception();
+        }
+
         return buyOffers;
 
     }
@@ -59,8 +64,7 @@ public class BuyTabGUI extends JPanel {
     // TODO : REMOVE ORG UNIT AS A COLUMN, AND ISNTEAD HAVE A BUTTON TO EDIT THE ASSET OFFER LISTING
     private JTable unitBuyOffersTable() {
         //ArrayList<String> dataArrayList = getRowData();
-        String data[][] = { {"101","Amit","670000", "a", "a", "a"},
-                            {"101","Sachin","700000", "a", "a", "a"}};
+        String data[][] = getRowData();
 
         // covnert to String[]
         //String[] dataRows = new String[dataArrayList.size()];
@@ -75,8 +79,15 @@ public class BuyTabGUI extends JPanel {
 
     // makle return type whatever data is
     private String[][] getRowData() {
+        try {
+            buyOffers = getUnitBuyOffers();
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         String[][] data = new String[buyOffers.size()][];
-        buyOffers = getUnitBuyOffers();
         int count = 0;
         for(Map.Entry<Integer, BuyOffer> entry : buyOffers.entrySet()) {
             Integer key = entry.getKey();
