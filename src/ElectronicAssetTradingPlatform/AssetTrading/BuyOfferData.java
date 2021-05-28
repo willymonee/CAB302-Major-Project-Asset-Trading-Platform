@@ -1,6 +1,8 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,11 +15,15 @@ import static java.util.Collections.unmodifiableMap;
 
 public class BuyOfferData extends OfferData {
     private static TreeMap<Integer, BuyOffer> MarketBuyOffers = new TreeMap<>();
+    private NetworkDataSource dataSource;
 
     /**
      * Constructor to initialise the single BuyOfferData object - protected to suppress unauthorised calls
      */
-    protected BuyOfferData() { }
+    protected BuyOfferData() {
+        dataSource = new NetworkDataSource();
+        dataSource.run();
+    }
 
     /**
      * BuyOfferDataHolder is loaded on the first execution of BuyOfferData.getInstance() or the first access to
@@ -38,12 +44,15 @@ public class BuyOfferData extends OfferData {
      * Retrieve market buy offers from the database and insert them into the TreeMap
      */
     protected void getOffersFromDB() {
-        TreeMap<Integer, BuyOffer> buyOffers = MarketplaceDataSource.getInstance().getBuyOffers();
+        // TreeMap<Integer, BuyOffer> buyOffers = MarketplaceDataSource.getInstance().getBuyOffers();
+        TreeMap<Integer, BuyOffer> buyOffers = dataSource.getBuyOffers();
+        MarketBuyOffers.clear();
         for (Map.Entry<Integer, BuyOffer> buyOffer : buyOffers.entrySet()) {
             BuyOffer nextOffer = buyOffer.getValue();
             MarketBuyOffers.put(nextOffer.getOfferID(), nextOffer);
         }
     }
+
 
     /**
      * Return all market buy offers in a TreeMap
@@ -75,15 +84,13 @@ public class BuyOfferData extends OfferData {
     /**
      * Insert a buy offer into the DB
      */
-    public static void addOffer(BuyOffer offer)  { MarketplaceDataSource.getInstance().insertBuyOffer(offer); }
-
-    /**
-     * Remove an offer from the DB
-     */
-    public static void removeOffer(int ID) {
-        MarketBuyOffers.remove(ID);
-        MarketplaceDataSource.getInstance().removeOffer(ID);
+    public void addOffer(BuyOffer offer)  {
+        // MarketplaceDataSource.getInstance().insertBuyOffer(offer);
+        //NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.addBuyOffer(offer);
     }
+
+
 
     /**
      * Update the market buy offers stored in BuyOfferData MarketBuyOffers field and return them all as a string

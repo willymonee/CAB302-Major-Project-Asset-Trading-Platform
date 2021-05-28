@@ -1,6 +1,12 @@
 package ElectronicAssetTradingPlatform.Server;
 
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOfferData;
 import ElectronicAssetTradingPlatform.Database.DBConnectivity;
+import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
+import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
@@ -13,6 +19,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NetworkServer {
@@ -33,6 +40,7 @@ public class NetworkServer {
      * The connection to the database where everything is stored.
      */
     private Connection database;
+
 
     // Exception codes: https://sqlite.org/rescode.html
     private static final int UNIQUE_CONSTRAINT_EXCEPTION_CODE = 19;
@@ -98,12 +106,16 @@ public class NetworkServer {
      */
     private void handleConnection(Socket socket) {
         try {
+
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+
             while (true) {
                 try {
                     // Reads Command and parameter object
                     NetworkCommands command = (NetworkCommands) objectInputStream.readObject();
+                    if (command == null) {
+                    }
                     handleCommand(command, objectInputStream, objectOutputStream, socket);
                 } catch (SocketTimeoutException e) {
                     /**
@@ -129,6 +141,12 @@ public class NetworkServer {
     /**
      * Execute the command
      * @param command NetworkCommand from input stream
+     * @param socket socket for the client
+     * @param objectInputStream input stream to read objects from
+     * @param objectOutputStream output stream to write objects to
+     * @throws IOException if the client has disconnected
+     * @throws ClassNotFoundException if the client sends an invalid object
+     * @throws User.UserTypeException if the user is an invalid user type for the specified command
      */
     private void handleCommand (NetworkCommands command, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, Socket socket)
             throws IOException, ClassNotFoundException, SQLException, User.UserTypeException {
@@ -181,7 +199,75 @@ public class NetworkServer {
                     // Write success output
                     objectOutputStream.writeObject("Edited user.");
                     System.out.println("Wrote to socket: " + socket.toString());
+                    System.out.println("Wrote to socket: " + socket.toString());
                 }
+            }
+            case ADD_BUY_OFFER -> {
+                // Get input
+                BuyOffer offer =  (BuyOffer) objectInputStream.readObject();
+                synchronized (database) {
+                    // add offer to the DB
+                    MarketplaceDataSource.getInstance().insertBuyOffer(offer);
+                    // write success output
+                    objectOutputStream.writeObject("Added buy offer: " + offer);
+                }
+                objectOutputStream.flush();
+                System.out.println("Wrote to socket: " + socket.toString());
+
+            }
+            case ADD_SELL_OFFER -> {
+                SellOffer offer = (SellOffer) objectInputStream.readObject();
+                synchronized (database) {
+                    // add offer to the DB
+                    MarketplaceDataSource.getInstance().insertSellOffer(offer);
+                    // write success output
+                    objectOutputStream.writeObject("Added buy offer: " + offer);
+                }
+                objectOutputStream.flush();
+                System.out.println("Wrote to socket: " + socket.toString());
+            }
+            case REMOVE_OFFER -> {
+                int ID = (int) objectInputStream.readObject();
+                synchronized (database) {
+                    // remove offer from DB
+                    MarketplaceDataSource.getInstance().removeOffer(ID);
+                    objectOutputStream.writeObject("Removed offer");
+                }
+                objectOutputStream.flush();
+                System.out.println("Removed offer on behalf of client");
+            }
+            case GET_BUY_OFFERS -> {
+                synchronized (database) {
+                    final TreeMap<Integer, BuyOffer> buyOffers = MarketplaceDataSource.getInstance().getBuyOffers();
+                    objectOutputStream.writeObject(buyOffers);
+                }
+                objectOutputStream.flush();
+                System.out.println("Retrieved buy offers and sent to client" + socket.toString());
+            }
+            case GET_SELL_OFFERS -> {
+                synchronized (database) {
+                    objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getSellOffers());
+                }
+                objectOutputStream.flush();
+                System.out.println("Retrieved sell offers and sent to client" + socket.toString());
+            }
+            case GET_PLACED_OFFER -> {
+                synchronized (database) {
+                    objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getPlacedOfferID());
+                }
+                objectOutputStream.flush();
+                System.out.println("Retrieved placed offer ID and sent to client");
+            }
+            case UPDATE_OFFER -> {
+                int newQuantity = (int) objectInputStream.readObject();
+                int ID = (int) objectInputStream.readObject();
+                synchronized (database) {
+                    MarketplaceDataSource.getInstance().open();
+                    MarketplaceDataSource.getInstance().updateOfferQuantity(newQuantity ,ID);
+                    objectOutputStream.writeObject("Updated offer quantity");
+                }
+                objectOutputStream.flush();
+                System.out.println("Updated offer quantity on behalf of client");
             }
             case EDIT_PASSWORD -> {
                 // Get input
@@ -196,6 +282,31 @@ public class NetworkServer {
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
             }
+            case UPDATE_CREDITS -> {
+                double credits = (double) objectInputStream.readObject();
+                String orgName = (String) objectInputStream.readObject();
+                synchronized (database) {
+                    UnitDataSource unitDataSource = new UnitDataSource();
+                    unitDataSource.updateUnitCredits((float) credits, orgName);
+                    objectOutputStream.writeObject("Updated unit credits");
+                }
+                objectOutputStream.flush();
+
+                System.out.println("Updated unit credits");
+            }
+            case UPDATE_ASSETS -> {
+                int quantity = (int) objectInputStream.readObject();
+                String orgName = (String) objectInputStream.readObject();
+                String assetName = (String) objectInputStream.readObject();
+                synchronized (database) {
+                    UnitDataSource unitDataSource = new UnitDataSource();
+                    unitDataSource.updateUnitAssets(quantity, orgName, assetName);
+                    objectOutputStream.writeObject("Updated org assets");
+                }
+                objectOutputStream.flush();
+                System.out.println("Updated org assets");
+            }
+
         }
     }
 
