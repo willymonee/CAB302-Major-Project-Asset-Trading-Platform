@@ -10,6 +10,7 @@ import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
+import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,6 +20,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -129,7 +131,7 @@ public class NetworkServer {
                     if (e.getErrorCode() == UNIQUE_CONSTRAINT_EXCEPTION_CODE)
                         objectOutputStream.writeObject("It already exists.");
                     else objectOutputStream.writeObject("It could not be found: " + e.getMessage());
-                } catch (User.UserTypeException e) {
+                } catch (UserTypeException e) {
                     e.printStackTrace();
                 }
             }
@@ -146,10 +148,10 @@ public class NetworkServer {
      * @param objectOutputStream output stream to write objects to
      * @throws IOException if the client has disconnected
      * @throws ClassNotFoundException if the client sends an invalid object
-     * @throws User.UserTypeException if the user is an invalid user type for the specified command
+     * @throws UserTypeException if the user is an invalid user type for the specified command
      */
     private void handleCommand (NetworkCommands command, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, Socket socket)
-            throws IOException, ClassNotFoundException, SQLException, User.UserTypeException {
+            throws IOException, ClassNotFoundException, SQLException, UserTypeException {
         /*
          * Remember this is happening on separate threads for each client. Therefore access to the database
          * must be thread-safe in some way. The easiest way to achieve thread safety is to just put a giant
@@ -306,7 +308,20 @@ public class NetworkServer {
                 objectOutputStream.flush();
                 System.out.println("Updated org assets");
             }
-
+            case GET_UNIT_CREDIT -> {
+                String unitName = (String) objectInputStream.readObject();
+                synchronized (database) {
+                    float credits = UsersDataSource.getInstance().getUnitCredits(unitName);
+                    objectOutputStream.writeObject(credits);
+                }
+            }
+            case GET_UNIT_ASSETS -> {
+                String unitName = (String) objectInputStream.readObject();
+                synchronized (database) {
+                    HashMap<String, Integer> credits = UsersDataSource.getInstance().getUnitAssets(unitName);
+                    objectOutputStream.writeObject(credits);
+                }
+            }
         }
     }
 

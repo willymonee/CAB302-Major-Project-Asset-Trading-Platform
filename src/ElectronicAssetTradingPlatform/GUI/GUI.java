@@ -1,8 +1,10 @@
 package ElectronicAssetTradingPlatform.GUI;
 
+import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
 import ElectronicAssetTradingPlatform.GUI.ITAdmin.ITAdminGUI;
 import ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader.OrgUnitMemGUI;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 
@@ -147,7 +149,7 @@ public class GUI extends JFrame {
                 User.checkInputEmpty(usernameIn);
                 User.checkInputEmpty(passwordIn);
                 user = data.retrieveUser(usernameIn);
-            } catch (User.EmptyFieldException | NetworkDataSource.DatabaseException e) {
+            } catch (EmptyFieldException | DatabaseException e) {
                 // Empty input error
                 output = "Username is invalid.";
             }
