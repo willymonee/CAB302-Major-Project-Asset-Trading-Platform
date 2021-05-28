@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
@@ -27,14 +28,14 @@ public class ServerDataTesting {
     }
 
     @Test
-    public void testGetUser() throws SQLException, NetworkDataSource.DatabaseException {
+    public void testGetUser() throws SQLException, DatabaseException {
         OrganisationalUnitMembers user = (OrganisationalUnitMembers) data.retrieveUser("willymon");
 
         System.out.println("Gotten: " + user.getUsername() + user.getPassword() + user.getUserType() + user.getUnitCredits());
     }
 
     @Test
-    public void testStoreUser() throws NetworkDataSource.DatabaseException {
+    public void testStoreUser() throws DatabaseException {
         ITAdmin userStore = new ITAdmin("name", "pass", "salt");
         System.out.println(data.storeUser(userStore));
 
@@ -46,7 +47,7 @@ public class ServerDataTesting {
 
     @Test
     public void testInvalidGetUser() {
-        assertThrows(NetworkDataSource.DatabaseException.class, () -> data.retrieveUser("joe1920c"));
+        assertThrows(DatabaseException.class, () -> data.retrieveUser("joe1920c"));
     }
 
     @Test
@@ -93,7 +94,7 @@ public class ServerDataTesting {
 
                     OrganisationalUnitMembers user = (OrganisationalUnitMembers) data.retrieveUser("willymon");
                     System.out.println("Gotten: " + user.getUsername() + user.getPassword());
-                } catch (NetworkDataSource.DatabaseException e) {
+                } catch (DatabaseException e) {
                     e.printStackTrace();
                 }
                 try {

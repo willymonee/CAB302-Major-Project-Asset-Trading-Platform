@@ -5,6 +5,7 @@ import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 
 import javax.swing.JOptionPane;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 public class NetworkDataSource extends Thread {
@@ -250,7 +252,35 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.UPDATE_ASSETS, quantity, orgName, assetName );
     }
 
-    public class DatabaseException extends Exception {
-        public DatabaseException(String message) { super(message); }
+    /**
+     * Sends command to get the credits of an organisational unit
+     * Returns unit credits
+     *  If an error string was sent instead, throw the error
+     */
+    public float getCredits(String unitName) throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.GET_UNIT_CREDIT, unitName);
+
+        try {
+            return (float) out;
+        }
+        catch (ClassCastException e) {
+            throw new DatabaseException((String) out);
+        }
+    }
+
+    /**
+     * Sends command to get the assets of an organisational unit
+     * Returns unit assets
+     *  If an error string was sent instead, throw the error
+     */
+    public HashMap<String, Integer> getAssets(String unitName) throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.GET_UNIT_ASSETS, unitName);
+
+        try {
+            return (HashMap<String, Integer>) out;
+        }
+        catch (ClassCastException e) {
+            throw new DatabaseException((String) out);
+        }
     }
 }

@@ -1,6 +1,6 @@
 package ElectronicAssetTradingPlatform.Database;
 
-import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
+import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 import ElectronicAssetTradingPlatform.Users.*;
 
 import java.sql.Connection;
@@ -79,9 +79,9 @@ public class UsersDataSource {
      * @param username string username of user to get
      * @return the queried user from the database
      * @throws SQLException Throws database query errors
-     * @throws User.UserTypeException Throws exception when the user type in the database is wrong
+     * @throws UserTypeException Throws exception when the user type in the database is wrong
      */
-    public User getUser(String username) throws SQLException, User.UserTypeException {
+    public User getUser(String username) throws SQLException, UserTypeException {
         // Initialise
         getUserQuery.setString(1, username);
 
@@ -113,7 +113,7 @@ public class UsersDataSource {
             type = UsersFactory.UserType.valueOf(userType);
         }
         catch (IllegalArgumentException e) {
-            throw new User.UserTypeException("Invalid user type in database");
+            throw new UserTypeException("Invalid user type in database");
         }
 
         return UsersFactory.CreateUser(username, passwordHash, salt, unitName, type);
@@ -133,7 +133,7 @@ public class UsersDataSource {
         addUserQuery.setString(4, user.getUserType());
 
         // Get unit ID
-        if (user.getClass() == OrganisationalUnitMembers.class) {
+        if (user.getClass() == OrganisationalUnitMembers.class || user.getClass() == OrganisationalUnitLeader.class) {
             UnitDataSource unitDB = new UnitDataSource();
             String id = unitDB.executeGetUnitID(((OrganisationalUnitMembers) user).getUnitName());
 
@@ -154,7 +154,7 @@ public class UsersDataSource {
      * @param unitName Edited unit of the user
      * @throws SQLException Throws database query errors
      */
-    public void editUser(String username, String userType, String unitName) throws SQLException, User.UserTypeException {
+    public void editUser(String username, String userType, String unitName) throws SQLException, UserTypeException {
         // Check user is in database
         getUser(username);
 
