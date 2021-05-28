@@ -5,6 +5,7 @@ import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +20,6 @@ public class MarketplaceTesting {
     OrganisationalUnitMembers userA;
     OrganisationalUnitMembers userB;
     OrganisationalUnit unit;
-    //static MarketplaceDataSource marketplaceDataSource;
     UnitDataSource unitDataSource;
 
 
@@ -47,36 +47,38 @@ public class MarketplaceTesting {
     @Test
     public void testInsertBuyOffer() {
         // creating a buy offer and adding it into the database through the user
-        //userA.listBuyOrderNoResolve("Table", 1, 1);
+        //userB.listBuyOrderNoResolve("Table", 2, 1);
+
     }
 
     @Test
     public void testInsertSellOffer() {
         // creating a buy offer and adding it into the database through the user
-        //userA.listSellOrderNoResolve("Table", 2, 20);
+
+        //BuyOfferData.getInstance().removeOffer(216);
+
     }
 
     @Test
     public void testRetrieveBuyOffers() {
         // print them out from BuyOfferData
-        System.out.println(BuyOfferData.getInstance());
+        //System.out.println(BuyOfferData.getInstance());
     }
 
     @Test
     public void testRetrieveSellOffers() {
         // print them out from SellOfferData
-        System.out.println(SellOfferData.getInstance());
+        //System.out.println(SellOfferData.getInstance());
     }
 
     @Test
     public void removeBuyOffer() {
         //userA.removeBuyOffer(31);
-
     }
 
     @Test
     public void removeSellOffer() {
-        //userA.removeSellOffer(26);
+        //userA.removeSellOffer(36);
     }
 
     // retrieve buy offers from a user's organisational unit
@@ -94,27 +96,26 @@ public class MarketplaceTesting {
     // list a buy offer and look to resolve it
     @Test
     public void resolveBuyOffer() {
-        //userA.listBuyOrder("Table", 3, 5);
+        //userB.listBuyOrder("Table", 3, 10);
     }
 
     // list a sell offer and look to resolve it
     @Test
     public void resolveSellOffer() {
-         //userA.listSellOrder("Table", 6, 5);
+         userB.listSellOrder("Table", 5, 1);
     }
-
 
 
     // test failing to insert a offer when offer quantity is negative
     @Test
     public void testFailInsertOfferNegativeQuantity() {
-        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", -1, 50));
+        //assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", -1, 50));
     }
 
     // test failing to insert a buy offer when offer price is negative
     @Test
     public void testFailInsertOfferNegativePrice() {
-        assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", 1, -50));
+        //assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", 1, -50));
     }
 
     // test failing to insert a buy offer for an asset not in the system

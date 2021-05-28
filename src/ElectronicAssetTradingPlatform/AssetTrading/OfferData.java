@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 public abstract class OfferData {
     /**
@@ -22,13 +23,23 @@ public abstract class OfferData {
     public abstract String getOrgOffers(String unitName);
 
     /**
+     * Remove an offer from the DB
+     */
+    public void removeOffer(int ID) {
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        dataSource.removeOffer(ID);
+    }
+
+    /**
      * Given a quantity and offer, edit the offer's quantity by that amount
      * @param quantity is the amount you want to change the offer by
      * @param ID is the ID of the offer you want to change the quantity of
      */
     public void updateOfferQuantity(int quantity, int ID) {
-        getOffersFromDB();
-        MarketplaceDataSource.getInstance().updateOfferQuantity(quantity, ID);
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        dataSource.updateOfferQuantity(quantity,ID);
     }
 
     /**
@@ -36,7 +47,9 @@ public abstract class OfferData {
      * @return int of the most recently placed offer ID
      */
     public int getPlacedOfferID() {
-        return MarketplaceDataSource.getInstance().getPlacedOfferID();
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        return dataSource.getPlacedOffer();
     }
 
     /**

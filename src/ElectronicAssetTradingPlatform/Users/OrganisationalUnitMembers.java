@@ -4,6 +4,7 @@ import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -59,11 +60,11 @@ public class OrganisationalUnitMembers extends User {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // add offer into database
-        BuyOfferData.addOffer(offer);
+        BuyOfferData.getInstance().addOffer(offer);
         // retrieve the buy offer's ID from the database and set the buy offer's ID
         int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
-       offer.setOfferID(buyOfferID);
-       // look to resolve the offer
+        offer.setOfferID(buyOfferID);
+        // look to resolve the offer
         offer.resolveOffer();
     }
 
@@ -76,11 +77,16 @@ public class OrganisationalUnitMembers extends User {
     public void listSellOrder(String assetType, int quantity, double price) {
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // using the actual database
-        SellOfferData.addSellOffer(offer);
+        SellOfferData.getInstance().addSellOffer(offer);
         // retrieve the sell offer's ID from the database and set the sell offer's ID
         int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(sellOfferID);
-        // look to resolve the offer
+//        int matchingID = offer.getMatchedPriceOffer();
+//        System.out.println(matchingID);
+//        offer.tradeAssetsAndCredits(matchingID);
+//        //offer.reduceMatchingOfferQuantities(matchingID);
+//
+//        // look to resolve the offer
         offer.resolveOffer();
     }
 
@@ -88,7 +94,7 @@ public class OrganisationalUnitMembers extends User {
     public void listSellOrderNoResolve(String assetType, int quantity, double price) {
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // using the actual database
-        SellOfferData.addSellOffer(offer);
+        SellOfferData.getInstance().addSellOffer(offer);
         // retrieve the sell offer's ID from the database and set the sell offer's ID
         int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(sellOfferID);
@@ -99,7 +105,7 @@ public class OrganisationalUnitMembers extends User {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // add offer into database
-        BuyOfferData.addOffer(offer);
+         BuyOfferData.getInstance().addOffer(offer);
         // retrieve the buy offer's ID from the database and set the buy offer's ID
         int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(buyOfferID);
@@ -111,7 +117,7 @@ public class OrganisationalUnitMembers extends User {
      * @param listingID int ID of asset listing for removal
      */
     public void removeBuyOffer(int listingID) {
-        BuyOfferData.removeOffer(listingID);
+        BuyOfferData.getInstance().removeOffer(listingID);
     }
 
     /**
@@ -120,7 +126,7 @@ public class OrganisationalUnitMembers extends User {
      * @param listingID int ID of asset listing for removal
      */
     public void removeSellOffer(int listingID) {
-        SellOfferData.removeOffer(listingID);
+        SellOfferData.getInstance().removeOffer(listingID);
     }
 
     /**

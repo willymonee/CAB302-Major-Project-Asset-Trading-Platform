@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -10,14 +11,16 @@ import static java.util.Collections.unmodifiableMap;
 
 public class SellOfferData extends OfferData {
     private static TreeMap<Integer, SellOffer> MarketSellOffers = new TreeMap<>();
+    private NetworkDataSource dataSource;
 
-    // database connectivity
-    // private static MarketplaceDataSource marketplaceDataSource = new MarketplaceDataSource();
 
     /**
      * Constructor to initialise the single SellOfferData object - protected to suppress unauthorised calls
      */
-    protected SellOfferData() { }
+    private SellOfferData() {
+        dataSource = new NetworkDataSource();
+        dataSource.run();
+    }
 
     /**
      * SellOfferDataHolder is loaded on the first execution of SellOfferData.getInstance() or the first access to
@@ -38,7 +41,8 @@ public class SellOfferData extends OfferData {
      * Retrieve market sell offers from the database and insert them into the TreeMap
      */
     protected void getOffersFromDB() {
-        TreeMap<Integer, SellOffer> sellOffers = MarketplaceDataSource.getInstance().getSellOffers();
+        TreeMap<Integer, SellOffer> sellOffers = dataSource.getSellOffers();
+        MarketSellOffers.clear();
         for (Map.Entry<Integer, SellOffer> sellOffer : sellOffers.entrySet()) {
             SellOffer nextOffer = sellOffer.getValue();
             MarketSellOffers.put(nextOffer.getOfferID(), nextOffer);
@@ -71,19 +75,12 @@ public class SellOfferData extends OfferData {
         return MarketSellOffers.get(ID);
     }
 
-    /**
-     * Remove an offer from the DB
-     */
-    public static void removeOffer(int ID) {
-        MarketSellOffers.remove(ID);
-        MarketplaceDataSource.getInstance().removeOffer(ID);
-    }
 
     /**
      * Add a sell offer to the DB
      */
-    public static void addSellOffer(SellOffer offer) {
-        MarketplaceDataSource.getInstance().insertSellOffer(offer);
+    public void addSellOffer(SellOffer offer) {
+        dataSource.addSellOffer(offer);
     }
 
 
