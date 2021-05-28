@@ -42,6 +42,16 @@ public class NetworkServer {
      */
     private Connection database;
 
+    /**
+     * Port of the server
+     */
+    private int PORT;
+
+    /**
+     * @return The port number of the server
+     */
+    public int getPort() {return PORT;}
+
 
     // Exception codes: https://sqlite.org/rescode.html
     private static final int UNIQUE_CONSTRAINT_EXCEPTION_CODE = 19;
@@ -54,7 +64,7 @@ public class NetworkServer {
         database = DBConnectivity.getInstance();
 
         HashMap<String, String> file = ReadConfig.readConfigFile();
-        int PORT = ReadConfig.getPort(file);
+        PORT = ReadConfig.getPort(file);
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);

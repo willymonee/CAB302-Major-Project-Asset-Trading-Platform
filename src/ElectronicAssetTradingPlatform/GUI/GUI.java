@@ -46,13 +46,22 @@ public class GUI extends JFrame {
     }
 
     /**
+     * Validates the input is empty or just spaces
+     * @param str Input text field value
+     * @throws EmptyFieldException Throws exception if empty or just spaces
+     */
+    public static void checkInputEmpty(String str) throws EmptyFieldException {
+        if (str == null || str.isBlank()) throw new EmptyFieldException("Invalid input");
+    }
+
+    /**
      * Makes the Create User form
      * @return JPanel of form
      */
     public JPanel loginForm() {
-        JPanel addressPanel = new JPanel();
-        GroupLayout layout = new GroupLayout(addressPanel);
-        addressPanel.setLayout(layout);
+        JPanel panel = new JPanel();
+        GroupLayout layout = new GroupLayout(panel);
+        panel.setLayout(layout);
 
         // Turn on automatically adding gaps between components
         layout.setAutoCreateGaps(true);
@@ -100,7 +109,7 @@ public class GUI extends JFrame {
                 .addComponent(messaging));
         layout.setVerticalGroup(vGroup);
 
-        return addressPanel;
+        return panel;
     }
 
 
@@ -146,8 +155,8 @@ public class GUI extends JFrame {
             String output = "";
             User user = null;
             try {
-                User.checkInputEmpty(usernameIn);
-                User.checkInputEmpty(passwordIn);
+                checkInputEmpty(usernameIn);
+                checkInputEmpty(passwordIn);
                 user = data.retrieveUser(usernameIn);
             } catch (EmptyFieldException | DatabaseException e) {
                 // Empty input error

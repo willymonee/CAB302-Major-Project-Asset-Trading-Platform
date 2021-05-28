@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.GUI.ITAdmin;
 
 import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
+import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 
@@ -140,14 +141,19 @@ class CreateUserGUI extends JFrame {
         private void createUserPressed() {
             String usernameIn = username.getText();
             String unitNameIn = unitName.getText();
-            String userTypeIn = Objects.requireNonNull(userType.getSelectedItem()).toString();
+            UsersFactory.UserType type = (UsersFactory.UserType) userType.getSelectedItem();
+            String userTypeIn = Objects.requireNonNull(type).toString();
 
             // Check inputs are not null
             String output = "";
             try {
-                ITAdmin.checkInputEmpty(usernameIn);
-                ITAdmin.checkInputEmpty(userTypeIn);
-                ITAdmin.checkInputEmpty(userTypeIn);
+                GUI.checkInputEmpty(usernameIn);
+                GUI.checkInputEmpty(userTypeIn);
+
+                if (type == UsersFactory.UserType.OrganisationalUnitMembers ||
+                        type == UsersFactory.UserType.OrganisationalUnitLeader) {
+                    GUI.checkInputEmpty(unitNameIn);
+                }
 
                 User user = loggedInUser.createUser(usernameIn, unitNameIn, userTypeIn);
                 output = data.storeUser(user);

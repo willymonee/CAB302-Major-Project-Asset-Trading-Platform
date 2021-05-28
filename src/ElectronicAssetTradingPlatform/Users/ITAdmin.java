@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
+import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
@@ -38,7 +39,7 @@ public class ITAdmin extends User {
      * @param credits float credits to be initially assigned to the unit
      */
     public OrganisationalUnit createOrganisationalUnit(String name, float credits) throws EmptyFieldException {
-        checkInputEmpty(name);
+        GUI.checkInputEmpty(name);
 
         return new OrganisationalUnit(name, credits);
 
@@ -55,7 +56,7 @@ public class ITAdmin extends User {
      * @param credits int new amou  nt of credits to edit for the organisational unit
      */
     public OrganisationalUnit addOrganisationalUnitCredits(OrganisationalUnit unitName, float credits) throws Exception {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
+        GUI.checkInputEmpty(unitName.getUnitName()); // these might be redundant
 
         unitName.addCredits(credits); // passed by value
 
@@ -74,7 +75,7 @@ public class ITAdmin extends User {
      * @param credits int new amou  nt of credits to edit for the organisational unit
      */
     public OrganisationalUnit removeOrganisationalUnitCredits(OrganisationalUnit unitName, float credits) throws Exception {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
+        GUI.checkInputEmpty(unitName.getUnitName()); // these might be redundant
 
         unitName.removeCredits(credits); // passed by value
 
@@ -93,8 +94,8 @@ public class ITAdmin extends User {
      * @param quantity int quantity of the asset to be changed
      */
     public OrganisationalUnit addOrganisationalUnitAssets(OrganisationalUnit unitName, String assetName, int quantity) throws Exception {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
-        checkInputEmpty(assetName);
+        GUI.checkInputEmpty(unitName.getUnitName()); // these might be redundant
+        GUI.checkInputEmpty(assetName);
 
         unitName.addAsset(assetName, quantity);
 
@@ -110,8 +111,8 @@ public class ITAdmin extends User {
      * @param quantity int quantity of the asset to be changed
      */
     public OrganisationalUnit removeOrganisationalUnitAssets(OrganisationalUnit unitName, String assetName, int quantity) throws Exception {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
-        checkInputEmpty(assetName);
+        GUI.checkInputEmpty(unitName.getUnitName()); // these might be redundant
+        GUI.checkInputEmpty(assetName);
 
         unitName.removeAsset(assetName, quantity);
 
@@ -129,8 +130,8 @@ public class ITAdmin extends User {
      */
     public User createUser(String name, String unitName, String userType) throws UserTypeException, EmptyFieldException {
         // Check valid parameters
-        checkInputEmpty(name);
-        checkInputEmpty(userType);
+        GUI.checkInputEmpty(name);
+        GUI.checkInputEmpty(userType);
 
         // Create password - length 8
         // Hash password
@@ -165,7 +166,7 @@ public class ITAdmin extends User {
      * @param name string name of the asset type to be added to the database
      */
     public Asset createNewAsset(String name) throws EmptyFieldException {
-        checkInputEmpty(name);
+        GUI.checkInputEmpty(name);
 
         return new Asset(name);
 
@@ -179,7 +180,7 @@ public class ITAdmin extends User {
      */
     public User editUser(User user, String userType, String unitName) throws EmptyFieldException, UserTypeException {
         // Check valid input
-        checkInputEmpty(userType);
+        GUI.checkInputEmpty(userType);
 
         // Checks complete - query to update db
         // Clear unit name if IT/SysAdmin
@@ -206,8 +207,8 @@ public class ITAdmin extends User {
      * @param newName the new name for the organisational unit
      */
     public OrganisationalUnit editOrganisationalUnitName(OrganisationalUnit unitName, String newName) throws EmptyFieldException {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
-        checkInputEmpty(newName);
+        GUI.checkInputEmpty(unitName.getUnitName()); // these might be redundant
+        GUI.checkInputEmpty(newName);
 
         unitName.editName(newName);
 
@@ -222,8 +223,8 @@ public class ITAdmin extends User {
      * @param newName the new name for the asset
      */
     public Asset editAssetName(Asset assetName, String newName) throws EmptyFieldException {
-        checkInputEmpty(assetName.getAssetName()); // these might be redundant
-        checkInputEmpty(newName);
+        GUI.checkInputEmpty(assetName.getAssetName()); // these might be redundant
+        GUI.checkInputEmpty(newName);
 
         assetName.editAssetName(newName);
 
