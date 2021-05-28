@@ -3,6 +3,7 @@ package ElectronicAssetTradingPlatform.Server;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 
 import javax.swing.JOptionPane;
@@ -170,18 +171,15 @@ public class NetworkDataSource extends Thread {
      * Sends command for server to edit user
      * Returns error message
      */
-    public String editUser(String username, String userType, String unitName) {
-        String[] object = new String[]{username, userType, unitName};
-        return (String) sendCommand(NetworkCommands.EDIT_USER, object);
-    }
+    public String editUser(User user) { return (String) sendCommand(NetworkCommands.EDIT_USER, user); }
 
     /**
      * Sends command for server to change user password
      * Returns error message
      */
-    public String editPassword(String username, String password, String salt) {
-        String[] strings = new String[]{username, password, salt};
-        return (String) sendCommand(NetworkCommands.EDIT_PASSWORD, strings);
+    public String editPassword(User thisUser) {
+        String str = (String) sendCommand(NetworkCommands.EDIT_PASSWORD, thisUser);
+        return str;
     }
 
     /**

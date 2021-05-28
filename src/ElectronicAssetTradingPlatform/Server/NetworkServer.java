@@ -8,6 +8,7 @@ import ElectronicAssetTradingPlatform.Database.DBConnectivity;
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 
 import java.io.IOException;
@@ -184,11 +185,16 @@ public class NetworkServer {
             }
             case EDIT_USER -> {
                 // Get input
-                String[] editedValues = (String[]) objectInputStream.readObject();
+                User user = (User) objectInputStream.readObject();
 
                 synchronized (database) {
+                    String unitName = null;
+                    try {
+                        unitName = ((OrganisationalUnitMembers) user).getUnitName();
+                    } catch (ClassCastException ignored) {}
+
                     // Save to db
-                    UsersDataSource.getInstance().editUser(editedValues[0], editedValues[1], editedValues[2]);
+                    UsersDataSource.getInstance().editUser(user.getUsername(), user.getUserType(), unitName);
 
                     // Write success output
                     objectOutputStream.writeObject("Edited user.");
@@ -265,11 +271,11 @@ public class NetworkServer {
             }
             case EDIT_PASSWORD -> {
                 // Get input
-                String[] editedValues = (String[]) objectInputStream.readObject();
+                User user = (User) objectInputStream.readObject();
 
                 synchronized (database) {
                     // Save to db
-                    UsersDataSource.getInstance().editUserPassword(editedValues[0], editedValues[1], editedValues[2]);
+                    UsersDataSource.getInstance().editUserPassword(user.getUsername(), user.getPassword(), user.getSalt());
 
                     // Write success output
                     objectOutputStream.writeObject("Password has changed.");

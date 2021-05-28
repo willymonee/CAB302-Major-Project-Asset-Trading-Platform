@@ -36,6 +36,7 @@ public class UsersDataSource {
                 "ON Organisational_Unit_Assets.Asset_ID = Asset_Types.Type_ID " +
             "WHERE Organisational_Units.Name = ?";
 
+
     PreparedStatement getUserQuery;
     PreparedStatement addUserQuery;
     PreparedStatement editUserQuery;
@@ -102,12 +103,10 @@ public class UsersDataSource {
             salt = rs.getString("Salt");
             userType = rs.getString("User_Type");
             unitName = rs.getString("Unit_Name");
-            System.out.println("HI2");
         } finally {
             if (rs != null) rs.close();
         }
 
-        System.out.println("HI3");
         // Try get type
         UsersFactory.UserType type = null;
         try {
