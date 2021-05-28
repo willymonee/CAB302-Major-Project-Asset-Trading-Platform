@@ -75,7 +75,7 @@ public class BuyTabGUI extends JPanel {
 
     // makle return type whatever data is
     private String[][] getRowData() {
-        String[][] data = new String[buyOffers.size()][6];
+        String[][] data = new String[buyOffers.size()][];
         buyOffers = getUnitBuyOffers();
         int count = 0;
         for(Map.Entry<Integer, BuyOffer> entry : buyOffers.entrySet()) {
@@ -84,11 +84,16 @@ public class BuyTabGUI extends JPanel {
             //data.add(key, value.toString());
             //data[count][] = buyOffers.get(key);
 
+            data[count] = new String[] {
+                String.valueOf(value.getOfferID()),
+                value.getAssetName(),
+                String.valueOf(value.getQuantity()),
+                String.valueOf(value.getPricePerUnit()),
+                value.getUsername(),
+                value.getUnitName()
+            };
 
-
-
-
-            System.out.println(entry.getValue());
+//            System.out.println(entry.getValue());
             count++;
         }
         return data;
