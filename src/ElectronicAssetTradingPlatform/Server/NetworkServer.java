@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NetworkServer {
@@ -203,9 +204,9 @@ public class NetworkServer {
                     MarketplaceDataSource.getInstance().insertBuyOffer(offer);
                     // write success output
                     objectOutputStream.writeObject("Added buy offer: " + offer);
-                    System.out.println("Wrote to socket: " + socket.toString());
-
                 }
+                objectOutputStream.flush();
+                System.out.println("Wrote to socket: " + socket.toString());
 
             }
             case ADD_SELL_OFFER -> {
@@ -215,22 +216,24 @@ public class NetworkServer {
                     MarketplaceDataSource.getInstance().insertSellOffer(offer);
                     // write success output
                     objectOutputStream.writeObject("Added buy offer: " + offer);
-                    System.out.println("Wrote to socket: " + socket.toString());
-
                 }
+                objectOutputStream.flush();
+                System.out.println("Wrote to socket: " + socket.toString());
             }
             case REMOVE_OFFER -> {
                 int ID = (int) objectInputStream.readObject();
                 synchronized (database) {
                     // remove offer from DB
                     MarketplaceDataSource.getInstance().removeOffer(ID);
-                    objectOutputStream.writeObject("Removed offer: #" + ID);
+                    objectOutputStream.writeObject("Removed offer");
                 }
-                System.out.println("Wrote to socket:" + socket.toString());
+                objectOutputStream.flush();
+                System.out.println("Removed offer on behalf of client");
             }
             case GET_BUY_OFFERS -> {
                 synchronized (database) {
-                    objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getBuyOffers());
+                    final TreeMap<Integer, BuyOffer> buyOffers = (TreeMap<Integer, BuyOffer>) MarketplaceDataSource.getInstance().getBuyOffers();
+                    objectOutputStream.writeObject(buyOffers);
                 }
                 objectOutputStream.flush();
                 System.out.println("Retrieved buy offers and sent to client" + socket.toString());
@@ -245,7 +248,6 @@ public class NetworkServer {
             case GET_PLACED_OFFER -> {
                 synchronized (database) {
                     objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getPlacedOfferID());
-
                 }
                 objectOutputStream.flush();
                 System.out.println("Retrieved placed offer ID and sent to client");
@@ -256,8 +258,9 @@ public class NetworkServer {
                 synchronized (database) {
                     MarketplaceDataSource.getInstance().open();
                     MarketplaceDataSource.getInstance().updateOfferQuantity(newQuantity ,ID);
+                    objectOutputStream.writeObject("Updated offer quantity");
                 }
-                objectOutputStream.writeObject("Updated offer quantity");
+                objectOutputStream.flush();
                 System.out.println("Updated offer quantity on behalf of client");
             }
             case EDIT_PASSWORD -> {
@@ -279,8 +282,10 @@ public class NetworkServer {
                 synchronized (database) {
                     UnitDataSource unitDataSource = new UnitDataSource();
                     unitDataSource.updateUnitCredits((float) credits, orgName);
+                    objectOutputStream.writeObject("Updated unit credits");
                 }
-                objectOutputStream.writeObject("Updated unit credits");
+                objectOutputStream.flush();
+
                 System.out.println("Updated unit credits");
             }
             case UPDATE_ASSETS -> {
@@ -290,8 +295,9 @@ public class NetworkServer {
                 synchronized (database) {
                     UnitDataSource unitDataSource = new UnitDataSource();
                     unitDataSource.updateUnitAssets(quantity, orgName, assetName);
+                    objectOutputStream.writeObject("Updated org assets");
                 }
-                objectOutputStream.writeObject("Updated org assets");
+                objectOutputStream.flush();
                 System.out.println("Updated org assets");
             }
 

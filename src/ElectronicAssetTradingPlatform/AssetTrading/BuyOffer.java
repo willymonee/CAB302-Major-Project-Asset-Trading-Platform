@@ -68,7 +68,7 @@ public class BuyOffer extends Offer  {
      *
      * @return int of the sell offer OR 0 if no sell offer was found with a matching price and asset name
      */
-    public int getMatchedPriceOffer() {
+    private int getMatchedPriceOffer() {
         ArrayList<SellOffer> matchingSellOffers = getMatchingSellOffers();
         double buyOfferPrice = getPricePerUnit();
         Iterator<SellOffer> sellOffersIter = matchingSellOffers.iterator();
@@ -104,7 +104,7 @@ public class BuyOffer extends Offer  {
      * Takes a matching sell offer ID and compares it to the buy offer
      * Then it reduces the 'quantities' of both offers
      */
-    public void reduceMatchingOfferQuantities(int matchingID) {
+    private void reduceMatchingOfferQuantities(int matchingID) {
         if (isMatching(matchingID)) {
             SellOffer matchingSellOffer = SellOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = matchingSellOffer.getQuantity();
@@ -140,7 +140,7 @@ public class BuyOffer extends Offer  {
     /**
      * Remove credits from the buy org and add credits the sell org
      */
-    public void tradeCredits(double credit, String sellOrgName) {
+    private void tradeCredits(double credit, String sellOrgName) {
         NetworkDataSource dataSource = new NetworkDataSource();
         dataSource.run();
         // increase credits of sell org
@@ -156,9 +156,9 @@ public class BuyOffer extends Offer  {
     private void tradeAssets(int quantity, SellOffer sellOffer)  {
         NetworkDataSource dataSource = new NetworkDataSource();
         dataSource.run();
-        // remove assets for a unit
+        // add assets to the buy unit
         dataSource.editAssets(quantity, this.getUnitName(), this.getAssetName());
-        // add assets to a unit
+        // remove assets from the sell unit
         dataSource.editAssets(-(quantity), sellOffer.getUnitName(), sellOffer.getAssetName());
     }
 
@@ -167,7 +167,7 @@ public class BuyOffer extends Offer  {
      * @param matchingID - ID of the matching sell offer
      *
      */
-    public void tradeAssetsAndCredits(int matchingID)  {
+    private void tradeAssetsAndCredits(int matchingID)  {
         if (isMatching(matchingID)) {
             SellOffer matchingSellOffer = SellOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = matchingSellOffer.getQuantity();
@@ -199,23 +199,16 @@ public class BuyOffer extends Offer  {
         boolean buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
         int matchingID = getMatchedPriceOffer();
         while (isMatching(matchingID) && buyOfferNotResolved) {
-
             matchingID = getMatchedPriceOffer();
             // trade assets and credits of the matching offers
             tradeAssetsAndCredits(matchingID);
             // edit the quantity of the offers
             reduceMatchingOfferQuantities(matchingID);
             // probably create a match offer history here whenever assets are traded @Daniel
-
             // check if offer has been fully resolved
             buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
             System.out.println("Matching offer" + matchingID);
             System.out.println(buyOfferNotResolved);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

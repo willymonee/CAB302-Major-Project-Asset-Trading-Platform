@@ -54,7 +54,9 @@ public class MarketplaceTesting {
     @Test
     public void testInsertSellOffer() {
         // creating a buy offer and adding it into the database through the user
-        //userB.listSellOrderNoResolve("Table", 2, 20);
+
+        //BuyOfferData.getInstance().removeOffer(216);
+
     }
 
     @Test
@@ -94,20 +96,13 @@ public class MarketplaceTesting {
     // list a buy offer and look to resolve it
     @Test
     public void resolveBuyOffer() {
-        //BuyOfferData.getInstance().updateOfferQuantity(1, 32);
-        //BuyOfferData.getInstance().updateOfferQuantity(3, 45);
-        userA.listBuyOrder("Table", 2, 25);
-        //userB.listSellOrderNoResolve("Table", 2, 25);
-
-
-        //SellOfferData.getInstance().removeOffer(228);
-        //System.out.println(SellOfferData.getInstance());
+        //userB.listBuyOrder("Table", 3, 10);
     }
 
     // list a sell offer and look to resolve it
     @Test
     public void resolveSellOffer() {
-         //userA.listSellOrder("Table", 6, 5);
+         userB.listSellOrder("Table", 5, 1);
     }
 
 

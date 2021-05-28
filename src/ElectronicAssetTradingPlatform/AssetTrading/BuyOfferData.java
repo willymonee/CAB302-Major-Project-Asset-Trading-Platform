@@ -46,6 +46,7 @@ public class BuyOfferData extends OfferData {
     protected void getOffersFromDB() {
         // TreeMap<Integer, BuyOffer> buyOffers = MarketplaceDataSource.getInstance().getBuyOffers();
         TreeMap<Integer, BuyOffer> buyOffers = dataSource.getBuyOffers();
+        MarketBuyOffers.clear();
         for (Map.Entry<Integer, BuyOffer> buyOffer : buyOffers.entrySet()) {
             BuyOffer nextOffer = buyOffer.getValue();
             MarketBuyOffers.put(nextOffer.getOfferID(), nextOffer);

@@ -71,7 +71,7 @@ public class MarketplaceDataSource {
     public void removeOffer(int offerID) {
         try {
             removeOffer.setInt(1, offerID);
-            removeOffer.execute();
+            removeOffer.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

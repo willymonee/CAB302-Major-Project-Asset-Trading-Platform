@@ -65,7 +65,7 @@ public class SellOffer extends Offer {
      *
      * @return int of the buy offer, int >= 0
      */
-    private int getMatchedPriceOffer() {
+    public int getMatchedPriceOffer() {
         ArrayList<BuyOffer> matchingBuyOffers = matchingBuyOffers();
         double sellOfferPrice = getPricePerUnit();
         Iterator<BuyOffer> buyOffersIter = matchingBuyOffers.iterator();
@@ -93,11 +93,15 @@ public class SellOffer extends Offer {
      * Takes a matching buy offer ID and compares it to the sell offer
      * Then it reduces the 'quantities' of both offers
      */
-    private void reduceMatchingOfferQuantities(int matchingID) {
+    public void reduceMatchingOfferQuantities(int matchingID) {
+        System.out.println("Before is matching");
         if (isMatching(matchingID)) {
+            System.out.println("Matching ID:" + matchingID);
             BuyOffer matchingBuyOffer = BuyOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = this.getQuantity();
             int buyOfferQuantity = matchingBuyOffer.getQuantity();
+            System.out.println("Sell Offer Quantity:" + sellOfferQuantity);
+            System.out.println("Buy Offer Quantity:" + buyOfferQuantity);
             // if the quantity of buy and sell offers are equal remove them both from the DB
             if (sellOfferQuantity == buyOfferQuantity) {
                 BuyOfferData.getInstance().removeOffer(this.getOfferID());
@@ -144,16 +148,10 @@ public class SellOffer extends Offer {
      * @param quantity quantity to be added to the buy org and removed from the sell org
      */
     private void tradeAssets(int quantity, BuyOffer buyOffer)  {
-        UnitDataSource unitDataSource = new UnitDataSource();
-        try {
-            int sellOrgID  = Integer.parseInt(unitDataSource.executeGetUnitID(this.getUnitName()));
-            int buyOrgID = Integer.parseInt(unitDataSource.executeGetUnitID(buyOffer.getUnitName()));
-            int assetID = unitDataSource.executeGetAssetID(this.getAssetName());
-            unitDataSource.updateUnitAssets(quantity, buyOrgID, assetID);
-            unitDataSource.updateUnitAssets(-(quantity), sellOrgID, assetID);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        dataSource.editAssets(-(quantity), this.getUnitName(), this.getAssetName());
+        dataSource.editAssets(quantity, buyOffer.getUnitName(), buyOffer.getAssetName());
     }
 
     /**
@@ -192,7 +190,6 @@ public class SellOffer extends Offer {
         boolean sellOfferNotResolved = SellOfferData.getInstance().offerExists(this.getOfferID());
         int matchingID = getMatchedPriceOffer();
         while (isMatching(matchingID) && sellOfferNotResolved) {
-
             matchingID = getMatchedPriceOffer();
             // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
             tradeAssetsAndCredits(matchingID);
