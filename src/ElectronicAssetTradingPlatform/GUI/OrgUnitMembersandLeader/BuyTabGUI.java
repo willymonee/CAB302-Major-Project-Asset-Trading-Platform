@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -29,9 +30,9 @@ public class BuyTabGUI extends JPanel {
         data = dataSource;
 
         memberTextDisplay();
+        getRowData();
+        this.add(unitBuyOffersTable());
 
-        getUnitBuyOffers();
-        System.out.println(buyOffers.size());
     }
 
     private void memberTextDisplay() {
@@ -49,8 +50,48 @@ public class BuyTabGUI extends JPanel {
     }
 
     private TreeMap<Integer, BuyOffer> getUnitBuyOffers() {
+        buyOffers = null;
         buyOffers = BuyOfferData.getInstance().getOrgOffersMap(loggedInMember.getUnitName());
         return buyOffers;
+
+    }
+
+    // TODO : REMOVE ORG UNIT AS A COLUMN, AND ISNTEAD HAVE A BUTTON TO EDIT THE ASSET OFFER LISTING
+    private JTable unitBuyOffersTable() {
+        //ArrayList<String> dataArrayList = getRowData();
+        String data[][] = { {"101","Amit","670000", "a", "a", "a"},
+                            {"101","Sachin","700000", "a", "a", "a"}};
+
+        // covnert to String[]
+        //String[] dataRows = new String[dataArrayList.size()];
+        //dataRows = dataArrayList.toArray(dataRows);
+
+
+        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price per unit", "Offer Creator", "Org Unit"};
+        JTable buyOffersTable = new JTable(data, columns);
+
+        return buyOffersTable;
+    }
+
+    // makle return type whatever data is
+    private String[][] getRowData() {
+        String[][] data = new String[buyOffers.size()][6];
+        buyOffers = getUnitBuyOffers();
+        int count = 0;
+        for(Map.Entry<Integer, BuyOffer> entry : buyOffers.entrySet()) {
+            Integer key = entry.getKey();
+            BuyOffer value = entry.getValue();
+            //data.add(key, value.toString());
+            //data[count][] = buyOffers.get(key);
+
+
+
+
+
+            System.out.println(entry.getValue());
+            count++;
+        }
+        return data;
 
     }
 

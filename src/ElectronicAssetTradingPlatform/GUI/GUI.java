@@ -2,7 +2,7 @@ package ElectronicAssetTradingPlatform.GUI;
 
 import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
 import ElectronicAssetTradingPlatform.GUI.ITAdmin.ITAdminGUI;
-import ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader.OrgUnitMemGUI;
+import ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader.*;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
