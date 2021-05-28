@@ -114,7 +114,7 @@ public class BuyOfferData extends OfferData {
     /**
      * Return the buy offers of an organisational unit as a TreeMap
      */
-    private TreeMap<Integer, BuyOffer> getOrgOffersMap(String unitName) {
+    public TreeMap<Integer, BuyOffer> getOrgOffersMap(String unitName) {
         getOffersFromDB();
         TreeMap<Integer, BuyOffer> orgOffers = new TreeMap<>();
         for (Map.Entry<Integer, BuyOffer> buyOffer : MarketBuyOffers.entrySet()) {

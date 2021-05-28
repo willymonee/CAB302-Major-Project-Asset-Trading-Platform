@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.GUI;
 
 import ElectronicAssetTradingPlatform.GUI.ITAdmin.ITAdminGUI;
+import ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader.OrgUnitMemGUI;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
@@ -106,7 +107,7 @@ public class GUI extends JFrame {
     }
 
     public void memberGUI(OrganisationalUnitMembers member) {
-
+        new OrgUnitMemGUI(member, data);
     }
 
     public void memberGUI(OrganisationalUnitLeader member) {

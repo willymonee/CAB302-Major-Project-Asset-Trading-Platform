@@ -11,8 +11,8 @@ import java.awt.event.WindowEvent;
 
 public class OrgUnitMemGUI extends JFrame {
 
-    public static final int WIDTH = 300;
-    public static final int HEIGHT = 200;
+    public static final int WIDTH = 600;
+    public static final int HEIGHT = 800;
     final static int extraWindowWidth = 100;
 
     private final static String buyTab = "BUY";
@@ -24,10 +24,6 @@ public class OrgUnitMemGUI extends JFrame {
     OrganisationalUnitMembers loggedInUser;
     NetworkDataSource data;
 
-    private JTabbedPane goToBuyMenu;
-    private JTabbedPane goToSellMenu;
-    private JTabbedPane goToOrgUnitMenu;
-    private JTabbedPane goToAccountMenu;
 
     /**
      * Creates Organisational Unit Member Main Menu
@@ -35,17 +31,15 @@ public class OrgUnitMemGUI extends JFrame {
      * @param dataSource the server connection
      */
 
-    // params OrganisationalUnitMembers user, NetworkDataSource dataSource
-    public OrgUnitMemGUI() {
-        //data = dataSource;
-        //loggedInUser = user;
-
+    public OrgUnitMemGUI(OrganisationalUnitMembers user, NetworkDataSource dataSource) {
+        data = dataSource;
+        loggedInUser = user;
         initUI();
 
         // Button listeners
         addWindowListener(new ClosingListener());
 
-        setTitle("Test Title");
+        setTitle("Member/Leader Menu");
         setMinimumSize(new Dimension(WIDTH, HEIGHT));
         pack();
         setVisible(true);
@@ -58,36 +52,21 @@ public class OrgUnitMemGUI extends JFrame {
     private void initUI() {
         Container contentPane = this.getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-        contentPane.add(Box.createVerticalStrut(20));
-        contentPane.add(buttonPanel());
+        contentPane.add(tabMenuPane());
     }
 
-    private JTabbedPane buttonPanel() {
+    private JTabbedPane tabMenuPane() {
         JTabbedPane menuTabs = new JTabbedPane();
-        //CardLayout buttonLayout = new CardLayout();
-        //displayPanel.setLayout(buttonLayout);
 
-
-        // BuyTabGUi buyCard = new BuyTabGUI();
-        JPanel buyCard = new JPanel() {
-
-            public Dimension getSize() {
-                Dimension size = super.getSize();
-                size.width += extraWindowWidth;
-                return size;
-            }
-
-        };
-
-        JPanel sellCard = new JPanel();
-        JPanel orgUnitCard = new JPanel();
-        JPanel accountCard = new JPanel();
+        BuyTabGUI buyCard = new BuyTabGUI(loggedInUser);
+        SellTabGUI sellCard = new SellTabGUI(loggedInUser);
+        OrgUnitTabGUI orgUnitCard = new OrgUnitTabGUI(loggedInUser);
+        AccountTabGUI accountCard = new AccountTabGUI(loggedInUser);
 
         menuTabs.add("BUY", buyCard);
         menuTabs.add("SELL", sellCard);
         menuTabs.add("ORG UNIT", orgUnitCard);
         menuTabs.add("ACCOUNT", accountCard);
-
 
         return menuTabs;
     }
@@ -100,7 +79,7 @@ public class OrgUnitMemGUI extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new OrgUnitMemGUI();
+                //new OrgUnitMemGUI();
             }
         });
         JFrame.setDefaultLookAndFeelDecorated(true);
