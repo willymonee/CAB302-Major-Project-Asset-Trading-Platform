@@ -126,7 +126,7 @@ public class GUI extends JFrame {
     }
 
     public void systemAdminGUI(SystemsAdmin user) {
-
+        new SystemsAdminGUI();
     }
 
     /**
