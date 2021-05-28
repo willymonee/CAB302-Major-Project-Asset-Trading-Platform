@@ -1,5 +1,7 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
+import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
+import ElectronicAssetTradingPlatform.Exceptions.MissingAssetException;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -8,19 +10,18 @@ import java.util.TreeMap;
  * Class for the organisational units which are individual departments in the organisation e.g. Human Resources or
  * Management or Public Relations etc.
  * These are the organisational units in which the users will belong in, and will use their unit's assets and credits
- * to perform exchanges on this platform
+ * to perform exchanges on this platform.
  */
-
 public class OrganisationalUnit {
     private String name;
     private double credits;
     private Map<String,Integer> assetsOwned;
 
     /**
-     * Constructor for an organisational unit
+     * Constructor for an organisational unit that sets the constructor's parameter's into the local storage.
      *
-     * @param name The organisational unit's name
-     * @param credits The number of credits the organisational unit starts with/currently owns when created
+     * @param name A string name of the organisational unit to be initialised
+     * @param credits A float amount of total credits the organisational unit is to be initialised with
      */
     public OrganisationalUnit(String name, float credits) {
         this.name = name;
@@ -29,31 +30,25 @@ public class OrganisationalUnit {
     }
 
     /**
-     * Given an integer of credits, add this onto the existing amount of credits an organisational unit owns
-     * However, cannot reduce credits by more than the organisational unit owns (can't go negative)
-     * This is the base helper function for all other methods elsewhere which add/subtract organisational unit credits
-     * [M]
+     * Adds a given amount of credits onto the existing credits that the organisational unit already has.
      *
-     * @param credits float amount of credits to add (positive int) or remove (negative int)
-     *
+     * @param credits A float amount of credits to add to the existing credits of the organisational unit
      */
     public void addCredits(float credits){
         this.credits += credits;
     }
 
     /**
-     * Given an integer of credits, add this onto the existing amount of credits an organisational unit owns
-     * However, cannot reduce credits by more than the organisational unit owns (can't go negative)
-     * This is the base helper function for all other methods elsewhere which add/subtract organisational unit credits
-     * [M]
+     * Removes a given amount of credits from the existing credits that the organisational unit owns.
      *
-     * @param credits float amount of credits to add (positive int) or remove (negative int)
+     * @param credits A float amount of credits to be removed from the organisational unit
      *
-     * @throws Exception exception handling so that net credits cannot be less than zero
+     * @throws LessThanZeroException An exception to handle the total amount of credits of the organisational unit
+     *                               being less than zero disallowing the given amount of credits to be removed
      */
-    public void removeCredits(float credits) throws Exception {
+    public void removeCredits(float credits) throws LessThanZeroException {
         if (this.credits + credits < 0) {
-            throw new Exception("Cannot remove more credits than there actually are!");
+            throw new LessThanZeroException("Cannot remove more credits than owned... ");
         }
         else {
             this.credits -= credits;
@@ -61,79 +56,95 @@ public class OrganisationalUnit {
     }
 
     /**
-     * Given an existing asset object (has been created by IT admins)
-     * and a quantity of the asset in integers, add the asset name as the key and quantity as
-     * the value into the organisationalUnitAssets' TreeMap collection IF the organisation does not own any amount of
-     * the asset yet.
-     * Otherwise, add onto the existing quantity value in the TreeMap
-     * [M]
+     * Given a name and an amount to add, an asset will be added to the organisational unit's assets owned collection.
+     * If the organisational unit already owns the specified asset, the quantity to add will be added onto the
+     * currently existing total amount of that asset, otherwise a new asset with the specified amount will be added.
      *
-     * @param assetName Asset object which an organisational unit owns/going to own
-     * @param quantityToAdd Number of that particular asset to be added (must be greater than 0)
-     *
+     * @param assetName A string name of the asset/s to be added or added to
+     * @param amountToAdd An integer amount of assets to add to the asset
      */
-    public void addAsset(String assetName, int quantityToAdd) {
-        assetsOwned.put(assetName, assetsOwned.getOrDefault(assetName, 0) + quantityToAdd);
+    public void addAsset(String assetName, int amountToAdd) {
+        assetsOwned.put(assetName, assetsOwned.getOrDefault(assetName, 0) + amountToAdd);
     }
 
     /**
-     * Given an existing asset object (has been created by IT admins) and a quantity of the asset in integers,
-     * reduce the quantity of the asset owned in the organisationalUnitAssets' TreeMap collection, where the asset name
-     * is the Key and quantity is the Value.
-     * [M]
+     * Given a name and an amount to remove, the asset will be removed from the organisational unit's assets owned
+     * collection. If the asset to be removed is not found to be owned by the organisational unit, then an exception
+     * will be thrown detailing that. If the organisational unit does not own more assets than the amount of assets to
+     * be removed, then an exception will be also be thrown detailing this. If the amount of assets to be removed is
+     * equal to the amount the organisational unit currently owns, then the asset will be completely removed from the
+     * organisational unit meaning they will no longer own any quantities of this asset.
      *
+     * @param assetName A string name of the asset/s to be removed
+     * @param amountToRemove An integer amount of assets to be removed from the asset or be completely removed
      *
-     * The asset name should be unique and the quantity removed should not reduce the asset below zero
-     *
-     * @param assetName String asset which an organisational unit owns
-     * @param quantityToRemove Number of that particular asset to be removed (must be less than number owned currently)
-     *
-     * @throws Exception // not enough assets owned to be removed
-     * @throws Exception // organisational unit does not have the asset (cannot remove asset that is not owned)
+     * @throws MissingAssetException An exception to handle the event that the queried asset name is not currently
+     *                               owned by the organisational unit
+     * @throws LessThanZeroException An exception to handle the removal of more assets than the organisational unit
+     *                               currently owns
      */
 
-    public void removeAsset(String assetName, int quantityToRemove) throws Exception { // TODO: MAKE EXCEPTION FILE FOR THIS
+    public void removeAsset(String assetName, int amountToRemove) throws MissingAssetException, LessThanZeroException {
         int currentQuantity;
 
         try {
             currentQuantity = assetsOwned.get(assetName);
-
         }
         catch (NullPointerException NPE) {
-            throw new Exception("ASSET DOES NOT EXIST HELLO? "); // TODO: THROW NEW EXCEPTION FOR THIS FROM MADE EXCEPTIONS
+            throw new MissingAssetException("This does not exist or is currently not owned by this organisational " +
+                                            "unit... ");
         }
 
-        if (currentQuantity > quantityToRemove) {
-            assetsOwned.put(assetName, currentQuantity - quantityToRemove);
+        if (currentQuantity > amountToRemove) {
+            assetsOwned.put(assetName, currentQuantity - amountToRemove);
         }
-        else if (quantityToRemove == currentQuantity) {
+        else if (amountToRemove == currentQuantity) {
             assetsOwned.remove(assetName);
         }
         else {
-            throw new Exception("Cannot remove more assets that owned!"); // TODO ADD EXCEPTION WHEN MADE
+            throw new LessThanZeroException("Cannot remove more assets that owned!"); // MAKE NEW EXCEPTION
         }
 
     }
 
+    /**
+     * A setter function to edit the name of the organisational unit.
+     *
+     * @param name A string name to change the organisational unit's name to
+     */
     public void editName(String name) {
         this.name = name;
     }
 
+    /**
+     * A method to remove all the assets that the organisational unit currently owns.
+     */
     public void removeAllAssets() {
         assetsOwned.clear();
     }
 
+    /**
+     * A getter function to retrieve and return the total amount of credits the organisational unit currently owns.
+     *
+     * @return The total amount of credits that the organisational unit owns
+     */
     public double getCredits() {
         return credits;
     }
 
+    /**
+     * A getter function that retrieves and returns the name of the organisational unit.
+     *
+     * @return The name of the organisational unit
+     */
     public String getUnitName() {
         return name;
     }
 
     /**
-     * Getter for the assetsOwned field
-     * @return A map of the asset_name and quantity for this unit's assets
+     * A getter function for retrieving and returning all the assets that the organisational unit currently owns.
+     *
+     * @return A map containing all the assets and their amounts in which this organisational unit currently owns
      */
     public Map<String, Integer> getAssetsOwned() {
         return assetsOwned;
