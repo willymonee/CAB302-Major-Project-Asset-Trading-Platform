@@ -1,9 +1,9 @@
 package ElectronicAssetTradingPlatform.GUI.ITAdmin;
 
+import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
-import ElectronicAssetTradingPlatform.Users.ITAdmin;
-import ElectronicAssetTradingPlatform.Users.User;
-import ElectronicAssetTradingPlatform.Users.UsersFactory;
+import ElectronicAssetTradingPlatform.Users.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -147,10 +147,11 @@ class CreateUserGUI extends JFrame {
             try {
                 ITAdmin.checkInputEmpty(usernameIn);
                 ITAdmin.checkInputEmpty(userTypeIn);
+                ITAdmin.checkInputEmpty(userTypeIn);
 
                 User user = loggedInUser.createUser(usernameIn, unitNameIn, userTypeIn);
                 output = data.storeUser(user);
-            } catch (User.EmptyFieldException | User.UserTypeException e) {
+            } catch (EmptyFieldException | UserTypeException e) {
                 // Empty input error
                 output = "Input is empty or invalid, please enter correct details into all fields.";
             }

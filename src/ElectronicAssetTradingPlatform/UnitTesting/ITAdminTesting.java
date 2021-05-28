@@ -1,15 +1,13 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
-import ElectronicAssetTradingPlatform.Database.ETPDataSource;
-import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.Users.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
-
-import java.sql.SQLException;
 
 public class ITAdminTesting {
     // Exception codes: https://sqlite.org/rescode.html
@@ -37,15 +35,15 @@ public class ITAdminTesting {
     // Create new users tests
     @Test
     public void emptyName() {
-        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser("", "", "ITAdmin"));
-        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser(" ", "", "ITAdmin"));
-        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser(null, "", "ITAdmin"));
+        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser("", "", "ITAdmin"));
+        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser(" ", "", "ITAdmin"));
+        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser(null, "", "ITAdmin"));
     }
     @Test
     public void invalidUserType() {
-        assertThrows(User.UserTypeException.class, () -> itAdmin.createUser("bob", "", "asd"));
-        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser("bob", "", ""));
-        assertThrows(User.EmptyFieldException.class, () -> itAdmin.createUser("bob", "", null));
+        assertThrows(UserTypeException.class, () -> itAdmin.createUser("bob", "", "asd"));
+        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser("bob", "", ""));
+        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser("bob", "", null));
     }
     @Test
     public void validITAdmin() throws Exception {

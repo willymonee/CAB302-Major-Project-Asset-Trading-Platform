@@ -4,11 +4,10 @@ import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.Users.ITAdmin;
-import ElectronicAssetTradingPlatform.Users.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.AfterClass;
+import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -43,7 +42,7 @@ public class UserTesting {
         ITAdmin adminGuy = null;
         try {
             adminGuy = (ITAdmin) UsersDataSource.getInstance().getUser("adminGuy");
-        } catch (SQLException | User.UserTypeException e) {
+        } catch (SQLException | UserTypeException e) {
             e.printStackTrace();
             assert false;
         }

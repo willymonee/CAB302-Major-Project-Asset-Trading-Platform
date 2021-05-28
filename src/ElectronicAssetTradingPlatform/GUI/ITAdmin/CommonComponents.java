@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.GUI.ITAdmin;
 
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
@@ -33,6 +34,6 @@ public class CommonComponents {
             pane.add(table);
 
             JOptionPane.showMessageDialog(null, pane);
-        } catch (NetworkDataSource.DatabaseException ignore) {}
+        } catch (DatabaseException ignore) {}
     }
 }

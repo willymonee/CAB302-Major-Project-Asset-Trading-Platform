@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.Users;
 
+import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 
 import java.io.Serializable;
@@ -57,24 +58,6 @@ public class User implements Serializable {
     public String getSalt() {return salt;}
     public String getUserType() {return userType;}
 
-
-    /**
-     * Exception for when an inputed user type is invalid
-     */
-    public static class UserTypeException extends Exception {
-        public UserTypeException(String message) {
-            super(message);
-        }
-    }
-
-    /**
-     * Exception for when any mandatory input is empty
-     */
-    public static class EmptyFieldException extends Exception {
-        public EmptyFieldException(String message) {
-            super(message);
-        }
-    }
 
     public static void checkInputEmpty(String str) throws EmptyFieldException {
         if (str == null || str.isBlank()) throw new EmptyFieldException("Invalid input"); // Temporary - add custom exception later
