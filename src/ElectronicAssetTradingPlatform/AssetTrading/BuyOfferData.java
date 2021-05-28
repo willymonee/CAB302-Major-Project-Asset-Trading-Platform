@@ -127,6 +127,21 @@ public class BuyOfferData extends OfferData {
     }
 
     /**
+     * Return the buy offers of a queried asset as a treemap
+     */
+    public TreeMap<Integer, BuyOffer> getAssetOffers(String assetName) {
+        getOffersFromDB();
+        TreeMap<Integer, BuyOffer> assetOffers = new TreeMap<>();
+        for (Map.Entry<Integer, BuyOffer> buyOffer : MarketBuyOffers.entrySet()) {
+            String buyOfferAssetName = buyOffer.getValue().getAssetName();
+            if (sameOrgUnitName(assetName, buyOfferAssetName )) {
+                assetOffers.put(buyOffer.getKey(), buyOffer.getValue());
+            }
+        }
+        return assetOffers;
+    }
+
+    /**
      * Retrieve buy offers made by a particular organisation as a string
      */
     @Override

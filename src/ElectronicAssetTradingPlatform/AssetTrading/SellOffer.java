@@ -94,14 +94,10 @@ public class SellOffer extends Offer {
      * Then it reduces the 'quantities' of both offers
      */
     public void reduceMatchingOfferQuantities(int matchingID) {
-        System.out.println("Before is matching");
         if (isMatching(matchingID)) {
-            System.out.println("Matching ID:" + matchingID);
             BuyOffer matchingBuyOffer = BuyOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = this.getQuantity();
             int buyOfferQuantity = matchingBuyOffer.getQuantity();
-            System.out.println("Sell Offer Quantity:" + sellOfferQuantity);
-            System.out.println("Buy Offer Quantity:" + buyOfferQuantity);
             // if the quantity of buy and sell offers are equal remove them both from the DB
             if (sellOfferQuantity == buyOfferQuantity) {
                 BuyOfferData.getInstance().removeOffer(this.getOfferID());

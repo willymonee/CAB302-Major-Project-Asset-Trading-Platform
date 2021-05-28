@@ -106,12 +106,27 @@ public class SellOfferData extends OfferData {
     /**
      * Return the sell offers of an organisational unit as a TreeMap
      */
-    private TreeMap<Integer, SellOffer> getOrgOffersMap(String unitName) {
+    public TreeMap<Integer, SellOffer> getOrgOffersMap(String unitName) {
         getOffersFromDB();
         TreeMap<Integer, SellOffer> orgOffers = new TreeMap<>();
         for (Map.Entry<Integer, SellOffer> sellOffer : MarketSellOffers.entrySet()) {
             String sellOfferUnitName = sellOffer.getValue().getUnitName();
             if (sameOrgUnitName(unitName, sellOfferUnitName)) {
+                orgOffers.put(sellOffer.getKey(), sellOffer.getValue());
+            }
+        }
+        return orgOffers;
+    }
+
+    /**
+     * Return the sell offers of a particular asset as a TreeMap
+     */
+    public TreeMap<Integer, SellOffer> getAssetOffers(String assetName) {
+        getOffersFromDB();
+        TreeMap<Integer, SellOffer> orgOffers = new TreeMap<>();
+        for (Map.Entry<Integer, SellOffer> sellOffer : MarketSellOffers.entrySet()) {
+            String sellOfferAssetName = sellOffer.getValue().getAssetName();
+            if (sameOrgUnitName(assetName, sellOfferAssetName)) {
                 orgOffers.put(sellOffer.getKey(), sellOffer.getValue());
             }
         }

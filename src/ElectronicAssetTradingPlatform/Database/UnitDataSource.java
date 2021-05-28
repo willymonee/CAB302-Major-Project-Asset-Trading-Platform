@@ -82,12 +82,11 @@ public class UnitDataSource {
         }
     }
 
-    public void updateUnitAssets(int quantity, int unitID,int assetID ) {
+    public void updateUnitCredits(float credits, int ID) {
         try {
-            updateUnitAssets.setInt(1, quantity);
-            updateUnitAssets.setInt(2, unitID);
-            updateUnitAssets.setInt(3, assetID);
-            updateUnitAssets.executeUpdate();
+            updateUnitCredits.setFloat(1, credits);
+            updateUnitCredits.setInt(2, ID);
+            updateUnitCredits.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -99,6 +98,17 @@ public class UnitDataSource {
             int unitID = Integer.parseInt(executeGetUnitID(unitName));
             updateUnitAssets.setInt(2, unitID);
             int assetID = executeGetAssetID(assetName);
+            updateUnitAssets.setInt(3, assetID);
+            updateUnitAssets.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void updateUnitAssets(int quantity, int unitID,int assetID ) {
+        try {
+            updateUnitAssets.setInt(1, quantity);
+            updateUnitAssets.setInt(2, unitID);
             updateUnitAssets.setInt(3, assetID);
             updateUnitAssets.executeUpdate();
         } catch (SQLException throwables) {
