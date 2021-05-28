@@ -27,10 +27,11 @@ public class NetworkDataSource extends Thread {
      */
     @Override
     public void run() {
-        final String HOSTNAME = "127.0.0.1";
-        final int PORT = 10000;
+        HashMap<String, String> file = ReadConfig.readConfigFile();
 
         try {
+            String HOSTNAME = ReadConfig.getHostname(file);
+            int PORT = ReadConfig.getPort(file);
             try {
                 socket = new Socket(HOSTNAME, PORT);
             } catch (ConnectException e) {

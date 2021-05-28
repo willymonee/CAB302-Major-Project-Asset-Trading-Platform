@@ -25,7 +25,6 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NetworkServer {
-    private static final int PORT = 10000;
     /**
      * this is the timeout inbetween accepting clients, not reading from the socket itself.
      */
@@ -48,20 +47,14 @@ public class NetworkServer {
     private static final int UNIQUE_CONSTRAINT_EXCEPTION_CODE = 19;
 
     /**
-     * Returns the port the server is configured to use
-     *
-     * @return The port number
-     */
-    public static int getPort() {
-        return PORT;
-    }
-
-    /**
      * Starts the server running on the default port
      */
     public void start() throws IOException {
         // Connect to the database
         database = DBConnectivity.getInstance();
+
+        HashMap<String, String> file = ReadConfig.readConfigFile();
+        int PORT = ReadConfig.getPort(file);
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);

@@ -93,6 +93,14 @@ public class MarketplaceTesting {
         //System.out.println(userA.getOrgSellOffers());
     }
 
+    // retrieve buy offers of a particular asset
+    @Test
+    public void testRetrieveAssetBuyOffers() {
+        userB.listSellOrderNoResolve("Table", 2, 10);
+        System.out.println(BuyOfferData.getInstance().getAssetOffers("iPhone 10"));
+        System.out.println(SellOfferData.getInstance().getAssetOffers("Table"));
+    }
+
     // list a buy offer and look to resolve it
     @Test
     public void resolveBuyOffer() {
@@ -102,7 +110,7 @@ public class MarketplaceTesting {
     // list a sell offer and look to resolve it
     @Test
     public void resolveSellOffer() {
-         userB.listSellOrder("Table", 5, 1);
+         //userA.listSellOrder("Table", 3, 2);
     }
 
 
