@@ -129,10 +129,6 @@ public class ITAdmin extends User {
      * @return the newly created user object
      */
     public User createUser(String name, String unitName, String userType) throws UserTypeException, EmptyFieldException {
-        // Check valid parameters
-        GUI.checkInputEmpty(name);
-        GUI.checkInputEmpty(userType);
-
         // Create password - length 8
         // Hash password
         byte[] saltBytes = Hashing.newRngBytes(Hashing.SALT_SIZE);
@@ -173,16 +169,12 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Choose to edit the user's user type and organisational unit [C]
+     * Edit a user's user type and organisational unit [C]
      * @param user the user to be edited
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
      */
     public User editUser(User user, String userType, String unitName) throws EmptyFieldException, UserTypeException {
-        // Check valid input
-        GUI.checkInputEmpty(userType);
-
-        // Checks complete - query to update db
         // Clear unit name if IT/SysAdmin
         try {
             UsersFactory.UserType type = UsersFactory.UserType.valueOf(userType);

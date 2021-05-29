@@ -174,6 +174,7 @@ public class NetworkServer {
                     objectOutputStream.writeObject(out);
                     System.out.println("Wrote to socket: " + socket.toString() + out);
                 }
+                objectOutputStream.flush();
             }
             case STORE_USER -> {
                 // Get input
@@ -187,6 +188,7 @@ public class NetworkServer {
                     objectOutputStream.writeObject("Added user.");
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
+                objectOutputStream.flush();
             }
             case EDIT_USER -> {
                 // Get input
@@ -204,8 +206,8 @@ public class NetworkServer {
                     // Write success output
                     objectOutputStream.writeObject("Edited user.");
                     System.out.println("Wrote to socket: " + socket.toString());
-                    System.out.println("Wrote to socket: " + socket.toString());
                 }
+                objectOutputStream.flush();
             }
             case ADD_BUY_OFFER -> {
                 // Get input
@@ -286,6 +288,7 @@ public class NetworkServer {
                     objectOutputStream.writeObject("Password has changed.");
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
+                objectOutputStream.flush();
             }
             case UPDATE_CREDITS -> {
                 double credits = (double) objectInputStream.readObject();
@@ -317,6 +320,7 @@ public class NetworkServer {
                     float credits = UsersDataSource.getInstance().getUnitCredits(unitName);
                     objectOutputStream.writeObject(credits);
                 }
+                objectOutputStream.flush();
             }
             case GET_UNIT_ASSETS -> {
                 String unitName = (String) objectInputStream.readObject();
@@ -324,6 +328,7 @@ public class NetworkServer {
                     HashMap<String, Integer> credits = UsersDataSource.getInstance().getUnitAssets(unitName);
                     objectOutputStream.writeObject(credits);
                 }
+                objectOutputStream.flush();
             }
         }
     }
