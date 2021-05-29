@@ -1,9 +1,6 @@
 package ElectronicAssetTradingPlatform.Server;
 
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
-import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-import ElectronicAssetTradingPlatform.AssetTrading.SellOfferData;
+import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Database.*;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
@@ -340,6 +337,20 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
                 System.out.println("Wrote to socket: " + socket.toString());
+            }
+            case STORE_ORG_UNIT -> {
+                // Get input
+                OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
+
+                synchronized (database) {
+                    // Save to db
+                    UnitDataSource.getInstance().insertOrgUnit(orgUnit);
+
+                    // Write success output
+                    objectOutputStream.writeObject("Added organisational unit.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
             }
         }
     }

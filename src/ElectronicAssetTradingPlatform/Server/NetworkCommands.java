@@ -17,6 +17,7 @@ public enum NetworkCommands {
     QUANTITY,
     GET_UNIT_CREDIT,
     GET_UNIT_ASSETS,
-    ADD_HISTORY
+    ADD_HISTORY,
+    STORE_ORG_UNIT
 
 }
