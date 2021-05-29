@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -29,14 +30,16 @@ public class BuyTabGUI extends JPanel {
         data = dataSource;
 
         memberTextDisplay();
-
-        getUnitBuyOffers();
-        System.out.println(buyOffers.size());
+        getRowData();
+        //this.add(unitBuyOffersTable());
+        JTable buyOffersTable = unitBuyOffersTable();
+        JScrollPane scrollPane = new JScrollPane(buyOffersTable);
+        this.add(scrollPane);
+    // TODO: BUTTON COLUMN TO EDIT ASSET LISTING https://camposha.info/java-jtable-buttoncolumn-tutorial/
     }
 
     private void memberTextDisplay() {
         this.add(new JTextArea("welcome " + loggedInMember.getUsername()));
-        // TODO : Add Unit Credits to string
         try {
             float credits = data.getCredits(loggedInMember.getUnitName());
             System.out.println(credits);
@@ -48,15 +51,55 @@ public class BuyTabGUI extends JPanel {
         }
     }
 
-    private TreeMap<Integer, BuyOffer> getUnitBuyOffers() {
+    private TreeMap<Integer, BuyOffer> getUnitBuyOffers() throws Exception {
+        buyOffers = null;
         buyOffers = BuyOfferData.getInstance().getOrgOffersMap(loggedInMember.getUnitName());
+
+        if (buyOffers == null) {
+            throw new Exception();
+        }
+
         return buyOffers;
 
     }
 
+    // TODO : REMOVE ORG UNIT AS A COLUMN, AND ISNTEAD HAVE A BUTTON TO EDIT THE ASSET OFFER LISTING
+    private JTable unitBuyOffersTable() {
+        String data[][] = getRowData();
+
+        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price per unit", "Offer Creator", "Org Unit"};
+        JTable buyOffersTable = new JTable(data, columns);
+        buyOffersTable.setBounds(30,40,200,300);
+        return buyOffersTable;
+    }
+
+    private String[][] getRowData() {
+        try {
+            buyOffers = getUnitBuyOffers();
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String[][] data = new String[buyOffers.size()][];
+        int count = 0;
+        for(Map.Entry<Integer, BuyOffer> entry : buyOffers.entrySet()) {
+            //Integer key = entry.getKey();
+            BuyOffer value = entry.getValue();
 
 
-
-
+            data[count] = new String[] {
+                String.valueOf(value.getOfferID()),
+                value.getAssetName(),
+                String.valueOf(value.getQuantity()),
+                String.valueOf(value.getPricePerUnit()),
+                value.getUsername(),
+                value.getUnitName()
+            };
+            count++;
+        }
+        return data;
+    }
 
 }
