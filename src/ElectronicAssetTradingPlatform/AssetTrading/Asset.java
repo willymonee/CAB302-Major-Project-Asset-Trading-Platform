@@ -10,40 +10,32 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 public class Asset {
     private String assetName;
 
-
     /**
-     * Constructor to initialise an asset with asset ID and name
-     * Adds the asset into the database if it does not exist yet
+     * A constructor to initialise an Asset object.
      *
-     * @param assetName string for asset name
+     * @param assetName A string name of the initialised asset object
      */
     public Asset(String assetName)  {
         this.assetName = assetName;
     }
 
     /**
-     * Check if the asset is listed for trade
+     *  A getter function to retrieve and return the name of the asset.
      *
-     * @return returns false if the asset isn't currently listed otherwise true if asset is listed
-     */
-    public boolean isListed() {
-        return false;
-    }
-
-    /**
-     *  Retrieve the asset's name
-     *
-     * @return string name of asset
+     * @return The name of the asset
      */
     public String getAssetName() {
         return this.assetName;
     }
 
-    public void editAssetName(String name) {
-        this.assetName = name;
+    /**
+     * Edit the name of an asset given the new name for the asset's name to be changed to.
+     *
+     * @param newName A string name for the asset's name to be changed to
+     */
+    public void editAssetName(String newName) {
+        this.assetName = newName;
     }
-
-
 
 }
 
