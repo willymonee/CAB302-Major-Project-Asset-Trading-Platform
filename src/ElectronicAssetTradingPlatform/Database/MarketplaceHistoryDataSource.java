@@ -61,7 +61,7 @@ public class MarketplaceHistoryDataSource {
     */
 
     public void insertCompletedTrade(BuyOffer buyOffer, SellOffer sellOffer, int quantity) {
-        boolean execute = false;
+        boolean execute = true;
         try {
             UnitDataSource unitDB = new UnitDataSource();
             String buyerID = unitDB.executeGetUserID(buyOffer.getUsername());
@@ -95,6 +95,14 @@ public class MarketplaceHistoryDataSource {
             String dateCompleted = dateFormatter.format(currentTime).toString();
             insertCompletedTrade.setString(6, dateCompleted);
 
+            if (execute) {
+                insertCompletedTrade.execute();
+            }
+
+            else {
+                throw new SQLException();
+            }
+
 
 
         } catch (SQLException throwables) {
@@ -102,4 +110,8 @@ public class MarketplaceHistoryDataSource {
         }
     }
 
+
+
 }
+
+
