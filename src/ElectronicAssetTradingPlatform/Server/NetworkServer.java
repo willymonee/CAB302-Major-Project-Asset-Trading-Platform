@@ -4,10 +4,7 @@ import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOfferData;
-import ElectronicAssetTradingPlatform.Database.DBConnectivity;
-import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
-import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Database.*;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
@@ -329,6 +326,20 @@ public class NetworkServer {
                     objectOutputStream.writeObject(credits);
                 }
                 objectOutputStream.flush();
+            }
+            case ADD_HISTORY -> {
+                BuyOffer buyOffer = (BuyOffer) objectInputStream.readObject();
+                SellOffer sellOffer = (SellOffer) objectInputStream.readObject();
+                int quantity = (int) objectInputStream.readObject();
+                synchronized (database) {
+                    // add to history
+                    MarketplaceHistoryDataSource.getInstance().insertCompletedTrade(buyOffer, sellOffer, quantity);
+
+                    // write output
+                    objectOutputStream.writeObject("Added history for asset: " + buyOffer.getAssetName());
+                }
+                objectOutputStream.flush();
+                System.out.println("Wrote to socket: " + socket.toString());
             }
         }
     }
