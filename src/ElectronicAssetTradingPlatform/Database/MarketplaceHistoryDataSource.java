@@ -18,7 +18,8 @@ public class MarketplaceHistoryDataSource {
     private static final String GET_TRADES_AFTER_DATE = "SELECT * FROM Marketplace_history WHERE Date_fulfilled > ?";
     private static final String GET_TRADES_BETWEEN_DATES = "SELECT * FROM Marketplace_history WHERE Date_fulfilled BETWEEN date(?) AND date(?);";
     private static final String INSERT_COMPLETED_TRADE = "INSERT INTRO Marketplace_history (Buyer_ID, Seller_ID, Asset_type_ID,"
-                                                            + "Price_per_unit, Quantity, Date_fulfilled";
+                                                            + "Price_per_unit, Quantity, Date_fulfilled)"
+                                                            + "VALUES (?, ?, ?, ?, ?, ?);";
     // private static final String DELETE_COMPLETED_TRADE = "";
 
 
@@ -106,6 +107,8 @@ public class MarketplaceHistoryDataSource {
             throwables.printStackTrace();
         }
     }
+
+
 
 
 
