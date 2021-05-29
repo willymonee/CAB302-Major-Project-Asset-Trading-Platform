@@ -73,18 +73,18 @@ public class MarketplaceHistoryDataSource {
                 insertCompletedTrade.setInt(3, assetID);
             }
 
-            else {
+            else
                 execute = false;
-            }
+
             if (buyOffer.getPricePerUnit() == sellOffer.getPricePerUnit()) {
                 double ppu = buyOffer.getPricePerUnit();
                 String price = Double.toString(ppu);
                 insertCompletedTrade.setString(4, price);
             }
 
-            else {
+            else
                 execute = false;
-            }
+
 
 
                insertCompletedTrade.setInt(5, quantity);
@@ -99,11 +99,8 @@ public class MarketplaceHistoryDataSource {
                 insertCompletedTrade.execute();
             }
 
-            else {
+            else
                 throw new SQLException();
-            }
-
-
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();

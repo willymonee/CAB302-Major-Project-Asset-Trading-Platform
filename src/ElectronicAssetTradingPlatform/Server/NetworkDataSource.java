@@ -284,4 +284,12 @@ public class NetworkDataSource extends Thread {
             throw new DatabaseException((String) out);
         }
     }
+
+    /**
+     * Sends command to add price history for
+     * a traded successfully traded asset
+     */
+    public String addAssetHistory(BuyOffer buyOffer, SellOffer sellOffer, int quantity) {
+        return (String) sendCommand(NetworkCommands.ADD_HISTORY, buyOffer, sellOffer, quantity);
+    }
 }
