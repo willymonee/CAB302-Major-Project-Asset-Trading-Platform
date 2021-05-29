@@ -1,6 +1,12 @@
 package ElectronicAssetTradingPlatform.Database;
 
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.Database.UnitDataSource;
+
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MarketplaceHistoryDataSource {
     //SQLITE Default Date format: yyyy-MM-dd HH:mm:ss
@@ -23,7 +29,13 @@ public class MarketplaceHistoryDataSource {
 
     private Connection connection;
 
-    public MarketplaceHistoryDataSource() {
+    private static class HistorySingletonHolder {
+        private final static MarketplaceHistoryDataSource INSTANCE = new MarketplaceHistoryDataSource();
+    }
+
+    public static MarketplaceHistoryDataSource getInstance() { return HistorySingletonHolder.INSTANCE; }
+
+    private MarketplaceHistoryDataSource() {
         connection = DBConnectivity.getInstance();
         try {
             getTradesByDate = connection.prepareStatement(GET_TRADES_BY_DATE);
@@ -48,7 +60,46 @@ public class MarketplaceHistoryDataSource {
         Worst case scenario just display a table of data lmaooo, i guess just rip some columns straight out db
     */
 
+    public void insertCompletedTrade(BuyOffer buyOffer, SellOffer sellOffer, int quantity) {
+        boolean execute = false;
+        try {
+            UnitDataSource unitDB = new UnitDataSource();
+            String buyerID = unitDB.executeGetUserID(buyOffer.getUsername());
+            insertCompletedTrade.setString(1, buyerID);
+            String sellerID = unitDB.executeGetUserID(sellOffer.getUsername());
+            insertCompletedTrade.setString(2, sellerID);
+            if (buyOffer.getAssetName() == sellOffer.getAssetName()) {
+                int assetID = unitDB.executeGetAssetID(buyOffer.getAssetName());
+                insertCompletedTrade.setInt(3, assetID);
+            }
+
+            else {
+                execute = false;
+            }
+            if (buyOffer.getPricePerUnit() == sellOffer.getPricePerUnit()) {
+                double ppu = buyOffer.getPricePerUnit();
+                String price = Double.toString(ppu);
+                insertCompletedTrade.setString(4, price);
+            }
+
+            else {
+                execute = false;
+            }
 
 
+               insertCompletedTrade.setInt(5, quantity);
+
+
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime currentTime = LocalDateTime.now();
+            String dateCompleted = dateFormatter.format(currentTime).toString();
+            insertCompletedTrade.setString(6, dateCompleted);
+
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 
 }
