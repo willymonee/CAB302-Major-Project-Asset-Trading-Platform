@@ -27,7 +27,7 @@ public class GUI extends JFrame {
         // Get server connection
         this.data = data;
 
-        // Intialise
+        // Initialise
         Container contentPane = this.getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
