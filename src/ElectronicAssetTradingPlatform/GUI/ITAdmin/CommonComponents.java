@@ -26,12 +26,14 @@ public class CommonComponents {
             };
 
             JTable table = new JTable(data, columnNames);
+            table.setPreferredScrollableViewportSize(new Dimension(450, table.getRowHeight()));
+            JScrollPane tablePane = new JScrollPane(table);
             JLabel label = new JLabel("Showing user \'" + outUser.getUsername() + "\' from database");
 
             Container pane = new Container();
             pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
             pane.add(label);
-            pane.add(table);
+            pane.add(tablePane);
 
             JOptionPane.showMessageDialog(null, pane);
         } catch (DatabaseException ignore) {}

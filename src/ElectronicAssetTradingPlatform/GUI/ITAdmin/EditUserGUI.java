@@ -3,6 +3,7 @@ package ElectronicAssetTradingPlatform.GUI.ITAdmin;
 import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
+import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 
@@ -141,13 +142,19 @@ class EditUserGUI extends JFrame {
         private void editUserPressed() {
             String usernameIn = username.getText();
             String unitNameIn = unitName.getText();
-            String userTypeIn = Objects.requireNonNull(userType.getSelectedItem()).toString();
+            UsersFactory.UserType type = (UsersFactory.UserType) userType.getSelectedItem();
+            String userTypeIn = Objects.requireNonNull(type).toString();
 
             // Check inputs are not null
             String output = "";
             try {
-                ITAdmin.checkInputEmpty(usernameIn);
-                ITAdmin.checkInputEmpty(userTypeIn);
+                GUI.checkInputEmpty(usernameIn);
+                GUI.checkInputEmpty(userTypeIn);
+
+                if (type == UsersFactory.UserType.OrganisationalUnitMembers ||
+                        type == UsersFactory.UserType.OrganisationalUnitLeader) {
+                    GUI.checkInputEmpty(unitNameIn);
+                }
 
                 User userToBeEdited = data.retrieveUser(usernameIn);
                 User outUser = loggedInUser.editUser(userToBeEdited, userTypeIn, unitNameIn);

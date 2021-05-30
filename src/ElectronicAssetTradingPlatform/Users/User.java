@@ -44,22 +44,10 @@ public class User implements Serializable {
         this.salt = Hashing.bytesToString(saltBytes);
     }
 
-    /**
-     * Connect organisational unit member to the server using the supplied
-     * configuration file
-     *
-     */
-    public void connectDB() {
-        // connectDB method
-    }
-
     public String getUsername() {return username;}
     public String getPassword() {return password;}
     public String getSalt() {return salt;}
     public String getUserType() {return userType;}
 
 
-    public static void checkInputEmpty(String str) throws EmptyFieldException {
-        if (str == null || str.isBlank()) throw new EmptyFieldException("Invalid input"); // Temporary - add custom exception later
-    }
 }

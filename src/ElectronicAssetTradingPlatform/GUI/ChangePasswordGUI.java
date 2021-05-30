@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.GUI;
 
+import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.ITAdmin;
@@ -131,16 +132,22 @@ public class ChangePasswordGUI extends JFrame {
             String passwordText = password.getText();
             String newPasswordText = newPassword.getText();
 
-            // Check correct password
-            if (Hashing.compareHashPass(loggedInUser.getSalt(), passwordText, loggedInUser.getPassword())) {
-                loggedInUser.changePassword(newPasswordText);
+            try {
+                GUI.checkInputEmpty(newPasswordText);
 
-                String output = "";
-                output = data.editPassword(loggedInUser);
+                // Check correct password
+                if (Hashing.compareHashPass(loggedInUser.getSalt(), passwordText, loggedInUser.getPassword())) {
+                    loggedInUser.changePassword(newPasswordText);
 
-                messaging.setText(output);
-            } else {
-                messaging.setText("Incorrect password.");
+                    String output = "";
+                    output = data.editPassword(loggedInUser);
+
+                    messaging.setText(output);
+                } else {
+                    messaging.setText("Incorrect password.");
+                }
+            } catch (EmptyFieldException e) {
+                messaging.setText("Password cannot be empty.");
             }
         }
     }

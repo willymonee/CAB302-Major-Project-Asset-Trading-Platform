@@ -1,13 +1,7 @@
 package ElectronicAssetTradingPlatform.Server;
 
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
-import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-import ElectronicAssetTradingPlatform.AssetTrading.SellOfferData;
-import ElectronicAssetTradingPlatform.Database.DBConnectivity;
-import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
-import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.AssetTrading.*;
+import ElectronicAssetTradingPlatform.Database.*;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
@@ -42,6 +36,16 @@ public class NetworkServer {
      */
     private Connection database;
 
+    /**
+     * Port of the server
+     */
+    private int PORT;
+
+    /**
+     * @return The port number of the server
+     */
+    public int getPort() {return PORT;}
+
 
     // Exception codes: https://sqlite.org/rescode.html
     private static final int UNIQUE_CONSTRAINT_EXCEPTION_CODE = 19;
@@ -54,7 +58,7 @@ public class NetworkServer {
         database = DBConnectivity.getInstance();
 
         HashMap<String, String> file = ReadConfig.readConfigFile();
-        int PORT = ReadConfig.getPort(file);
+        PORT = ReadConfig.getPort(file);
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);
@@ -164,6 +168,7 @@ public class NetworkServer {
                     objectOutputStream.writeObject(out);
                     System.out.println("Wrote to socket: " + socket.toString() + out);
                 }
+                objectOutputStream.flush();
             }
             case STORE_USER -> {
                 // Get input
@@ -177,6 +182,7 @@ public class NetworkServer {
                     objectOutputStream.writeObject("Added user.");
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
+                objectOutputStream.flush();
             }
             case EDIT_USER -> {
                 // Get input
@@ -194,8 +200,8 @@ public class NetworkServer {
                     // Write success output
                     objectOutputStream.writeObject("Edited user.");
                     System.out.println("Wrote to socket: " + socket.toString());
-                    System.out.println("Wrote to socket: " + socket.toString());
                 }
+                objectOutputStream.flush();
             }
             case ADD_BUY_OFFER -> {
                 // Get input
@@ -276,6 +282,7 @@ public class NetworkServer {
                     objectOutputStream.writeObject("Password has changed.");
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
+                objectOutputStream.flush();
             }
             case UPDATE_CREDITS -> {
                 double credits = (double) objectInputStream.readObject();
@@ -307,6 +314,7 @@ public class NetworkServer {
                     float credits = UsersDataSource.getInstance().getUnitCredits(unitName);
                     objectOutputStream.writeObject(credits);
                 }
+                objectOutputStream.flush();
             }
             case GET_UNIT_ASSETS -> {
                 String unitName = (String) objectInputStream.readObject();
@@ -314,6 +322,35 @@ public class NetworkServer {
                     HashMap<String, Integer> credits = UsersDataSource.getInstance().getUnitAssets(unitName);
                     objectOutputStream.writeObject(credits);
                 }
+                objectOutputStream.flush();
+            }
+            case ADD_HISTORY -> {
+                BuyOffer buyOffer = (BuyOffer) objectInputStream.readObject();
+                SellOffer sellOffer = (SellOffer) objectInputStream.readObject();
+                int quantity = (int) objectInputStream.readObject();
+                synchronized (database) {
+                    // add to history
+                    MarketplaceHistoryDataSource.getInstance().insertCompletedTrade(buyOffer, sellOffer, quantity);
+
+                    // write output
+                    objectOutputStream.writeObject("Added history for asset: " + buyOffer.getAssetName());
+                }
+                objectOutputStream.flush();
+                System.out.println("Wrote to socket: " + socket.toString());
+            }
+            case STORE_ORG_UNIT -> {
+                // Get input
+                OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
+
+                synchronized (database) {
+                    // Save to db
+                    UnitDataSource.getInstance().insertOrgUnit(orgUnit);
+
+                    // Write success output
+                    objectOutputStream.writeObject("Added organisational unit.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
             }
         }
     }

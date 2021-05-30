@@ -3,6 +3,7 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Exceptions.MissingAssetException;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -12,9 +13,9 @@ import java.util.TreeMap;
  * These are the organisational units in which the users will belong in, and will use their unit's assets and credits
  * to perform exchanges on this platform.
  */
-public class OrganisationalUnit {
+public class OrganisationalUnit implements Serializable {
     private String name;
-    private double credits;
+    private float credits;
     private Map<String,Integer> assetsOwned;
 
     /**
@@ -128,7 +129,7 @@ public class OrganisationalUnit {
      *
      * @return The total amount of credits that the organisational unit owns
      */
-    public double getCredits() {
+    public float getCredits() {
         return credits;
     }
 

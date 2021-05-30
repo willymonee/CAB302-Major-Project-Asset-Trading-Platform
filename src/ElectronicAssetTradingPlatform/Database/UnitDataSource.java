@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.Database;
 
+import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import javax.xml.transform.Result;
@@ -22,6 +23,8 @@ public class UnitDataSource {
     private static final String UPDATE_CREDITS = "UPDATE Organisational_Units SET Credits= Credits + ? WHERE Name=?";
     private static final String UPDATE_ASSETS = "UPDATE Organisational_Unit_Assets SET Asset_Quantity= Asset_Quantity + ? WHERE Unit_ID=? AND Asset_ID=?";
 
+    private static final String INSERT_ORG_UNIT = "INSERT INTO Organisational_Units (Name, Credits) VALUES (?, ?);";
+
 
     PreparedStatement getUnitNameQuery;
     PreparedStatement getUnitIDQuery;
@@ -33,7 +36,17 @@ public class UnitDataSource {
     PreparedStatement updateUnitCredits;
     PreparedStatement updateUnitAssets;
 
+    PreparedStatement addOrgUnitQuery;
+
     private Connection connection;
+
+    /**
+     * Singleton of data source
+     */
+    private static class SingletonHolder {
+        private final static UnitDataSource INSTANCE = new UnitDataSource();
+    }
+    public static UnitDataSource getInstance() { return UnitDataSource.SingletonHolder.INSTANCE; }
 
     public UnitDataSource() {
         connection = DBConnectivity.getInstance();
@@ -47,6 +60,8 @@ public class UnitDataSource {
             getAssetIDQuery = connection.prepareStatement(GET_ASSET_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             updateUnitCredits = connection.prepareStatement(UPDATE_CREDITS, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
             updateUnitAssets = connection.prepareStatement(UPDATE_ASSETS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+            addOrgUnitQuery = connection.prepareStatement(INSERT_ORG_UNIT);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -196,5 +211,11 @@ public class UnitDataSource {
         return assetID;
     }
 
+    public void insertOrgUnit(OrganisationalUnit orgUnit) throws SQLException {
+        addOrgUnitQuery.setString(1, orgUnit.getUnitName());
+        addOrgUnitQuery.setFloat(2, orgUnit.getCredits());
+
+        addOrgUnitQuery.execute();
+    }
 
 }

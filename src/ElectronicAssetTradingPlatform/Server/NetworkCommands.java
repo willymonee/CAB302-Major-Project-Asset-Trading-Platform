@@ -16,5 +16,8 @@ public enum NetworkCommands {
     UPDATE_OFFER,
     QUANTITY,
     GET_UNIT_CREDIT,
-    GET_UNIT_ASSETS
+    GET_UNIT_ASSETS,
+    ADD_HISTORY,
+    STORE_ORG_UNIT
+
 }

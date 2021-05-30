@@ -1,7 +1,10 @@
 package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
+import ElectronicAssetTradingPlatform.Exceptions.MissingAssetException;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
+import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
@@ -32,91 +35,113 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Create a new organisational unit, assign user/s to it, and update the database [M]
+     * Create a new organisational unit given a name and an amount of credits to be initialised with the organisational
+     * unit.
      *
-     * @param name string name of the organisational unit
-     * @param credits float credits to be initially assigned to the unit
+     * @param name A string name for the newly to be created organisational unit
+     * @param credits A float amount of credits to be initialised with the new organisational unit
+     *
+     * @return A newly created OrganisationalUnit object
      */
-    public OrganisationalUnit createOrganisationalUnit(String name, float credits) throws EmptyFieldException {
-        checkInputEmpty(name);
-
+    public OrganisationalUnit createOrganisationalUnit(String name, float credits) {
         return new OrganisationalUnit(name, credits);
-
-        // createOrganisationalUnit method
-        // Create new org unit ID
-        // Assign member/s with the new unit ID (or create new user containing the org unit ID)
     }
 
     /**
-     * Add or remove the number of credits an organisational unit owns manually [M]
-     * Prints a success or error message
+     * Add additional credits to an existing organisational unit given the unit object and an amount of credits to add.
      *
-     * @param unitName string organisational unit name that owns the assets that are to be edited
-     * @param credits int new amou  nt of credits to edit for the organisational unit
+     * @param unitName An OrganisationalUnit object of the organisational unit for credits to be added to
+     * @param credits A float amount of credits to be added to the organisational unit
+     *
+     * @return The OrganisationalUnit object where the credits have been added
      */
-    public OrganisationalUnit addOrganisationalUnitCredits(OrganisationalUnit unitName, float credits) throws Exception {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
-
-        unitName.addCredits(credits); // passed by value
-
+    public OrganisationalUnit addOrganisationalUnitCredits(OrganisationalUnit unitName, float credits) {
+        unitName.addCredits(credits);
         return unitName;
-
-        // TODO: add exceptions for non existent unitName, ADD implementation for confirmation when GUI is implemented
-
-
     }
 
     /**
-     * Add or remove the number of credits an organisational unit owns manually [M]
-     * Prints a success or error message
+     * Remove a certain amount of credits from an existing organisational unit given the unit object and credits to be
+     * removed.
      *
-     * @param unitName string organisational unit name that owns the assets that are to be edited
-     * @param credits int new amou  nt of credits to edit for the organisational unit
+     * @param unitName An OrganisationalUnit object of the organisational unit for the credits to be removed
+     * @param credits A float amount of credits to remove from the organisational unit
+     *
+     * @return The OrganisationalUnit object where the credits have been removed
      */
-    public OrganisationalUnit removeOrganisationalUnitCredits(OrganisationalUnit unitName, float credits) throws Exception {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
-
-        unitName.removeCredits(credits); // passed by value
-
+    public OrganisationalUnit removeOrganisationalUnitCredits(OrganisationalUnit unitName, float credits)
+            throws LessThanZeroException {
+        unitName.removeCredits(credits);
         return unitName;
-
-        // TODO: add exceptions for non existent unitName, ADD implementation for confirmation when GUI is implemented
-
-
     }
 
     /**
-     * Edit the assets or quantity of asset an organisational unit owns [M]
+     * Add additional amounts of assets to an organisational unit given the unit object, the asset name to add
+     * quantities to, and the amount of extra assets to add.
      *
-     * @param unitName string organisational unit name that owns the assets that are to be edited
-     * @param assetName Asset type to be edited
-     * @param quantity int quantity of the asset to be changed
+     * @param unitName An OrganisationalUnit object of the organisational unit whose asset belongs to
+     * @param assetName A string name of the asset to which the extra quantities will be added
+     * @param quantity An integer amount of extra assets to be added
+     *
+     * @return The OrganisationalUnit object in which the assets have been added to
      */
-    public OrganisationalUnit addOrganisationalUnitAssets(OrganisationalUnit unitName, String assetName, int quantity) throws Exception {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
-        checkInputEmpty(assetName);
-
+    public OrganisationalUnit addOrganisationalUnitAssets(OrganisationalUnit unitName, String assetName, int quantity) {
         unitName.addAsset(assetName, quantity);
-
         return unitName;
-
     }
 
     /**
-     * Edit the assets or quantity of asset an organisational unit owns [M]
+     * Remove an amount of assets from an organisational unit given the unit object, the asset name for quantities to
+     * be removed, and the amount of assets to be removed.
      *
-     * @param unitName string organisational unit name that owns the assets that are to be edited
-     * @param assetName Asset type to be edited
-     * @param quantity int quantity of the asset to be changed
+     * @param unitName An OrganisationalUnit object of the organisational unit the asset belongs to
+     * @param assetName A string name of the asset amounts to be removed
+     * @param quantity An integer amount of assets to be removed
+     *
+     * @return The OrganisationalUnit object in which the assets have been removed from
      */
-    public OrganisationalUnit removeOrganisationalUnitAssets(OrganisationalUnit unitName, String assetName, int quantity) throws Exception {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
-        checkInputEmpty(assetName);
-
+    public OrganisationalUnit removeOrganisationalUnitAssets(OrganisationalUnit unitName, String assetName,
+                                                             int quantity) throws MissingAssetException,
+                                                                                  LessThanZeroException {
         unitName.removeAsset(assetName, quantity);
-
         return unitName;
+    }
 
+    /**
+     * Create a new asset given the name of the asset
+     *
+     * @param name A string name of the newly to be created asset
+     *
+     * @return A newly created Asset object
+     */
+    public Asset createNewAsset(String name) {
+        return new Asset(name);
+    }
+
+    /**
+     * Edit the name of the organisational unit given the original OrganisationalUnit object and the new name for it.
+     *
+     * @param unitName An OrganisationalUnit object of the unit to be name changed
+     * @param newName A string name for the organisational unit name to be changed to
+     *
+     * @return The newly name changed OrganisationalUnit object
+     */
+    public OrganisationalUnit editOrganisationalUnitName(OrganisationalUnit unitName, String newName) {
+        unitName.editName(newName);
+        return unitName;
+    }
+
+    /**
+     * Edit the name of an asset given the Asset object and the new name for the asset to be changed to.
+     *
+     * @param assetName An Asset object for the name to be changed
+     * @param newName A string name for the asset to be changed to
+     *
+     * @return The Asset object in which the name has been changed
+     */
+    public Asset editAssetName(Asset assetName, String newName) {
+        assetName.editAssetName(newName);
+        return assetName;
     }
 
     /**
@@ -128,10 +153,6 @@ public class ITAdmin extends User {
      * @return the newly created user object
      */
     public User createUser(String name, String unitName, String userType) throws UserTypeException, EmptyFieldException {
-        // Check valid parameters
-        checkInputEmpty(name);
-        checkInputEmpty(userType);
-
         // Create password - length 8
         // Hash password
         byte[] saltBytes = Hashing.newRngBytes(Hashing.SALT_SIZE);
@@ -160,28 +181,12 @@ public class ITAdmin extends User {
     }
 
     /**
-     * Create a new asset type and add it to the database [M]
-     *
-     * @param name string name of the asset type to be added to the database
-     */
-    public Asset createNewAsset(String name) throws EmptyFieldException {
-        checkInputEmpty(name);
-
-        return new Asset(name);
-
-    }
-
-    /**
-     * Choose to edit the user's user type and organisational unit [C]
+     * Edit a user's user type and organisational unit [C]
      * @param user the user to be edited
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
      */
     public User editUser(User user, String userType, String unitName) throws EmptyFieldException, UserTypeException {
-        // Check valid input
-        checkInputEmpty(userType);
-
-        // Checks complete - query to update db
         // Clear unit name if IT/SysAdmin
         try {
             UsersFactory.UserType type = UsersFactory.UserType.valueOf(userType);
@@ -198,39 +203,6 @@ public class ITAdmin extends User {
             throw new UserTypeException("Invalid user type");
         }
     }
-
-    /**
-     * Edit an organisational unit's name [C]
-     *
-     * @param unitName the current name the organisational unit has
-     * @param newName the new name for the organisational unit
-     */
-    public OrganisationalUnit editOrganisationalUnitName(OrganisationalUnit unitName, String newName) throws EmptyFieldException {
-        checkInputEmpty(unitName.getUnitName()); // these might be redundant
-        checkInputEmpty(newName);
-
-        unitName.editName(newName);
-
-        return unitName;
-
-    }
-
-    /**
-     * Edit an asset's name [C]
-     *
-     * @param assetName the current name the asset has
-     * @param newName the new name for the asset
-     */
-    public Asset editAssetName(Asset assetName, String newName) throws EmptyFieldException {
-        checkInputEmpty(assetName.getAssetName()); // these might be redundant
-        checkInputEmpty(newName);
-
-        assetName.editAssetName(newName);
-
-        return assetName;
-    }
-
-
 
     private String newRngText(int length) {
         if (length == 0) throw new IndexOutOfBoundsException("Length cannot be 0");

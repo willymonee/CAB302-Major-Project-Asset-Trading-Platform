@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.Server;
 
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
@@ -283,5 +284,18 @@ public class NetworkDataSource extends Thread {
         catch (ClassCastException e) {
             throw new DatabaseException((String) out);
         }
+    }
+
+    /**
+     * Sends command to add price history for
+     * a traded successfully traded asset
+     */
+    public String addAssetHistory(BuyOffer buyOffer, SellOffer sellOffer, int quantity) {
+        return (String) sendCommand(NetworkCommands.ADD_HISTORY, buyOffer, sellOffer, quantity);
+    }
+
+
+    public String storeOrgUnit(OrganisationalUnit orgUnit) {
+        return (String) sendCommand(NetworkCommands.STORE_ORG_UNIT, orgUnit);
     }
 }
