@@ -11,8 +11,8 @@ import java.awt.event.WindowEvent;
 
 public class OrgUnitMemGUI extends JFrame {
 
-    public static final int WIDTH = 600;
-    public static final int HEIGHT = 800;
+    public static final int WIDTH = 900;
+    public static final int HEIGHT = 400;
     final static int extraWindowWidth = 100;
 
     private final static String buyTab = "BUY";
@@ -63,10 +63,13 @@ public class OrgUnitMemGUI extends JFrame {
         OrgUnitTabGUI orgUnitCard = new OrgUnitTabGUI(loggedInUser);
         AccountTabGUI accountCard = new AccountTabGUI(loggedInUser);
 
-        menuTabs.add("BUY", buyCard);
-        menuTabs.add("SELL", sellCard);
-        menuTabs.add("ORG UNIT", orgUnitCard);
-        menuTabs.add("ACCOUNT", accountCard);
+        menuTabs.add("Buy", buyCard);
+        menuTabs.add("Sell", sellCard);
+        menuTabs.add("Org Unit", orgUnitCard);
+        menuTabs.add("Account", accountCard);
+        menuTabs.setFont(new Font ( "Dialog", Font.BOLD, 24));
+        menuTabs.setBackground(Color.WHITE);
+
 
         return menuTabs;
     }

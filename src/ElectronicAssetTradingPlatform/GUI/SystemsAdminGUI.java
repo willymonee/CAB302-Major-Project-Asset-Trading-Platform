@@ -1,5 +1,7 @@
 package ElectronicAssetTradingPlatform.GUI;
 
+import ElectronicAssetTradingPlatform.Users.SystemsAdmin;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,16 +11,17 @@ import java.awt.event.WindowEvent;
 import java.io.*;
 
 public class SystemsAdminGUI extends JFrame {
+    private SystemsAdmin loggedInUser;
+
     private JLabel title;
     private JLabel label;
     private JButton backupBtn;
 
-    private String DB_FILENAME = "ETP.db";
-    private String BACKUP_FILENAME = "dbBackup.db";
-
     private String LABEL_CONTENT = "Press the button below to backup";
 
-    public SystemsAdminGUI() {
+    public SystemsAdminGUI(SystemsAdmin user) {
+        loggedInUser = user;
+
         // Initialise
         Container contentPane = this.getContentPane();
 
@@ -57,33 +60,11 @@ public class SystemsAdminGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             JButton source = (JButton) e.getSource();
             if (source == backupBtn) {
-                backup();
+                loggedInUser.backupDB();
+                // Alert of update
+                JOptionPane.showMessageDialog(null, "Backup has completed.");
             }
         }
-    }
-
-    /**
-     * Copies the DB file and backs it up as a separate file
-     */
-    private void backup() {
-        // From https://www.baeldung.com/java-copy-file
-        try (
-                InputStream in = new BufferedInputStream(
-                        new FileInputStream(DB_FILENAME));
-                OutputStream out = new BufferedOutputStream(
-                        new FileOutputStream(BACKUP_FILENAME))) {
-
-            byte[] buffer = new byte[1024];
-            int lengthRead;
-            label.setText("Backing up...please wait and do not close the application.");
-            while ((lengthRead = in.read(buffer)) > 0) {
-                out.write(buffer, 0, lengthRead);
-                out.flush();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        label.setText(LABEL_CONTENT);
     }
 
     /**

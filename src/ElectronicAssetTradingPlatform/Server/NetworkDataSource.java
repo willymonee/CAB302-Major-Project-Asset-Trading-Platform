@@ -17,6 +17,9 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+/**
+ * The client-side class for accessing the server, to access the database through the server
+ */
 public class NetworkDataSource extends Thread {
 
     private Socket socket = null;
@@ -182,8 +185,7 @@ public class NetworkDataSource extends Thread {
      * Returns error message
      */
     public String editPassword(User thisUser) {
-        String str = (String) sendCommand(NetworkCommands.EDIT_PASSWORD, thisUser);
-        return str;
+        return (String) sendCommand(NetworkCommands.EDIT_PASSWORD, thisUser);
     }
 
     /**

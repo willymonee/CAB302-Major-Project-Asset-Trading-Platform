@@ -4,9 +4,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Class for reading the config file
+ */
 public class ReadConfig {
+    /**
+     * Config file name
+     */
     private static final String FILENAME = "ipconfig.props";
 
+    /**
+     * Creates a map of values given by the config file
+     * @return Map of values from the config file
+     */
     public static HashMap<String, String> readConfigFile() {
         HashMap<String, String> str = new HashMap<>();
 
@@ -47,6 +57,12 @@ public class ReadConfig {
         return str;
     }
 
+    /**
+     * Get the host name from the config file
+     * @param configFile The map of values gotten from the config file
+     * @return String of the host name (IP address)
+     * @throws IOException Throws exception when hostname is not found in the file
+     */
     public static String getHostname(HashMap<String, String> configFile) throws IOException {
         String hostname = configFile.get("HOSTNAME");
 
@@ -57,6 +73,12 @@ public class ReadConfig {
         }
     }
 
+    /**
+     * Get the port from the config file
+     * @param configFile The map of values gotten from the config file
+     * @return int of the port number
+     * @throws IOException Throws exception when port is not found in the file
+     */
     public static int getPort(HashMap<String, String> configFile) throws IOException {
         String port = configFile.get("PORT");
 

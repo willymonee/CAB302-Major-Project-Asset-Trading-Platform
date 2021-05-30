@@ -1,10 +1,8 @@
 package ElectronicAssetTradingPlatform.Users;
 
-import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Exceptions.MissingAssetException;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
-import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
@@ -151,8 +149,9 @@ public class ITAdmin extends User {
      * @param unitName string organisational unit name for new user to be associated with
      * @param userType user type for new user's access level
      * @return the newly created user object
+     * @throws UserTypeException Throws exception when an inputed user type is invalid
      */
-    public User createUser(String name, String unitName, String userType) throws UserTypeException, EmptyFieldException {
+    public User createUser(String name, String unitName, String userType) throws UserTypeException {
         // Create password - length 8
         // Hash password
         byte[] saltBytes = Hashing.newRngBytes(Hashing.SALT_SIZE);
@@ -185,8 +184,10 @@ public class ITAdmin extends User {
      * @param user the user to be edited
      * @param userType the new user type the user will be
      * @param unitName the organisational unit that the user will be part of
+     * @return The user with the edited details
+     * @throws UserTypeException Throws exception when an inputed user type is invalid
      */
-    public User editUser(User user, String userType, String unitName) throws EmptyFieldException, UserTypeException {
+    public User editUser(User user, String userType, String unitName) throws UserTypeException {
         // Clear unit name if IT/SysAdmin
         try {
             UsersFactory.UserType type = UsersFactory.UserType.valueOf(userType);

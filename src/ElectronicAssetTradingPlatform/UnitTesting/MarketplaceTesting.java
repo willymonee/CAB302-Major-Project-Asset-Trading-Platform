@@ -47,7 +47,7 @@ public class MarketplaceTesting {
     @Test
     public void testInsertBuyOffer() {
         // creating a buy offer and adding it into the database through the user
-        //userB.listBuyOrderNoResolve("Table", 2, 1);
+        //userA.listBuyOrderNoResolve("Table", 2, 5);
 
     }
 
@@ -73,7 +73,11 @@ public class MarketplaceTesting {
 
     @Test
     public void removeBuyOffer() {
-        //userA.removeBuyOffer(31);
+        userA.removeBuyOffer(128);
+        userA.removeBuyOffer(127);
+        userA.removeBuyOffer(126);
+        userA.removeBuyOffer(125);
+        userA.removeBuyOffer(124);
     }
 
     @Test
@@ -96,7 +100,7 @@ public class MarketplaceTesting {
     // retrieve buy offers of a particular asset
     @Test
     public void testRetrieveAssetBuyOffers() {
-        userB.listSellOrderNoResolve("Table", 2, 10);
+        //userB.listSellOrderNoResolve("Table", 2, 10);
         //System.out.println(BuyOfferData.getInstance().getAssetOffers("iPhone 10"));
         //System.out.println(SellOfferData.getInstance().getAssetOffers("Table"));
     }
