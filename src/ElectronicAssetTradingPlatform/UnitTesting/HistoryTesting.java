@@ -49,4 +49,13 @@ public class HistoryTesting {
         System.out.println("Rows found " + assetPriceHistory.size());
         System.out.println(assetPriceHistory);
     }
+
+    @Test
+    public void testNetworkInsert() {
+        NetworkDataSource net = new NetworkDataSource();
+        net.run();
+        BuyOffer buyOffer = new BuyOffer("iPhone 10", 2, 33.0, "そら", "Human Resources");
+        SellOffer sellOffer = new SellOffer("iPhone 10", 2, 33.0, "willymon", "Human Resources");
+        net.addAssetHistory(buyOffer, sellOffer, 2);
+    }
 }
