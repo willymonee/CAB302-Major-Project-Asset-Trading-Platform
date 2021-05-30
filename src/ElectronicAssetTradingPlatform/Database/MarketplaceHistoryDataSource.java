@@ -5,23 +5,16 @@ import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.TradeHistory;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 
-import javax.xml.transform.Result;
+
 import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class MarketplaceHistoryDataSource {
-    //SQLITE Default Date format: yyyy-MM-dd HH:mm:ss
-    // example: '2007-01-01 10:00:00'
-    //https://www.sqlitetutorial.net/sqlite-date/
-    //Acceptable format: YYY-MM-DD
-    //https://www.sqlite.org/lang_datefunc.html
 
     private static final String INSERT_COMPLETED_TRADE = "INSERT INTO Marketplace_history (Buyer_ID, Seller_ID, Asset_type_ID,"
                                                             + "Price_per_unit, Quantity, Date_fulfilled)"
@@ -50,7 +43,6 @@ public class MarketplaceHistoryDataSource {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Inserts the relevant data into the Marketplace_history database given a completed trade
@@ -82,11 +74,7 @@ public class MarketplaceHistoryDataSource {
 
             else
                 execute = false;
-
-
-
                insertCompletedTrade.setInt(5, quantity);
-
 
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDateTime currentTime = LocalDateTime.now();
@@ -105,13 +93,6 @@ public class MarketplaceHistoryDataSource {
         }
     }
 
-
-
-    // TODO:     // Need to get History of all org unit's trade
-    //          // Need to get history of price given an asset ID
-                // Above 2 can be done via creating an MarketplaceHistoryRow Object (constructor params probs db and methods just return these vals, refer to buyOffer and
-                // marketplace data source
-                // Graph needs float and data thats all
 
     /**
      * Returns all buy & sell trades completed by a organisational unit
@@ -145,13 +126,7 @@ public class MarketplaceHistoryDataSource {
 
                 String dateTraded = rs.getString(2);
                 // Convert string to Date
-                //dateTraded = "2021-05-30";
                 Date date = java.sql.Date.valueOf(dateTraded);
-
-
-
-
-
                 assetPriceHistory.put(date, price);
 
             }
@@ -165,7 +140,6 @@ public class MarketplaceHistoryDataSource {
     public static void main(String[] args) {
         System.out.println("Start of main fn");
         MarketplaceHistoryDataSource m = MarketplaceHistoryDataSource.getInstance();
-        //MarketplaceHistoryDataSource m = new MarketplaceHistoryDataSource();
         System.out.println("created m");
         HashMap<Date, Float> assetPriceHistory = new HashMap<>();
         System.out.println("created hashmap empty");
@@ -176,7 +150,7 @@ public class MarketplaceHistoryDataSource {
             Date key = entry.getKey();
             Float value = entry.getValue();
 
-            System.out.println("Date: " + key + "AT FLOAT PRICE : " + value);
+            System.out.println("Date: " + key + " AT FLOAT PRICE : " + value);
 
         }
     }
