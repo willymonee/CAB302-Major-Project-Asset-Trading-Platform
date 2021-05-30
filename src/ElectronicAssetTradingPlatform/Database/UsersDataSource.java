@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 
 /**
- * Class for retrieving data from the db file.
+ * Class for retrieving data from the database
  */
 public class UsersDataSource {
     private static final String INSERT_USER = "INSERT INTO User_Accounts (Username, Password_hash, Salt, User_Type, Unit_ID) VALUES (?, ?, ?, ?, ?);";
@@ -108,7 +108,7 @@ public class UsersDataSource {
         }
 
         // Try get type
-        UsersFactory.UserType type = null;
+        UsersFactory.UserType type;
         try {
             type = UsersFactory.UserType.valueOf(userType);
         }

@@ -1,5 +1,8 @@
 package ElectronicAssetTradingPlatform.Server;
 
+/**
+ * Commands used by the NetworkServer and NetworkDataSource to send/receive data
+ */
 public enum NetworkCommands {
     RETRIEVE_USER,
     STORE_USER,

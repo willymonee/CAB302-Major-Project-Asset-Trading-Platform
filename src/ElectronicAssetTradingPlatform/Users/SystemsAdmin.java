@@ -1,5 +1,7 @@
 package ElectronicAssetTradingPlatform.Users;
 
+import java.io.*;
+
 /**
  * Class for Systems Admin users allowing for all users with this access level to be able to
  * create new Organisational Units, be able to edit their respective Assets and Credits
@@ -20,17 +22,27 @@ public class SystemsAdmin extends User {
         this.userType = UsersFactory.UserType.SystemsAdmin.toString();
     }
 
+    private String DB_FILENAME = "ETP.db";
+    private String BACKUP_FILENAME = "dbBackup.db";
     /**
-     * Initialise the Database
-     */
-    public void initDB() {
-        // Might not need - db should be initialised in the server already, not when the admin wants to
-    }
-
-    /**
-     * Backup the Database
+     * Copies the DB file and backs it up as a separate file
      */
     public void backupDB() {
+        // From https://www.baeldung.com/java-copy-file
+        try (
+                InputStream in = new BufferedInputStream(
+                        new FileInputStream(DB_FILENAME));
+                OutputStream out = new BufferedOutputStream(
+                        new FileOutputStream(BACKUP_FILENAME))) {
 
+            byte[] buffer = new byte[1024];
+            int lengthRead;
+            while ((lengthRead = in.read(buffer)) > 0) {
+                out.write(buffer, 0, lengthRead);
+                out.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
