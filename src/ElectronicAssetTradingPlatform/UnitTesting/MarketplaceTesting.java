@@ -97,8 +97,8 @@ public class MarketplaceTesting {
     @Test
     public void testRetrieveAssetBuyOffers() {
         userB.listSellOrderNoResolve("Table", 2, 10);
-        System.out.println(BuyOfferData.getInstance().getAssetOffers("iPhone 10"));
-        System.out.println(SellOfferData.getInstance().getAssetOffers("Table"));
+        //System.out.println(BuyOfferData.getInstance().getAssetOffers("iPhone 10"));
+        //System.out.println(SellOfferData.getInstance().getAssetOffers("Table"));
     }
 
     // list a buy offer and look to resolve it

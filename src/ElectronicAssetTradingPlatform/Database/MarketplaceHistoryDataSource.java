@@ -2,11 +2,19 @@ package ElectronicAssetTradingPlatform.Database;
 
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.TradeHistory;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 
+import javax.xml.transform.Result;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MarketplaceHistoryDataSource {
     //SQLITE Default Date format: yyyy-MM-dd HH:mm:ss
@@ -14,19 +22,15 @@ public class MarketplaceHistoryDataSource {
     //https://www.sqlitetutorial.net/sqlite-date/
     //Acceptable format: YYY-MM-DD
     //https://www.sqlite.org/lang_datefunc.html
-    private static final String GET_TRADES_BY_DATE = "SELECT * FROM Marketplace_history WHERE Date_fulfilled < date(?)";
-    private static final String GET_TRADES_AFTER_DATE = "SELECT * FROM Marketplace_history WHERE Date_fulfilled > ?";
-    private static final String GET_TRADES_BETWEEN_DATES = "SELECT * FROM Marketplace_history WHERE Date_fulfilled BETWEEN date(?) AND date(?);";
-    private static final String INSERT_COMPLETED_TRADE = "INSERT INTRO Marketplace_history (Buyer_ID, Seller_ID, Asset_type_ID,"
+
+    private static final String INSERT_COMPLETED_TRADE = "INSERT INTO Marketplace_history (Buyer_ID, Seller_ID, Asset_type_ID,"
                                                             + "Price_per_unit, Quantity, Date_fulfilled)"
                                                             + "VALUES (?, ?, ?, ?, ?, ?);";
-    // private static final String DELETE_COMPLETED_TRADE = "";
+    private static final String GET_ASSET_HISTORY = "SELECT Price_per_unit, Date_fulfilled FROM Marketplace_history WHERE Asset_type_ID = ?;";
 
 
-    private PreparedStatement getTradesByDate;
-    private PreparedStatement getTradesAfterDate;
-    private PreparedStatement getTradesBetweenDates;
     private PreparedStatement insertCompletedTrade;
+    private PreparedStatement getAssetHistory;
 
     private Connection connection;
 
@@ -39,10 +43,8 @@ public class MarketplaceHistoryDataSource {
     private MarketplaceHistoryDataSource() {
         connection = DBConnectivity.getInstance();
         try {
-            getTradesByDate = connection.prepareStatement(GET_TRADES_BY_DATE);
-            getTradesAfterDate = connection.prepareStatement(GET_TRADES_AFTER_DATE);
-            getTradesBetweenDates = connection.prepareStatement(GET_TRADES_BETWEEN_DATES);
             insertCompletedTrade = connection.prepareStatement(INSERT_COMPLETED_TRADE);
+            getAssetHistory = connection.prepareStatement(GET_ASSET_HISTORY);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,17 +52,12 @@ public class MarketplaceHistoryDataSource {
     }
 
 
-    // Some data structure to store multiple values
-    public void getTradesByDate(Date date) throws SQLException {
-        ResultSet rs = null;
-        getTradesByDate.setString(1, date.toString());
-    }
-    /*  When displaying the graph, im guessing x axis is date and y axis is price per unit
-        Will need to display or create graph for each unique asset in the database
-        and the quantity would come into play um.
-        Worst case scenario just display a table of data lmaooo, i guess just rip some columns straight out db
-    */
-
+    /**
+     * Inserts the relevant data into the Marketplace_history database given a completed trade
+     * @param buyOffer      A buy offer
+     * @param sellOffer     A sell offer
+     * @param quantity      The quantity of assets traded
+     */
     public void insertCompletedTrade(BuyOffer buyOffer, SellOffer sellOffer, int quantity) {
         boolean execute = true;
         try {
@@ -91,7 +88,7 @@ public class MarketplaceHistoryDataSource {
                insertCompletedTrade.setInt(5, quantity);
 
 
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDateTime currentTime = LocalDateTime.now();
             String dateCompleted = dateFormatter.format(currentTime).toString();
             insertCompletedTrade.setString(6, dateCompleted);
@@ -110,8 +107,79 @@ public class MarketplaceHistoryDataSource {
 
 
 
+    // TODO:     // Need to get History of all org unit's trade
+    //          // Need to get history of price given an asset ID
+                // Above 2 can be done via creating an MarketplaceHistoryRow Object (constructor params probs db and methods just return these vals, refer to buyOffer and
+                // marketplace data source
+                // Graph needs float and data thats all
+
+    /**
+     * Returns all buy & sell trades completed by a organisational unit
+     * @param unitID    The ID of the organisational Unit
+     * @return          The trade history of the queried organisational unit
+     */
+    public TreeMap<Integer, TradeHistory> getUnitTradeHistory(int unitID) {
+        TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
+        ResultSet rs = null;
+        // Need SQL query to print out all the trades given a unit ID, where the buyerID/seller ID has unitID = unitID
 
 
+        return unitTradeHistory;
+    }
+
+    /**
+     * Gets the price history of an asset
+     * @param assetID       ID of the asset's history which is being queried
+     * @return              A HashMap of the asset's previously sold price as
+     *                      float and date a trade for this asset was completed
+     */
+    public HashMap<Date, Float> getAssetPriceHistory(int assetID) {
+        HashMap<Date, Float> assetPriceHistory = new HashMap<>();
+        ResultSet rs = null;
+        try {
+            getAssetHistory.setInt(1, assetID);
+            rs = getAssetHistory.executeQuery();
+
+            while(rs.next()) {
+                float price = rs.getFloat(1);
+
+                String dateTraded = rs.getString(2);
+                // Convert string to Date
+                //dateTraded = "2021-05-30";
+                Date date = java.sql.Date.valueOf(dateTraded);
+
+
+
+
+
+                assetPriceHistory.put(date, price);
+
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return assetPriceHistory;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Start of main fn");
+        MarketplaceHistoryDataSource m = MarketplaceHistoryDataSource.getInstance();
+        //MarketplaceHistoryDataSource m = new MarketplaceHistoryDataSource();
+        System.out.println("created m");
+        HashMap<Date, Float> assetPriceHistory = new HashMap<>();
+        System.out.println("created hashmap empty");
+        assetPriceHistory = m.getAssetPriceHistory(1);
+        System.out.println("hashmap put data in");
+
+        for(Map.Entry<Date, Float> entry : assetPriceHistory.entrySet()) {
+            Date key = entry.getKey();
+            Float value = entry.getValue();
+
+            System.out.println("Date: " + key + "AT FLOAT PRICE : " + value);
+
+        }
+    }
 }
 
 
