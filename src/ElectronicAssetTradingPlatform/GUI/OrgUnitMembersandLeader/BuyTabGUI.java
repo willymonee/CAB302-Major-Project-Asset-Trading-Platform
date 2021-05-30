@@ -25,6 +25,8 @@ public class BuyTabGUI extends JPanel {
     private JLabel orgBuyOfferLabel;
     private JLabel welcomeMessage;
     private JPanel marketBuyOffersPanel;
+    private JScrollPane scrollPanel;
+    private JLabel marketBuyOffersLabel;
 
     TreeMap<Integer, BuyOffer> buyOffers;
 
@@ -32,13 +34,13 @@ public class BuyTabGUI extends JPanel {
     public BuyTabGUI(OrganisationalUnitMembers member, NetworkDataSource dataSource) {
         loggedInMember = member;
         data = dataSource;
+        // create a wrapper to put elements in
         wrapper = Helper.createPanel(Color.WHITE);
-
         BoxLayout boxlayout = new BoxLayout(wrapper, BoxLayout.Y_AXIS);
         wrapper.setLayout(boxlayout);
         wrapper.setPreferredSize(new Dimension(850, 600));
         this.add(wrapper);
-        // add a welcome message
+        // add a welcome message into the wrapper
         welcomeMessage = Helper.createLabel(memberTextDisplay(), 16);
         welcomeMessage.setHorizontalAlignment(JLabel.CENTER);
         welcomeMessage.setBorder(new EmptyBorder(10, 0, 10, 0));
@@ -46,23 +48,43 @@ public class BuyTabGUI extends JPanel {
         // add org buy offer panel
         orgBuyOffersPanel = Helper.createPanel(Color.WHITE);
         orgBuyOfferLabel = Helper.createLabel(member.getUnitName() + "'s Buy Offers:", 20);
-        orgBuyOfferLabel.setHorizontalAlignment(JLabel.LEFT);
         orgBuyOfferLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
         // add a label to the org buy offer panel
         orgBuyOffersPanel.add(orgBuyOfferLabel);
-        JTable buyOffersTable = unitBuyOffersTable();
         // add a table to the org buy offer panel
-        JScrollPane scrollPane = new JScrollPane(buyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(850, 400));
-        scrollPane.getViewport().setBackground(Color.WHITE);
-
-
-        orgBuyOffersPanel.add(scrollPane);
+        JTable buyOffersTable = unitBuyOffersTable();
+        int buyTableHeight = buyOffersTable.getPreferredSize().height + 25;
+        // if the buy table's height is greater than 250
+        if (buyTableHeight >= 250) {
+            // create scroll panel with table inside
+           scrollPanel = new JScrollPane(buyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+           // set the org buy offer panel to a FIXED 325
+           orgBuyOffersPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 325));
+           orgBuyOffersPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 325));
+           // set the scroll panel to a FIXED 250
+           scrollPanel.setPreferredSize(new Dimension(850, 250));
+           scrollPanel.setMaximumSize(new Dimension(850, 250));
+        }
+        else {
+            // create scroll panel with table inside, but never allow vertical scrolling
+            scrollPanel = new JScrollPane(buyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            int height = buyOffersTable.getPreferredSize().height + 125;
+            // set height of panel to the buy offer table's size + 125 (VARIABLE size)
+            orgBuyOffersPanel.setPreferredSize(new Dimension(825, height));
+            orgBuyOffersPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
+            // set height of scroll panel to a VARIABLE size equal to the buy offers table's height
+            scrollPanel.setPreferredSize(new Dimension(850, buyOffersTable.getPreferredSize().height + 25));
+        }
+        scrollPanel.getViewport().setBackground(Color.WHITE);
+        // add the scroll panel to the org buy offer's panel
+        orgBuyOffersPanel.add(scrollPanel);
+        // add panel to wrapper
         wrapper.add(orgBuyOffersPanel);
 
-//        marketBuyOffersPanel = Helper.createPanel(Color.PINK);
-//        marketBuyOffersPanel.setBorder(BorderFactory.createEmptyBorder(50,0,0,0));
-//        wrapper.add(marketBuyOffersPanel);
+        marketBuyOffersPanel = Helper.createPanel(Color.GRAY);
+        marketBuyOffersLabel = Helper.createLabel("Market Buy Offers", 20);
+        marketBuyOffersPanel.add(marketBuyOffersLabel);
+        wrapper.add(marketBuyOffersPanel);
 
 
     // TODO: BUTTON COLUMN TO EDIT ASSET LISTING https://camposha.info/java-jtable-buttoncolumn-tutorial/
@@ -117,7 +139,6 @@ public class BuyTabGUI extends JPanel {
         String data[][] = getRowData();
         String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator", "Edit/Delete"};
         JTable buyOffersTable = new JTable(data, columns);
-        //buyOffersTable.setBounds(30,40,200,200);
         resizeColumnWidth(buyOffersTable);
         buyOffersTable.setRowHeight(25);
         buyOffersTable.setFont(new Font ( "Dialog", Font.PLAIN, 14));
@@ -132,8 +153,14 @@ public class BuyTabGUI extends JPanel {
         }
         // prevent editing of cells in table
         buyOffersTable.setDefaultEditor(Object.class, null);
-        return buyOffersTable;
+        // set the preferred size of the table
+        Dimension preferredSize = new Dimension(825, buyOffersTable.getRowCount() * 25);
 
+        if (preferredSize.height < 225) {
+            System.out.println("setting a preferred size for the table");
+            buyOffersTable.setPreferredSize(preferredSize);
+        }
+        return buyOffersTable;
     }
 
     private String[][] getRowData() {
