@@ -61,35 +61,41 @@ public class MarketplaceHistoryDataSource {
             if (buyOffer.getAssetName() == sellOffer.getAssetName()) {
                 int assetID = unitDB.executeGetAssetID(buyOffer.getAssetName());
                 insertCompletedTrade.setInt(3, assetID);
+                System.out.println("Asset ID: " +assetID);
             }
 
             else
                 execute = false;
 
-            if (buyOffer.getPricePerUnit() == sellOffer.getPricePerUnit()) {
-                double ppu = buyOffer.getPricePerUnit();
-                String price = Double.toString(ppu);
-                insertCompletedTrade.setString(4, price);
-            }
 
-            else
-                execute = false;
-               insertCompletedTrade.setInt(5, quantity);
+            insertCompletedTrade.setString(4, String.valueOf(sellOffer.getPricePerUnit()));
+
+            insertCompletedTrade.setString(5, String.valueOf(quantity));
 
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDateTime currentTime = LocalDateTime.now();
             String dateCompleted = dateFormatter.format(currentTime).toString();
             insertCompletedTrade.setString(6, dateCompleted);
 
-            if (execute) {
+            System.out.println("Buyer id: " +buyerID);
+            System.out.println("seller id : "+sellerID);
+            double price = sellOffer.getPricePerUnit();
+            System.out.println("price: "+price);
+            System.out.println("quantity : "+quantity);
+            System.out.println("date : "+dateCompleted);
+            System.out.println(execute);
+            //if (execute) {
                 insertCompletedTrade.execute();
-            }
+            //}
 
+            /*
             else
                 throw new SQLException();
+                */
 
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -116,12 +122,13 @@ public class MarketplaceHistoryDataSource {
      */
     public HashMap<Date, Float> getAssetPriceHistory(int assetID) {
         HashMap<Date, Float> assetPriceHistory = new HashMap<>();
+        System.out.println(assetPriceHistory.size());
         ResultSet rs = null;
         try {
             getAssetHistory.setInt(1, assetID);
             rs = getAssetHistory.executeQuery();
-
             while(rs.next()) {
+                System.out.println(rs);
                 float price = rs.getFloat(1);
 
                 String dateTraded = rs.getString(2);
@@ -130,6 +137,7 @@ public class MarketplaceHistoryDataSource {
                 assetPriceHistory.put(date, price);
 
             }
+            System.out.println(assetPriceHistory.size());
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -140,6 +148,31 @@ public class MarketplaceHistoryDataSource {
     public static void main(String[] args) {
         System.out.println("Start of main fn");
         MarketplaceHistoryDataSource m = MarketplaceHistoryDataSource.getInstance();
+        BuyOffer buyOffer = new BuyOffer("iPhone 10", 2, 33.0, "そら", "Human Resources");
+        SellOffer sellOffer = new SellOffer("iPhone 10", 2, 33.0, "willymon", "Human Resources");
+
+        //m.insertCompletedTrade(buyOffer, sellOffer, 2);
+        // delete this test part
+
+        HashMap<Date, Float> assetPriceHistory = new HashMap<>();
+        assetPriceHistory = m.getAssetPriceHistory(1);
+
+        for(Map.Entry<Date, Float> entry : assetPriceHistory.entrySet()) {
+            Date key = entry.getKey();
+            Float value = entry.getValue();
+
+            System.out.println("Date: " + key + " AT FLOAT PRICE : " + value);
+
+        }
+
+
+
+        try {
+            DBConnectivity.getInstance().close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        /* // Test getAssethistory
         System.out.println("created m");
         HashMap<Date, Float> assetPriceHistory = new HashMap<>();
         System.out.println("created hashmap empty");
@@ -153,6 +186,8 @@ public class MarketplaceHistoryDataSource {
             System.out.println("Date: " + key + " AT FLOAT PRICE : " + value);
 
         }
+        */
+
     }
 }
 
