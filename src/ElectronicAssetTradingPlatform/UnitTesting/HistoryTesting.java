@@ -5,6 +5,7 @@ import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.MarketplaceHistoryDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.Test;
@@ -57,5 +58,17 @@ public class HistoryTesting {
         BuyOffer buyOffer = new BuyOffer("iPhone 10", 2, 33.0, "そら", "Human Resources");
         SellOffer sellOffer = new SellOffer("iPhone 10", 2, 33.0, "willymon", "Human Resources");
         net.addAssetHistory(buyOffer, sellOffer, 2);
+    }
+
+    @Test
+    public void testNetworkGetHistory() {
+        NetworkDataSource net = new NetworkDataSource();
+        net.run();
+        try {
+            net.getAssetHistory(1);
+            System.out.println(net.getAssetHistory(1));
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -9,12 +9,14 @@ import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 
 import javax.swing.JOptionPane;
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -299,5 +301,15 @@ public class NetworkDataSource extends Thread {
 
     public String storeOrgUnit(OrganisationalUnit orgUnit) {
         return (String) sendCommand(NetworkCommands.STORE_ORG_UNIT, orgUnit);
+    }
+
+    public List<List<Object>> getAssetHistory(int assetID) throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.GET_ASSET_HISTORY, assetID);
+        try {
+            return (List<List<Object>>) out;
+        }
+        catch (ClassCastException e) {
+            throw new DatabaseException((String) out);
+        }
     }
 }
