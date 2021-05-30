@@ -3,15 +3,14 @@ package ElectronicAssetTradingPlatform.Database;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.TradeHistory;
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
+
 
 
 import java.sql.*;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 public class MarketplaceHistoryDataSource {
@@ -27,12 +26,21 @@ public class MarketplaceHistoryDataSource {
 
     private Connection connection;
 
+    /**
+     * Singleton Holder for MarketplaceHistoryDataSource
+     */
     private static class HistorySingletonHolder {
         private final static MarketplaceHistoryDataSource INSTANCE = new MarketplaceHistoryDataSource();
     }
 
+    /**
+     * Get Instance via Singleton
+     */
     public static MarketplaceHistoryDataSource getInstance() { return HistorySingletonHolder.INSTANCE; }
 
+    /**
+     * Constructor for MarketplaceHistory Data Source
+     */
     private MarketplaceHistoryDataSource() {
         connection = DBConnectivity.getInstance();
         try {
@@ -61,7 +69,6 @@ public class MarketplaceHistoryDataSource {
             if (buyOffer.getAssetName() == sellOffer.getAssetName()) {
                 int assetID = unitDB.executeGetAssetID(buyOffer.getAssetName());
                 insertCompletedTrade.setInt(3, assetID);
-                System.out.println("Asset ID: " +assetID);
             }
 
             else
@@ -69,7 +76,6 @@ public class MarketplaceHistoryDataSource {
 
 
             insertCompletedTrade.setString(4, String.valueOf(sellOffer.getPricePerUnit()));
-
             insertCompletedTrade.setString(5, String.valueOf(quantity));
 
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -77,22 +83,12 @@ public class MarketplaceHistoryDataSource {
             String dateCompleted = dateFormatter.format(currentTime).toString();
             insertCompletedTrade.setString(6, dateCompleted);
 
-            System.out.println("Buyer id: " +buyerID);
-            System.out.println("seller id : "+sellerID);
-            double price = sellOffer.getPricePerUnit();
-            System.out.println("price: "+price);
-            System.out.println("quantity : "+quantity);
-            System.out.println("date : "+dateCompleted);
-            System.out.println(execute);
-            //if (execute) {
+            if (execute) {
                 insertCompletedTrade.execute();
-            //}
+            }
 
-            /*
             else
                 throw new SQLException();
-                */
-
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -120,24 +116,24 @@ public class MarketplaceHistoryDataSource {
      * @return              A HashMap of the asset's previously sold price as
      *                      float and date a trade for this asset was completed
      */
-    public HashMap<Date, Float> getAssetPriceHistory(int assetID) {
-        HashMap<Date, Float> assetPriceHistory = new HashMap<>();
-        System.out.println(assetPriceHistory.size());
+    public List<List<Object>> getAssetPriceHistory(int assetID) {
+        List<List<Object>> assetPriceHistory = new ArrayList<List<Object>>();
         ResultSet rs = null;
         try {
             getAssetHistory.setInt(1, assetID);
             rs = getAssetHistory.executeQuery();
             while(rs.next()) {
-                System.out.println(rs);
                 float price = rs.getFloat(1);
 
                 String dateTraded = rs.getString(2);
                 // Convert string to Date
                 Date date = java.sql.Date.valueOf(dateTraded);
-                assetPriceHistory.put(date, price);
+                ArrayList<Object> newRow = new ArrayList<>();
+                newRow.add(date);
+                newRow.add(price);
+                assetPriceHistory.add(newRow);
 
             }
-            System.out.println(assetPriceHistory.size());
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -145,50 +141,9 @@ public class MarketplaceHistoryDataSource {
         return assetPriceHistory;
     }
 
-    public static void main(String[] args) {
-        System.out.println("Start of main fn");
-        MarketplaceHistoryDataSource m = MarketplaceHistoryDataSource.getInstance();
-        BuyOffer buyOffer = new BuyOffer("iPhone 10", 2, 33.0, "そら", "Human Resources");
-        SellOffer sellOffer = new SellOffer("iPhone 10", 2, 33.0, "willymon", "Human Resources");
-
-        //m.insertCompletedTrade(buyOffer, sellOffer, 2);
-        // delete this test part
-
-        HashMap<Date, Float> assetPriceHistory = new HashMap<>();
-        assetPriceHistory = m.getAssetPriceHistory(1);
-
-        for(Map.Entry<Date, Float> entry : assetPriceHistory.entrySet()) {
-            Date key = entry.getKey();
-            Float value = entry.getValue();
-
-            System.out.println("Date: " + key + " AT FLOAT PRICE : " + value);
-
-        }
-
-
-
-        try {
-            DBConnectivity.getInstance().close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        /* // Test getAssethistory
-        System.out.println("created m");
-        HashMap<Date, Float> assetPriceHistory = new HashMap<>();
-        System.out.println("created hashmap empty");
-        assetPriceHistory = m.getAssetPriceHistory(1);
-        System.out.println("hashmap put data in");
-
-        for(Map.Entry<Date, Float> entry : assetPriceHistory.entrySet()) {
-            Date key = entry.getKey();
-            Float value = entry.getValue();
-
-            System.out.println("Date: " + key + " AT FLOAT PRICE : " + value);
-
-        }
-        */
-
-    }
 }
+
+// TODO: Test Insert works with Network
+// TODO: Add getAssetPriceHistory functionality to Network
 
 
