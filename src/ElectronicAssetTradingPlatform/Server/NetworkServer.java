@@ -352,6 +352,20 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
             }
+            case STORE_ASSET -> {
+                // Get input
+                Asset asset = (Asset) objectInputStream.readObject();
+
+                synchronized (database) {
+                    // Save to db
+                    UnitDataSource.getInstance().insertAsset(asset);
+
+                    // Write success output
+                    objectOutputStream.writeObject("Added asset.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
+            }
         }
     }
 

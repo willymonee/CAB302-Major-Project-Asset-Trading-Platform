@@ -1,10 +1,9 @@
 package ElectronicAssetTradingPlatform.Server;
 
+import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-import ElectronicAssetTradingPlatform.Database.UsersDataSource;
-import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 
@@ -299,5 +298,9 @@ public class NetworkDataSource extends Thread {
 
     public String storeOrgUnit(OrganisationalUnit orgUnit) {
         return (String) sendCommand(NetworkCommands.STORE_ORG_UNIT, orgUnit);
+    }
+
+    public String storeAsset(Asset asset) {
+        return (String) sendCommand(NetworkCommands.STORE_ASSET, asset);
     }
 }
