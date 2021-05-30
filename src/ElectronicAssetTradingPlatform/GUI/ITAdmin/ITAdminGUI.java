@@ -3,8 +3,6 @@ package ElectronicAssetTradingPlatform.GUI.ITAdmin;
 import ElectronicAssetTradingPlatform.GUI.ChangePasswordGUI;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.ITAdmin;
-import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
-import ElectronicAssetTradingPlatform.Users.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -113,7 +111,7 @@ public class ITAdminGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             JButton source = (JButton) e.getSource();
             if (goToCreateAsset.equals(source)) {
-                new CreateAssetGUI();
+                new CreateAssetGUI(loggedInUser, data);
             } else if (goToCreateOrgUnit.equals(source)) {
                 new CreateOrgUnitGUI(loggedInUser, data);
             } else if (goToCreateUser.equals(source)) {

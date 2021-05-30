@@ -1,9 +1,8 @@
 package ElectronicAssetTradingPlatform.Database;
 
+import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
-import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
-import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,6 +23,7 @@ public class UnitDataSource {
     private static final String UPDATE_ASSETS = "UPDATE Organisational_Unit_Assets SET Asset_Quantity= Asset_Quantity + ? WHERE Unit_ID=? AND Asset_ID=?";
 
     private static final String INSERT_ORG_UNIT = "INSERT INTO Organisational_Units (Name, Credits) VALUES (?, ?);";
+    private static final String INSERT_ASSET = "INSERT INTO Asset_Types (Name) VALUES (?);";
 
 
     PreparedStatement getUnitNameQuery;
@@ -37,6 +37,7 @@ public class UnitDataSource {
     PreparedStatement updateUnitAssets;
 
     PreparedStatement addOrgUnitQuery;
+    PreparedStatement addAssetQuery;
 
     private Connection connection;
 
@@ -62,6 +63,7 @@ public class UnitDataSource {
             updateUnitAssets = connection.prepareStatement(UPDATE_ASSETS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
             addOrgUnitQuery = connection.prepareStatement(INSERT_ORG_UNIT);
+            addAssetQuery = connection.prepareStatement(INSERT_ASSET);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -216,6 +218,12 @@ public class UnitDataSource {
         addOrgUnitQuery.setFloat(2, orgUnit.getCredits());
 
         addOrgUnitQuery.execute();
+    }
+
+    public void insertAsset(Asset asset) throws SQLException {
+        addAssetQuery.setString(1, asset.getAssetName());
+
+        addAssetQuery.execute();
     }
 
 }
