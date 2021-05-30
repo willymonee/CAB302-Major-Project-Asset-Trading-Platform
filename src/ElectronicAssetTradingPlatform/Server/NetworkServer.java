@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * The server-side class for creating connections, and interacting with the database
+ */
 public class NetworkServer {
     /**
      * this is the timeout inbetween accepting clients, not reading from the socket itself.
@@ -113,16 +116,13 @@ public class NetworkServer {
                 try {
                     // Reads Command and parameter object
                     NetworkCommands command = (NetworkCommands) objectInputStream.readObject();
-                    if (command == null) {
-                    }
                     handleCommand(command, objectInputStream, objectOutputStream, socket);
                 } catch (SocketTimeoutException e) {
-                    /**
+                    /*
                      * We catch SocketTimeoutExceptions, because that just means the client hasn't sent
                      * any new requests. We don't want to disconnect them otherwise. Another way to
                      * check if they're "still there would be with ping/pong commands.
                      */
-                    continue;
                 } catch (SQLException e) {
                     e.printStackTrace();
                     if (e.getErrorCode() == UNIQUE_CONSTRAINT_EXCEPTION_CODE)

@@ -1,6 +1,5 @@
 package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
-import ElectronicAssetTradingPlatform.Database.MarketplaceHistoryDataSource;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
@@ -10,9 +9,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class AssetDetailGUI extends JFrame {
@@ -93,6 +90,7 @@ public class AssetDetailGUI extends JFrame {
     }
 
     public static void main(String[] args) {
+        // TODO: remove main done
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
