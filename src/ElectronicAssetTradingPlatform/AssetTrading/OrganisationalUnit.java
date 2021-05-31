@@ -48,7 +48,7 @@ public class OrganisationalUnit implements Serializable {
      *                               being less than zero disallowing the given amount of credits to be removed
      */
     public void removeCredits(float credits) throws LessThanZeroException {
-        if (this.credits + credits < 0) {
+        if (this.credits - credits < 0) {
             throw new LessThanZeroException("Cannot remove more credits than owned... ");
         }
         else {
