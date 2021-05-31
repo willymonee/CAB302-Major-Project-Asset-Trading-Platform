@@ -317,4 +317,19 @@ public class NetworkDataSource extends Thread {
             throw new DatabaseException((String) out);
         }
     }
+
+    public OrganisationalUnit retrieveOrgUnit(String unitName) throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.RETRIEVE_ORG_UNIT, unitName);
+
+        try {
+            return (OrganisationalUnit) out;
+        }
+        catch (ClassCastException e) {
+            throw new DatabaseException((String) out);
+        }
+    }
+
+    public String editOrgUnitCredits(OrganisationalUnit orgUnit) {
+        return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_CREDITS, orgUnit);
+    }
 }
