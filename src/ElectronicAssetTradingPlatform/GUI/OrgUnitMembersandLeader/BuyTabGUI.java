@@ -8,12 +8,12 @@ import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,10 +30,20 @@ public class BuyTabGUI extends JPanel {
     private JPanel marketBuyOffersPanel;
     private JScrollPane scrollPanel;
     private JLabel marketBuyOffersLabel;
+    private int selectedOfferID;
+    private int selectedRow;
+    private JTable buyOffersTable;
+    private DefaultTableModel model;
+
 
     TreeMap<Integer, BuyOffer> buyOffers;
 
 
+    /**
+     * Construct the BuyTab GUI which will display the organisational unit buy offers & market buy offers
+     * @param member the member who has logged in
+     * @param dataSource the network connection
+     */
     public BuyTabGUI(OrganisationalUnitMembers member, NetworkDataSource dataSource) {
         loggedInMember = member;
         data = dataSource;
@@ -69,8 +79,8 @@ public class BuyTabGUI extends JPanel {
            scrollPanel.setMaximumSize(new Dimension(850, 250));
         }
         else {
-            // create scroll panel with table inside, but never allow vertical scrolling
-            scrollPanel = new JScrollPane(buyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            // create scroll panel with table inside, but is not a fixed size
+            scrollPanel = new JScrollPane(buyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
             int height = buyOffersTable.getPreferredSize().height + 125;
             // set height of panel to the buy offer table's size + 125 (VARIABLE size)
             orgBuyOffersPanel.setPreferredSize(new Dimension(825, height));
@@ -88,11 +98,12 @@ public class BuyTabGUI extends JPanel {
         marketBuyOffersLabel = Helper.createLabel("Market Buy Offers", 20);
         marketBuyOffersPanel.add(marketBuyOffersLabel);
         wrapper.add(marketBuyOffersPanel);
-
-
-
     }
 
+    /**
+     * A welcome message once in the BuyTab GUI
+     * @return String welcome message including the user's username
+     */
     private String memberTextDisplay() {
         String memberTextDisplay = "";
         memberTextDisplay += "Welcome" + loggedInMember.getUsername();
@@ -108,19 +119,53 @@ public class BuyTabGUI extends JPanel {
         return memberTextDisplay;
     }
 
+    /**
+     * Returns a TreeMap of the organisational unit's buy offers
+     * @return
+     * @throws Exception
+     */
     private TreeMap<Integer, BuyOffer> getUnitBuyOffers() throws Exception {
         buyOffers = null;
         buyOffers = BuyOfferData.getInstance().getOrgOffersMap(loggedInMember.getUnitName());
-
-
         if (buyOffers == null) {
             throw new Exception(); // maybe don't 'throw' an exception just display nothing
         }
-
         return buyOffers;
 
     }
 
+    /**
+     * Extract the organisational unit's buy offers from the TreeMap and return it as an array of strings
+     * @return Array of org buy offers to be used as input for JTable
+     */
+    private String[][] getOrgUnitBuyOffersRowData() {
+        try {
+            buyOffers = getUnitBuyOffers();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        String[][] data = new String[buyOffers.size()][];
+        int count = 0;
+        for(Map.Entry<Integer, BuyOffer> entry : buyOffers.entrySet()) {
+            BuyOffer value = entry.getValue();
+            data[count] = new String[] {
+                    String.valueOf(value.getOfferID()),
+                    value.getAssetName(),
+                    String.valueOf(value.getQuantity()),
+                    String.valueOf(value.getPricePerUnit()),
+                    value.getUsername(),
+                    "Edit/Delete"
+            };
+            count++;
+        }
+        return data;
+    }
+
+    /**
+     * Given a table, resize the column widths automatically to fit data inside
+     * @param table to be resized
+     */
     // https://stackoverflow.com/questions/17627431/auto-resizing-the-jtable-column-widths by Paul Vargas
     public void resizeColumnWidth(JTable table) {
         final TableColumnModel columnModel = table.getColumnModel();
@@ -137,24 +182,25 @@ public class BuyTabGUI extends JPanel {
         }
     }
 
-    // TODO : REMOVE ORG UNIT AS A COLUMN, AND ISNTEAD HAVE A BUTTON TO EDIT THE ASSET OFFER LISTING
+    public JTable createTable(String data[][], String columns[], DefaultTableModel tableModel) {
+        tableModel = new DefaultTableModel(data, columns);
+        JTable table = new JTable(tableModel);
+        return table;
+    }
+
+    /**
+     * Create the org unit's buy offers table
+     * @return
+     */
     private JTable unitBuyOffersTable() {
-        String data[][] = getRowData();
+        String data[][] = getOrgUnitBuyOffersRowData();
         String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator", "Edit/Delete"};
-        JTable buyOffersTable = new JTable(data, columns);
+        // model = new DefaultTableModel(data, columns);
+
+        buyOffersTable = createTable(data, columns, model);
         resizeColumnWidth(buyOffersTable);
         buyOffersTable.setRowHeight(25);
         buyOffersTable.setFont(new Font ( "Dialog", Font.PLAIN, 14));
-
-//        Font font = buyOffersTable.getFont();
-//        Map attributes = font.getAttributes();
-//
-//        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-//        buyOffersTable.setFont(font.deriveFont(attributes));
-
-
-
-
 
         buyOffersTable.getTableHeader().setPreferredSize(new Dimension(150,25));
         buyOffersTable.getTableHeader().setFont(new Font ( "Dialog", Font.BOLD, 14));
@@ -195,125 +241,147 @@ public class BuyTabGUI extends JPanel {
         Dimension preferredSize = new Dimension(825, buyOffersTable.getRowCount() * 25);
 
         if (preferredSize.height < 225) {
-            System.out.println("setting a preferred size for the table");
             buyOffersTable.setPreferredSize(preferredSize);
         }
+
+
+        buyOffersTable.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int column = 0;
+                int row = buyOffersTable.getSelectedRow();
+                String value = buyOffersTable.getModel().getValueAt(row, column).toString();
+                selectedOfferID = Integer.parseInt(value);
+                selectedRow  = row;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
         return buyOffersTable;
     }
 
 
-    private String[][] getRowData() {
-        try {
-            buyOffers = getUnitBuyOffers();
+
+
+
+
+
+    // Button Renderer and Editor classes from: https://camposha.info/java-jtable-buttoncolumn-tutorial/
+
+    class ButtonRenderer extends JButton implements TableCellRenderer {
+
+        public ButtonRenderer() {
+            setOpaque(true);
         }
 
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String[][] data = new String[buyOffers.size()][];
-        int count = 0;
-        for(Map.Entry<Integer, BuyOffer> entry : buyOffers.entrySet()) {
-            //Integer key = entry.getKey();
-            BuyOffer value = entry.getValue();
-
-
-            data[count] = new String[] {
-                String.valueOf(value.getOfferID()),
-                value.getAssetName(),
-                String.valueOf(value.getQuantity()),
-                String.valueOf(value.getPricePerUnit()),
-                value.getUsername(),
-                "Edit/Delete"
-            };
-            count++;
-        }
-        return data;
-    }
-
-
-}
-
-// Button Renderer and Editor classes from: https://camposha.info/java-jtable-buttoncolumn-tutorial/
-
-class ButtonRenderer extends JButton implements TableCellRenderer {
-
-    public ButtonRenderer() {
-        setOpaque(true);
-    }
-
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value,
-                                                   boolean isSelected, boolean hasFocus, int row, int column) {
-        System.out.println("button renderer working");
-        if (isSelected) {
-            setForeground(table.getSelectionForeground());
-            setBackground(table.getSelectionBackground());
-        } else {
-            setForeground(table.getForeground());
-            setBackground(UIManager.getColor("Button.background"));
-        }
-        setText((value == null) ? "" : value.toString());
-        return this;
-    }
-}
-
-
-class ButtonEditor extends DefaultCellEditor {
-
-    protected JButton button;
-    private String label;
-    private boolean isPushed;
-
-    public ButtonEditor(JCheckBox checkBox) {
-        super(checkBox);
-        button = new JButton();
-        button.setOpaque(true);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                fireEditingStopped();
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+            if (isSelected) {
+                setForeground(table.getSelectionForeground());
+                setBackground(table.getSelectionBackground());
+            } else {
+                setForeground(table.getForeground());
+                setBackground(UIManager.getColor("Button.background"));
             }
-        });
-    }
-
-    @Override
-    public Component getTableCellEditorComponent(JTable table, Object value,
-                                                 boolean isSelected, int row, int column) {
-        if (isSelected) {
-            button.setForeground(table.getSelectionForeground());
-            button.setBackground(table.getSelectionBackground());
-        } else {
-            button.setForeground(table.getForeground());
-            button.setBackground(table.getBackground());
-            Font font = button.getFont();
-            Map attributes = font.getAttributes();
-            attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-            button.setFont(font.deriveFont(attributes));
+            setText((value == null) ? "" : value.toString());
+            return this;
         }
-        label = (value == null) ? "" : value.toString();
-        button.setText(label);
-        isPushed = true;
-        return button;
     }
 
-    @Override
-    public Object getCellEditorValue() {
-        if (isPushed) {
-            JOptionPane.showMessageDialog(button, label + ": Ouch!");
+
+    class ButtonEditor extends DefaultCellEditor {
+
+        protected JButton button;
+        private String label;
+        private boolean isPushed;
+
+        public ButtonEditor(JCheckBox checkBox) {
+            super(checkBox);
+            button = new JButton();
+            button.setOpaque(true);
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("A");
+                    fireEditingStopped();
+                }
+            });
         }
-        isPushed = false;
-        return label;
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value,
+                                                     boolean isSelected, int row, int column) {
+            if (isSelected) {
+                button.setForeground(table.getSelectionForeground());
+                button.setBackground(table.getSelectionBackground());
+            } else {
+                button.setForeground(table.getForeground());
+                button.setBackground(table.getBackground());
+            }
+            label = (value == null) ? "" : value.toString();
+            button.setText(label);
+            isPushed = true;
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            if (isPushed) {
+                String[] options = {"Edit", "Delete", "Cancel"};
+                int result = JOptionPane.showOptionDialog(button, "Edit or Remove Offer","Edit or Remove Offer" , JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,null ,options, options[0]);
+                if (result == JOptionPane.YES_OPTION) {
+                    System.out.println("edit offer");
+                }
+                else if (result == JOptionPane.NO_OPTION) {
+                    int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove the offer?", "Remove Offer", JOptionPane.YES_NO_OPTION);
+                    if(dialogResult == JOptionPane.YES_OPTION){
+                        System.out.println("remove offer");
+                        BuyOfferData.getInstance().removeOffer(selectedOfferID);
+                        model.removeRow(selectedRow);
+                    }
+                    else {
+                        System.out.println("cancel remove offer");
+                    }
+                }
+                else {
+                    System.out.println("cancel");
+                }
+            }
+            isPushed = false;
+            return label;
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            isPushed = false;
+            return super.stopCellEditing();
+        }
+
+        @Override
+        protected void fireEditingStopped() {
+            super.fireEditingStopped();
+        }
     }
 
-    @Override
-    public boolean stopCellEditing() {
-        isPushed = false;
-        return super.stopCellEditing();
-    }
-
-    @Override
-    protected void fireEditingStopped() {
-        super.fireEditingStopped();
-    }
 }
+
