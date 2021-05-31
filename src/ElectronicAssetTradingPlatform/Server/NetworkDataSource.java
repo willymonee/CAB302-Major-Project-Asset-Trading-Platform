@@ -4,16 +4,20 @@ import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 
 import javax.swing.JOptionPane;
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -289,7 +293,7 @@ public class NetworkDataSource extends Thread {
 
     /**
      * Sends command to add price history for
-     * a traded successfully traded asset
+     * a successfully traded asset
      */
     public String addAssetHistory(BuyOffer buyOffer, SellOffer sellOffer, int quantity) {
         return (String) sendCommand(NetworkCommands.ADD_HISTORY, buyOffer, sellOffer, quantity);
@@ -302,5 +306,15 @@ public class NetworkDataSource extends Thread {
 
     public String storeAsset(Asset asset) {
         return (String) sendCommand(NetworkCommands.STORE_ASSET, asset);
+    }
+
+    public List<List<Object>> getAssetHistory(int assetID) throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.GET_ASSET_HISTORY, assetID);
+        try {
+            return (List<List<Object>>) out;
+        }
+        catch (ClassCastException e) {
+            throw new DatabaseException((String) out);
+        }
     }
 }

@@ -15,6 +15,7 @@ import java.net.SocketTimeoutException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -363,6 +364,14 @@ public class NetworkServer {
                     // Write success output
                     objectOutputStream.writeObject("Added asset.");
                     System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
+            }
+            case GET_ASSET_HISTORY -> {
+                int assetID = (int) objectInputStream.readObject();
+                synchronized (database) {
+                    List<List<Object>> assetPriceHistory = MarketplaceHistoryDataSource.getInstance().getAssetPriceHistory(assetID);
+                    objectOutputStream.writeObject(assetPriceHistory);
                 }
                 objectOutputStream.flush();
             }
