@@ -12,6 +12,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.font.TextAttribute;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -87,7 +90,7 @@ public class BuyTabGUI extends JPanel {
         wrapper.add(marketBuyOffersPanel);
 
 
-    // TODO: BUTTON COLUMN TO EDIT ASSET LISTING https://camposha.info/java-jtable-buttoncolumn-tutorial/
+
     }
 
     private String memberTextDisplay() {
@@ -142,15 +145,50 @@ public class BuyTabGUI extends JPanel {
         resizeColumnWidth(buyOffersTable);
         buyOffersTable.setRowHeight(25);
         buyOffersTable.setFont(new Font ( "Dialog", Font.PLAIN, 14));
+
+//        Font font = buyOffersTable.getFont();
+//        Map attributes = font.getAttributes();
+//
+//        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+//        buyOffersTable.setFont(font.deriveFont(attributes));
+
+
+
+
+
         buyOffersTable.getTableHeader().setPreferredSize(new Dimension(150,25));
         buyOffersTable.getTableHeader().setFont(new Font ( "Dialog", Font.BOLD, 14));
         buyOffersTable.getTableHeader().setReorderingAllowed(false);
+        // set button column for Edit/Delete column
+        buyOffersTable.getColumn("Edit/Delete").setCellRenderer(new ButtonRenderer());
+        buyOffersTable.getColumn("Edit/Delete").setCellEditor(new ButtonEditor(new JCheckBox()));
+
         // center table cells
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment( JLabel.CENTER );
         for(int x = 0; x < columns.length; x++){
             buyOffersTable.getColumnModel().getColumn(x).setCellRenderer( centerRenderer );
         }
+        // set an underline for the edit/delete buttons
+        // https://forums.codeguru.com/showthread.php?38965-Change-background-color-of-one-column-in-JTable#:~:text=Re%3A%20Change%20background%20color%20of,before%20returning%20the%20renderer%2C%20e.g.
+        buyOffersTable.getColumn("Edit/Delete").setCellRenderer(
+            new DefaultTableCellRenderer() {
+                public Component getTableCellRendererComponent(JTable table,
+                                                               Object value,
+                                                               boolean isSelected,
+                                                               boolean hasFocus,
+                                                               int row,
+                                                               int column) {
+                    setText(value.toString());
+                    setHorizontalAlignment(JLabel.CENTER);
+                    Font font = buyOffersTable.getFont();
+                    setFont(font);
+                    Map attributes = font.getAttributes();
+                    attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+                    setFont(font.deriveFont(attributes));
+                    return this;
+                }
+            });
         // prevent editing of cells in table
         buyOffersTable.setDefaultEditor(Object.class, null);
         // set the preferred size of the table
@@ -162,6 +200,7 @@ public class BuyTabGUI extends JPanel {
         }
         return buyOffersTable;
     }
+
 
     private String[][] getRowData() {
         try {
@@ -185,10 +224,96 @@ public class BuyTabGUI extends JPanel {
                 String.valueOf(value.getQuantity()),
                 String.valueOf(value.getPricePerUnit()),
                 value.getUsername(),
-                value.getUnitName()
+                "Edit/Delete"
             };
             count++;
         }
         return data;
+    }
+
+
+}
+
+// Button Renderer and Editor classes from: https://camposha.info/java-jtable-buttoncolumn-tutorial/
+
+class ButtonRenderer extends JButton implements TableCellRenderer {
+
+    public ButtonRenderer() {
+        setOpaque(true);
+    }
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value,
+                                                   boolean isSelected, boolean hasFocus, int row, int column) {
+        System.out.println("button renderer working");
+        if (isSelected) {
+            setForeground(table.getSelectionForeground());
+            setBackground(table.getSelectionBackground());
+        } else {
+            setForeground(table.getForeground());
+            setBackground(UIManager.getColor("Button.background"));
+        }
+        setText((value == null) ? "" : value.toString());
+        return this;
+    }
+}
+
+
+class ButtonEditor extends DefaultCellEditor {
+
+    protected JButton button;
+    private String label;
+    private boolean isPushed;
+
+    public ButtonEditor(JCheckBox checkBox) {
+        super(checkBox);
+        button = new JButton();
+        button.setOpaque(true);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fireEditingStopped();
+            }
+        });
+    }
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value,
+                                                 boolean isSelected, int row, int column) {
+        if (isSelected) {
+            button.setForeground(table.getSelectionForeground());
+            button.setBackground(table.getSelectionBackground());
+        } else {
+            button.setForeground(table.getForeground());
+            button.setBackground(table.getBackground());
+            Font font = button.getFont();
+            Map attributes = font.getAttributes();
+            attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+            button.setFont(font.deriveFont(attributes));
+        }
+        label = (value == null) ? "" : value.toString();
+        button.setText(label);
+        isPushed = true;
+        return button;
+    }
+
+    @Override
+    public Object getCellEditorValue() {
+        if (isPushed) {
+            JOptionPane.showMessageDialog(button, label + ": Ouch!");
+        }
+        isPushed = false;
+        return label;
+    }
+
+    @Override
+    public boolean stopCellEditing() {
+        isPushed = false;
+        return super.stopCellEditing();
+    }
+
+    @Override
+    protected void fireEditingStopped() {
+        super.fireEditingStopped();
     }
 }
