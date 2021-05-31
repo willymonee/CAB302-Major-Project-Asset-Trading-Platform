@@ -61,7 +61,7 @@ public class OrgUnitMemGUI extends JFrame {
         BuyTabGUI buyCard = new BuyTabGUI(loggedInUser, data);
         SellTabGUI sellCard = new SellTabGUI(loggedInUser);
         OrgUnitTabGUI orgUnitCard = new OrgUnitTabGUI(loggedInUser);
-        AccountTabGUI accountCard = new AccountTabGUI(loggedInUser);
+        AccountTabGUI accountCard = new AccountTabGUI(loggedInUser, data);
 
         menuTabs.add("Buy", buyCard);
         menuTabs.add("Sell", sellCard);
