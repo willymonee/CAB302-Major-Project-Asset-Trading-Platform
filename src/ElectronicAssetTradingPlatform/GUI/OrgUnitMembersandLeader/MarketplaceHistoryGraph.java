@@ -9,6 +9,7 @@ import java.util.LinkedList;
 
 public class MarketplaceHistoryGraph extends JComponent {
     private ArrayList<String> y2values = new ArrayList<>();
+    private String firsty1value;
 
     public MarketplaceHistoryGraph(Object[][] data, int width, int height) {
         ArrayList<Float> y_values = new ArrayList<>();
@@ -28,6 +29,7 @@ public class MarketplaceHistoryGraph extends JComponent {
         float diff_x = max_x - min_x;
         float diff_y = max_y - min_y;
 
+        firsty1value = String.valueOf(y_values.get(0));
         for (int i = 0; i < data.length - 1; i++) {
             float y2 = y_values.get(i + 1);
 
@@ -105,6 +107,13 @@ public class MarketplaceHistoryGraph extends JComponent {
         g.drawString("Date", getWidth()/2-10, getHeight());
 
         // Draw lines
+        // First y-value
+        g.drawOval(lines.getFirst().x1-3, lines.getFirst().y1-3, 5, 5);
+
+        g.setColor(Color.BLACK);
+        g.drawString(firsty1value, lines.getFirst().x1+10, lines.getFirst().y1+12);
+
+        // All
         int i = 0;
         for (Line line : lines) {
             g.setColor(Color.DARK_GRAY);
