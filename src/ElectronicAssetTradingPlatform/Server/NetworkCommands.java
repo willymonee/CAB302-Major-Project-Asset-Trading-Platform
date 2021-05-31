@@ -21,6 +21,8 @@ public enum NetworkCommands {
     GET_UNIT_CREDIT,
     GET_UNIT_ASSETS,
     ADD_HISTORY,
-    STORE_ORG_UNIT
+    STORE_ORG_UNIT,
+    STORE_ASSET,
+    GET_ASSET_HISTORY
 
 }

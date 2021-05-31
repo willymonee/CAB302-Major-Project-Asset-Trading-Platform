@@ -1,5 +1,7 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
+import java.io.Serializable;
+
 /**
  * The 'Asset' class provides goods or services owned by organisational units which can be used to trade.
  * This is achieved through the creation of the 'Asset' object by IT Admins, which adds an asset to the system.
@@ -7,7 +9,7 @@ package ElectronicAssetTradingPlatform.AssetTrading;
  * To add an asset to an organisational unit, an EXISTING Asset object's name is placed into a Map
  * containing the name of the asset as the key and the quantity owned as the value.
  */
-public class Asset {
+public class Asset implements Serializable {
     private String assetName;
 
     /**
