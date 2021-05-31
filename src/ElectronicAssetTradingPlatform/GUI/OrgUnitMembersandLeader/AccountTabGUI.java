@@ -15,6 +15,11 @@ public class AccountTabGUI extends JPanel{
 
     private JButton openChangePassMenu;
 
+    /**
+     * Constructor for the Account Tab in the Member GUI
+     * @param member    the member accessing the GUI
+     * @param net       the network connection
+     */
     public AccountTabGUI(OrganisationalUnitMembers member, NetworkDataSource net) {
         loggedInUser = member;
         data = net;
@@ -23,13 +28,27 @@ public class AccountTabGUI extends JPanel{
         this.add(openChangePassMenu);
     }
 
+    /**
+     * Handles button action/events
+     */
     private class ButtonListener implements ActionListener {
         OrganisationalUnitMembers loggedInUser;
         NetworkDataSource data;
+
+        /**
+         * Constructor for the Button Listener
+         * @param member    the member accessing the GUI and who pressed the button
+         * @param net       the network connection
+         */
         private ButtonListener(OrganisationalUnitMembers member, NetworkDataSource net) {
             loggedInUser = member;
             data = net;
         }
+
+        /**
+         * Action performed on button
+         * @param e         the action event of the button (in this case it was clicked)
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton source = (JButton) e.getSource();

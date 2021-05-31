@@ -143,7 +143,6 @@ public class MarketplaceHistoryDataSource {
 
 }
 
-// TODO: Test Insert works with Network
-// TODO: Add getAssetPriceHistory functionality to Network
+
 
 
