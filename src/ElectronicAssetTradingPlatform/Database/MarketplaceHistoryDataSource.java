@@ -2,65 +2,62 @@ package ElectronicAssetTradingPlatform.Database;
 
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
+import ElectronicAssetTradingPlatform.AssetTrading.TradeHistory;
+
+
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
 
 public class MarketplaceHistoryDataSource {
-    //SQLITE Default Date format: yyyy-MM-dd HH:mm:ss
-    // example: '2007-01-01 10:00:00'
-    //https://www.sqlitetutorial.net/sqlite-date/
-    //Acceptable format: YYY-MM-DD
-    //https://www.sqlite.org/lang_datefunc.html
-    private static final String GET_TRADES_BY_DATE = "SELECT * FROM Marketplace_history WHERE Date_fulfilled < date(?)";
-    private static final String GET_TRADES_AFTER_DATE = "SELECT * FROM Marketplace_history WHERE Date_fulfilled > ?";
-    private static final String GET_TRADES_BETWEEN_DATES = "SELECT * FROM Marketplace_history WHERE Date_fulfilled BETWEEN date(?) AND date(?);";
-    private static final String INSERT_COMPLETED_TRADE = "INSERT INTRO Marketplace_history (Buyer_ID, Seller_ID, Asset_type_ID,"
+
+    private static final String INSERT_COMPLETED_TRADE = "INSERT INTO Marketplace_history (Buyer_ID, Seller_ID, Asset_type_ID,"
                                                             + "Price_per_unit, Quantity, Date_fulfilled)"
                                                             + "VALUES (?, ?, ?, ?, ?, ?);";
-    // private static final String DELETE_COMPLETED_TRADE = "";
+    private static final String GET_ASSET_HISTORY = "SELECT Price_per_unit, Date_fulfilled FROM Marketplace_history WHERE Asset_type_ID = ?;";
 
 
-    private PreparedStatement getTradesByDate;
-    private PreparedStatement getTradesAfterDate;
-    private PreparedStatement getTradesBetweenDates;
     private PreparedStatement insertCompletedTrade;
+    private PreparedStatement getAssetHistory;
 
     private Connection connection;
 
+    /**
+     * Singleton Holder for MarketplaceHistoryDataSource
+     */
     private static class HistorySingletonHolder {
         private final static MarketplaceHistoryDataSource INSTANCE = new MarketplaceHistoryDataSource();
     }
 
+    /**
+     * Get Instance via Singleton
+     */
     public static MarketplaceHistoryDataSource getInstance() { return HistorySingletonHolder.INSTANCE; }
 
+    /**
+     * Constructor for MarketplaceHistory Data Source
+     */
     private MarketplaceHistoryDataSource() {
         connection = DBConnectivity.getInstance();
         try {
-            getTradesByDate = connection.prepareStatement(GET_TRADES_BY_DATE);
-            getTradesAfterDate = connection.prepareStatement(GET_TRADES_AFTER_DATE);
-            getTradesBetweenDates = connection.prepareStatement(GET_TRADES_BETWEEN_DATES);
             insertCompletedTrade = connection.prepareStatement(INSERT_COMPLETED_TRADE);
+            getAssetHistory = connection.prepareStatement(GET_ASSET_HISTORY);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-
-    // Some data structure to store multiple values
-    public void getTradesByDate(Date date) throws SQLException {
-        ResultSet rs = null;
-        getTradesByDate.setString(1, date.toString());
-    }
-    /*  When displaying the graph, im guessing x axis is date and y axis is price per unit
-        Will need to display or create graph for each unique asset in the database
-        and the quantity would come into play um.
-        Worst case scenario just display a table of data lmaooo, i guess just rip some columns straight out db
-    */
-
+    /**
+     * Inserts the relevant data into the Marketplace_history database given a completed trade
+     * @param buyOffer      A buy offer
+     * @param sellOffer     A sell offer
+     * @param quantity      The quantity of assets traded
+     */
     public void insertCompletedTrade(BuyOffer buyOffer, SellOffer sellOffer, int quantity) {
         boolean execute = true;
         try {
@@ -77,21 +74,11 @@ public class MarketplaceHistoryDataSource {
             else
                 execute = false;
 
-            if (buyOffer.getPricePerUnit() == sellOffer.getPricePerUnit()) {
-                double ppu = buyOffer.getPricePerUnit();
-                String price = Double.toString(ppu);
-                insertCompletedTrade.setString(4, price);
-            }
 
-            else
-                execute = false;
+            insertCompletedTrade.setString(4, String.valueOf(sellOffer.getPricePerUnit()));
+            insertCompletedTrade.setString(5, String.valueOf(quantity));
 
-
-
-               insertCompletedTrade.setInt(5, quantity);
-
-
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDateTime currentTime = LocalDateTime.now();
             String dateCompleted = dateFormatter.format(currentTime).toString();
             insertCompletedTrade.setString(6, dateCompleted);
@@ -103,15 +90,59 @@ public class MarketplaceHistoryDataSource {
             else
                 throw new SQLException();
 
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
 
+    /**
+     * Returns all buy & sell trades completed by a organisational unit
+     * @param unitID    The ID of the organisational Unit
+     * @return          The trade history of the queried organisational unit
+     */
+    public TreeMap<Integer, TradeHistory> getUnitTradeHistory(int unitID) {
+        TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
+        ResultSet rs = null;
+        // Need SQL query to print out all the trades given a unit ID, where the buyerID/seller ID has unitID = unitID
 
 
+        return unitTradeHistory;
+    }
+
+    /**
+     * Gets the price history of an asset
+     * @param assetID       ID of the asset's history which is being queried
+     * @return              A HashMap of the asset's previously sold price as
+     *                      float and date a trade for this asset was completed
+     */
+    public List<List<Object>> getAssetPriceHistory(int assetID) {
+        List<List<Object>> assetPriceHistory = new ArrayList<List<Object>>();
+        ResultSet rs = null;
+        try {
+            getAssetHistory.setInt(1, assetID);
+            rs = getAssetHistory.executeQuery();
+            while(rs.next()) {
+                float price = rs.getFloat(1);
+
+                String dateTraded = rs.getString(2);
+                // Convert string to Date
+                Date date = java.sql.Date.valueOf(dateTraded);
+                ArrayList<Object> newRow = new ArrayList<>();
+                newRow.add(date);
+                newRow.add(price);
+                assetPriceHistory.add(newRow);
+
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return assetPriceHistory;
+    }
 
 }
+
+
 
 

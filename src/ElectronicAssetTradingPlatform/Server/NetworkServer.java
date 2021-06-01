@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.Server;
 
 import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Database.*;
+import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
@@ -15,6 +16,7 @@ import java.net.SocketTimeoutException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -130,6 +132,8 @@ public class NetworkServer {
                     else objectOutputStream.writeObject("It could not be found: " + e.getMessage());
                 } catch (UserTypeException e) {
                     e.printStackTrace();
+                } catch (LessThanZeroException e) {
+                    e.printStackTrace();
                 }
             }
         } catch (IOException | ClassCastException | ClassNotFoundException e) {
@@ -148,7 +152,7 @@ public class NetworkServer {
      * @throws UserTypeException if the user is an invalid user type for the specified command
      */
     private void handleCommand (NetworkCommands command, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, Socket socket)
-            throws IOException, ClassNotFoundException, SQLException, UserTypeException {
+            throws IOException, ClassNotFoundException, SQLException, UserTypeException, LessThanZeroException {
         /*
          * Remember this is happening on separate threads for each client. Therefore access to the database
          * must be thread-safe in some way. The easiest way to achieve thread safety is to just put a giant
@@ -348,6 +352,61 @@ public class NetworkServer {
 
                     // Write success output
                     objectOutputStream.writeObject("Added organisational unit.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
+            }
+            case STORE_ASSET -> {
+                // Get input
+                Asset asset = (Asset) objectInputStream.readObject();
+
+                synchronized (database) {
+                    // Save to db
+                    UnitDataSource.getInstance().insertAsset(asset);
+
+                    // Write success output
+                    objectOutputStream.writeObject("Added asset.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
+            }
+            case GET_ASSET_HISTORY -> {
+                int assetID = (int) objectInputStream.readObject();
+                synchronized (database) {
+                    List<List<Object>> assetPriceHistory = MarketplaceHistoryDataSource.getInstance().getAssetPriceHistory(assetID);
+                    objectOutputStream.writeObject(assetPriceHistory);
+                }
+                objectOutputStream.flush();
+            }
+            case RETRIEVE_ORG_UNIT -> {
+                // Get input
+                String unitName = (String) objectInputStream.readObject();
+
+                OrganisationalUnit out;
+                synchronized (database) {
+                    out = UnitDataSource.getInstance().getOrgUnit(unitName);
+
+                    // Write output
+                    objectOutputStream.writeObject(out);
+                    System.out.println("Wrote to socket: " + socket.toString() + out);
+                }
+                objectOutputStream.flush();
+            }
+            case EDIT_ORG_UNIT_CREDITS -> {
+                // Get input
+                OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
+
+                synchronized (database) {
+//                    String unitName = null;
+//                    try {
+//                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
+//                    } catch (ClassCastException ignored) {}
+
+                    // Save to db
+                    UnitDataSource.getInstance().editOrgUnitCredits(orgUnit.getUnitName(), orgUnit.getCredits());
+
+                    // Write success output
+                    objectOutputStream.writeObject("Edited Organisational Unit.");
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
                 objectOutputStream.flush();
