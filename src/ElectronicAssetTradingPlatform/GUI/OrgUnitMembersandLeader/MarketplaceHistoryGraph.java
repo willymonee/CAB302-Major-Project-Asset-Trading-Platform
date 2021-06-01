@@ -15,8 +15,8 @@ public class MarketplaceHistoryGraph extends JComponent {
         ArrayList<Float> y_values = new ArrayList<>();
         ArrayList<Date> x_values = new ArrayList<>();
         for (Object[] row : data) {
-            y_values.add((float) row[2]);
-            x_values.add((Date) row[4]);
+            x_values.add((Date) row[0]);
+            y_values.add((float) row[1]);
         }
 
         // Get ceiling/floor

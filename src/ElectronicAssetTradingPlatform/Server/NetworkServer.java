@@ -371,9 +371,9 @@ public class NetworkServer {
                 objectOutputStream.flush();
             }
             case GET_ASSET_HISTORY -> {
-                int assetID = (int) objectInputStream.readObject();
+                String assetName = (String) objectInputStream.readObject();
                 synchronized (database) {
-                    List<List<Object>> assetPriceHistory = MarketplaceHistoryDataSource.getInstance().getAssetPriceHistory(assetID);
+                    List<List<Object>> assetPriceHistory = MarketplaceHistoryDataSource.getInstance().getAssetPriceHistory(assetName);
                     objectOutputStream.writeObject(assetPriceHistory);
                 }
                 objectOutputStream.flush();

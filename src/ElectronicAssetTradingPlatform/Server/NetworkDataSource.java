@@ -308,8 +308,8 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.STORE_ASSET, asset);
     }
 
-    public List<List<Object>> getAssetHistory(int assetID) throws DatabaseException {
-        Object out = sendCommand(NetworkCommands.GET_ASSET_HISTORY, assetID);
+    public List<List<Object>> getAssetHistory(String assetName) throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.GET_ASSET_HISTORY, assetName);
         try {
             return (List<List<Object>>) out;
         }
