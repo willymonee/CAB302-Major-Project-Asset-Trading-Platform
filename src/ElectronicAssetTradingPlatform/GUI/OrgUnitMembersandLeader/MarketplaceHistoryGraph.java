@@ -121,8 +121,13 @@ public class MarketplaceHistoryGraph extends JComponent {
 
             g.drawOval(line.x1-3, line.y1-3, 5, 5);
 
+            // Erase any text behind
+            g.setColor(Color.WHITE);
+            g.fillRect(line.x2+10, line.y2+12, 30, -15);
+
+            // Write text
             g.setColor(Color.BLACK);
-            g.drawString(y2values.get(i), line.x2+10, line.y2+12);
+            g.drawString(y2values.get(i), line.x2+11, line.y2+12);
             i++;
         }
 
