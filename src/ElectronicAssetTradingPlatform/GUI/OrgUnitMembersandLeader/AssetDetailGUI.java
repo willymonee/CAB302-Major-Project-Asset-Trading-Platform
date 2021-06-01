@@ -31,7 +31,7 @@ public class AssetDetailGUI extends JFrame {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
         contentPane.add(Box.createVerticalStrut(20));
-        contentPane.add(makeMarketPlaceHistoryTable());
+        contentPane.add(makeMarketPlaceHistoryGraph());
 
         // Decorate the frame and make it visible
         setTitle("Asset Detail");
@@ -40,7 +40,7 @@ public class AssetDetailGUI extends JFrame {
         setVisible(true);
     }
 
-    private JPanel makeMarketPlaceHistoryTable() {
+    private JPanel makeMarketPlaceHistoryGraph() {
         JPanel panel = new JPanel(new BorderLayout());
 
         List<List<Object>> data;
