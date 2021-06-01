@@ -60,7 +60,7 @@ public class OrgUnitMemGUI extends JFrame {
 
         BuyTabGUI buyCard = new BuyTabGUI(loggedInUser, data);
         SellTabGUI sellCard = new SellTabGUI(loggedInUser);
-        OrgUnitTabGUI orgUnitCard = new OrgUnitTabGUI(loggedInUser);
+        OrgUnitTabGUI orgUnitCard = new OrgUnitTabGUI(loggedInUser, data);
         AccountTabGUI accountCard = new AccountTabGUI(loggedInUser, data);
 
         menuTabs.add("Buy", buyCard);
@@ -78,6 +78,7 @@ public class OrgUnitMemGUI extends JFrame {
         public void windowClosing(WindowEvent e) { dispose(); }
     }
 
+    // TODO: remove
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
