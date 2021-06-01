@@ -1,5 +1,6 @@
 package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
+import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-public class BuyTabGUI extends JPanel implements ActionListener {
+public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
     // Global variables
     private OrganisationalUnitMembers loggedInMember;
     private NetworkDataSource data;
@@ -41,6 +42,7 @@ public class BuyTabGUI extends JPanel implements ActionListener {
     private JButton removeOfferButton;
     private JButton editOfferButton;
     private JPanel orgBuyButtonPanel;
+    private JButton viewAssetButton;
 
 
     TreeMap<Integer, BuyOffer> buyOffers;
@@ -77,16 +79,14 @@ public class BuyTabGUI extends JPanel implements ActionListener {
         scrollPanelOrgBuyOffers = createScrollPane(buyOffersTable, orgBuyOfferPanel);
         // add the scroll panel to the org buy offer's panel
         orgBuyOfferPanel.add(scrollPanelOrgBuyOffers);
-        // add button to org buy offer panel
+        // add remove and edit offer buttons to org buy offer panel
         orgBuyButtonPanel = Helper.createPanel(Color.WHITE);
-
         removeOfferButton = createButton("Remove Buy Offer");
         removeOfferButton.setEnabled(false);
         editOfferButton = createButton("Edit Buy Offer");
         orgBuyButtonPanel.add(removeOfferButton, BorderLayout.WEST);
         orgBuyButtonPanel.add(editOfferButton, BorderLayout.EAST);
         orgBuyOfferPanel.add(orgBuyButtonPanel);
-
         // add org buy offer's panel to wrapper
         wrapper.add(orgBuyOfferPanel);
         // add market buy offer panel
@@ -94,12 +94,14 @@ public class BuyTabGUI extends JPanel implements ActionListener {
         marketBuyOffersLabel = Helper.createLabel("Market Buy Offers", 20);
         // add label to market buy offer panel
         marketBuyOffersPanel.add(marketBuyOffersLabel);
-        // add a table to the market buy offer's panel
+        // add a table to the market buy offers panel
         marketBuyOffersTable = marketBuyOffersTable();
         scrollPanelMarketBuyOffers = createScrollPane(marketBuyOffersTable, marketBuyOffersPanel);
-        // add the scroll panel to the org buy offer's panel
         marketBuyOffersPanel.add(scrollPanelMarketBuyOffers);
-        // add panel to wrapper
+        // add view asset button to market buy offers panel
+        viewAssetButton = createButton("View Asset");
+        marketBuyOffersPanel.add(viewAssetButton);
+        // add market buy offers panel to wrapper
         wrapper.add(marketBuyOffersPanel);
     }
 
@@ -170,48 +172,45 @@ public class BuyTabGUI extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
-        String buttonText = "";
         if (src == this.removeOfferButton) {
-            JButton btn = (JButton)src;
+            String message = "Are you sure you want to remove offer: " + selectedOrgOfferID;
             int dialogResult = JOptionPane.showConfirmDialog
-                    (null, "Are you sure you want to remove the offer?",
+                    (null, message,
                             "Remove Offer", JOptionPane.YES_NO_OPTION);
             if(dialogResult == JOptionPane.YES_OPTION){
                 // remove the buy offer
                 BuyOfferData.getInstance().removeOffer(selectedOrgOfferID);
                 // remove all offers in the table
-                int rowCount = model.getRowCount();
-                for (int i = rowCount - 1; i >= 0; i--) {
-                    model.removeRow(i);
-                }
-                // add all the offers back using updated data
-                String [][] rowData = getOrgUnitBuyOffersRowData();
-                for (int i = 0; i < rowData.length; i++) {
-                    model.addRow(rowData[i]);
-                }
-
-                rowCount = marketModel.getRowCount();
-                for (int i = rowCount - 1; i >= 0; i--) {
-                    marketModel.removeRow(i);
-                }
-
-                rowData = getMarketBuyOffersRowData();
-                for (int i = 0; i < rowData.length; i++) {
-                    marketModel.addRow(rowData[i]);
-                }
-
-                //                model.removeRow(selectedOrgOfferRow);
-//                for (int i = 0; i < marketModel.getRowCount(); i++) {
-//                    System.out.println((String) marketModel.getValueAt(i, 0) + String.valueOf(selectedOrgOfferID));
-//                    if (((String) marketModel.getValueAt(i, 0)).equals(String.valueOf(selectedOrgOfferID))) {
-//                        marketModel.removeRow(i);
-//                        System.out.println("should be removing row" + i);
-//                    }
-//                }
-
+                updateTables();
             }
         }
+        else if (src == this.viewAssetButton) {
+            System.out.println("Pressed view asset button");
+            new AssetDetailGUI(loggedInMember, data, new Asset("iPhone 10"));
+        }
     }
+    private void updateTables() {
+        int rowCount = model.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            model.removeRow(i);
+        }
+        // add all the offers back using updated data
+        String [][] rowData = getOrgUnitBuyOffersRowData();
+        for (int i = 0; i < rowData.length; i++) {
+            model.addRow(rowData[i]);
+        }
+
+        rowCount = marketModel.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            marketModel.removeRow(i);
+        }
+
+        rowData = getMarketBuyOffersRowData();
+        for (int i = 0; i < rowData.length; i++) {
+            marketModel.addRow(rowData[i]);
+        }
+    }
+
 
     private String[][] getMarketBuyOffersRowData() {
         TreeMap<Integer, BuyOffer> marketBuyOffers =  BuyOfferData.getInstance().getMarketBuyOffers();
@@ -377,10 +376,34 @@ public class BuyTabGUI extends JPanel implements ActionListener {
                 else {
                     removeOfferButton.setEnabled(true);
                 }
-
             }
         });
         return table;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
 
