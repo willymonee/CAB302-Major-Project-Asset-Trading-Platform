@@ -406,7 +406,28 @@ public class NetworkServer {
                     UnitDataSource.getInstance().editOrgUnitCredits(orgUnit.getUnitName(), orgUnit.getCredits());
 
                     // Write success output
-                    objectOutputStream.writeObject("Edited Organisational Unit.");
+                    objectOutputStream.writeObject("Edited Organisational Unit Credits.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
+            }
+            case EDIT_ORG_UNIT_ASSETS -> {
+                // Get input
+                OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
+                String assetName = (String) objectInputStream.readObject();
+
+
+                synchronized (database) {
+//                    String unitName = null;
+//                    try {
+//                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
+//                    } catch (ClassCastException ignored) {}
+
+                    // Save to db
+                    UnitDataSource.getInstance().editOrgUnitAssets(orgUnit.getUnitName(), assetName, orgUnit.getAssetQuantity(assetName));
+
+                    // Write success output
+                    objectOutputStream.writeObject("Edited Organisational Unit Assets.");
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
                 objectOutputStream.flush();
