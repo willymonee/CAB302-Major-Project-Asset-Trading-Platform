@@ -62,7 +62,8 @@ public class ETPDataSource {
             "CREATE TABLE IF NOT EXISTS Organisational_Unit_Assets ("
                 + "Unit_ID INTEGER NOT NULL,"
                 + "Asset_ID INTEGER NOT NULL,"
-                + "Asset_Quantity INTEGER NOT NULL"
+                + "Asset_Quantity INTEGER NOT NULL,"
+                + "UNIQUE(\"Unit_ID\",\"Asset_ID\")"
                 + ");";
 
 
