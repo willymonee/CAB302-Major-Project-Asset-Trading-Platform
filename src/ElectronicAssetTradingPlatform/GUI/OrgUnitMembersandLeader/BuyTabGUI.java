@@ -28,11 +28,13 @@ public class BuyTabGUI extends JPanel {
     private JLabel orgBuyOfferLabel;
     private JLabel welcomeMessage;
     private JPanel marketBuyOffersPanel;
-    private JScrollPane scrollPanel;
+    private JScrollPane scrollPanelOrgBuyOffers;
+    private JScrollPane scrollPanelMarketBuyOffers;
     private JLabel marketBuyOffersLabel;
     private int selectedOfferID;
     private int selectedRow;
     private JTable buyOffersTable;
+    private JTable marketBuyOffersTable;
     private DefaultTableModel model;
 
 
@@ -51,7 +53,7 @@ public class BuyTabGUI extends JPanel {
         wrapper = Helper.createPanel(Color.WHITE);
         BoxLayout boxlayout = new BoxLayout(wrapper, BoxLayout.Y_AXIS);
         wrapper.setLayout(boxlayout);
-        wrapper.setPreferredSize(new Dimension(850, 600));
+        wrapper.setPreferredSize(new Dimension(850, 800));
         this.add(wrapper);
         // add a welcome message into the wrapper
         welcomeMessage = Helper.createLabel(memberTextDisplay(), 16);
@@ -70,33 +72,61 @@ public class BuyTabGUI extends JPanel {
         // if the buy table's height is greater than 250
         if (buyTableHeight >= 250) {
             // create scroll panel with table inside
-           scrollPanel = new JScrollPane(buyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+           scrollPanelOrgBuyOffers = new JScrollPane(buyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
            // set the org buy offer panel to a FIXED 325
            orgBuyOffersPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 325));
            orgBuyOffersPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 325));
            // set the scroll panel to a FIXED 250
-           scrollPanel.setPreferredSize(new Dimension(850, 250));
-           scrollPanel.setMaximumSize(new Dimension(850, 250));
+           scrollPanelOrgBuyOffers.setPreferredSize(new Dimension(850, 250));
+           scrollPanelOrgBuyOffers.setMaximumSize(new Dimension(850, 250));
         }
         else {
             // create scroll panel with table inside, but is not a fixed size
-            scrollPanel = new JScrollPane(buyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            scrollPanelOrgBuyOffers = new JScrollPane(buyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
             int height = buyOffersTable.getPreferredSize().height + 125;
             // set height of panel to the buy offer table's size + 125 (VARIABLE size)
             orgBuyOffersPanel.setPreferredSize(new Dimension(825, height));
             orgBuyOffersPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
             // set height of scroll panel to a VARIABLE size equal to the buy offers table's height
-            scrollPanel.setPreferredSize(new Dimension(850, buyOffersTable.getPreferredSize().height + 25));
+            scrollPanelOrgBuyOffers.setPreferredSize(new Dimension(850, buyOffersTable.getPreferredSize().height + 25));
         }
-        scrollPanel.getViewport().setBackground(Color.WHITE);
+        scrollPanelOrgBuyOffers.getViewport().setBackground(Color.WHITE);
         // add the scroll panel to the org buy offer's panel
-        orgBuyOffersPanel.add(scrollPanel);
+        orgBuyOffersPanel.add(scrollPanelOrgBuyOffers);
         // add panel to wrapper
         wrapper.add(orgBuyOffersPanel);
 
         marketBuyOffersPanel = Helper.createPanel(Color.GRAY);
         marketBuyOffersLabel = Helper.createLabel("Market Buy Offers", 20);
         marketBuyOffersPanel.add(marketBuyOffersLabel);
+
+        marketBuyOffersTable = marketBuyOffersTable();
+
+        int marketBuyTableHeight = marketBuyOffersTable.getPreferredSize().height + 25;
+        // if the buy table's height is greater than 250
+        if (marketBuyTableHeight >= 250) {
+            // create scroll panel with table inside
+            scrollPanelMarketBuyOffers = new JScrollPane(marketBuyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            // set the org buy offer panel to a FIXED 325
+            scrollPanelMarketBuyOffers.setPreferredSize(new Dimension(Integer.MAX_VALUE, 325));
+            scrollPanelMarketBuyOffers.setMaximumSize(new Dimension(Integer.MAX_VALUE, 325));
+            // set the scroll panel to a FIXED 250
+            scrollPanelMarketBuyOffers.setPreferredSize(new Dimension(850, 250));
+            scrollPanelMarketBuyOffers.setMaximumSize(new Dimension(850, 250));
+        }
+        else {
+            // create scroll panel with table inside, but is not a fixed size
+            scrollPanelMarketBuyOffers = new JScrollPane(marketBuyOffersTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            int height = marketBuyOffersTable.getPreferredSize().height + 125;
+            // set height of panel to the buy offer table's size + 125 (VARIABLE size)
+            scrollPanelMarketBuyOffers.setPreferredSize(new Dimension(825, height));
+            scrollPanelMarketBuyOffers.setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
+            // set height of scroll panel to a VARIABLE size equal to the buy offers table's height
+            scrollPanelOrgBuyOffers.setPreferredSize(new Dimension(850, marketBuyOffersTable.getPreferredSize().height + 25));
+        }
+        // add the scroll panel to the org buy offer's panel
+        marketBuyOffersPanel.add(scrollPanelMarketBuyOffers);
+        // add panel to wrapper
         wrapper.add(marketBuyOffersPanel);
     }
 
@@ -117,6 +147,53 @@ public class BuyTabGUI extends JPanel {
             e.printStackTrace();
         }
         return memberTextDisplay;
+    }
+
+
+    private String[][] getMarketBuyOffersRowData() {
+        TreeMap<Integer, BuyOffer> marketBuyOffers =  BuyOfferData.getInstance().getMarketBuyOffers();
+        String[][] data = new String[marketBuyOffers.size()][];
+        int count = 0;
+        for(Map.Entry<Integer, BuyOffer> entry : marketBuyOffers.entrySet()) {
+            BuyOffer value = entry.getValue();
+            data[count] = new String[] {
+                    String.valueOf(value.getOfferID()),
+                    value.getAssetName(),
+                    String.valueOf(value.getQuantity()),
+                    String.valueOf(value.getPricePerUnit()),
+                    value.getUsername()
+            };
+            count++;
+        }
+        return data;
+    }
+
+    private JTable marketBuyOffersTable() {
+        // create a table
+        String data[][] = getMarketBuyOffersRowData();
+        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
+        model = new DefaultTableModel(data, columns);
+        marketBuyOffersTable = new JTable(model);
+        // format the table
+        resizeColumnWidth(marketBuyOffersTable);
+        marketBuyOffersTable.setRowHeight(25);
+        marketBuyOffersTable.setFont(new Font ( "Dialog", Font.PLAIN, 14));
+        marketBuyOffersTable.getTableHeader().setPreferredSize(new Dimension(150,25));
+        marketBuyOffersTable.getTableHeader().setFont(new Font ( "Dialog", Font.BOLD, 14));
+        marketBuyOffersTable.getTableHeader().setReorderingAllowed(false);
+        marketBuyOffersTable.setDefaultEditor(Object.class, null);
+        // set the preferred size of the table
+        Dimension preferredSize = new Dimension(825, marketBuyOffersTable.getRowCount() * 25);
+        if (preferredSize.height < 225) {
+            marketBuyOffersTable.setPreferredSize(preferredSize);
+        }
+        // center table cells
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+        for(int x = 0; x < columns.length; x++){
+            marketBuyOffersTable.getColumnModel().getColumn(x).setCellRenderer( centerRenderer );
+        }
+        return marketBuyOffersTable;
     }
 
     /**
@@ -182,49 +259,45 @@ public class BuyTabGUI extends JPanel {
         }
     }
 
-    public JTable createTable(String data[][], String columns[], DefaultTableModel tableModel) {
-        tableModel = new DefaultTableModel(data, columns);
-        JTable table = new JTable(tableModel);
-        return table;
-    }
 
     /**
      * Create the org unit's buy offers table
      * @return
      */
     private JTable unitBuyOffersTable() {
+        // create a table
         String data[][] = getOrgUnitBuyOffersRowData();
         String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator", "Edit/Delete"};
-        // model = new DefaultTableModel(data, columns);
-
-        buyOffersTable = createTable(data, columns, model);
+        model = new DefaultTableModel(data, columns);
+        buyOffersTable = new JTable(model);
+        // format the table
         resizeColumnWidth(buyOffersTable);
         buyOffersTable.setRowHeight(25);
         buyOffersTable.setFont(new Font ( "Dialog", Font.PLAIN, 14));
-
         buyOffersTable.getTableHeader().setPreferredSize(new Dimension(150,25));
         buyOffersTable.getTableHeader().setFont(new Font ( "Dialog", Font.BOLD, 14));
         buyOffersTable.getTableHeader().setReorderingAllowed(false);
-        // set button column for Edit/Delete column
-        buyOffersTable.getColumn("Edit/Delete").setCellRenderer(new ButtonRenderer());
-        buyOffersTable.getColumn("Edit/Delete").setCellEditor(new ButtonEditor(new JCheckBox()));
-
+        buyOffersTable.setDefaultEditor(Object.class, null);
+        // set the preferred size of the table
+        Dimension preferredSize = new Dimension(825, buyOffersTable.getRowCount() * 25);
+        if (preferredSize.height < 225) {
+            buyOffersTable.setPreferredSize(preferredSize);
+        }
         // center table cells
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment( JLabel.CENTER );
         for(int x = 0; x < columns.length; x++){
             buyOffersTable.getColumnModel().getColumn(x).setCellRenderer( centerRenderer );
         }
+        // set button column for Edit/Delete column
+        buyOffersTable.getColumn("Edit/Delete").setCellRenderer(new ButtonRenderer());
+        buyOffersTable.getColumn("Edit/Delete").setCellEditor(new ButtonEditor(new JCheckBox()));
         // set an underline for the edit/delete buttons
         // https://forums.codeguru.com/showthread.php?38965-Change-background-color-of-one-column-in-JTable#:~:text=Re%3A%20Change%20background%20color%20of,before%20returning%20the%20renderer%2C%20e.g.
         buyOffersTable.getColumn("Edit/Delete").setCellRenderer(
             new DefaultTableCellRenderer() {
-                public Component getTableCellRendererComponent(JTable table,
-                                                               Object value,
-                                                               boolean isSelected,
-                                                               boolean hasFocus,
-                                                               int row,
-                                                               int column) {
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                               boolean hasFocus, int row, int column) {
                     setText(value.toString());
                     setHorizontalAlignment(JLabel.CENTER);
                     Font font = buyOffersTable.getFont();
@@ -235,22 +308,10 @@ public class BuyTabGUI extends JPanel {
                     return this;
                 }
             });
-        // prevent editing of cells in table
-        buyOffersTable.setDefaultEditor(Object.class, null);
-        // set the preferred size of the table
-        Dimension preferredSize = new Dimension(825, buyOffersTable.getRowCount() * 25);
-
-        if (preferredSize.height < 225) {
-            buyOffersTable.setPreferredSize(preferredSize);
-        }
-
-
+        // add listener to the table
         buyOffersTable.addMouseListener(new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
+            public void mouseClicked(MouseEvent e) { }
             @Override
             public void mousePressed(MouseEvent e) {
                 int column = 0;
@@ -261,32 +322,19 @@ public class BuyTabGUI extends JPanel {
             }
 
             @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
+            public void mouseReleased(MouseEvent e) { }
 
             @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
+            public void mouseEntered(MouseEvent e) { }
 
             @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
+            public void mouseExited(MouseEvent e) { }
         });
-
         return buyOffersTable;
     }
 
 
-
-
-
-
-
     // Button Renderer and Editor classes from: https://camposha.info/java-jtable-buttoncolumn-tutorial/
-
     class ButtonRenderer extends JButton implements TableCellRenderer {
 
         public ButtonRenderer() {
