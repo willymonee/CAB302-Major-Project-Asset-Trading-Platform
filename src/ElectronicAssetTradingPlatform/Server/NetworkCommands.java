@@ -23,6 +23,8 @@ public enum NetworkCommands {
     ADD_HISTORY,
     STORE_ORG_UNIT,
     STORE_ASSET,
-    GET_ASSET_HISTORY
+    GET_ASSET_HISTORY,
+    RETRIEVE_ORG_UNIT,
+    EDIT_ORG_UNIT_CREDITS
 
 }

@@ -9,13 +9,14 @@ import java.util.LinkedList;
 
 public class MarketplaceHistoryGraph extends JComponent {
     private ArrayList<String> y2values = new ArrayList<>();
+    private String firsty1value;
 
     public MarketplaceHistoryGraph(Object[][] data, int width, int height) {
         ArrayList<Float> y_values = new ArrayList<>();
         ArrayList<Date> x_values = new ArrayList<>();
         for (Object[] row : data) {
-            y_values.add((float) row[2]);
-            x_values.add((Date) row[4]);
+            x_values.add((Date) row[0]);
+            y_values.add((float) row[1]);
         }
 
         // Get ceiling/floor
@@ -28,14 +29,15 @@ public class MarketplaceHistoryGraph extends JComponent {
         float diff_x = max_x - min_x;
         float diff_y = max_y - min_y;
 
+        firsty1value = String.valueOf(y_values.get(0));
         for (int i = 0; i < data.length - 1; i++) {
             float y2 = y_values.get(i + 1);
 
             float value1 = 1 - (y_values.get(i) - min_y) / diff_y;
             float value2 = 1 - (y2 - min_y) / diff_y;
 
-            float date1 = 1 - (x_values.get(i).getTime() - min_x) / diff_x;
-            float date2 = 1 - (x_values.get(i + 1).getTime() - min_x) / diff_x;
+            float date1 = (x_values.get(i).getTime() - min_x) / diff_x;
+            float date2 = (x_values.get(i + 1).getTime() - min_x) / diff_x;
 
             addLine((int) (date1 * (width - 50)), (int) (value1 * (height - 50)),
                     (int) (date2 * (width - 50)), (int) (value2 * (height - 50)),
@@ -64,7 +66,7 @@ public class MarketplaceHistoryGraph extends JComponent {
         }
     }
 
-    private final LinkedList<Line> lines = new LinkedList<Line>();
+    private final LinkedList<Line> lines = new LinkedList<>();
 
     public void addLine(int x1, int y1, int x2, int y2, String y2value) {
         lines.add(new Line(x1,y1,x2,y2));
@@ -105,6 +107,13 @@ public class MarketplaceHistoryGraph extends JComponent {
         g.drawString("Date", getWidth()/2-10, getHeight());
 
         // Draw lines
+        // First y-value
+        g.drawOval(lines.getFirst().x1-3, lines.getFirst().y1-3, 5, 5);
+
+        g.setColor(Color.BLACK);
+        g.drawString(firsty1value, lines.getFirst().x1+10, lines.getFirst().y1+12);
+
+        // All
         int i = 0;
         for (Line line : lines) {
             g.setColor(Color.DARK_GRAY);

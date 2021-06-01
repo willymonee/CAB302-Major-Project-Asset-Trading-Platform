@@ -58,9 +58,9 @@ public class BuyOfferData extends OfferData {
      * Return all market buy offers in a TreeMap
      * @return Unmodifiable Map of all market buy offers
      */
-    public Map<Integer, BuyOffer> getMarketBuyOffers() {
+    public TreeMap<Integer, BuyOffer> getMarketBuyOffers() {
         getOffersFromDB();
-        return unmodifiableMap(MarketBuyOffers);
+        return MarketBuyOffers;
     }
 
     /**

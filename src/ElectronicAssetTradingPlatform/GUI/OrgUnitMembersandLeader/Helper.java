@@ -21,4 +21,6 @@ public class Helper {
         // Return the JPanel object
         return label;
     }
+
+
 }
