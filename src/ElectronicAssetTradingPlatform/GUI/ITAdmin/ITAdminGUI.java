@@ -119,7 +119,7 @@ public class ITAdminGUI extends JFrame {
             } else if (goToEditAssetName.equals(source)) {
                 new EditAssetNameGUI();
             } else if (goToEditOrgAssets.equals(source)) {
-                new EditOrgAssetsGUI();
+                new EditOrgAssetsGUI(loggedInUser, data);
             } else if (goToEditOrgCredits.equals(source)) {
                 new EditOrgCreditsGUI(loggedInUser, data);
             } else if (goToEditOrgUnitName.equals(source)) {
