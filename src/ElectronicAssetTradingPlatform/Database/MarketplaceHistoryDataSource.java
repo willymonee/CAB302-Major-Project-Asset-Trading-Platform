@@ -62,9 +62,9 @@ public class MarketplaceHistoryDataSource {
         boolean execute = true;
         try {
             UnitDataSource unitDB = new UnitDataSource();
-            String buyerID = unitDB.executeGetUserID(buyOffer.getUsername());
+            String buyerID = unitDB.executeGetUnitID(buyOffer.getUnitName());
             insertCompletedTrade.setString(1, buyerID);
-            String sellerID = unitDB.executeGetUserID(sellOffer.getUsername());
+            String sellerID = unitDB.executeGetUnitID(sellOffer.getUnitName());
             insertCompletedTrade.setString(2, sellerID);
             if (buyOffer.getAssetName() == sellOffer.getAssetName()) {
                 int assetID = unitDB.executeGetAssetID(buyOffer.getAssetName());

@@ -5,6 +5,7 @@ import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -29,8 +30,9 @@ public class AccountTabGUI extends JPanel{
         this.add(openChangePassMenu);
         String greetUser = "Hello, " + member.getUsername();
         usernameLabel = Helper.createLabel(greetUser, 12);
+        usernameLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(usernameLabel);
-
+        this.setBackground(Color.WHITE);
 
     }
 
