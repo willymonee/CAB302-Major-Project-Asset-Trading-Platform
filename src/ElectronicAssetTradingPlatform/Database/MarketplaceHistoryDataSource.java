@@ -112,14 +112,17 @@ public class MarketplaceHistoryDataSource {
 
     /**
      * Gets the price history of an asset
-     * @param assetID       ID of the asset's history which is being queried
+     * @param assetName       String name of the asset's history which is being queried
      * @return              A HashMap of the asset's previously sold price as
      *                      float and date a trade for this asset was completed
      */
-    public List<List<Object>> getAssetPriceHistory(int assetID) {
+    public List<List<Object>> getAssetPriceHistory(String assetName) {
         List<List<Object>> assetPriceHistory = new ArrayList<List<Object>>();
         ResultSet rs = null;
         try {
+            // Get ID
+            int assetID = UnitDataSource.getInstance().executeGetAssetID(assetName);
+
             getAssetHistory.setInt(1, assetID);
             rs = getAssetHistory.executeQuery();
             while(rs.next()) {
@@ -143,7 +146,6 @@ public class MarketplaceHistoryDataSource {
 
 }
 
-// TODO: Test Insert works with Network
-// TODO: Add getAssetPriceHistory functionality to Network
+
 
 

@@ -1,73 +1,62 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
-import java.util.Date;
+import ElectronicAssetTradingPlatform.Database.MarketplaceHistoryDataSource;
 
 public class TradeHistory {
-    int tradeID;
-    int buyerID;
-    int sellerID;
-    int assetID;
+    String assetName;
+    int tradedQuantity;
     float price;
-    int quantity;
-    float total;
-    Date dateFulfilled;
+    java.sql.Date dateFulfilled;
+    String creatorUsername;
+    OrganisationalUnit unitOfTrader;
+
 
     /**
-     * Constructor for trade history
-     * @param tradeID           ID for the trade completed
-     * @param buyerID           ID of the buyer given a particular asset
-     * @param sellerID          ID of the seller given a particular asset
-     * @param assetID           ID of the asset traded
-     * @param price             Price the asset was sold/bought at
-     * @param quantity          Quantity of the asset traded
-     * @param dateFulfilled     Date the trade was completed
+     * Constructor for tracking trade history of a org unit
+     * @param assetName             Name of the asset traded
+     * @param tradedQuantity        Number of asset traded
+     * @param price                 Price of the asset traded
+     * @param dateFulfilled         Date the trade was completed
+     * @param creatorUsername       Name of the buy/sell listing creator
+     * @param unitOfTrader          Unit the asset was bought from or sold to
      */
-    public TradeHistory(int tradeID, int buyerID, int sellerID, int assetID, float price, int quantity, Date dateFulfilled) {
-        this.tradeID = tradeID;
-        this.buyerID = buyerID;
-        this.sellerID = sellerID;
-        this.assetID = assetID;
+
+    // TODO: THIS IS IN FORMAT OF THE TABLE'S REQUIRED INFORMATION,
+    //  Can change OrganisationalUnit unitOfTrader to String, and dateFulfilled
+    //  will either be SQL Date or Java UTIL Date,
+    //  althought structure however u want to, GL!
+
+    public TradeHistory(String assetName, int tradedQuantity, float price, java.sql.Date dateFulfilled, String creatorUsername, OrganisationalUnit unitOfTrader ) {
+        this.assetName = assetName;
+        this.tradedQuantity = tradedQuantity;
         this.price = price;
-        this.quantity = quantity;
         this.dateFulfilled = dateFulfilled;
-        total = quantity * price;
-        this.quantity = quantity;
-        this.price = price;
-        float total = quantity * price;
+        this.creatorUsername = creatorUsername;
+        this.unitOfTrader = unitOfTrader;
+
     }
 
-    public int getTradeID() {
-        return tradeID;
+    public String getAssetName() {
+        return assetName;
     }
 
-    public int getBuyerID() {
-        return buyerID;
-    }
-
-    public int getSellerID() {
-        return sellerID;
-    }
-
-    public int getAssetID() {
-        return assetID;
+    public int getTradedQuantity() {
+        return tradedQuantity;
     }
 
     public float getPrice() {
         return price;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public float getTotal() {
-        return total;
-    }
-
-    public Date getDateFulfilled() {
+    public java.sql.Date getDateFulfilled() {
         return dateFulfilled;
     }
 
-    // methods to get BuyerUsername, SellerUsername, AssetName
-    // method to get row data regarding the org unit GUI table
+    public String getCreatorUsername() {
+        return creatorUsername;
+    }
+
+    public OrganisationalUnit getunitOfTrader() {
+        return unitOfTrader;
+    }
 }

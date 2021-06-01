@@ -46,7 +46,7 @@ public class HistoryTesting {
     public void testGetAssetHistory() {
         MarketplaceHistoryDataSource m = MarketplaceHistoryDataSource.getInstance();
         List<List<Object>> assetPriceHistory = new ArrayList<List<Object>>();
-        assetPriceHistory = m.getAssetPriceHistory(1);
+        assetPriceHistory = m.getAssetPriceHistory("iPhone 10");
         System.out.println("Rows found " + assetPriceHistory.size());
         System.out.println(assetPriceHistory);
     }
@@ -65,8 +65,8 @@ public class HistoryTesting {
         NetworkDataSource net = new NetworkDataSource();
         net.run();
         try {
-            net.getAssetHistory(1);
-            System.out.println(net.getAssetHistory(1));
+            net.getAssetHistory("iPhone 10");
+            System.out.println(net.getAssetHistory("iPhone 10"));
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
