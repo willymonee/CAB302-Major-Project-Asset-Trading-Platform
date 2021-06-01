@@ -14,9 +14,10 @@ public class AccountTabGUI extends JPanel{
     NetworkDataSource data;
 
     private JButton openChangePassMenu;
+    private JLabel usernameLabel;
 
     /**
-     * Constructor for the Account Tab in the Member GUI
+     * Constructor (a JPanel) for the Account Tab in the Member GUI
      * @param member    the member accessing the GUI
      * @param net       the network connection
      */
@@ -26,6 +27,11 @@ public class AccountTabGUI extends JPanel{
         openChangePassMenu = new JButton("Change password Menu");
         openChangePassMenu.addActionListener(new ButtonListener(member, data));
         this.add(openChangePassMenu);
+        String greetUser = "Hello, " + member.getUsername();
+        usernameLabel = Helper.createLabel(greetUser, 12);
+        this.add(usernameLabel);
+
+
     }
 
     /**
