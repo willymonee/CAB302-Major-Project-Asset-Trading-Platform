@@ -36,8 +36,8 @@ public class MarketplaceHistoryGraph extends JComponent {
             float value1 = 1 - (y_values.get(i) - min_y) / diff_y;
             float value2 = 1 - (y2 - min_y) / diff_y;
 
-            float date1 = 1 - (x_values.get(i).getTime() - min_x) / diff_x;
-            float date2 = 1 - (x_values.get(i + 1).getTime() - min_x) / diff_x;
+            float date1 = (x_values.get(i).getTime() - min_x) / diff_x;
+            float date2 = (x_values.get(i + 1).getTime() - min_x) / diff_x;
 
             addLine((int) (date1 * (width - 50)), (int) (value1 * (height - 50)),
                     (int) (date2 * (width - 50)), (int) (value2 * (height - 50)),
@@ -66,7 +66,7 @@ public class MarketplaceHistoryGraph extends JComponent {
         }
     }
 
-    private final LinkedList<Line> lines = new LinkedList<Line>();
+    private final LinkedList<Line> lines = new LinkedList<>();
 
     public void addLine(int x1, int y1, int x2, int y2, String y2value) {
         lines.add(new Line(x1,y1,x2,y2));

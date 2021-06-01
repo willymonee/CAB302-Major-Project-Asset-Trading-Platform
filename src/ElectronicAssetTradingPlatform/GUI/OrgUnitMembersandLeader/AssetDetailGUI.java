@@ -35,7 +35,7 @@ public class AssetDetailGUI extends JFrame {
 
         // Decorate the frame and make it visible
         setTitle("Asset Detail");
-        setMinimumSize(new Dimension(400, 300));
+        setMinimumSize(new Dimension(500, 400));
         pack();
         setVisible(true);
     }
@@ -54,6 +54,7 @@ public class AssetDetailGUI extends JFrame {
         if (data.size() > 1) {
             // Sort by date
             data.sort(Comparator.comparingLong(a -> ((Date) a.get(0)).getTime()));
+
             Object[][] dataArrayIn = new Object[data.size()][];
             int count = 0;
             for (List<Object> row : data) {
@@ -96,8 +97,8 @@ public class AssetDetailGUI extends JFrame {
             @Override
             public void run() {
                 NetworkDataSource net = new NetworkDataSource();
-                net.run();
-                new AssetDetailGUI(new OrganisationalUnitMembers("a", "a", "a", "a"), net, new Asset("Table"));
+                net.start();
+                new AssetDetailGUI(new OrganisationalUnitMembers("a", "a", "a", "a"), net, new Asset("iPhone 10"));
             }
         });
     }
