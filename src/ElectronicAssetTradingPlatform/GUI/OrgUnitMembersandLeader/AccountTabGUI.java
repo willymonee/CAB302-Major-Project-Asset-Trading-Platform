@@ -31,16 +31,15 @@ public class AccountTabGUI extends JPanel{
         // Greeting Text Label
         String greetUser = "Hello, " + member.getUsername();
         usernameLabel = Helper.createLabel(greetUser, 25);
-        usernameLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        usernameLabel.setBorder(BorderFactory.createEmptyBorder(0,100,0,100));
-        this.add(usernameLabel);
+        usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.add(usernameLabel, CENTER_ALIGNMENT);
 
         // Button to open password changer menu
         openChangePassMenu = new JButton("Change password Menu");
         openChangePassMenu.addActionListener(new ButtonListener(member, data));
-        //openChangePassMenu.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        //openChangePassMenu.setBorder(BorderFactory.createEmptyBorder(0,100,0,100));
-        this.add(openChangePassMenu);
+        openChangePassMenu.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        this.add(openChangePassMenu, CENTER_ALIGNMENT);
 
         // Page background colour
         this.setBackground(Color.WHITE);
