@@ -363,4 +363,19 @@ public class NetworkDataSource extends Thread {
     public String editOrgUnitName(OrganisationalUnit orgUnit, String oldUnitName) {
         return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_NAME, orgUnit, oldUnitName);
     }
+
+    public Asset retrieveAsset(String assetName) throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.RETRIEVE_ASSET, assetName);
+
+        try {
+            return (Asset) out;
+        }
+        catch (ClassCastException e) {
+            throw new DatabaseException((String) out);
+        }
+    }
+
+    public String editAssetName(Asset asset, String oldAssetName) {
+        return (String) sendCommand(NetworkCommands.EDIT_ASSET_NAME, asset, oldAssetName);
+    }
 }

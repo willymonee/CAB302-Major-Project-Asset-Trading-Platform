@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.Database;
 
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
+import ElectronicAssetTradingPlatform.AssetTrading.AssetFactory;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.UnitFactory;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
@@ -30,7 +31,9 @@ public class UnitDataSource {
     private static final String GET_UNIT_CREDITS = "SELECT Credits FROM Organisational_Units WHERE Name = ?;";
     private static final String EDIT_UNIT_CREDITS = "UPDATE Organisational_Units SET Credits = ? WHERE Name = ?;";
     private static final String EDIT_UNIT_ASSETS = "REPLACE INTO Organisational_Unit_Assets (Unit_ID, Asset_ID, Asset_Quantity) VALUES (?, ?, ?);";
-    private static final String EDIT_UNIT_NAME = "UPDATE Organisational_Units SET Name = ? WHERE Unit_ID = ?";
+    private static final String EDIT_UNIT_NAME = "UPDATE Organisational_Units SET Name = ? WHERE Unit_ID = ?;";
+    private static final String GET_ASSET = "SELECT Name FROM Asset_Types WHERE Type_ID = ?";
+    private static final String EDIT_ASSET_NAME = "UPDATE Asset_Types SET Name = ? WHERE Type_ID = ?;";
 
     PreparedStatement getUnitNameQuery;
     PreparedStatement getUnitIDQuery;
@@ -48,6 +51,8 @@ public class UnitDataSource {
     PreparedStatement editUnitCreditsQuery;
     PreparedStatement editUnitAssetsQuery;
     PreparedStatement editUnitNameQuery;
+    PreparedStatement getAssetQuery;
+    PreparedStatement editAssetNameQuery;
 
     private Connection connection;
 
@@ -78,6 +83,8 @@ public class UnitDataSource {
             editUnitCreditsQuery = connection.prepareStatement(EDIT_UNIT_CREDITS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             editUnitAssetsQuery = connection.prepareStatement(EDIT_UNIT_ASSETS);
             editUnitNameQuery = connection.prepareStatement(EDIT_UNIT_NAME);
+            getAssetQuery = connection.prepareStatement(GET_ASSET, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            editAssetNameQuery = connection.prepareStatement(EDIT_ASSET_NAME);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -298,6 +305,38 @@ public class UnitDataSource {
         editUnitNameQuery.setInt(2, unitIDToInteger);
 
         editUnitNameQuery.execute();
+    }
+
+    public Asset getAsset(String assetName) throws SQLException {
+        int assetID = executeGetAssetID(assetName);
+
+        getAssetQuery.setInt(1, assetID);
+
+        ResultSet rs = null;
+
+        try {
+            rs = getAssetQuery.executeQuery();
+            if (rs.isClosed()) throw new SQLException("Asset not found: " + assetName);
+            rs.next();
+
+        }
+        finally {
+            if (rs != null) rs.close();
+        }
+
+        return AssetFactory.CreateAsset(assetName);
+    }
+
+    public void editAssetName(String newName, String oldUnitName) throws SQLException {
+        int assetID;
+
+        assetID = executeGetAssetID(oldUnitName);
+
+
+        editAssetNameQuery.setString(1, newName);
+        editAssetNameQuery.setInt(2, assetID);
+
+        editAssetNameQuery.execute();
     }
 
 }

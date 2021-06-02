@@ -476,6 +476,40 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
             }
+            case RETRIEVE_ASSET -> {
+                // Get input
+                String assetName = (String) objectInputStream.readObject();
+
+                Asset out;
+                synchronized (database) {
+                    out = UnitDataSource.getInstance().getAsset(assetName);
+
+                    // Write output
+                    objectOutputStream.writeObject(out);
+                    System.out.println("Wrote to socket: " + socket.toString() + out);
+                }
+                objectOutputStream.flush();
+            }
+            case EDIT_ASSET_NAME -> {
+                // Get input
+                Asset asset = (Asset) objectInputStream.readObject();
+                String oldAssetName = (String) objectInputStream.readObject();
+
+                synchronized (database) {
+//                    String unitName = null;
+//                    try {
+//                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
+//                    } catch (ClassCastException ignored) {}
+
+                    // Save to db
+                    UnitDataSource.getInstance().editAssetName(asset.getAssetName(), oldAssetName);
+
+                    // Write success output
+                    objectOutputStream.writeObject("Edited Asset Name.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
+            }
         }
     }
 

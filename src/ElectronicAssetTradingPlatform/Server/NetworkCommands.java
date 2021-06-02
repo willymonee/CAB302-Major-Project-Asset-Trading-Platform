@@ -29,6 +29,8 @@ public enum NetworkCommands {
     EDIT_ORG_UNIT_ASSETS,
     GET_ALL_ASSETS,
     GET_ALL_MEMBERS,
-    EDIT_ORG_UNIT_NAME
+    EDIT_ORG_UNIT_NAME,
+    RETRIEVE_ASSET,
+    EDIT_ASSET_NAME
 
 }
