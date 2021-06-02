@@ -165,7 +165,6 @@ public class BuyOffer extends Offer  {
     /**
      * Exchanges the organisational unit assets and credits with a matching sell offer
      * @param matchingID - ID of the matching sell offer
-     *
      */
     private void tradeAssetsAndCredits(int matchingID)  {
         if (isMatching(matchingID)) {

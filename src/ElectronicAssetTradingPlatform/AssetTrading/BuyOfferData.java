@@ -44,7 +44,6 @@ public class BuyOfferData extends OfferData {
      * Retrieve market buy offers from the database and insert them into the TreeMap
      */
     protected void getOffersFromDB() {
-        // TreeMap<Integer, BuyOffer> buyOffers = MarketplaceDataSource.getInstance().getBuyOffers();
         TreeMap<Integer, BuyOffer> buyOffers = dataSource.getBuyOffers();
         MarketBuyOffers.clear();
         for (Map.Entry<Integer, BuyOffer> buyOffer : buyOffers.entrySet()) {
@@ -134,11 +133,44 @@ public class BuyOfferData extends OfferData {
         TreeMap<Integer, BuyOffer> assetOffers = new TreeMap<>();
         for (Map.Entry<Integer, BuyOffer> buyOffer : MarketBuyOffers.entrySet()) {
             String buyOfferAssetName = buyOffer.getValue().getAssetName();
-            if (sameOrgUnitName(assetName, buyOfferAssetName )) {
+            if (sameAssetName(assetName, buyOfferAssetName )) {
                 assetOffers.put(buyOffer.getKey(), buyOffer.getValue());
             }
         }
         return assetOffers;
+    }
+
+    /**
+     * Return the price of the highest priced buy offer for a particular asset
+     */
+    public double getHighestPrice(String assetName) {
+        TreeMap<Integer, BuyOffer> assetOffers = getAssetOffers(assetName);
+        Iterator<Map.Entry<Integer, BuyOffer>> buyOffersIter = assetOffers.entrySet().iterator();
+        double highestPrice = 0;
+        if (buyOffersIter.hasNext()) {
+            highestPrice = buyOffersIter.next().getValue().getPricePerUnit();
+        }
+        while (buyOffersIter.hasNext()) {
+            double nextPrice = buyOffersIter.next().getValue().getPricePerUnit();
+            if (nextPrice > highestPrice) {
+                highestPrice = nextPrice;
+            }
+        }
+        return highestPrice;
+    }
+
+    /**
+     * Return the quantity of buy offers for a particular asset
+     */
+    public int quantityBuyOffersForAsset(String assetName) {
+        TreeMap<Integer, BuyOffer> assetOffers = getAssetOffers(assetName);
+        int quantity = 0;
+        Iterator<Map.Entry<Integer, BuyOffer>> buyOffersIter = assetOffers.entrySet().iterator();
+        while (buyOffersIter.hasNext()) {
+            int offerQuantity = buyOffersIter.next().getValue().getQuantity();
+            quantity += offerQuantity;
+        }
+        return quantity;
     }
 
     /**

@@ -70,6 +70,7 @@ public class OrgUnitTabGUI extends JPanel {
         table.setPreferredScrollableViewportSize(new Dimension(700, table.getRowCount() * table.getRowHeight()));
         Helper.formatTable(table);
         JScrollPane tablePane = new JScrollPane(table);
+        tablePane.setPreferredSize(new Dimension(700, 300));
         tablePane.setVisible(true);
 
         JPanel panel = new JPanel();

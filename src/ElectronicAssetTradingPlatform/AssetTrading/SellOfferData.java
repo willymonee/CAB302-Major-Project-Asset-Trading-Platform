@@ -134,6 +134,39 @@ public class SellOfferData extends OfferData {
     }
 
     /**
+     * Return the price of the highest priced buy offer for a particular asset
+     */
+    public double getLowestPricedSellOffer(String assetName) {
+        TreeMap<Integer, SellOffer> assetOffers = getAssetOffers(assetName);
+        Iterator<Map.Entry<Integer, SellOffer>> sellOffersIter = assetOffers.entrySet().iterator();
+        double lowestPrice = 0;
+        if (sellOffersIter.hasNext()) {
+            lowestPrice = sellOffersIter.next().getValue().getPricePerUnit();
+        }
+        while (sellOffersIter.hasNext()) {
+            double nextPrice = sellOffersIter.next().getValue().getPricePerUnit();
+            if (nextPrice < lowestPrice) {
+                lowestPrice = nextPrice;
+            }
+        }
+        return lowestPrice;
+    }
+
+    /**
+     * Return the quantity of an asset for sale
+     */
+    public int quantitySellOffersForAsset(String assetName) {
+        TreeMap<Integer, SellOffer> assetOffers = getAssetOffers(assetName);
+        int quantity = 0;
+        Iterator<Map.Entry<Integer, SellOffer>> sellOffersIter = assetOffers.entrySet().iterator();
+        while (sellOffersIter.hasNext()) {
+            int offerQuantity = sellOffersIter.next().getValue().getQuantity();
+            quantity += offerQuantity;
+        }
+        return quantity;
+    }
+
+    /**
      * Retrieve the sell offers created by an organisation given the org's name and return it as a string
      */
     public String getOrgOffers(String unitName) {
