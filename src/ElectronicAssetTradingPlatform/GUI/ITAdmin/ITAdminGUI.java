@@ -117,7 +117,7 @@ public class ITAdminGUI extends JFrame {
             } else if (goToCreateUser.equals(source)) {
                 new CreateUserGUI(loggedInUser, data);
             } else if (goToEditAssetName.equals(source)) {
-                new EditAssetNameGUI();
+                new EditAssetNameGUI(loggedInUser, data);
             } else if (goToEditOrgAssets.equals(source)) {
                 new EditOrgAssetsGUI(loggedInUser, data);
             } else if (goToEditOrgCredits.equals(source)) {
