@@ -81,6 +81,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         setMinimumSize(new Dimension(850, 400));
         pack();
         setVisible(true);
+        addWindowListener(new ClosingListener());
     }
 
     private double getBestBuyPrice() {
@@ -307,6 +308,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
      * Closes the window
      */
     private class ClosingListener extends WindowAdapter {
+        public void windowClosed(WindowEvent e) { dispose(); }
         public void windowClosing(WindowEvent e) { dispose(); }
     }
 
