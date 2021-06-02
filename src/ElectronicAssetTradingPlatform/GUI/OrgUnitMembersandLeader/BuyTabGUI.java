@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
+public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, ListSelectionListener {
     // Global variables
     private OrganisationalUnitMembers loggedInMember;
     private NetworkDataSource data;
@@ -35,7 +35,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
     private JLabel marketBuyOffersLabel;
     private int selectedOrgOfferID;
     private int selectedOrgOfferRow;
-    private JTable buyOffersTable;
+    private JTable orgBuyOffersTable;
     private JTable marketBuyOffersTable;
     private DefaultTableModel model;
     private DefaultTableModel marketModel;
@@ -43,6 +43,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
     private JButton editOfferButton;
     private JPanel orgBuyButtonPanel;
     private JButton viewAssetButton;
+    private String selectedAsset;
 
 
     TreeMap<Integer, BuyOffer> buyOffers;
@@ -75,8 +76,8 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
 
         orgBuyOfferPanel.add(orgBuyOfferLabel);
         // add a table to the org buy offer panel
-        buyOffersTable = unitBuyOffersTable();
-        scrollPanelOrgBuyOffers = createScrollPane(buyOffersTable, orgBuyOfferPanel);
+        orgBuyOffersTable = unitBuyOffersTable();
+        scrollPanelOrgBuyOffers = createScrollPane(orgBuyOffersTable, orgBuyOfferPanel);
         // add the scroll panel to the org buy offer's panel
         orgBuyOfferPanel.add(scrollPanelOrgBuyOffers);
         // add remove and edit offer buttons to org buy offer panel
@@ -100,6 +101,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
         marketBuyOffersPanel.add(scrollPanelMarketBuyOffers);
         // add view asset button to market buy offers panel
         viewAssetButton = createButton("View Asset");
+        viewAssetButton.setEnabled(false);
         marketBuyOffersPanel.add(viewAssetButton);
         // add market buy offers panel to wrapper
         wrapper.add(marketBuyOffersPanel);
@@ -186,9 +188,11 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
         }
         else if (src == this.viewAssetButton) {
             System.out.println("Pressed view asset button");
-            new AssetDetailGUI(loggedInMember, data, new Asset("iPhone 10"));
+            new AssetDetailGUI(loggedInMember, data, new Asset(selectedAsset));
         }
     }
+
+
     private void updateTables() {
         int rowCount = model.getRowCount();
         for (int i = rowCount - 1; i >= 0; i--) {
@@ -228,16 +232,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
             count++;
         }
         return data;
-    }
-
-    private JTable marketBuyOffersTable() {
-        // create a table
-        String data[][] = getMarketBuyOffersRowData();
-        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
-        marketModel = new DefaultTableModel(data, columns);
-        JTable table = new JTable(marketModel);
-        formatTable(table);
-        return table;
     }
 
     /**
@@ -339,45 +333,21 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
         JTable table = new JTable(model);
         formatTable(table);
         // add listener to the table
-        table.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) { }
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int column = 0;
-                int row = table.getSelectedRow();
-                if (table.getRowCount() != 0) {
-                    try {
-                        String value = table.getModel().getValueAt(row, column).toString();
-                        selectedOrgOfferID = Integer.parseInt(value);
-                        selectedOrgOfferRow = row;
-                    } catch (ArrayIndexOutOfBoundsException p) {
-                        // do nothing
-                    }
-                }
-            }
+        table.addMouseListener(this);
 
-            @Override
-            public void mouseReleased(MouseEvent e) { }
+        table.getSelectionModel().addListSelectionListener(this);
+        return table;
+    }
 
-            @Override
-            public void mouseEntered(MouseEvent e) { }
-
-            @Override
-            public void mouseExited(MouseEvent e) { }
-        });
-
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-            public void valueChanged(ListSelectionEvent event) {
-                int row = table.getSelectedRow();
-                if (row == -1) {
-                    removeOfferButton.setEnabled(false);
-                }
-                else {
-                    removeOfferButton.setEnabled(true);
-                }
-            }
-        });
+    private JTable marketBuyOffersTable() {
+        // create a table
+        String data[][] = getMarketBuyOffersRowData();
+        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
+        marketModel = new DefaultTableModel(data, columns);
+        JTable table = new JTable(marketModel);
+        formatTable(table);
+        table.addMouseListener(this);
+        table.getSelectionModel().addListSelectionListener(this);
         return table;
     }
 
@@ -388,7 +358,32 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        Object src = e.getSource();
+        if (src == orgBuyOffersTable) {
+            int column = 0;
+            int row = orgBuyOffersTable.getSelectedRow();
+            if (orgBuyOffersTable.getRowCount() != 0) {
+                try {
+                    String value = orgBuyOffersTable.getModel().getValueAt(row, column).toString();
+                    selectedOrgOfferID = Integer.parseInt(value);
+                    selectedOrgOfferRow = row;
+                } catch (ArrayIndexOutOfBoundsException p) {
+                    // do nothing
+                }
+            }
+        }
+        else if (src == marketBuyOffersTable) {
+            int column = 1;
+            int row = marketBuyOffersTable.getSelectedRow();
+            if (marketBuyOffersTable.getRowCount() != 0) {
+                try {
+                    selectedAsset = marketBuyOffersTable.getModel().getValueAt(row, column).toString();
+                    System.out.println(selectedAsset);
+                } catch (ArrayIndexOutOfBoundsException p) {
+                    // do nothing
+                }
+            }
+        }
     }
 
     @Override
@@ -404,6 +399,29 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        Object src = e.getSource();
+        if (src == orgBuyOffersTable.getSelectionModel()) {
+            int row = orgBuyOffersTable.getSelectedRow();
+            if (row == -1) {
+                removeOfferButton.setEnabled(false);
+            }
+            else {
+                removeOfferButton.setEnabled(true);
+            }
+        }
+        else if (src == marketBuyOffersTable.getSelectionModel()) {
+            int row = marketBuyOffersTable.getSelectedRow();
+            if (row == -1) {
+                viewAssetButton.setEnabled(false);
+            }
+            else {
+                viewAssetButton.setEnabled(true);
+            }
+        }
     }
 }
 

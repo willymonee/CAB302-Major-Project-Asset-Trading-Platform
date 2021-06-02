@@ -62,12 +62,47 @@ public class Helper {
         if (preferredSize.height < 225) {
             table.setPreferredSize(preferredSize);
         }
+        table.setPreferredSize(preferredSize);
         // center table cells
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment( JLabel.CENTER );
         for(int x = 0; x < table.getColumnCount(); x++){
             table.getColumnModel().getColumn(x).setCellRenderer( centerRenderer );
         }
+    }
+
+    /**
+     * Takes a table and places it into a scroll panel + some formatting
+     * @param table the scroll panel will contain
+     * @param panel which the scroll panel is contained in
+     * @return a JScrollPane object containing the table
+     */
+    public static JScrollPane createScrollPane(JTable table, JPanel panel) {
+        int tableHeight = table.getPreferredSize().height + 25;
+        JScrollPane scrollPane;
+        // if the buy table's height is greater than 250
+        if (tableHeight >= 250) {
+            // create scroll panel with table inside
+            scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            // set the org buy offer panel to a FIXED 325
+            panel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 360));
+            panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 360));
+            // set the scroll panel to a FIXED 250
+            scrollPane.setPreferredSize(new Dimension(850, 250));
+            scrollPane.setMaximumSize(new Dimension(850, 250));
+        }
+        else {
+            // create scroll panel with table inside, but is not a fixed size
+            scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            int height = table.getPreferredSize().height + 150;
+            // set height of panel to the buy offer table's size + 125 (VARIABLE size)
+            panel.setPreferredSize(new Dimension(825, height));
+            panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
+            // set height of scroll panel to a VARIABLE size equal to the buy offers table's height
+            scrollPane.setPreferredSize(new Dimension(850, table.getPreferredSize().height + 25));
+        }
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        return scrollPane;
     }
 
 
