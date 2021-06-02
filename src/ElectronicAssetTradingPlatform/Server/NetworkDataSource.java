@@ -16,6 +16,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -335,5 +336,27 @@ public class NetworkDataSource extends Thread {
 
     public String editOrgUnitAssets(OrganisationalUnit orgUnit, String assetName) {
         return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_ASSETS, orgUnit, assetName);
+    }
+
+    public ArrayList<String> retrieveAllAssets() throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.GET_ALL_ASSETS);
+
+        try {
+            return (ArrayList<String>) out;
+        }
+        catch (ClassCastException e) {
+            throw new DatabaseException((String) out);
+        }
+    }
+
+    public ArrayList<String[]> retrieveAllMembers(String unitName) throws DatabaseException {
+        Object out = sendCommand(NetworkCommands.GET_ALL_MEMBERS, unitName);
+
+        try {
+            return (ArrayList<String[]>) out;
+        }
+        catch (ClassCastException e) {
+            throw new DatabaseException((String) out);
+        }
     }
 }

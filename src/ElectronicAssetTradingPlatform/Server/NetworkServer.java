@@ -15,6 +15,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -430,6 +431,29 @@ public class NetworkServer {
                     objectOutputStream.writeObject("Edited Organisational Unit Assets.");
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
+                objectOutputStream.flush();
+            }
+            case GET_ALL_ASSETS -> {
+                synchronized (database) {
+                    ArrayList<String> list = UsersDataSource.getInstance().getAllAssets();
+
+                    // Write output
+                    objectOutputStream.writeObject(list);
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
+            }
+            case GET_ALL_MEMBERS -> {
+                String unitName = (String) objectInputStream.readObject();
+
+                synchronized (database) {
+                    ArrayList<String[]> list = UsersDataSource.getInstance().getAllMembers(unitName);
+
+                    // Write output
+                    objectOutputStream.writeObject(list);
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+
                 objectOutputStream.flush();
             }
         }

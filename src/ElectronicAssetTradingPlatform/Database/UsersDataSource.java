@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -36,6 +37,9 @@ public class UsersDataSource {
                 "ON Organisational_Unit_Assets.Asset_ID = Asset_Types.Type_ID " +
             "WHERE Organisational_Units.Name = ?";
 
+    private static final String GET_ALL_ASSETS = "SELECT Name FROM Asset_Types";
+    private static final String GET_ALL_MEMBERS = "SELECT Username, User_Type FROM User_Accounts WHERE Unit_ID = ?";
+
 
     PreparedStatement getUserQuery;
     PreparedStatement addUserQuery;
@@ -43,6 +47,9 @@ public class UsersDataSource {
     PreparedStatement editPasswordQuery;
     PreparedStatement getUnitCreditsQuery;
     PreparedStatement getUnitAssetsQuery;
+
+    PreparedStatement getAllAssetsQuery;
+    PreparedStatement getAllMembersQuery;
 
     private Connection connection;
 
@@ -67,6 +74,8 @@ public class UsersDataSource {
             editPasswordQuery = connection.prepareStatement(EDIT_PASSWORD);
             getUnitCreditsQuery = connection.prepareStatement(GET_UNIT_CREDITS);
             getUnitAssetsQuery = connection.prepareStatement(GET_UNIT_ASSETS);
+            getAllAssetsQuery = connection.prepareStatement(GET_ALL_ASSETS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            getAllMembersQuery = connection.prepareStatement(GET_ALL_MEMBERS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         } catch (SQLException e) {
             System.out.println("UsersDataSource constructor error: ");
             e.printStackTrace();
@@ -253,6 +262,49 @@ public class UsersDataSource {
         }
 
         return unitAssets;
+    }
+
+
+    public ArrayList<String> getAllAssets() throws SQLException {
+
+        ResultSet rs = getAllAssetsQuery.executeQuery();
+        ArrayList<String> assetList = new ArrayList<>();
+
+        while (rs.next()) {
+            assetList.add(rs.getString("Name"));
+        }
+
+        rs.close();
+
+        if (assetList.size() == 0) {
+            throw new SQLException("No assets found.");
+        }
+
+        return assetList;
+    }
+
+    public ArrayList<String[]> getAllMembers(String unitName) throws SQLException {
+        String unitID = UnitDataSource.getInstance().executeGetUnitID(unitName);
+
+        getAllMembersQuery.setString(1, unitID);
+
+        ResultSet rs = getAllMembersQuery.executeQuery();
+        ArrayList<String[]> memberList = new ArrayList<>();
+
+        while (rs.next()) {
+            memberList.add(new String[] {
+                    rs.getString("Username"),
+                    rs.getString("User_Type")
+            });
+        }
+
+        rs.close();
+
+        if (memberList.size() == 0) {
+            throw new SQLException("No members found.");
+        }
+
+        return memberList;
     }
 
     /**
