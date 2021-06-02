@@ -456,6 +456,26 @@ public class NetworkServer {
 
                 objectOutputStream.flush();
             }
+            case EDIT_ORG_UNIT_NAME -> {
+                // Get input
+                OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
+                String oldUnitName = (String) objectInputStream.readObject();
+
+                synchronized (database) {
+//                    String unitName = null;
+//                    try {
+//                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
+//                    } catch (ClassCastException ignored) {}
+
+                    // Save to db
+                    UnitDataSource.getInstance().editOrgUnitName(orgUnit.getUnitName(), oldUnitName);
+
+                    // Write success output
+                    objectOutputStream.writeObject("Edited Organisational Unit Name.");
+                    System.out.println("Wrote to socket: " + socket.toString());
+                }
+                objectOutputStream.flush();
+            }
         }
     }
 

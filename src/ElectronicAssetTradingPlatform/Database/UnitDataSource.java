@@ -30,6 +30,7 @@ public class UnitDataSource {
     private static final String GET_UNIT_CREDITS = "SELECT Credits FROM Organisational_Units WHERE Name = ?;";
     private static final String EDIT_UNIT_CREDITS = "UPDATE Organisational_Units SET Credits = ? WHERE Name = ?;";
     private static final String EDIT_UNIT_ASSETS = "REPLACE INTO Organisational_Unit_Assets (Unit_ID, Asset_ID, Asset_Quantity) VALUES (?, ?, ?);";
+    private static final String EDIT_UNIT_NAME = "UPDATE Organisational_Units SET Name = ? WHERE Unit_ID = ?";
 
     PreparedStatement getUnitNameQuery;
     PreparedStatement getUnitIDQuery;
@@ -46,6 +47,7 @@ public class UnitDataSource {
     PreparedStatement getUnitCreditsQuery;
     PreparedStatement editUnitCreditsQuery;
     PreparedStatement editUnitAssetsQuery;
+    PreparedStatement editUnitNameQuery;
 
     private Connection connection;
 
@@ -75,6 +77,7 @@ public class UnitDataSource {
             getUnitCreditsQuery = connection.prepareStatement(GET_UNIT_CREDITS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             editUnitCreditsQuery = connection.prepareStatement(EDIT_UNIT_CREDITS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             editUnitAssetsQuery = connection.prepareStatement(EDIT_UNIT_ASSETS);
+            editUnitNameQuery = connection.prepareStatement(EDIT_UNIT_NAME);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -283,6 +286,18 @@ public class UnitDataSource {
 
         editUnitAssetsQuery.execute();
 
+    }
+
+    public void editOrgUnitName(String newName, String oldUnitName) throws SQLException {
+        String unitID = executeGetUnitID(oldUnitName);
+        int unitIDToInteger;
+
+        unitIDToInteger = Integer.parseInt(unitID);
+
+        editUnitNameQuery.setString(1, newName);
+        editUnitNameQuery.setInt(2, unitIDToInteger);
+
+        editUnitNameQuery.execute();
     }
 
 }

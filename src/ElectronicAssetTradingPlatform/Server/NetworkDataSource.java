@@ -359,4 +359,8 @@ public class NetworkDataSource extends Thread {
             throw new DatabaseException((String) out);
         }
     }
+
+    public String editOrgUnitName(OrganisationalUnit orgUnit, String oldUnitName) {
+        return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_NAME, orgUnit, oldUnitName);
+    }
 }
