@@ -31,7 +31,7 @@ public class ServerDataTesting {
     public void testGetUser() throws SQLException, DatabaseException {
         OrganisationalUnitMembers user = (OrganisationalUnitMembers) data.retrieveUser("willymon");
 
-        System.out.println("Gotten: " + user.getUsername() + user.getPassword() + user.getUserType() + user.getUnitCredits());
+        System.out.println("Gotten: " + user.getUsername() + user.getPassword() + user.getUserType() + user.getUnitCredits(data));
     }
 
     @Test

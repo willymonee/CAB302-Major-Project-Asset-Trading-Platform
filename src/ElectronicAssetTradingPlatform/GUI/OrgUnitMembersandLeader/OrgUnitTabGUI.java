@@ -2,7 +2,6 @@ package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.TradeHistory;
-import ElectronicAssetTradingPlatform.Database.MarketplaceHistoryDataSource;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
@@ -13,6 +12,7 @@ import java.awt.*;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 public class OrgUnitTabGUI extends JPanel {
@@ -24,25 +24,35 @@ public class OrgUnitTabGUI extends JPanel {
         this.dataSource = dataSource;
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        JLabel unitCreditsLabel = Helper.createLabel("Your Unit Credits: " /* + member.getUnitCredits */, 14);
-        unitCreditsLabel.setBorder(new EmptyBorder(10, 0, 5, 0));
+
+        String creditsText = member.getUnitName() + "\'s Credits: ";
+        try {
+            creditsText += member.getUnitCredits(dataSource);
+        } catch (DatabaseException e) {
+            creditsText += "Not found";
+        }
+
+        JLabel unitCreditsLabel = Helper.createLabel(creditsText, 16);
+        unitCreditsLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        unitCreditsLabel.setHorizontalAlignment(JLabel.RIGHT);
         this.add(unitCreditsLabel);
 
-        JLabel tradeHistoryLabel = Helper.createLabel("Your Unit Trade History", 14);
-        tradeHistoryLabel.setBorder(new EmptyBorder(10, 0, 5, 0));
+        JLabel tradeHistoryLabel = Helper.createLabel(member.getUnitName() + "\'s Trade History", 20);
+        tradeHistoryLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
         this.add(tradeHistoryLabel);
         this.add(unitTradeHistoryTable());
 
-        JLabel unitAssetsLabel = Helper.createLabel("Your Unit Assets", 14);
-        unitAssetsLabel.setBorder(new EmptyBorder(10, 0, 5, 0));
+        JLabel unitAssetsLabel = Helper.createLabel(member.getUnitName() + "\'s Assets", 20);
+        unitAssetsLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        unitAssetsLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(unitAssetsLabel);
         this.add(unitAssetTable());
 
-        JLabel unitMembersLabel = Helper.createLabel("Your Unit Assets", 14);
-        unitMembersLabel.setBorder(new EmptyBorder(10, 0, 5, 0));
+        JLabel unitMembersLabel = Helper.createLabel(member.getUnitName() + "\'s Members", 20);
+        unitMembersLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        unitMembersLabel.setHorizontalAlignment(JLabel.CENTER);
         this.add(unitMembersLabel);
         this.add(unitMemberTable());
-
     }
 
     public JPanel unitTradeHistoryTable() {
@@ -84,7 +94,7 @@ public class OrgUnitTabGUI extends JPanel {
         }
 
         JTable table = new JTable(tableData, columnNames);
-        table.setPreferredScrollableViewportSize(new Dimension(700, table.getRowCount() * table.getRowHeight()));
+        table.setPreferredScrollableViewportSize(new Dimension(800, table.getRowCount() * table.getRowHeight()));
         Helper.formatTable(table);
         JScrollPane tablePane = new JScrollPane(table);
         tablePane.setVisible(true);
@@ -102,24 +112,27 @@ public class OrgUnitTabGUI extends JPanel {
         try {
             // Table
             ArrayList<String> assetNames = dataSource.retrieveAllAssets();
+            HashMap<String, Integer> assets = member.getUnitAssets(dataSource);
 
-            String[] columnNames = {"Asset Name"};
+            String[] columnNames = {"Asset Name", "Quantity Owned"};
 
             // Create Object[][] for table data
             Object[][] tableData = new Object[assetNames.size()][];
-            int count = 0;
-            for (String assetName : assetNames) {
-                tableData[count] = new Object[]{
-                        assetName
+            for (int i = 0; i < assetNames.size(); i++) {
+                Object quantity = assets.get(assetNames.get(i));
+                // Not found -> set to 0
+                if (quantity == null) quantity = 0;
+
+                tableData[i] = new Object[]{
+                        assetNames.get(i), quantity
                 };
-                count++;
             }
 
-            JTable table = new JTable(tableData, columnNames);
-            Helper.formatTable(table);
-            table.setPreferredScrollableViewportSize(new Dimension(400, table.getRowCount() * table.getRowHeight()));
-            table.setMaximumSize(new Dimension(400,300));
-            JScrollPane tablePane = new JScrollPane(table);
+            JTable assetTable = new JTable(tableData, columnNames);
+            Helper.formatTable(assetTable);
+            assetTable.setPreferredScrollableViewportSize(new Dimension(400, assetTable.getRowCount() * assetTable.getRowHeight()));
+            assetTable.setMaximumSize(new Dimension(400,300));
+            JScrollPane tablePane = new JScrollPane(assetTable);
             tablePane.setVisible(true);
 
             panel.add(tablePane);

@@ -4,6 +4,7 @@ import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.sql.SQLException;
@@ -172,8 +173,8 @@ public class OrganisationalUnitMembers extends User {
      *
      * @return Returns the map of asset_name and quantity
      */
-    public HashMap<String, Integer> getUnitAssets() throws SQLException {
-        return UsersDataSource.getInstance().getUnitAssets(organisationalUnitName);
+    public HashMap<String, Integer> getUnitAssets(NetworkDataSource source) throws DatabaseException {
+        return source.getAssets(organisationalUnitName);
     }
 
     /**
@@ -181,8 +182,8 @@ public class OrganisationalUnitMembers extends User {
      *
      * @return Returns the quantity of credits
      */
-    public float getUnitCredits() throws SQLException {
-        return UsersDataSource.getInstance().getUnitCredits(organisationalUnitName);
+    public float getUnitCredits(NetworkDataSource source) throws DatabaseException {
+        return source.getCredits(organisationalUnitName);
     }
 
     public String getUnitName() { return organisationalUnitName; }

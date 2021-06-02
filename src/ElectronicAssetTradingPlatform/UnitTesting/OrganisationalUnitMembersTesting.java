@@ -19,42 +19,42 @@ public class OrganisationalUnitMembersTesting {
     INSERT INTO Organisational_Unit_Assets (Unit_ID, Asset_ID, Asset_Quantity) VALUES (1, 1, 5), (2, 2, 3), (1, 3, 6);
      */
 
-    OrganisationalUnitMembers member;
-    static UsersDataSource db;
+//    OrganisationalUnitMembers member;
+//    static UsersDataSource db;
 
-    @BeforeEach
-    @Test
-    public void setUpITAdmin() {
-        // Recreate db
-        ETPDataSource etp = new ETPDataSource();
-        db = UsersDataSource.getInstance();
-        // create an organisational unit member
-        try {
-            member = new OrganisationalUnitMembers("member1", "pass123", "salt", "unit1");
-            db.insertUser(member);
-        } catch (SQLException ignore) {
-        }
-    }
+//    @BeforeEach
+//    @Test
+//    public void setUpITAdmin() {
+//        // Recreate db
+//        ETPDataSource etp = new ETPDataSource();
+//        db = UsersDataSource.getInstance();
+//        // create an organisational unit member
+//        try {
+//            member = new OrganisationalUnitMembers("member1", "pass123", "salt", "unit1");
+//            db.insertUser(member);
+//        } catch (SQLException ignore) {
+//        }
+//    }
 
-    // Test get unit credits
-    @Test
-    public void getCredit() throws SQLException {
-        float res = member.getUnitCredits();
-        assertEquals(5.0, res);
-    }
+//    // Test get unit credits
+//    @Test
+//    public void getCredit() throws SQLException {
+//        float res = member.getUnitCredits();
+//        assertEquals(5.0, res);
+//    }
+//
+//    // Test get unit assets
+//    @Test
+//    public void getAssets() throws SQLException {
+//        HashMap<String, Integer> res = member.getUnitAssets();
+//        HashMap<String, Integer> test = new HashMap<>();
+//        test.put("Asset1", 5);
+//        test.put("Asset3", 6);
+//        assertEquals(test, res);
+//    }
 
-    // Test get unit assets
-    @Test
-    public void getAssets() throws SQLException {
-        HashMap<String, Integer> res = member.getUnitAssets();
-        HashMap<String, Integer> test = new HashMap<>();
-        test.put("Asset1", 5);
-        test.put("Asset3", 6);
-        assertEquals(test, res);
-    }
-
-    @AfterAll
-    public static void close() throws SQLException {
-        db.close();
-    }
+//    @AfterAll
+//    public static void close() throws SQLException {
+//        db.close();
+//    }
 }
