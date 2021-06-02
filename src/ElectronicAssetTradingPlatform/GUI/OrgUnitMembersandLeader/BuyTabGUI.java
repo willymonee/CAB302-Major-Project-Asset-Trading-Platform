@@ -13,10 +13,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -116,29 +113,15 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
      * @return a scroll pane containing the table
      */
     private JScrollPane createScrollPane(JTable table, JPanel panel) {
-        int tableHeight = table.getPreferredSize().height + 25;
         JScrollPane scrollPane;
-        // if the buy table's height is greater than 250
-        if (tableHeight >= 250) {
-            // create scroll panel with table inside
-            scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            // set the org buy offer panel to a FIXED 325
-            panel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 375));
-            panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 375));
-            // set the scroll panel to a FIXED 250
-            scrollPane.setPreferredSize(new Dimension(850, 250));
-            scrollPane.setMaximumSize(new Dimension(850, 250));
-        }
-        else {
-            // create scroll panel with table inside, but is not a fixed size
-            scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            int height = table.getPreferredSize().height + 165;
-            // set height of panel to the buy offer table's size + 125 (VARIABLE size)
-            panel.setPreferredSize(new Dimension(825, height));
-            panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
-            // set height of scroll panel to a VARIABLE size equal to the buy offers table's height
-            scrollPane.setPreferredSize(new Dimension(850, table.getPreferredSize().height + 25));
-        }
+        // create scroll panel with table inside
+        scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        // set the org buy offer panel to a FIXED 325
+        panel.setPreferredSize(new Dimension(825, 375));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 375));
+        // set the scroll panel to a FIXED 250
+        scrollPane.setPreferredSize(new Dimension(850, 250));
+        scrollPane.setMaximumSize(new Dimension(850, 250));
         scrollPane.getViewport().setBackground(Color.WHITE);
         return scrollPane;
     }
@@ -188,7 +171,17 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         }
         else if (src == this.viewAssetButton) {
             System.out.println("Pressed view asset button");
-            new AssetDetailGUI(loggedInMember, data, new Asset(selectedAsset));
+            AssetDetailGUI assetDetailGUI = new AssetDetailGUI(loggedInMember, data, new Asset(selectedAsset));
+            assetDetailGUI.addWindowListener(new WindowAdapter()
+            {
+                @Override
+                public void windowClosed(WindowEvent e)
+                {
+                    System.out.println("Closed");
+                    updateTables();
+                    e.getWindow().dispose();
+                }
+            });
         }
     }
 
@@ -308,11 +301,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         table.getTableHeader().setFont(new Font ( "Dialog", Font.BOLD, 14));
         table.getTableHeader().setReorderingAllowed(false);
         table.setDefaultEditor(Object.class, null);
-        // set the preferred size of the table
-        Dimension preferredSize = new Dimension(825, table.getRowCount() * 25);
-        if (preferredSize.height < 225) {
-            table.setPreferredSize(preferredSize);
-        }
+
         // center table cells
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment( JLabel.CENTER );

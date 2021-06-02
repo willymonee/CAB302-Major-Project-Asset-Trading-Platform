@@ -12,6 +12,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Date;
@@ -19,7 +21,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 
-public class AssetDetailGUI extends JFrame {
+public class AssetDetailGUI extends JFrame implements ActionListener {
     private final OrganisationalUnitMembers loggedInUser;
     private final NetworkDataSource dataSource;
     private final Asset selectedAsset;
@@ -31,14 +33,23 @@ public class AssetDetailGUI extends JFrame {
     private JScrollPane assetBuyOffersScrollPane;
     private JPanel assetSellOffersPanel;
     private JScrollPane assetSellOffersScrollPane;
+    private JButton buyButton;
+    private JButton sellButton;
+    private JPanel buyAssetPanel;
+    private JPanel sellAssetPanel;
+    private JTextField quantityBuy;
+    private JTextField priceBuy;
+    private String assetName;
+    private JPanel buyResponseMessage;
 
     public AssetDetailGUI(OrganisationalUnitMembers loggedInUser, NetworkDataSource data, Asset selectedAsset) {
         this.loggedInUser = loggedInUser;
         this.dataSource = data;
         this.selectedAsset = selectedAsset;
-        String assetName = selectedAsset.getAssetName();
+        assetName = selectedAsset.getAssetName();
 
         Container contentPane = this.getContentPane();
+        contentPane.setPreferredSize(new Dimension(850, 850));
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
         contentPane.add(Box.createVerticalStrut(20));
@@ -47,12 +58,17 @@ public class AssetDetailGUI extends JFrame {
         assetBuyOffersScrollPane = Helper.createScrollPane(assetBuyOffersTable, assetBuyOffersPanel);
         assetBuyOffersPanel.add(Helper.createLabel(assetName + " Buy Offers", 20));
         assetBuyOffersPanel.add(assetBuyOffersScrollPane);
+        sellButton = createButton("SELL");
+        assetBuyOffersPanel.add(sellButton);
 
         assetSellOffersPanel = Helper.createPanel(Color.WHITE);
         assetSellOffersTable = assetSellOffersTable();
         assetSellOffersScrollPane = Helper.createScrollPane(assetSellOffersTable, assetSellOffersPanel);
         assetSellOffersPanel.add(Helper.createLabel(assetName + " Sell Offers",20));
         assetSellOffersPanel.add(assetSellOffersScrollPane);
+        buyButton = createButton("BUY");
+        assetSellOffersPanel.add(buyButton);
+
         contentPane.add(assetBuyOffersPanel);
         contentPane.add(assetSellOffersPanel);
 
@@ -117,6 +133,71 @@ public class AssetDetailGUI extends JFrame {
         JTable table = new JTable(assetSellOfferModel);
         Helper.formatTable(table);
         return table;
+    }
+
+    private JButton createButton(String buttonText) {
+        // create a JButton object and store it in a local var
+        JButton button = new JButton();
+        // Set the button text to that passed in String buttonText
+        button.setText(buttonText);
+        button.addActionListener(this);
+        // Return the JButton
+        return button;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object src = e.getSource();
+        if (src == this.buyButton) {
+           displayBuyAssetPanel();
+        }
+        else if (src == this.sellButton) {
+            System.out.println("pressed sell button");
+        }
+
+    }
+
+
+
+    // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool
+    public void displayBuyAssetPanel() {
+        buyAssetPanel = Helper.createPanel(Color.WHITE);
+        buyAssetPanel.setLayout(new GridLayout(0, 2, 2, 2));
+
+        quantityBuy = new JTextField(4);
+        priceBuy = new JTextField(4);
+
+        buyAssetPanel.add(new JLabel("Quantity to buy"));
+        buyAssetPanel.add(quantityBuy);
+
+        buyAssetPanel.add(new JLabel("Price"));
+        buyAssetPanel.add(priceBuy);
+
+        int option = JOptionPane.showConfirmDialog(null,
+                buyAssetPanel,
+                "Buy Asset" + selectedAsset.getAssetName(),
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE, null);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String quantity = quantityBuy.getText();
+            String price = priceBuy.getText();
+            try {
+                int quantityInt = Integer.parseInt(quantity);
+                int priceInt = Integer.parseInt(price);
+                loggedInUser.listBuyOrderNoResolve(assetName, quantityInt, priceInt);
+                JOptionPane.showMessageDialog(null,
+                        "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
+                this.dispose();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null,
+                        "Please enter a valid number for quantity and price", "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
     }
 
     private JPanel makeMarketPlaceHistoryGraph() {
