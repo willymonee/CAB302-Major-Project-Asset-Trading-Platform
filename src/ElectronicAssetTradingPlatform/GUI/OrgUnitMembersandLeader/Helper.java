@@ -78,14 +78,12 @@ public class Helper {
         // create scroll panel with table inside
         scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         // set the org buy offer panel to a FIXED 325
-        panel.setPreferredSize(new Dimension(825, 375));
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 375));
+        panel.setPreferredSize(new Dimension(825, 365));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 365));
         // set the scroll panel to a FIXED 250
         scrollPane.setPreferredSize(new Dimension(850, 250));
         scrollPane.setMaximumSize(new Dimension(850, 250));
         scrollPane.getViewport().setBackground(Color.WHITE);
         return scrollPane;
     }
-
-
 }

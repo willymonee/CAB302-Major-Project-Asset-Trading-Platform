@@ -1,8 +1,6 @@
 package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
 import ElectronicAssetTradingPlatform.AssetTrading.*;
-import ElectronicAssetTradingPlatform.Database.MarketplaceHistoryDataSource;
-import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
@@ -17,7 +15,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 
@@ -37,10 +34,11 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     private JButton sellButton;
     private JPanel buyAssetPanel;
     private JPanel sellAssetPanel;
-    private JTextField quantityBuy;
-    private JTextField priceBuy;
+    private JTextField quantityBuyField;
+    private JTextField priceBuyField;
     private String assetName;
-    private JPanel buyResponseMessage;
+    private JTextField quantitySellField;
+    private JTextField priceSellField;
 
     public AssetDetailGUI(OrganisationalUnitMembers loggedInUser, NetworkDataSource data, Asset selectedAsset) {
         this.loggedInUser = loggedInUser;
@@ -58,6 +56,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         assetBuyOffersScrollPane = Helper.createScrollPane(assetBuyOffersTable, assetBuyOffersPanel);
         assetBuyOffersPanel.add(Helper.createLabel(assetName + " Buy Offers", 20));
         assetBuyOffersPanel.add(assetBuyOffersScrollPane);
+        assetBuyOffersPanel.add(Helper.createLabel("Current buy offers: " + getBuyQuantity()
+                + " requests to buy at " + getBestBuyPrice() + " credits or lower", 14));
         sellButton = createButton("SELL");
         assetBuyOffersPanel.add(sellButton);
 
@@ -66,6 +66,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         assetSellOffersScrollPane = Helper.createScrollPane(assetSellOffersTable, assetSellOffersPanel);
         assetSellOffersPanel.add(Helper.createLabel(assetName + " Sell Offers",20));
         assetSellOffersPanel.add(assetSellOffersScrollPane);
+        assetSellOffersPanel.add(Helper.createLabel("Current sell offers: " + getSellQuantity()
+                + " for sale starting at " + getBestSellPrice() + " credits", 14));
         buyButton = createButton("BUY");
         assetSellOffersPanel.add(buyButton);
 
@@ -79,6 +81,22 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         setMinimumSize(new Dimension(850, 400));
         pack();
         setVisible(true);
+    }
+
+    private double getBestBuyPrice() {
+        return BuyOfferData.getInstance().getHighestPrice(assetName);
+    }
+
+    private int getBuyQuantity() {
+        return BuyOfferData.getInstance().assetQuantity(assetName);
+    }
+
+    private double getBestSellPrice() {
+        return SellOfferData.getInstance().getLowestPricedSellOffer(assetName);
+    }
+
+    private int getSellQuantity() {
+        return SellOfferData.getInstance().quantityAsset(assetName);
     }
 
     private String[][] getAssetBuyOffersRowData() {
@@ -117,8 +135,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
 
     private JTable assetBuyOffersTable() {
         // create a table
-        String data[][] = getAssetBuyOffersRowData();
-        String columns[] = { "Offer ID", "Quantity", "Price", "Offer Creator"};
+        String[][] data = getAssetBuyOffersRowData();
+        String[] columns = { "Offer ID", "Quantity", "Price", "Offer Creator"};
         assetBuyOfferModel = new DefaultTableModel(data, columns);
         JTable table = new JTable(assetBuyOfferModel);
         Helper.formatTable(table);
@@ -127,8 +145,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
 
     private JTable assetSellOffersTable() {
         // create a table
-        String data[][] = getAssetSellOffersRowData();
-        String columns[] = { "Offer ID", "Quantity", "Price", "Offer Creator"};
+        String[][] data = getAssetSellOffersRowData();
+        String[] columns = { "Offer ID", "Quantity", "Price", "Offer Creator"};
         assetSellOfferModel = new DefaultTableModel(data, columns);
         JTable table = new JTable(assetSellOfferModel);
         Helper.formatTable(table);
@@ -153,8 +171,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         }
         else if (src == this.sellButton) {
             System.out.println("pressed sell button");
+            displaySellAssetPanel();
         }
-
     }
 
 
@@ -164,14 +182,14 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         buyAssetPanel = Helper.createPanel(Color.WHITE);
         buyAssetPanel.setLayout(new GridLayout(0, 2, 2, 2));
 
-        quantityBuy = new JTextField(4);
-        priceBuy = new JTextField(4);
+        quantityBuyField = new JTextField(4);
+        priceBuyField = new JTextField(4);
 
         buyAssetPanel.add(new JLabel("Quantity to buy"));
-        buyAssetPanel.add(quantityBuy);
+        buyAssetPanel.add(quantityBuyField);
 
         buyAssetPanel.add(new JLabel("Price"));
-        buyAssetPanel.add(priceBuy);
+        buyAssetPanel.add(priceBuyField);
 
         int option = JOptionPane.showConfirmDialog(null,
                 buyAssetPanel,
@@ -180,14 +198,55 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 JOptionPane.PLAIN_MESSAGE, null);
 
         if (option == JOptionPane.OK_OPTION) {
-            String quantity = quantityBuy.getText();
-            String price = priceBuy.getText();
+            String quantity = quantityBuyField.getText();
+            String price = priceBuyField.getText();
             try {
                 int quantityInt = Integer.parseInt(quantity);
                 int priceInt = Integer.parseInt(price);
                 loggedInUser.listBuyOrderNoResolve(assetName, quantityInt, priceInt);
                 JOptionPane.showMessageDialog(null,
                         "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
+                this.dispose();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null,
+                        "Please enter a valid number for quantity and price", "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
+    // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool
+    public void displaySellAssetPanel() {
+        sellAssetPanel = Helper.createPanel(Color.WHITE);
+        sellAssetPanel.setLayout(new GridLayout(0, 2, 2, 2));
+
+        quantitySellField = new JTextField(4);
+        priceSellField = new JTextField(4);
+
+        sellAssetPanel.add(new JLabel("Quantity to sell"));
+        sellAssetPanel.add(quantitySellField);
+
+        sellAssetPanel.add(new JLabel("Price"));
+        sellAssetPanel.add(priceSellField);
+
+        int option = JOptionPane.showConfirmDialog(null,
+                sellAssetPanel,
+                "Sell Asset " + selectedAsset.getAssetName(),
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE, null);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String quantity = quantitySellField.getText();
+            String price = priceSellField.getText();
+            try {
+                int quantityInt = Integer.parseInt(quantity);
+                int priceInt = Integer.parseInt(price);
+                loggedInUser.listSellOrderNoResolve(assetName, quantityInt, priceInt);
+                JOptionPane.showMessageDialog(null,
+                        "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price );
                 this.dispose();
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,

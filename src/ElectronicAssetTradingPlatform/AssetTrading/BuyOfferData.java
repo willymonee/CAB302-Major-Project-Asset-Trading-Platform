@@ -162,12 +162,11 @@ public class BuyOfferData extends OfferData {
     /**
      * Return the quantity of buy offers for a particular asset
      */
-    public int quantityBuyOffersForAsset(String assetName) {
+    public int assetQuantity(String assetName) {
         TreeMap<Integer, BuyOffer> assetOffers = getAssetOffers(assetName);
         int quantity = 0;
-        Iterator<Map.Entry<Integer, BuyOffer>> buyOffersIter = assetOffers.entrySet().iterator();
-        while (buyOffersIter.hasNext()) {
-            int offerQuantity = buyOffersIter.next().getValue().getQuantity();
+        for (Map.Entry<Integer, BuyOffer> integerBuyOfferEntry : assetOffers.entrySet()) {
+            int offerQuantity = integerBuyOfferEntry.getValue().getQuantity();
             quantity += offerQuantity;
         }
         return quantity;

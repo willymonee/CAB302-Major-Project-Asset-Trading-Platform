@@ -70,7 +70,6 @@ public class OrgUnitMemGUI extends JFrame {
         menuTabs.setFont(new Font ( "Dialog", Font.BOLD, 24));
         menuTabs.setBackground(Color.WHITE);
 
-
         return menuTabs;
     }
 

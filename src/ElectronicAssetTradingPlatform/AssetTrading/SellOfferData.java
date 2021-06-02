@@ -155,12 +155,11 @@ public class SellOfferData extends OfferData {
     /**
      * Return the quantity of an asset for sale
      */
-    public int quantitySellOffersForAsset(String assetName) {
+    public int quantityAsset(String assetName) {
         TreeMap<Integer, SellOffer> assetOffers = getAssetOffers(assetName);
         int quantity = 0;
-        Iterator<Map.Entry<Integer, SellOffer>> sellOffersIter = assetOffers.entrySet().iterator();
-        while (sellOffersIter.hasNext()) {
-            int offerQuantity = sellOffersIter.next().getValue().getQuantity();
+        for (Map.Entry<Integer, SellOffer> integerSellOfferEntry : assetOffers.entrySet()) {
+            int offerQuantity = integerSellOfferEntry.getValue().getQuantity();
             quantity += offerQuantity;
         }
         return quantity;
