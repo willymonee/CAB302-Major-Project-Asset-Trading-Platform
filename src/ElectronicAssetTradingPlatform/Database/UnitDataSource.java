@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  * Helper Class for any DataSource class that requires to fetch the organisational unit name and/or ID.
@@ -28,7 +29,7 @@ public class UnitDataSource {
     private static final String INSERT_ASSET = "INSERT INTO Asset_Types (Name) VALUES (?);";
     private static final String GET_UNIT_CREDITS = "SELECT Credits FROM Organisational_Units WHERE Name = ?;";
     private static final String EDIT_UNIT_CREDITS = "UPDATE Organisational_Units SET Credits = ? WHERE Name = ?;";
-
+    private static final String EDIT_UNIT_ASSETS = "REPLACE INTO Organisational_Unit_Assets (Unit_ID, Asset_ID, Asset_Quantity) VALUES (?, ?, ?);";
 
     PreparedStatement getUnitNameQuery;
     PreparedStatement getUnitIDQuery;
@@ -44,6 +45,7 @@ public class UnitDataSource {
     PreparedStatement addAssetQuery;
     PreparedStatement getUnitCreditsQuery;
     PreparedStatement editUnitCreditsQuery;
+    PreparedStatement editUnitAssetsQuery;
 
     private Connection connection;
 
@@ -72,6 +74,7 @@ public class UnitDataSource {
             addAssetQuery = connection.prepareStatement(INSERT_ASSET);
             getUnitCreditsQuery = connection.prepareStatement(GET_UNIT_CREDITS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             editUnitCreditsQuery = connection.prepareStatement(EDIT_UNIT_CREDITS, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            editUnitAssetsQuery = connection.prepareStatement(EDIT_UNIT_ASSETS);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -234,11 +237,11 @@ public class UnitDataSource {
         addAssetQuery.execute();
     }
 
-    public OrganisationalUnit getOrgUnit(String unitName) throws SQLException, LessThanZeroException {
+    public OrganisationalUnit getOrgUnit(String unitName) throws SQLException {
         getUnitCreditsQuery.setString(1, unitName);
 
         ResultSet rs = null;
-        Float credits;
+        float credits;
 
         try {
             rs = getUnitCreditsQuery.executeQuery();
@@ -252,7 +255,9 @@ public class UnitDataSource {
             if (rs != null) rs.close();
         }
 
-        return UnitFactory.CreateOrgUnit(unitName, credits);
+        HashMap<String, Integer> assets = UsersDataSource.getInstance().getUnitAssets(unitName);
+
+        return UnitFactory.CreateOrgUnit(unitName, credits, assets);
     }
 
     public void editOrgUnitCredits(String unitName, float credits) throws SQLException, LessThanZeroException {
@@ -262,6 +267,21 @@ public class UnitDataSource {
         editUnitCreditsQuery.setString(2, unitName);
 
         editUnitCreditsQuery.execute();
+
+    }
+
+    public void editOrgUnitAssets(String unitName, String assetName, int amount) throws SQLException, LessThanZeroException {
+        getOrgUnit(unitName); // Check unit exists
+        String unitID = executeGetUnitID(unitName);
+        int unitIDToInteger;
+
+        unitIDToInteger = Integer.parseInt(unitID);
+
+        editUnitAssetsQuery.setInt(1, unitIDToInteger);
+        editUnitAssetsQuery.setInt(2, executeGetAssetID(assetName));
+        editUnitAssetsQuery.setInt(3, amount);
+
+        editUnitAssetsQuery.execute();
 
     }
 

@@ -332,4 +332,8 @@ public class NetworkDataSource extends Thread {
     public String editOrgUnitCredits(OrganisationalUnit orgUnit) {
         return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_CREDITS, orgUnit);
     }
+
+    public String editOrgUnitAssets(OrganisationalUnit orgUnit, String assetName) {
+        return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_ASSETS, orgUnit, assetName);
+    }
 }

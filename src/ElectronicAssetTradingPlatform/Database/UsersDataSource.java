@@ -238,8 +238,15 @@ public class UsersDataSource {
             // Result
             while (rs.next()) {
                 String name = rs.getString("Name");
-                Integer quantity = Integer.parseInt(rs.getString("Asset_Quantity"));
-                unitAssets.put(name, quantity);
+                String quantity = rs.getString("Asset_Quantity");
+                int amount;
+                if (quantity == null) {
+                    amount = 0;
+                }
+                else {
+                    amount = Integer.parseInt(quantity);
+                }
+                unitAssets.put(name, amount);
             }
         } finally {
             if (rs != null) rs.close();

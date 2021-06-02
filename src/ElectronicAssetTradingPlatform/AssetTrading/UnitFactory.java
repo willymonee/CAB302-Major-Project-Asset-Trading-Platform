@@ -1,6 +1,6 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
-import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
+import java.util.HashMap;
 
 public class UnitFactory {
 
@@ -8,8 +8,15 @@ public class UnitFactory {
         addCredits, removeCredits
     }
 
-    public static OrganisationalUnit CreateOrgUnit(String unitName, float credits) throws LessThanZeroException {
+    public enum EditAssetType {
+        addAssets, removeAssets
+    }
 
+    public static OrganisationalUnit CreateOrgUnit(String unitName, float credits) {
         return new OrganisationalUnit(unitName, credits);
+    }
+
+    public static OrganisationalUnit CreateOrgUnit(String unitName, float credits, HashMap<String, Integer> assets) {
+        return new OrganisationalUnit(unitName, credits, assets);
     }
 }

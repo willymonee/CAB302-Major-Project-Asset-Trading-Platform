@@ -4,6 +4,7 @@ import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Exceptions.MissingAssetException;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -28,6 +29,19 @@ public class OrganisationalUnit implements Serializable {
         this.name = name;
         this.credits = credits;
         assetsOwned = new TreeMap<>();
+    }
+
+    /**
+     * Constructor for an organisational unit that sets the constructor's parameter's into the local storage.
+     *
+     * @param name A string name of the organisational unit to be initialised
+     * @param credits A float amount of total credits the organisational unit is to be initialised with
+     * @param assets A hashmap collection of string and integers of the assets owned by the organisational unit
+     */
+    public OrganisationalUnit(String name, float credits, HashMap<String, Integer> assets) {
+        this.name = name;
+        this.credits = credits;
+        assetsOwned = assets;
     }
 
     /**
@@ -65,7 +79,10 @@ public class OrganisationalUnit implements Serializable {
      * @param amountToAdd An integer amount of assets to add to the asset
      */
     public void addAsset(String assetName, int amountToAdd) {
+        int hello = assetsOwned.getOrDefault(assetName, 0) + amountToAdd;
+        System.out.println(hello);
         assetsOwned.put(assetName, assetsOwned.getOrDefault(assetName, 0) + amountToAdd);
+
     }
 
     /**
@@ -149,6 +166,24 @@ public class OrganisationalUnit implements Serializable {
      */
     public Map<String, Integer> getAssetsOwned() {
         return assetsOwned;
+    }
+
+    /**
+     * A getter function for retrieving and returning the amount of a specific singular asset given the name of the
+     * asset to query.
+     *
+     * @param assetName A string name of the asset to return the amount of that asset
+     *
+     * @return Return the quantity amount of the asset queried
+     */
+    public int getAssetQuantity(String assetName) {
+        if (assetsOwned.get(assetName) == null) {
+            return 0;
+        }
+        else {
+            return assetsOwned.get(assetName);
+        }
+
     }
 
 }

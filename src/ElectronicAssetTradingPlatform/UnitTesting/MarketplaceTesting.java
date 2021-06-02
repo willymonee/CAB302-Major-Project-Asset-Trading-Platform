@@ -47,16 +47,30 @@ public class MarketplaceTesting {
     @Test
     public void testInsertBuyOffer() {
         // creating a buy offer and adding it into the database through the user
-        //userA.listBuyOrderNoResolve("Table", 2, 5);
+//        userA.listSellOrderNoResolve("iPhone 10", 2, 100);
+//        userA.listBuyOrderNoResolve("Table", 2, 50);
+
+        userA.listBuyOrderNoResolve("Table", 2, 5);
+        userA.listBuyOrderNoResolve("Table", 2, 5);
+        userA.listBuyOrderNoResolve("Table", 2, 5);
+        userA.listBuyOrderNoResolve("Table", 2, 5);
+        userB.listBuyOrderNoResolve("iPhone 10", 2, 5);
+        userB.listBuyOrderNoResolve("iPhone 10", 2, 5);
+        userB.listBuyOrderNoResolve("iPhone 10", 2, 5);
+        userB.listSellOrderNoResolve("iPhone 10", 2, 10);
+        userB.listSellOrderNoResolve("iPhone 10", 2, 11);
+        userB.listSellOrderNoResolve("iPhone 10", 1, 100);
+        userA.listSellOrderNoResolve("Table", 1, 10);
+        userA.listSellOrderNoResolve("Table", 2, 30);
+        userA.listSellOrderNoResolve("Table", 3, 20);
+
 
     }
 
     @Test
     public void testInsertSellOffer() {
         // creating a buy offer and adding it into the database through the user
-
         //BuyOfferData.getInstance().removeOffer(216);
-
     }
 
     @Test
@@ -73,11 +87,11 @@ public class MarketplaceTesting {
 
     @Test
     public void removeBuyOffer() {
-        userA.removeBuyOffer(128);
-        userA.removeBuyOffer(127);
-        userA.removeBuyOffer(126);
-        userA.removeBuyOffer(125);
-        userA.removeBuyOffer(124);
+//        userA.removeBuyOffer(128);
+//        userA.removeBuyOffer(127);
+//        userA.removeBuyOffer(126);
+//        userA.removeBuyOffer(125);
+//        userA.removeBuyOffer(124);
     }
 
     @Test

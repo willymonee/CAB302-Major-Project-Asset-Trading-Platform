@@ -63,7 +63,7 @@ public class ETPDataSource {
                 + "Unit_ID INTEGER NOT NULL,"
                 + "Asset_ID INTEGER NOT NULL,"
                 + "Asset_Quantity INTEGER NOT NULL,"
-                + "UNIQUE(Unit_ID, Asset_ID)"
+                + "UNIQUE(\"Unit_ID\",\"Asset_ID\")"
                 + ");";
 
 

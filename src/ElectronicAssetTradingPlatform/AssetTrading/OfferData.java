@@ -59,4 +59,12 @@ public abstract class OfferData {
     protected boolean sameOrgUnitName(String unitNameA, String unitNameB) {
         return unitNameA.equals(unitNameB);
     }
+
+    /**
+     * Checks if two strings are the same asset
+     * @return true if they are the same name, otherwise false
+     */
+    protected boolean sameAssetName(String assetNameA, String assetNameB) {
+        return assetNameA.equals(assetNameB);
+    }
 }

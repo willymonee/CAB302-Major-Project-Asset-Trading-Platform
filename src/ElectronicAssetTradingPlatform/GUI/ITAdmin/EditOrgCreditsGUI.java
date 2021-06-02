@@ -134,19 +134,19 @@ class EditOrgCreditsGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             JButton source = (JButton) e.getSource();
             if (source == editOrgUnitCreditsButton) {
-                editUserPressed();
+                editOrgUnitCreditsPressed();
             }
         }
 
         /**
          * Create user
          */
-        private void editUserPressed() {
+        private void editOrgUnitCreditsPressed() {
             String unitNameIn = unitName.getText();
             String amountIn = amount.getText();
             float amountInToFloat;
             UnitFactory.EditCreditType type = (UnitFactory.EditCreditType)  editType.getSelectedItem();
-            String userTypeIn = Objects.requireNonNull(type).toString();
+            String editTypeIn = Objects.requireNonNull(type).toString();
 
             OrganisationalUnit outOrgUnit = null;
 
@@ -154,13 +154,13 @@ class EditOrgCreditsGUI extends JFrame {
             String output = "";
             try {
                 GUI.checkInputEmpty(unitNameIn);
-                GUI.checkInputEmpty(userTypeIn);
+                GUI.checkInputEmpty(editTypeIn);
                 GUI.checkInputEmpty(amountIn);
 
                 amountInToFloat = Float.parseFloat(amountIn);
 
-
                 OrganisationalUnit orgUnitToBeEdited = data.retrieveOrgUnit(unitNameIn);
+
                 if (type == UnitFactory.EditCreditType.addCredits) {
                     outOrgUnit = loggedInUser.addOrganisationalUnitCredits(orgUnitToBeEdited, amountInToFloat);
                 }
