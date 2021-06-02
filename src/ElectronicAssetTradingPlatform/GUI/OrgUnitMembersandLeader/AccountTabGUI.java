@@ -5,6 +5,7 @@ import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,18 +15,35 @@ public class AccountTabGUI extends JPanel{
     NetworkDataSource data;
 
     private JButton openChangePassMenu;
+    private JLabel usernameLabel;
 
     /**
-     * Constructor for the Account Tab in the Member GUI
+     * Constructor (a JPanel) for the Account Tab in the Member GUI
      * @param member    the member accessing the GUI
      * @param net       the network connection
      */
     public AccountTabGUI(OrganisationalUnitMembers member, NetworkDataSource net) {
         loggedInUser = member;
         data = net;
+
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        // Greeting Text Label
+        String greetUser = "Hello, " + member.getUsername();
+        usernameLabel = Helper.createLabel(greetUser, 25);
+        usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.add(usernameLabel, CENTER_ALIGNMENT);
+
+        // Button to open password changer menu
         openChangePassMenu = new JButton("Change password Menu");
         openChangePassMenu.addActionListener(new ButtonListener(member, data));
-        this.add(openChangePassMenu);
+        openChangePassMenu.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        this.add(openChangePassMenu, CENTER_ALIGNMENT);
+
+        // Page background colour
+        this.setBackground(Color.WHITE);
+
     }
 
     /**
