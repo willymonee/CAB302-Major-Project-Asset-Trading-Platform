@@ -78,6 +78,9 @@ public class ChangePasswordGUI extends JFrame {
         newPassword = new JTextField(20);
         changeButton = new JButton("Change Password");
         messaging = new JTextArea();
+        messaging.setEditable(false);
+        messaging.setLineWrap(true);
+        messaging.setWrapStyleWord(true);
 
         // Create a sequential group for the horizontal axis.
         GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();

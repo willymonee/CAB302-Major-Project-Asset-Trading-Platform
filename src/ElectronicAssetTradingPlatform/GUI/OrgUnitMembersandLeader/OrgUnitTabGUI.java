@@ -23,36 +23,44 @@ public class OrgUnitTabGUI extends JPanel {
         this.member = member;
         this.dataSource = dataSource;
 
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        String creditsText = member.getUnitName() + "\'s Credits: ";
+        String creditsText = member.getUnitName() + ": ";
         try {
-            creditsText += member.getUnitCredits(dataSource);
+            creditsText += member.getUnitCredits(dataSource) + " credits";
         } catch (DatabaseException e) {
             creditsText += "Not found";
         }
 
+        JPanel wrapper = Helper.createPanel(Color.WHITE);
+        wrapper.setPreferredSize(new Dimension(850, 800));
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+
         JLabel unitCreditsLabel = Helper.createLabel(creditsText, 16);
-        unitCreditsLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
-        unitCreditsLabel.setHorizontalAlignment(JLabel.RIGHT);
-        this.add(unitCreditsLabel);
+        unitCreditsLabel.setBorder(new EmptyBorder(10, 550, 10, 0));
+        wrapper.add(unitCreditsLabel);
 
         JLabel tradeHistoryLabel = Helper.createLabel(member.getUnitName() + "\'s Trade History", 20);
-        tradeHistoryLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        this.add(tradeHistoryLabel);
-        this.add(unitTradeHistoryTable());
+        tradeHistoryLabel.setBorder(new EmptyBorder(10, 30, 10, 0));
+        wrapper.add(tradeHistoryLabel);
+        JPanel tradeTable = unitTradeHistoryTable();
+        tradeTable.setBackground(Color.WHITE);
+        wrapper.add(tradeTable);
 
         JLabel unitAssetsLabel = Helper.createLabel(member.getUnitName() + "\'s Assets", 20);
-        unitAssetsLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
-        unitAssetsLabel.setHorizontalAlignment(JLabel.CENTER);
-        this.add(unitAssetsLabel);
-        this.add(unitAssetTable());
+        unitAssetsLabel.setBorder(new EmptyBorder(10, 220, 10, 0));
+        wrapper.add(unitAssetsLabel);
+        JPanel assetTable = unitAssetTable();
+        assetTable.setBackground(Color.WHITE);
+        wrapper.add(assetTable);
 
         JLabel unitMembersLabel = Helper.createLabel(member.getUnitName() + "\'s Members", 20);
-        unitMembersLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
-        unitMembersLabel.setHorizontalAlignment(JLabel.CENTER);
-        this.add(unitMembersLabel);
-        this.add(unitMemberTable());
+        unitMembersLabel.setBorder(new EmptyBorder(10, 220, 10, 0));
+        wrapper.add(unitMembersLabel);
+        JPanel memTable = unitMemberTable();
+        memTable.setBackground(Color.WHITE);
+        wrapper.add(memTable);
+
+        this.add(wrapper);
     }
 
     public JPanel unitTradeHistoryTable() {
@@ -97,7 +105,6 @@ public class OrgUnitTabGUI extends JPanel {
         table.setPreferredScrollableViewportSize(new Dimension(800, table.getRowCount() * table.getRowHeight()));
         Helper.formatTable(table);
         JScrollPane tablePane = new JScrollPane(table);
-        tablePane.setPreferredSize(new Dimension(700, 300));
         tablePane.setVisible(true);
 
         JPanel panel = new JPanel();
