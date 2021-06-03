@@ -79,6 +79,7 @@ public class OrgUnitMemGUI extends JFrame implements ChangeListener {
         // assign change listener's as each tab
         addChangeListener(buyCard);
         addChangeListener(sellCard);
+        addChangeListener(orgUnitCard);
 
         return menuTabs;
     }

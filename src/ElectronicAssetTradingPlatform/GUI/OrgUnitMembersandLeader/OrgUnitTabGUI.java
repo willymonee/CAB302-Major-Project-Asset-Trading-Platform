@@ -8,6 +8,8 @@ import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -15,14 +17,28 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-public class OrgUnitTabGUI extends JPanel {
+public class OrgUnitTabGUI extends JPanel implements ChangeListener {
     private NetworkDataSource dataSource;
     private OrganisationalUnitMembers member;
+
+    private JPanel content;
 
     public OrgUnitTabGUI(OrganisationalUnitMembers member, NetworkDataSource dataSource) {
         this.member = member;
         this.dataSource = dataSource;
 
+        content = makeContent();
+        this.add(content);
+    }
+
+    /**
+     * Create JPanel of entire content
+     * @return Content of the tab
+     */
+    public JPanel makeContent() {
+        JPanel wrapper = Helper.createPanel(Color.WHITE);
+        wrapper.setPreferredSize(new Dimension(850, 800));
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
 
         String creditsText = member.getUnitName() + ": ";
         try {
@@ -30,10 +46,6 @@ public class OrgUnitTabGUI extends JPanel {
         } catch (DatabaseException e) {
             creditsText += "Not found";
         }
-
-        JPanel wrapper = Helper.createPanel(Color.WHITE);
-        wrapper.setPreferredSize(new Dimension(850, 800));
-        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
 
         JLabel unitCreditsLabel = Helper.createLabel(creditsText, 16);
         unitCreditsLabel.setBorder(new EmptyBorder(10, 550, 10, 0));
@@ -60,9 +72,13 @@ public class OrgUnitTabGUI extends JPanel {
         memTable.setBackground(Color.WHITE);
         wrapper.add(memTable);
 
-        this.add(wrapper);
+        return wrapper;
     }
 
+    /**
+     * Table for the unit's trade history
+     * @return JPanel containing the history table
+     */
     public JPanel unitTradeHistoryTable() {
         String[] columnNames = {"Name", "Quantity", "Price", "Total", "Trade Date", "Created by", "To/From"};
 
@@ -114,6 +130,10 @@ public class OrgUnitTabGUI extends JPanel {
         return panel;
     }
 
+    /**
+     * Table for the assets owned by the unit
+     * @return JPanel containing the asset table
+     */
     public JPanel unitAssetTable() {
         JPanel panel = new JPanel();
 
@@ -157,6 +177,10 @@ public class OrgUnitTabGUI extends JPanel {
         return panel;
     }
 
+    /**
+     * Table for the unit's members
+     * @return JPanel containing the member table
+     */
     public JPanel unitMemberTable() {
         JPanel panel = new JPanel();
 
@@ -196,5 +220,16 @@ public class OrgUnitTabGUI extends JPanel {
         panel.setBorder(new EmptyBorder(10, -10, 10, -10));
 
         return panel;
+    }
+
+    /**
+     * Event handling of switching between tabs - refresh the UI
+     * @param e
+     */
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        this.remove(content);
+        content = makeContent();
+        this.add(content);
     }
 }
