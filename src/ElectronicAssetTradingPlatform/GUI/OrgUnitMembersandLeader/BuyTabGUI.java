@@ -1,14 +1,14 @@
 package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
-import ElectronicAssetTradingPlatform.AssetTrading.Asset;
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
+import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
@@ -17,8 +17,11 @@ import java.awt.event.*;
 import java.util.Map;
 import java.util.TreeMap;
 
-
-public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, ListSelectionListener {
+/**
+ * BuyTabGUI class is responsible for displaying the organisational unit's buy offers and all the market buy offers
+ * Enables user to remove their org's offers and view assets on the market
+ */
+public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, ListSelectionListener, ChangeListener {
     // Global variables
     private OrganisationalUnitMembers loggedInMember;
     private NetworkDataSource data;
@@ -31,7 +34,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
     private JScrollPane scrollPanelMarketBuyOffers;
     private JLabel marketBuyOffersLabel;
     private int selectedOrgOfferID;
-    private int selectedOrgOfferRow;
     private JTable orgBuyOffersTable;
     private JTable marketBuyOffersTable;
     private DefaultTableModel model;
@@ -41,9 +43,9 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
     private JPanel orgBuyButtonPanel;
     private JButton viewAssetButton;
     private String selectedAsset;
+    private final int OFFER_ID_COLUMN = 0;
+    private final int ASSET_NAME_COLUMN = 1;
 
-
-    TreeMap<Integer, BuyOffer> buyOffers;
 
 
     /**
@@ -65,7 +67,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         welcomeMessage.setHorizontalAlignment(JLabel.CENTER);
         welcomeMessage.setBorder(new EmptyBorder(10, 0, 10, 0));
         wrapper.add(welcomeMessage);
-
         // add org buy offer's panel to wrapper
         orgBuyOfferPanel = createOrgBuyOfferPanel(member);
         wrapper.add(orgBuyOfferPanel);
@@ -75,6 +76,11 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         wrapper.add(marketBuyOffersPanel);
     }
 
+    /**
+     * Create an org buy offer panel which displays the organisational unit's current buy offers
+     * @param member logged in
+     * @return org buy offer panel
+     */
     private JPanel createOrgBuyOfferPanel(OrganisationalUnitMembers member) {
         // add org buy offer panel
         orgBuyOfferPanel = Helper.createPanel(Color.WHITE);
@@ -98,6 +104,10 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         return orgBuyOfferPanel;
     }
 
+    /**
+     * Create a market buy offer panel which displays all current market buy offers
+     * @return market buy offer panel
+     */
     private JPanel createMarketBuyOfferPanel() {
         // add market buy offer panel
         marketBuyOffersPanel = Helper.createPanel(Color.WHITE);
@@ -133,6 +143,11 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         return memberTextDisplay;
     }
 
+    /**
+     * Create a button given text
+     * @param buttonText text to be displayed in the button
+     * @return a JButton object
+     */
     private JButton createButton(String buttonText) {
         // create a JButton object and store it in a local var
         JButton button = new JButton();
@@ -144,24 +159,31 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         return button;
     }
 
+    /**
+     * Action Listener for JButtons created in createButton for when a particular button is pressed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
+        // when remove offer button is pressed
         if (src == this.removeOfferButton) {
             String message = "Are you sure you want to remove offer: " + selectedOrgOfferID;
+            // open a confirm dialog for removing the selected offer
             int dialogResult = JOptionPane.showConfirmDialog
                     (null, message,
                             "Remove Offer", JOptionPane.YES_NO_OPTION);
             if(dialogResult == JOptionPane.YES_OPTION){
                 // remove the buy offer
                 BuyOfferData.getInstance().removeOffer(selectedOrgOfferID);
-                // remove all offers in the table
+                // update all tables in the buy tab
                 updateTables();
             }
         }
+        // when the view asset button is pressed
         else if (src == this.viewAssetButton) {
-            System.out.println("Pressed view asset button");
+            // open the assetDetailGUI in a new frame which will display the selected asset
             AssetDetailGUI assetDetailGUI = new AssetDetailGUI(loggedInMember, data, new Asset(selectedAsset));
+            // add a window listener to the new frame which will update the buy tab's tables when the window is closed
             assetDetailGUI.addWindowListener(new WindowAdapter()
             {
                 @Override
@@ -175,9 +197,12 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         }
     }
 
-
+    /**
+     * Method which will re-update the data in the tables with data from the database
+     */
     private void updateTables() {
         int rowCount = model.getRowCount();
+        // remove all rows
         for (int i = rowCount - 1; i >= 0; i--) {
             model.removeRow(i);
         }
@@ -186,12 +211,12 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         for (int i = 0; i < rowData.length; i++) {
             model.addRow(rowData[i]);
         }
-
+        // remove all rows
         rowCount = marketModel.getRowCount();
         for (int i = rowCount - 1; i >= 0; i--) {
             marketModel.removeRow(i);
         }
-
+        // add all the offers back using updated data
         rowData = getMarketBuyOffersRowData();
         for (int i = 0; i < rowData.length; i++) {
             marketModel.addRow(rowData[i]);
@@ -199,6 +224,10 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
     }
 
 
+    /**
+     * Retrieve all the current market buy offers
+     * @return a two-dimensional array containing these buy offers
+     */
     private String[][] getMarketBuyOffersRowData() {
         TreeMap<Integer, BuyOffer> marketBuyOffers =  BuyOfferData.getInstance().getMarketBuyOffers();
         String[][] data = new String[marketBuyOffers.size()][];
@@ -217,35 +246,16 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         return data;
     }
 
-    /**
-     * Returns a TreeMap of the organisational unit's buy offers
-     * @return
-     * @throws Exception
-     */
-    private TreeMap<Integer, BuyOffer> getUnitBuyOffers() throws Exception {
-        buyOffers = null;
-        buyOffers = BuyOfferData.getInstance().getOrgOffersMap(loggedInMember.getUnitName());
-        if (buyOffers == null) {
-            throw new Exception(); // maybe don't 'throw' an exception just display nothing
-        }
-        return buyOffers;
-
-    }
 
     /**
      * Extract the organisational unit's buy offers from the TreeMap and return it as an array of strings
      * @return Array of org buy offers to be used as input for JTable
      */
     private String[][] getOrgUnitBuyOffersRowData() {
-        try {
-            buyOffers = getUnitBuyOffers();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        String[][] data = new String[buyOffers.size()][];
+        TreeMap<Integer, BuyOffer> marketBuyOffers =  BuyOfferData.getInstance().getOrgOffersMap(loggedInMember.getUnitName());
+        String[][] data = new String[marketBuyOffers.size()][];
         int count = 0;
-        for(Map.Entry<Integer, BuyOffer> entry : buyOffers.entrySet()) {
+        for(Map.Entry<Integer, BuyOffer> entry : marketBuyOffers.entrySet()) {
             BuyOffer value = entry.getValue();
             data[count] = new String[] {
                     String.valueOf(value.getOfferID()),
@@ -290,77 +300,91 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         return table;
     }
 
+    /**
+     * Table mouse listeners
+     */
     @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
+    public void mouseClicked(MouseEvent e) { }
     @Override
+    // when a table is pressed on
     public void mousePressed(MouseEvent e) {
         Object src = e.getSource();
+        // if the table pressed was the org buy offer table
         if (src == orgBuyOffersTable) {
-            int column = 0;
+            // select the offerID of that particular selected row
+            int column = OFFER_ID_COLUMN;
             int row = orgBuyOffersTable.getSelectedRow();
             if (orgBuyOffersTable.getRowCount() != 0) {
                 try {
                     String value = orgBuyOffersTable.getModel().getValueAt(row, column).toString();
                     selectedOrgOfferID = Integer.parseInt(value);
-                    selectedOrgOfferRow = row;
                 } catch (ArrayIndexOutOfBoundsException p) {
                     // do nothing
                 }
             }
         }
+        // if the table pressed was the market sell offer table
         else if (src == marketBuyOffersTable) {
-            int column = 1;
+            // select the asset name of that particular row
+            int column = ASSET_NAME_COLUMN;
             int row = marketBuyOffersTable.getSelectedRow();
             if (marketBuyOffersTable.getRowCount() != 0) {
                 try {
                     selectedAsset = marketBuyOffersTable.getModel().getValueAt(row, column).toString();
-                    System.out.println(selectedAsset);
                 } catch (ArrayIndexOutOfBoundsException p) {
                     // do nothing
                 }
             }
         }
     }
-
     @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
+    public void mouseReleased(MouseEvent e) { }
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
+    public void mouseEntered(MouseEvent e) { }
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(MouseEvent e) { }
 
-    }
-
+    /**
+     * Table list selection listener
+     */
     @Override
+    // when a selection is changed on the table
     public void valueChanged(ListSelectionEvent e) {
         Object src = e.getSource();
+        // if selected the org buy offers table
         if (src == orgBuyOffersTable.getSelectionModel()) {
             int row = orgBuyOffersTable.getSelectedRow();
+            // if a row is not selected turn off the remove and edit offer buttons
             if (row == -1) {
                 removeOfferButton.setEnabled(false);
+                editOfferButton.setEnabled(false);
             }
+            // enable the buttons once a row is selected
             else {
                 removeOfferButton.setEnabled(true);
+                editOfferButton.setEnabled(true);
             }
         }
+        // if selected value changed in the market buy offers table
         else if (src == marketBuyOffersTable.getSelectionModel()) {
             int row = marketBuyOffersTable.getSelectedRow();
+            // if no row is selected then disable the view asset button
             if (row == -1) {
                 viewAssetButton.setEnabled(false);
             }
+            // if a row is selected then enable it
             else {
                 viewAssetButton.setEnabled(true);
             }
         }
+    }
+
+
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        System.out.println("updating table");
+        updateTables();
     }
 }
 
