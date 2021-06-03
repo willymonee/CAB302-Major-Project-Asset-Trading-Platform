@@ -37,19 +37,9 @@ public class UserTesting {
     public void editPwd() {
         itAdmin.changePassword("newPassword");
 
-        assertDoesNotThrow(() -> UsersDataSource.getInstance().editUserPassword(itAdmin.getUsername(), itAdmin.getPassword(), itAdmin.getSalt()));
-
-        ITAdmin adminGuy = null;
-        try {
-            adminGuy = (ITAdmin) UsersDataSource.getInstance().getUser("adminGuy");
-        } catch (SQLException | UserTypeException e) {
-            e.printStackTrace();
-            assert false;
-        }
-
         // Test update
-        assertNotEquals("pass123", adminGuy.getPassword());
-        assertNotEquals("salt", adminGuy.getSalt());
+        assertNotEquals("pass123", itAdmin.getPassword());
+        assertNotEquals("salt", itAdmin.getSalt());
         // Test password checking works
         assertTrue(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword", itAdmin.getPassword()));
     }

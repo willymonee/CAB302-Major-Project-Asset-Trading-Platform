@@ -37,7 +37,7 @@ public class ChangePasswordGUI extends JFrame {
         changeButton.addActionListener(new ButtonListener());
 
         // decorate the frame and make it visible
-        setTitle("EDIT Existing User");
+        setTitle("Change Password");
         setMinimumSize(new Dimension(400, 300));
         pack();
         setVisible(true);

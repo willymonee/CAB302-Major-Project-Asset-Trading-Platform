@@ -377,8 +377,8 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.EDIT_ASSET_NAME, asset, oldAssetName);
     }
 
-    public TreeMap<Integer, TradeHistory> getUnitTradeHistory(int unitID) throws LessThanZeroException {
-        Object out = sendCommand(NetworkCommands.GET_UNIT_TRADEHISTORY, unitID);
+    public TreeMap<Integer, TradeHistory> getUnitTradeHistory(String unitName) throws LessThanZeroException {
+        Object out = sendCommand(NetworkCommands.GET_UNIT_TRADEHISTORY, unitName);
         return (TreeMap<Integer, TradeHistory>) out;
     }
 }

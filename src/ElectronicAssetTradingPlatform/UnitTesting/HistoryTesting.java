@@ -100,7 +100,7 @@ public class HistoryTesting {
         net.run();
         TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
         try {
-            unitTradeHistory = net.getUnitTradeHistory(1);
+            unitTradeHistory = net.getUnitTradeHistory("Human Resources");
 
             for(Map.Entry<Integer, TradeHistory> entry : unitTradeHistory.entrySet()) {
                 Integer key = entry.getKey();
@@ -116,6 +116,6 @@ public class HistoryTesting {
             e.printStackTrace();
         }
 
-        System.out.println(net.getUnitTradeHistory(1));
+        System.out.println(net.getUnitTradeHistory("Human Resources"));
     }
 }

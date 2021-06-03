@@ -34,16 +34,8 @@ public class ITAdminTesting {
 
     // Create new users tests
     @Test
-    public void emptyName() {
-        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser("", "", "ITAdmin"));
-        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser(" ", "", "ITAdmin"));
-        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser(null, "", "ITAdmin"));
-    }
-    @Test
     public void invalidUserType() {
         assertThrows(UserTypeException.class, () -> itAdmin.createUser("bob", "", "asd"));
-        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser("bob", "", ""));
-        assertThrows(EmptyFieldException.class, () -> itAdmin.createUser("bob", "", null));
     }
     @Test
     public void validITAdmin() throws Exception {

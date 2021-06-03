@@ -141,7 +141,7 @@ public class MarketplaceHistoryDataSource {
 
                 // Else Unit sold and bought the same asset
                 else {
-                    buyOrSell = "+=";
+                    buyOrSell = "+-";
                     // Trade Party was themselves
                     tradeParty = unitDB.executeGetUnitName(buyerID);
                 }
