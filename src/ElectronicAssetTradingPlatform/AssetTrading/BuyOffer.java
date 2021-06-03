@@ -1,15 +1,14 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
+import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 import java.sql.Date;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class BuyOffer extends Offer  {
     private Date dateResolved;
@@ -151,15 +150,39 @@ public class BuyOffer extends Offer  {
 
     /**
      * Remove assets from the sell org and add them to the buy org
-     * TODO add asset to buy org unit if they don't have that asset yet - once david has an add asset to buy org
+     * TODO add asset to buy org unit if they don't have that asset yet
      */
     private void tradeAssets(int quantity, SellOffer sellOffer)  {
         NetworkDataSource dataSource = new NetworkDataSource();
         dataSource.run();
+        // if the buy org unit does not own the asset yet, add that asset to their unit with quantity 0 initially
+        if (!orgOwnsAsset()) {
+            OrganisationalUnit unit = new OrganisationalUnit(this.getUnitName(), 0);
+            dataSource.editOrgUnitAssets(unit, this.getAssetName());
+        }
         // add assets to the buy unit
         dataSource.editAssets(quantity, this.getUnitName(), this.getAssetName());
         // remove assets from the sell unit
         dataSource.editAssets(-(quantity), sellOffer.getUnitName(), sellOffer.getAssetName());
+    }
+
+    private boolean orgOwnsAsset() {
+        NetworkDataSource dataSource = new NetworkDataSource();
+        dataSource.run();
+        try {
+            HashMap<String, Integer> orgAssets = dataSource.getAssets(this.getUnitName());
+            Iterator orgAssetsIter = orgAssets.entrySet().iterator();
+            while (orgAssetsIter.hasNext()) {
+                Map.Entry element = (Map.Entry) orgAssetsIter.next();
+                if (element.getKey().equals(this.getAssetName())) {
+                    return true;
+                };
+            }
+
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**

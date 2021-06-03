@@ -82,12 +82,7 @@ public class OrganisationalUnitMembers extends User {
         // retrieve the sell offer's ID from the database and set the sell offer's ID
         int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(sellOfferID);
-//        int matchingID = offer.getMatchedPriceOffer();
-//        System.out.println(matchingID);
-//        offer.tradeAssetsAndCredits(matchingID);
-//        //offer.reduceMatchingOfferQuantities(matchingID);
-//
-//        // look to resolve the offer
+        // resolve the offer
         offer.resolveOffer();
     }
 

@@ -197,6 +197,9 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             assetOwned += amountOwned;
         } catch (DatabaseException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            assetOwned += 0;
+            amountOwned = 0;
         }
         return assetOwned;
     }
@@ -244,7 +247,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                             JOptionPane.WARNING_MESSAGE);
                 }
                 else {
-                    loggedInUser.listBuyOrderNoResolve(assetName, quantityInt, priceInt);
+                    loggedInUser.listBuyOrder(assetName, quantityInt, priceInt);
                     JOptionPane.showMessageDialog(null,
                             "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
                     this.dispose();
@@ -295,7 +298,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                             JOptionPane.WARNING_MESSAGE);
                 }
                 else {
-                    loggedInUser.listSellOrderNoResolve(assetName, quantityInt, priceInt);
+                    loggedInUser.listSellOrder(assetName, quantityInt, priceInt);
                     JOptionPane.showMessageDialog(null,
                             "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price );
                     this.dispose();

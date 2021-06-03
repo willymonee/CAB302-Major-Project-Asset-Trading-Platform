@@ -94,8 +94,8 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
         // add remove and edit
         // add remove and edit offer buttons to org buy offer panel
         orgSellButtonPanel = Helper.createPanel(Color.WHITE);
-        removeOfferButton = createButton("Remove Buy Offer");
-        editOfferButton = createButton("Edit Buy Offer");
+        removeOfferButton = createButton("Remove Sell Offer");
+        editOfferButton = createButton("Edit Sell Offer");
         orgSellButtonPanel.add(removeOfferButton, BorderLayout.WEST);
         orgSellButtonPanel.add(editOfferButton, BorderLayout.EAST);
         orgSellOfferPanel.add(orgSellButtonPanel);
