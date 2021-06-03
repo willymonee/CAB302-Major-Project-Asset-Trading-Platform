@@ -17,6 +17,11 @@ import java.awt.event.*;
 import java.util.Map;
 import java.util.TreeMap;
 
+
+/**
+ * SellTabGUI class is responsible for displaying the organisational unit's sell offers and all the market sell offers
+ * Enables user to remove their org's offers and view assets on the market
+ */
 public class SellTabGUI extends JPanel implements ActionListener, MouseListener, ListSelectionListener {
     // Global variables
     private OrganisationalUnitMembers loggedInMember;
@@ -30,7 +35,6 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
     private JScrollPane scrollPaneMarketSellOffers;
     private JLabel marketSellOffersLabel;
     private int selectedOrgOfferID;
-    private int selectedOrgOfferRow;
     private JTable orgSellOffersTable;
     private JTable marketSellOffersTable;
     private DefaultTableModel orgModel;
@@ -40,7 +44,14 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
     private JPanel orgSellButtonPanel;
     private JButton viewAssetButton;
     private String selectedAsset;
+    private final int OFFER_ID_COLUMN = 0;
+    private final int ASSET_NAME_COLUMN = 1;
 
+    /**
+     * Construct the SellTab GUI which will display the organisational unit buy offers & market buy offers
+     * @param member the member who has logged in
+     * @param dataSource the network connection
+     */
     public SellTabGUI(OrganisationalUnitMembers member, NetworkDataSource dataSource) {
         loggedInMember = member;
         data = dataSource;
@@ -63,6 +74,11 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
         wrapper.add(marketSellOffersPanel);
     }
 
+    /**
+     * Create an org sell offer panel which displays the organisational unit's current sell offers
+     * @param member logged in
+     * @return org sell offer panel
+     */
     private JPanel createOrgSellOfferPanel(OrganisationalUnitMembers member) {
         // add org sell offer panel
         orgSellOfferPanel = Helper.createPanel(Color.WHITE);
@@ -84,152 +100,6 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
         return orgSellOfferPanel;
     }
 
-    private JPanel createMarketSellOfferPanel() {
-        // add market buy offer panel
-        marketSellOffersPanel = Helper.createPanel(Color.WHITE);
-        marketSellOffersLabel = Helper.createLabel("Market Sell Offers", 20);
-        // add label to market buy offer panel
-        marketSellOffersPanel.add(marketSellOffersLabel);
-        // add a table to the market buy offers panel
-        marketSellOffersTable = marketSellOffersTable();
-        scrollPaneMarketSellOffers = Helper.createScrollPane(marketSellOffersTable, marketSellOffersPanel);
-        marketSellOffersPanel.add(scrollPaneMarketSellOffers);
-        // add view asset button to market buy offers panel
-        viewAssetButton = createButton("View Asset");
-        marketSellOffersPanel.add(viewAssetButton);
-        return marketSellOffersPanel;
-    }
-
-    private JButton createButton(String buttonText) {
-        // create a JButton object and store it in a local var
-        JButton button = new JButton();
-        // Set the button text to that passed in String buttonText
-        button.setText(buttonText);
-        button.addActionListener(this);
-        button.setEnabled(false);
-        // Return the JButton
-        return button;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Object src = e.getSource();
-        if (src == this.removeOfferButton) {
-            String message = "Are you sure you want to remove offer: " + selectedOrgOfferID;
-            int dialogResult = JOptionPane.showConfirmDialog
-                    (null, message,
-                            "Remove Offer", JOptionPane.YES_NO_OPTION);
-            if(dialogResult == JOptionPane.YES_OPTION){
-                // remove the buy offer
-                SellOfferData.getInstance().removeOffer(selectedOrgOfferID);
-                // remove all offers in the table
-                updateTables();
-            }
-        }
-        else if (src == this.viewAssetButton) {
-            System.out.println("Pressed view asset button");
-            AssetDetailGUI assetDetailGUI = new AssetDetailGUI(loggedInMember, data, new Asset(selectedAsset));
-            assetDetailGUI.addWindowListener(new WindowAdapter()
-            {
-                @Override
-                public void windowClosed(WindowEvent e)
-                {
-                    System.out.println("Closed");
-                    updateTables();
-                    e.getWindow().dispose();
-                }
-            });
-        }
-    }
-
-
-    private void updateTables() {
-        int rowCount = orgModel.getRowCount();
-        for (int i = rowCount - 1; i >= 0; i--) {
-            orgModel.removeRow(i);
-        }
-        // add all the offers back using updated data
-        String [][] rowData = getOrgSellOffersData();
-        for (int i = 0; i < rowData.length; i++) {
-            orgModel.addRow(rowData[i]);
-        }
-
-        rowCount = marketModel.getRowCount();
-        for (int i = rowCount - 1; i >= 0; i--) {
-            marketModel.removeRow(i);
-        }
-
-        rowData = getMarketSellOffersData();
-        for (int i = 0; i < rowData.length; i++) {
-            marketModel.addRow(rowData[i]);
-        }
-    }
-
-    private String[][] getMarketSellOffersData() {
-        TreeMap<Integer, SellOffer> marketBuyOffers =  SellOfferData.getInstance().getMarketSellOffers();
-        String[][] data = new String[marketBuyOffers.size()][];
-        int count = 0;
-        for(Map.Entry<Integer, SellOffer> entry : marketBuyOffers.entrySet()) {
-            SellOffer value = entry.getValue();
-            data[count] = new String[] {
-                    String.valueOf(value.getOfferID()),
-                    value.getAssetName(),
-                    String.valueOf(value.getQuantity()),
-                    String.valueOf(value.getPricePerUnit()),
-                    value.getUsername()
-            };
-            count++;
-        }
-        return data;
-    }
-
-    private String[][] getOrgSellOffersData() {
-        TreeMap<Integer, SellOffer> marketBuyOffers =  SellOfferData.getInstance().getOrgOffersMap(loggedInMember.getUnitName());
-        String[][] data = new String[marketBuyOffers.size()][];
-        int count = 0;
-        for(Map.Entry<Integer, SellOffer> entry : marketBuyOffers.entrySet()) {
-            SellOffer value = entry.getValue();
-            data[count] = new String[] {
-                    String.valueOf(value.getOfferID()),
-                    value.getAssetName(),
-                    String.valueOf(value.getQuantity()),
-                    String.valueOf(value.getPricePerUnit()),
-                    value.getUsername()
-            };
-            count++;
-        }
-        return data;
-    }
-
-    /**
-     * Create the org unit's buy offers table
-     * @return
-     */
-    private JTable unitSellOffersTable() {
-        // create a table
-        String data[][] = getOrgSellOffersData();
-        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
-        orgModel = new DefaultTableModel(data, columns);
-        JTable table = new JTable(orgModel);
-        Helper.formatTable(table);
-        // add listener to the table
-        table.addMouseListener(this);
-        table.getSelectionModel().addListSelectionListener(this);
-        return table;
-    }
-
-    private JTable marketSellOffersTable() {
-        // create a table
-        String data[][] = getMarketSellOffersData();
-        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
-        marketModel = new DefaultTableModel(data, columns);
-        JTable table = new JTable(marketModel);
-        Helper.formatTable(table);
-        table.addMouseListener(this);
-        table.getSelectionModel().addListSelectionListener(this);
-        return table;
-    }
-
     /**
      * A welcome message once in the BuyTab GUI
      * @return String welcome message including the user's username
@@ -248,75 +118,258 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
         return memberTextDisplay;
     }
 
-
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
+    /**
+     * Create a market sell offer panel which displays all current market sell offers
+     * @return market sell offer panel
+     */
+    private JPanel createMarketSellOfferPanel() {
+        // add market buy offer panel
+        marketSellOffersPanel = Helper.createPanel(Color.WHITE);
+        marketSellOffersLabel = Helper.createLabel("Market Sell Offers", 20);
+        // add label to market buy offer panel
+        marketSellOffersPanel.add(marketSellOffersLabel);
+        // add a table to the market buy offers panel
+        marketSellOffersTable = marketSellOffersTable();
+        scrollPaneMarketSellOffers = Helper.createScrollPane(marketSellOffersTable, marketSellOffersPanel);
+        marketSellOffersPanel.add(scrollPaneMarketSellOffers);
+        // add view asset button to market buy offers panel
+        viewAssetButton = createButton("View Asset");
+        marketSellOffersPanel.add(viewAssetButton);
+        return marketSellOffersPanel;
     }
 
+    /**
+     * Create a button given text
+     * @param buttonText text to be displayed in the button
+     * @return a JButton object
+     */
+    private JButton createButton(String buttonText) {
+        // create a JButton object and store it in a local var
+        JButton button = new JButton();
+        // Set the button text to that passed in String buttonText
+        button.setText(buttonText);
+        // add an action listener
+        button.addActionListener(this);
+        button.setEnabled(false);
+        // Return the JButton
+        return button;
+    }
+
+    /**
+     * Action Listener for JButtons created in createButton for when a particular button is pressed
+     */
     @Override
+    public void actionPerformed(ActionEvent e) {
+        Object src = e.getSource();
+        // when the remove offer button is pressed
+        if (src == this.removeOfferButton) {
+            String message = "Are you sure you want to remove offer: " + selectedOrgOfferID;
+            // open a confirm dialog for removing the selected offer
+            int dialogResult = JOptionPane.showConfirmDialog(null, message,
+                            "Remove Offer", JOptionPane.YES_NO_OPTION);
+            if(dialogResult == JOptionPane.YES_OPTION){
+                // remove the sell offer
+                SellOfferData.getInstance().removeOffer(selectedOrgOfferID);
+                // update all tables in the sell tab
+                updateTables();
+            }
+        }
+        // when the view asset button is pressed
+        else if (src == this.viewAssetButton) {
+            // open the assetDetailGUI in a new frame which will display the selected asset
+            AssetDetailGUI assetDetailGUI = new AssetDetailGUI(loggedInMember, data, new Asset(selectedAsset));
+            // add a window listener to the new frame which will update the sell tab's tables when the window is closed
+            assetDetailGUI.addWindowListener(new WindowAdapter()
+            {
+                @Override
+                public void windowClosed(WindowEvent e)
+                {
+                    System.out.println("Closed");
+                    updateTables();
+                    e.getWindow().dispose();
+                }
+            });
+        }
+    }
+
+
+    /**
+     * Method which will re-update the data in the tables with data from the database
+     */
+    private void updateTables() {
+        int rowCount = orgModel.getRowCount();
+        // remove all rows
+        for (int i = rowCount - 1; i >= 0; i--) {
+            orgModel.removeRow(i);
+        }
+        // add all the offers back using updated data
+        String [][] rowData = getOrgSellOffersData();
+        for (int i = 0; i < rowData.length; i++) {
+            orgModel.addRow(rowData[i]);
+        }
+        // remove all rows
+        rowCount = marketModel.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            marketModel.removeRow(i);
+        }
+        // add all the offers back using updated data
+        rowData = getMarketSellOffersData();
+        for (int i = 0; i < rowData.length; i++) {
+            marketModel.addRow(rowData[i]);
+        }
+    }
+
+    /**
+     * Retrieve all the current market sell offers
+     * @return a two-dimensional array containing these sell offers
+     */
+    private String[][] getMarketSellOffersData() {
+        TreeMap<Integer, SellOffer> marketSellOffers =  SellOfferData.getInstance().getMarketSellOffers();
+        String[][] data = new String[marketSellOffers.size()][];
+        int count = 0;
+        for(Map.Entry<Integer, SellOffer> entry : marketSellOffers.entrySet()) {
+            SellOffer value = entry.getValue();
+            data[count] = new String[] {
+                    String.valueOf(value.getOfferID()),
+                    value.getAssetName(),
+                    String.valueOf(value.getQuantity()),
+                    String.valueOf(value.getPricePerUnit()),
+                    value.getUsername()
+            };
+            count++;
+        }
+        return data;
+    }
+
+    /**
+     * Retrieve all the org sell offers
+     * @return a two-dimensional array containing these sell offers
+     */
+    private String[][] getOrgSellOffersData() {
+        TreeMap<Integer, SellOffer> marketSellOffers =  SellOfferData.getInstance().getOrgOffersMap(loggedInMember.getUnitName());
+        String[][] data = new String[marketSellOffers.size()][];
+        int count = 0;
+        for(Map.Entry<Integer, SellOffer> entry : marketSellOffers.entrySet()) {
+            SellOffer value = entry.getValue();
+            data[count] = new String[] {
+                    String.valueOf(value.getOfferID()),
+                    value.getAssetName(),
+                    String.valueOf(value.getQuantity()),
+                    String.valueOf(value.getPricePerUnit()),
+                    value.getUsername()
+            };
+            count++;
+        }
+        return data;
+    }
+
+    /**
+     * Create the org unit's sell offers table
+     * @return Org unit sell offer table
+     */
+    private JTable unitSellOffersTable() {
+        // create a table
+        String data[][] = getOrgSellOffersData();
+        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
+        orgModel = new DefaultTableModel(data, columns);
+        JTable table = new JTable(orgModel);
+        // format table
+        Helper.formatTable(table);
+        // add listeners to the table
+        table.addMouseListener(this);
+        table.getSelectionModel().addListSelectionListener(this);
+        return table;
+    }
+
+    /**
+     * Create the market sell offers table
+     * @return market sell offer table
+     */
+    private JTable marketSellOffersTable() {
+        // create a table
+        String data[][] = getMarketSellOffersData();
+        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
+        marketModel = new DefaultTableModel(data, columns);
+        JTable table = new JTable(marketModel);
+        // format table
+        Helper.formatTable(table);
+        // add listeners to table
+        table.addMouseListener(this);
+        table.getSelectionModel().addListSelectionListener(this);
+        return table;
+    }
+
+    /**
+     * Table mouse listeners
+     */
+    @Override
+    public void mouseClicked(MouseEvent e) { }
+    @Override
+    // when a table is pressed on
     public void mousePressed(MouseEvent e) {
         Object src = e.getSource();
+        // if the table pressed was the org sell offer table
         if (src == orgSellOffersTable) {
-            int column = 0;
+            // select the offerID of that particular selected row
+            int column = OFFER_ID_COLUMN;
             int row = orgSellOffersTable.getSelectedRow();
             if (orgSellOffersTable.getRowCount() != 0) {
                 try {
                     String value = orgSellOffersTable.getModel().getValueAt(row, column).toString();
                     selectedOrgOfferID = Integer.parseInt(value);
-                    selectedOrgOfferRow = row;
                 } catch (ArrayIndexOutOfBoundsException p) {
                     // do nothing
                 }
             }
         }
+        // if the table pressed was the market sell offer table
         else if (src == marketSellOffersTable) {
-            int column = 1;
+            // select the asset name of that particular row
+            int column = ASSET_NAME_COLUMN;
             int row = marketSellOffersTable.getSelectedRow();
             if (marketSellOffersTable.getRowCount() != 0) {
                 try {
                     selectedAsset = marketSellOffersTable.getModel().getValueAt(row, column).toString();
-                    System.out.println(selectedAsset);
                 } catch (ArrayIndexOutOfBoundsException p) {
                     // do nothing
                 }
             }
         }
     }
-
     @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
+    public void mouseReleased(MouseEvent e) { }
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
+    public void mouseEntered(MouseEvent e) { }
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(MouseEvent e) { }
 
-    }
-
+    /**
+     * Table list selection listener
+     */
     @Override
+    // when a selection is changed on the table e.g. selecting another row
     public void valueChanged(ListSelectionEvent e) {
         Object src = e.getSource();
+        // if selected the org sell offers table
         if (src == orgSellOffersTable.getSelectionModel()) {
             int row = orgSellOffersTable.getSelectedRow();
+            // if a row is not selected turn off the remove and edit offer buttons
             if (row == -1) {
                 removeOfferButton.setEnabled(false);
             }
+            // enable the buttons once a row is selected
             else {
                 removeOfferButton.setEnabled(true);
             }
         }
+        // if selected value changed in the market sell offers table
         else if (src == marketSellOffersTable.getSelectionModel()) {
             int row = marketSellOffersTable.getSelectedRow();
+            // if no row is selected then disable the view asset button
             if (row == -1) {
                 viewAssetButton.setEnabled(false);
             }
+            // if a row is selected then enable it
             else {
                 viewAssetButton.setEnabled(true);
             }
