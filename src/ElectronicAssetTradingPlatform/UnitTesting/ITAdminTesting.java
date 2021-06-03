@@ -1,6 +1,10 @@
 package ElectronicAssetTradingPlatform.UnitTesting;
 
+import ElectronicAssetTradingPlatform.AssetTrading.Asset;
+import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
+import ElectronicAssetTradingPlatform.Exceptions.MissingAssetException;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import ElectronicAssetTradingPlatform.Users.*;
@@ -19,6 +23,10 @@ public class ITAdminTesting {
      */
 
     ITAdmin itAdmin;
+    OrganisationalUnit orgUnit;
+    OrganisationalUnit uneditedOrgUnit;
+    Asset asset;
+    Asset uneditedAsset;
 //    static UsersDataSource db;
 
     @BeforeEach
@@ -30,6 +38,22 @@ public class ITAdminTesting {
         // create an organisational unit member
         itAdmin = new ITAdmin("adminGuy", "pass123", "salt");
 
+    }
+
+    @BeforeEach
+    @Test
+    public void setUpOrgUnit() {
+        uneditedOrgUnit = new OrganisationalUnit("orgUnit01", 100);
+        orgUnit = new OrganisationalUnit("orgUnit01", 100);
+
+        orgUnit.addAsset("asset01", 10);
+    }
+
+    @BeforeEach
+    @Test
+    public void setupAsset() {
+        uneditedAsset = new Asset("asset01");
+        asset = new Asset("asset01");
     }
 
     // Create new users tests
@@ -230,4 +254,75 @@ public class ITAdminTesting {
 //    public static void dbClose() throws SQLException {
 //        db.close();
 //    }
+
+    @Test
+    public void createValidOrgUnit() {
+        assertDoesNotThrow(() -> itAdmin.createOrganisationalUnit("newUnit01", 15));
+
+        assertEquals(itAdmin.createOrganisationalUnit("newUnit01", 15).getClass(), OrganisationalUnit.class);
+    }
+
+    @Test
+    public void createValidAsset() {
+        assertDoesNotThrow(() -> itAdmin.createNewAsset("newAsset01"));
+
+        assertEquals(itAdmin.createNewAsset("newAsset01").getClass(), Asset.class);
+    }
+
+    @Test
+    public void addValidOrgUnitCredits() {
+        itAdmin.addOrganisationalUnitCredits(orgUnit, 20);
+
+        assertNotEquals(uneditedOrgUnit.getCredits(), orgUnit.getCredits());
+    }
+
+    @Test
+    public void removeValidOrgUnitCredits() throws LessThanZeroException {
+        itAdmin.removeOrganisationalUnitCredits(orgUnit, 20);
+
+        assertNotEquals(uneditedOrgUnit.getCredits(), orgUnit.getCredits());
+    }
+
+    @Test
+    public void removeMoreThanOwnedCredits() {
+        assertThrows(LessThanZeroException.class, () -> itAdmin.removeOrganisationalUnitCredits(orgUnit, 120));
+    }
+
+    @Test
+    public void addValidOrgUnitAssets() {
+        itAdmin.addOrganisationalUnitAssets(orgUnit, "asset02", 5);
+
+        assertNotEquals(uneditedOrgUnit.getAssetsOwned(), orgUnit.getAssetsOwned());
+    }
+
+    @Test
+    public void removeValidOrgUnitAssets() throws MissingAssetException, LessThanZeroException {
+        itAdmin.removeOrganisationalUnitAssets(orgUnit, "asset01", 5);
+
+        assertNotEquals(uneditedOrgUnit.getAssetsOwned(), orgUnit.getAssetsOwned());
+    }
+
+    @Test
+    public void removeMoreThanOwnedAssets(){
+        assertThrows(LessThanZeroException.class, () -> itAdmin.removeOrganisationalUnitAssets(orgUnit, "asset01", 15));
+    }
+
+    @Test
+    public void removeMissingAssets() {
+        assertThrows(MissingAssetException.class, () -> itAdmin.removeOrganisationalUnitAssets(orgUnit, "asset02", 5));
+    }
+
+    @Test
+    public void validEditOrgUnitName() {
+        itAdmin.editOrganisationalUnitName(orgUnit, "newOrgUnitName");
+
+        assertNotEquals(uneditedOrgUnit.getUnitName(), orgUnit.getUnitName());
+    }
+
+    @Test
+    public void validEditAssetName() {
+        itAdmin.editAssetName(asset, "newAssetName");
+
+        assertNotEquals(uneditedAsset.getAssetName(), asset.getAssetName());
+    }
 }

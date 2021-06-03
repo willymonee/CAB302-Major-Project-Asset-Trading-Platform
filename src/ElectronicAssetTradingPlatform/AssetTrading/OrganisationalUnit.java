@@ -79,10 +79,7 @@ public class OrganisationalUnit implements Serializable {
      * @param amountToAdd An integer amount of assets to add to the asset
      */
     public void addAsset(String assetName, int amountToAdd) {
-        int hello = assetsOwned.getOrDefault(assetName, 0) + amountToAdd;
-        System.out.println(hello);
         assetsOwned.put(assetName, assetsOwned.getOrDefault(assetName, 0) + amountToAdd);
-
     }
 
     /**
