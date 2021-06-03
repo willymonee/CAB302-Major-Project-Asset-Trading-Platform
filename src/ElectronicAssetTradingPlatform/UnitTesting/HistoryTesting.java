@@ -14,10 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HistoryTesting {
 
@@ -69,6 +66,26 @@ public class HistoryTesting {
             System.out.println(net.getAssetHistory("iPhone 10"));
         } catch (DatabaseException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testUnitHistory() {
+        MarketplaceHistoryDataSource m = MarketplaceHistoryDataSource.getInstance();
+        TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
+
+        unitTradeHistory = m.getUnitTradeHistory(1);
+        System.out.println("Rows found: " + unitTradeHistory.size());
+
+        // Print hashmap out
+        for(Map.Entry<Integer, TradeHistory> entry : unitTradeHistory.entrySet()) {
+            Integer key = entry.getKey();
+            TradeHistory value = entry.getValue();
+
+            System.out.println("Key: " + key + ", " + "Buy/Sell: " + value.getBuyOrSell() + ", Asset Name: "
+                    + value.getAssetName() + ", Quantity: " + value.getTradedQuantity() + ", Price: "
+                    + value.getPrice() + ", Total: " + value.getTotal() + ", Date: "
+                    + value.getDateFulfilled() + ", To/From: " + value.getunitNameOfTrader());
         }
     }
 }

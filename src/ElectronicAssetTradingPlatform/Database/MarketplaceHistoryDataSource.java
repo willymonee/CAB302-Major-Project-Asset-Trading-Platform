@@ -3,7 +3,7 @@ package ElectronicAssetTradingPlatform.Database;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.TradeHistory;
-
+import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 
 
 import java.sql.*;
@@ -19,10 +19,12 @@ public class MarketplaceHistoryDataSource {
                                                             + "Price_per_unit, Quantity, Date_fulfilled)"
                                                             + "VALUES (?, ?, ?, ?, ?, ?);";
     private static final String GET_ASSET_HISTORY = "SELECT Price_per_unit, Date_fulfilled FROM Marketplace_history WHERE Asset_type_ID = ?;";
+    private static final String GET_UNIT_TRADEHISTORY = "SELECT * FROM Marketplace_history WHERE Seller_ID = ? OR Buyer_ID = ?";
 
 
     private PreparedStatement insertCompletedTrade;
     private PreparedStatement getAssetHistory;
+    private PreparedStatement getUnitTradeHistory;
 
     private Connection connection;
 
@@ -46,6 +48,7 @@ public class MarketplaceHistoryDataSource {
         try {
             insertCompletedTrade = connection.prepareStatement(INSERT_COMPLETED_TRADE);
             getAssetHistory = connection.prepareStatement(GET_ASSET_HISTORY);
+            getUnitTradeHistory = connection.prepareStatement(GET_UNIT_TRADEHISTORY);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -104,13 +107,74 @@ public class MarketplaceHistoryDataSource {
     public TreeMap<Integer, TradeHistory> getUnitTradeHistory(int unitID) {
         TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
         ResultSet rs = null;
-        // Need SQL query to print out all the trades given a unit ID, where the buyerID/seller ID has unitID = unitID
+        try {
+            getUnitTradeHistory.setInt(1, unitID);
+            getUnitTradeHistory.setInt(2, unitID);
+            rs = getUnitTradeHistory.executeQuery();
+            UnitDataSource unitDB = new UnitDataSource();
+
+            while (rs.next()) {
+                String buyOrSell = "";
+                // Other Org Unit the Asset trade was completed with
+                String tradeParty;
+
+                int tradeID = rs.getInt(1);
+                int buyerID = rs.getInt(2);
+                int sellerID = rs.getInt(3);
+                // Check if unit "bought" an asset
+                if (buyerID == unitID && sellerID != unitID) {
+                    // Org Unit was the "Buyer" of the trade
+                    buyOrSell = "+";
+
+                    // Trade party was seller
+                    tradeParty = unitDB.executeGetUnitName(sellerID);
+
+                }
+
+                // Check if unit "Sold" an asset
+                else if (buyerID != unitID && sellerID == unitID) {
+                    // Org Unit was the "Seller" of the trade
+                    buyOrSell = "-";
+                    // Trade party is the buyer
+                    tradeParty = unitDB.executeGetUnitName(buyerID);
+                }
+
+                // Else Unit sold and bought the same asset
+                else {
+                    buyOrSell = "+=";
+                    // Trade Party was themselves
+                    tradeParty = unitDB.executeGetUnitName(buyerID);
+                }
 
 
+                int assetID = rs.getInt(4);
+
+                String assetName = unitDB.executeGetAssetName(assetID);
+
+                float price = rs.getFloat(5);
+
+                int quantity = rs.getInt(6);
+
+                float total = price * quantity;
+
+                if (total < 0) {
+                    throw new LessThanZeroException("");
+                }
+
+                String dateFulfilled = rs.getString(7);
+                TradeHistory hist = new TradeHistory(buyOrSell, assetName, quantity, price, total, dateFulfilled, tradeParty);
+
+                unitTradeHistory.put(tradeID, hist);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (LessThanZeroException e) {
+            e.printStackTrace();
+        }
         return unitTradeHistory;
     }
 
-    /**
+        /**
      * Gets the price history of an asset
      * @param assetName       String name of the asset's history which is being queried
      * @return              A HashMap of the asset's previously sold price as
