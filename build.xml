@@ -3,14 +3,14 @@
     <property name="testBase" value="testFiles" />
     <property name="topPackage" value="ElectronicAssetTradingPlatform" />
 
-    <property name="junitJar" value="lib/junit-jupiter-api-5.4.2.jar" />
-    <property name="junitPlatformJar" value="lib/junit-platform-commons-1.4.2.jar" />
-    <property name="junitPlatformEngineJar" value="lib/junit-jupiter-engine-5.4.2.jar" />
-    <property name="junitPlatformLauncherJar" value="lib/junit-platform-launcher-1.4.2.jar" />
-    <property name="opentestJar" value="lib/opentest4j-1.1.1.jar" />
-    <property name="apiguardianJar" value="lib/apiguardian-api-1.0.0.jar" />
+    <property name="junitJar" value="lib/junit-jupiter-api-5.7.0.jar" />
+    <property name="junitPlatformJar" value="lib/junit-platform-commons-1.7.0.jar" />
+    <property name="opentestJar" value="lib/opentest4j-1.2.0.jar" />
+    <property name="apiguardianJar" value="lib/apiguardian-api-1.1.0.jar" />
+    <property name="sqliteJar" value="sqlite-jdbc-3.34.0.jar" />
+    <property name="hamcrestJar" value="hamcrest-core-1.3.jar" />
 
-    <property name="junitpath" value="${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}:${junitPlatformEngineJar}:${junitPlatformLauncherJar}" />
+    <property name="junitpath" value="${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" />
 
     <target name="prepare" description="Create target directories">
         <mkdir dir="${testBase}" />
@@ -37,17 +37,28 @@
             <include name="Server/*.java" />
 
             <include name="Users/*.java" />
+
+            <classpath>
+                <fileset dir="lib">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
         </javac>
     </target>
 
     <target name="compileTests" depends="compile" description="Compile tests" >
-        <javac srcdir="src/${topPackage}/UnitTesting" classpath="${base}:${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}:${junitPlatformEngineJar}:${junitPlatformLauncherJar}" destdir="utestclasses" includeantruntime="false">
+        <javac srcdir="src/${topPackage}/UnitTesting" classpath="${base}:${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" destdir="utestclasses" includeantruntime="false">
             <include name="HashingTesting.java" />
         </javac>
     </target>
 
     <target name="serverBuild" depends="compileTests" >
         <jar destfile="ElectronicAssetTrading-Server.jar" basedir="${base}">
+            <fileset dir="./">
+                <include name="ETP.db"/>
+                <include name="ipconfig.props"/>
+                <include name="db.props"/>
+            </fileset>
             <manifest>
                 <!-- Main destination -->
                 <attribute name="Main-Class"
@@ -59,10 +70,16 @@
                 <attribute name="Implementation-Title" value="CAB302 Exercise"/>
                 <attribute name="Implementation-Version" value="1.0.0"/>
             </manifest>
+            <zipgroupfileset dir="lib" includes="**/*.jar"/>
         </jar>
     </target>
 
     <target name="clientBuild" depends="serverBuild" >
+        <fileset dir="./">
+            <include name="ETP.db"/>
+            <include name="ipconfig.props"/>
+            <include name="db.props"/>
+        </fileset>
         <jar destfile="ElectronicAssetTrading-Client.jar" basedir="${base}">
             <manifest>
                 <!-- Main destination -->
@@ -75,6 +92,7 @@
                 <attribute name="Implementation-Title" value="CAB302 Exercise"/>
                 <attribute name="Implementation-Version" value="1.0.0"/>
             </manifest>
+            <zipgroupfileset dir="lib" includes="**/*.jar"/>
         </jar>
     </target>
 

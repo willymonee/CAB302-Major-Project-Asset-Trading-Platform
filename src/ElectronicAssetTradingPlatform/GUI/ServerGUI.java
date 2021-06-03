@@ -1,6 +1,7 @@
 package ElectronicAssetTradingPlatform.GUI;
 
 import ElectronicAssetTradingPlatform.Database.ETPDataSource;
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Server.NetworkServer;
 
 import javax.swing.*;
@@ -62,6 +63,7 @@ public class ServerGUI extends JFrame {
     private class ClosingListener extends WindowAdapter {
         public void windowClosing(WindowEvent e) {
             server.shutdown();
+            System.exit(0);
         }
     }
 
@@ -69,7 +71,7 @@ public class ServerGUI extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 // Create db if not there
-                ETPDataSource etp = new ETPDataSource();
+                new ETPDataSource();
 
                 // Start server
                 server = new NetworkServer();
@@ -88,6 +90,5 @@ public class ServerGUI extends JFrame {
                 new ServerGUI();
             }
         });
-
     }
 }
