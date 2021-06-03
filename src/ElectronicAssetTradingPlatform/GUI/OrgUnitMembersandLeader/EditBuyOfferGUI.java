@@ -29,12 +29,17 @@ public class EditBuyOfferGUI extends JFrame {
      * @param member        The logged in org unit member
      * @param asset         The specified asset to edit the listing for
      */
-    public EditBuyOfferGUI(NetworkDataSource data) {
+
+    // Maybe param is also previous quantity/ price
+    public EditBuyOfferGUI(NetworkDataSource data, OrganisationalUnitMembers member, Asset asset) {
         net = data;
-        //loggedInMember = member;
-        //this.asset = asset;
+        loggedInMember = member;
+        this.asset = asset;
 
         initUI();
+
+        // add window close listener
+        addWindowListener(new ClosingListener());
 
         setTitle("Edit Buy Listing");
         setMinimumSize(new Dimension(400, 300));
@@ -57,8 +62,7 @@ public class EditBuyOfferGUI extends JFrame {
         JPanel panel = new JPanel();
         FlowLayout layout = new FlowLayout(5);
         panel.setLayout(layout);
-        // TODO: add asset name
-        JLabel titleLabel = Helper.createLabel("Edit Buy Order - ", 18);
+        JLabel titleLabel = Helper.createLabel("Edit Buy Order - " + asset.getAssetName(), 18);
         panel.add(titleLabel);
         return panel;
 
@@ -78,13 +82,13 @@ public class EditBuyOfferGUI extends JFrame {
         layout.setAutoCreateContainerGaps(true);
 
 
-        // TODO : add asset info here
+        // TODO : add current quantity and price in JTextArea for respective comp
         JLabel quantityLabel = Helper.createLabel("Quantity:", 12);
         JLabel priceLabel = Helper.createLabel("Price:", 12);
         JLabel totalPriceLabel = Helper.createLabel("Total Price: ", 12);
         // TODO: Add asset price = quantity * price
-        JLabel displayPrice = Helper.createLabel("3333", 10);
-        // TODO: ADD INFO OR WHATEVER
+        JLabel displayPrice = Helper.createLabel("", 10);
+        // TODO: Add current order listing price information
         //JLabel currentOrdersInfo = Helper.createLabel("Current sell orders : ", 9);
         //JLabel currentOrdersInfoTwo = Helper.createLabel("x for sale starting at x credits or higher ", 7);
 
@@ -137,13 +141,6 @@ public class EditBuyOfferGUI extends JFrame {
         return displayPanel;
     }
 
-    public static void main(String[] args) {
-        NetworkDataSource net = new NetworkDataSource();
-        net.run();
-        EditBuyOfferGUI gui = new EditBuyOfferGUI(net);
-
-    }
-
     private class ButtonListener implements ActionListener {
         /**
          * When an action is performed
@@ -153,7 +150,8 @@ public class EditBuyOfferGUI extends JFrame {
             JButton source = (JButton) e.getSource();
 
             if (source == relistBtn) {
-                System.out.println("do something");
+                System.out.println("button relist was pressed: call function here");
+                // relistAsset();
             }
         }
 
@@ -163,6 +161,10 @@ public class EditBuyOfferGUI extends JFrame {
 
             // functionality
         }
+    }
+
+    private class ClosingListener extends WindowAdapter {
+        public void windowClosing(WindowEvent e) { dispose(); }
     }
 }
 
