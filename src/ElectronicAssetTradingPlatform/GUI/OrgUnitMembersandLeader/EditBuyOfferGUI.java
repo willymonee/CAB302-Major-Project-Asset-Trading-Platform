@@ -143,4 +143,26 @@ public class EditBuyOfferGUI extends JFrame {
         EditBuyOfferGUI gui = new EditBuyOfferGUI(net);
 
     }
+
+    private class ButtonListener implements ActionListener {
+        /**
+         * When an action is performed
+         */
+
+        public void actionPerformed(ActionEvent e) {
+            JButton source = (JButton) e.getSource();
+
+            if (source == relistBtn) {
+                System.out.println("do something");
+            }
+        }
+
+        private void relistAsset() {
+            String quantity = listQuantity.getText();
+            String price = listPrice.getText();
+
+            // functionality
+        }
+    }
 }
+
