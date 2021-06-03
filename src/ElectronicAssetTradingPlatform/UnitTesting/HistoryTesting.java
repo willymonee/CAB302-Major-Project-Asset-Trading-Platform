@@ -6,6 +6,7 @@ import ElectronicAssetTradingPlatform.Database.MarketplaceHistoryDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
+import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.Test;
@@ -14,10 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HistoryTesting {
 
@@ -61,7 +59,7 @@ public class HistoryTesting {
     }
 
     @Test
-    public void testNetworkGetHistory() {
+    public void testNetworkGetAssetHistory() {
         NetworkDataSource net = new NetworkDataSource();
         net.run();
         try {
@@ -70,5 +68,54 @@ public class HistoryTesting {
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testUnitHistory() {
+        MarketplaceHistoryDataSource m = MarketplaceHistoryDataSource.getInstance();
+        TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
+
+        try {
+            unitTradeHistory = m.getUnitTradeHistory(1);
+        } catch (LessThanZeroException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Rows found: " + unitTradeHistory.size());
+
+        // Print hashmap out
+        for(Map.Entry<Integer, TradeHistory> entry : unitTradeHistory.entrySet()) {
+            Integer key = entry.getKey();
+            TradeHistory value = entry.getValue();
+
+            System.out.println("Key: " + key + ", " + "Buy/Sell: " + value.getBuyOrSell() + ", Asset Name: "
+                    + value.getAssetName() + ", Quantity: " + value.getTradedQuantity() + ", Price: "
+                    + value.getPrice() + ", Total: " + value.getTotal() + ", Date: "
+                    + value.getDateFulfilled() + ", To/From: " + value.getunitNameOfTrader());
+        }
+    }
+
+    @Test
+    public void testNetworkGetUnitTradeHistory() throws LessThanZeroException{
+        NetworkDataSource net = new NetworkDataSource();
+        net.run();
+        TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
+        try {
+            unitTradeHistory = net.getUnitTradeHistory(1);
+
+            for(Map.Entry<Integer, TradeHistory> entry : unitTradeHistory.entrySet()) {
+                Integer key = entry.getKey();
+                TradeHistory value = entry.getValue();
+
+                System.out.println("Key: " + key + ", " + "Buy/Sell: " + value.getBuyOrSell() + ", Asset Name: "
+                        + value.getAssetName() + ", Quantity: " + value.getTradedQuantity() + ", Price: "
+                        + value.getPrice() + ", Total: " + value.getTotal() + ", Date: "
+                        + value.getDateFulfilled() + ", To/From: " + value.getunitNameOfTrader());
+            }
+        }
+        catch (LessThanZeroException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(net.getUnitTradeHistory(1));
     }
 }

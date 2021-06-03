@@ -2,39 +2,44 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Database.MarketplaceHistoryDataSource;
 
-public class TradeHistory {
+import java.io.Serializable;
+
+public class TradeHistory implements Serializable {
+    String buyOrSell;
     String assetName;
     int tradedQuantity;
     float price;
-    java.sql.Date dateFulfilled;
+    float total;
+    String dateFulfilled;
     String creatorUsername;
-    OrganisationalUnit unitOfTrader;
+    String unitNameOfTrader;
 
 
     /**
      * Constructor for tracking trade history of a org unit
+     * @param buyOrSell             Distinguishes whether the Unit gained or lost an asset (via the trade)
      * @param assetName             Name of the asset traded
      * @param tradedQuantity        Number of asset traded
      * @param price                 Price of the asset traded
+     * @param total                 Total price of credits traded throughout this trade
      * @param dateFulfilled         Date the trade was completed
-     * @param creatorUsername       Name of the buy/sell listing creator
-     * @param unitOfTrader          Unit the asset was bought from or sold to
+     * @param unitNameOfTrader      Unit the asset was bought from or sold to
      */
 
-    // TODO: THIS IS IN FORMAT OF THE TABLE'S REQUIRED INFORMATION,
-    //  Can change OrganisationalUnit unitOfTrader to String, and dateFulfilled
-    //  will either be SQL Date or Java UTIL Date,
-    //  althought structure however u want to, GL!
 
-    public TradeHistory(String assetName, int tradedQuantity, float price, java.sql.Date dateFulfilled, String creatorUsername, OrganisationalUnit unitOfTrader ) {
+
+    public TradeHistory(String buyOrSell, String assetName, int tradedQuantity, float price, float total, String dateFulfilled, String unitNameOfTrader ) {
+        this.buyOrSell = buyOrSell;
         this.assetName = assetName;
         this.tradedQuantity = tradedQuantity;
         this.price = price;
+        this.total = total;
         this.dateFulfilled = dateFulfilled;
-        this.creatorUsername = creatorUsername;
-        this.unitOfTrader = unitOfTrader;
+        this.unitNameOfTrader = unitNameOfTrader;
 
     }
+
+    public String getBuyOrSell() { return buyOrSell; }
 
     public String getAssetName() {
         return assetName;
@@ -48,15 +53,13 @@ public class TradeHistory {
         return price;
     }
 
-    public java.sql.Date getDateFulfilled() {
+    public float getTotal() { return total; }
+
+    public String getDateFulfilled() {
         return dateFulfilled;
     }
 
-    public String getCreatorUsername() {
-        return creatorUsername;
-    }
-
-    public OrganisationalUnit getunitOfTrader() {
-        return unitOfTrader;
+    public String getunitNameOfTrader() {
+        return unitNameOfTrader;
     }
 }

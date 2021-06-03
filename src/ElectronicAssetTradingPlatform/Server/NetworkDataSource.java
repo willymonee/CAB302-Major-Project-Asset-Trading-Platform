@@ -1,10 +1,8 @@
 package ElectronicAssetTradingPlatform.Server;
 
-import ElectronicAssetTradingPlatform.AssetTrading.Asset;
-import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
-import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
-import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
@@ -377,5 +375,10 @@ public class NetworkDataSource extends Thread {
 
     public String editAssetName(Asset asset, String oldAssetName) {
         return (String) sendCommand(NetworkCommands.EDIT_ASSET_NAME, asset, oldAssetName);
+    }
+
+    public TreeMap<Integer, TradeHistory> getUnitTradeHistory(int unitID) throws LessThanZeroException {
+        Object out = sendCommand(NetworkCommands.GET_UNIT_TRADEHISTORY, unitID);
+        return (TreeMap<Integer, TradeHistory>) out;
     }
 }

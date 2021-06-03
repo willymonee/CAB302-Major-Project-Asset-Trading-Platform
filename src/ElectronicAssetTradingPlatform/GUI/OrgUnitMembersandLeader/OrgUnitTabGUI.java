@@ -84,6 +84,7 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
 
         // TODO: replace mock (db) with server data  (MarketplaceHistoryDataSource.getUnitTradeHistory)
         TreeMap<Integer, TradeHistory> data = new TreeMap<>();
+        /*
         data.put(0, new TradeHistory("iPhone 16", 5, 11.25F, new Date(System.currentTimeMillis()), "User1", new OrganisationalUnit("org3", 10)));
         data.put(1, new TradeHistory("iPhone 11", 3, 10, new Date(System.currentTimeMillis()), "User4", new OrganisationalUnit("org10", 10)));
         data.put(2, new TradeHistory("iPhone 17", 25, 10.5F, new Date(System.currentTimeMillis()), "User2", new OrganisationalUnit("org12", 10)));
@@ -94,7 +95,7 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
         data.put(7, new TradeHistory("iPhone 16", 5, 11.5F, new Date(System.currentTimeMillis()), "User1", new OrganisationalUnit("org4", 10)));
         data.put(8, new TradeHistory("iPhone 11", 10, 12, new Date(System.currentTimeMillis()), "User4", new OrganisationalUnit("org7", 10)));
         data.put(9, new TradeHistory("iPhone 11", 5, 10, new Date(System.currentTimeMillis()), "User1", new OrganisationalUnit("org7", 10)));
-
+        */
         Collection values = data.values();
         //dataSource.
 
@@ -111,8 +112,8 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
                     price,
                     quantity * price,
                     rowData.getDateFulfilled().toString(),
-                    rowData.getCreatorUsername(),
-                    rowData.getunitOfTrader().getUnitName()
+                    // rowData.getCreatorUsername(),  TODO: NO LONGER NEED THIS DELET
+                    //rowData.getunitOfTrader().getUnitName()
             };
             count++;
         }

@@ -510,6 +510,15 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
             }
+            case GET_UNIT_TRADEHISTORY -> {
+                int unitID = (int) objectInputStream.readObject();
+                synchronized (database) {
+                    TreeMap<Integer, TradeHistory> unitTradeHistory = MarketplaceHistoryDataSource.getInstance().getUnitTradeHistory(unitID);
+                    objectOutputStream.writeObject(unitTradeHistory);
+                }
+                objectOutputStream.flush();
+                System.out.println("Retrieved org unit's trade history and wrote to socket: " + socket.toString());
+            }
         }
     }
 
