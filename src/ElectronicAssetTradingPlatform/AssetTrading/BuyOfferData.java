@@ -126,6 +126,20 @@ public class BuyOfferData extends OfferData {
     }
 
     /**
+     * Return the quantity of credits being used in buy offer by the organisational unit
+     */
+    public double creditsInUse(String unitName) {
+        double creditsInUse = 0;
+        TreeMap<Integer, BuyOffer> orgOffers = getOrgOffersMap(unitName);
+        Iterator<Map.Entry<Integer, BuyOffer>> buyOffersIter = orgOffers.entrySet().iterator();
+        while(buyOffersIter.hasNext()) {
+            BuyOffer offer = buyOffersIter.next().getValue();
+            creditsInUse += offer.getQuantity() * offer.getPricePerUnit();
+        }
+        return creditsInUse;
+    }
+
+    /**
      * Return the buy offers of a queried asset as a treemap
      */
     public TreeMap<Integer, BuyOffer> getAssetOffers(String assetName) {

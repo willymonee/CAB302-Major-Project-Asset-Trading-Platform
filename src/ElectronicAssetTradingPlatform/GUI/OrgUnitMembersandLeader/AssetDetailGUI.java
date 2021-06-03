@@ -39,6 +39,12 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     private String assetName;
     private JTextField quantitySellField;
     private JTextField priceSellField;
+    private JPanel assetsCreditsOwnedPanel;
+    private int amountOwned;
+    private double creditsAvailable;
+    private double credits;
+    private double creditsInBuyOffers;
+
 
     public AssetDetailGUI(OrganisationalUnitMembers loggedInUser, NetworkDataSource data, Asset selectedAsset) {
         this.loggedInUser = loggedInUser;
@@ -51,6 +57,14 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
         contentPane.add(Box.createVerticalStrut(20));
+        JLabel assetsOwned = Helper.createLabel(assetOwnedToString(), 16);
+        JLabel creditsAvailable = Helper.createLabel(creditsAvailableToString(), 16);
+        assetsCreditsOwnedPanel = Helper.createPanel(Color.WHITE);
+        assetsCreditsOwnedPanel.setLayout(new BorderLayout());
+        assetsCreditsOwnedPanel.add(assetsOwned, BorderLayout.WEST);
+        assetsCreditsOwnedPanel.add(creditsAvailable, BorderLayout.EAST);
+        contentPane.add(assetsCreditsOwnedPanel);
+
         assetBuyOffersPanel = Helper.createPanel(Color.WHITE);
         assetBuyOffersTable = assetBuyOffersTable();
         assetBuyOffersScrollPane = Helper.createScrollPane(assetBuyOffersTable, assetBuyOffersPanel);
@@ -176,11 +190,31 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         }
     }
 
+    private String assetOwnedToString() {
+        String assetOwned = assetName + "s owned: ";
+        try {
+            amountOwned = loggedInUser.getQuantityAsset(dataSource, assetName);
+            assetOwned += amountOwned;
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+        return assetOwned;
+    }
 
+    private String creditsAvailableToString() {
+        try {
+            credits = dataSource.getCredits(loggedInUser.getUnitName());
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+        creditsInBuyOffers = BuyOfferData.getInstance().creditsInUse(loggedInUser.getUnitName());
+        creditsAvailable = credits - creditsInBuyOffers;
+        return "Credits Available: " + creditsAvailable + " (" + credits + " - " + creditsInBuyOffers+ ")";
+    }
 
     // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool
     public void displayBuyAssetPanel() {
-        buyAssetPanel = Helper.createPanel(Color.WHITE);
+        buyAssetPanel = Helper.createPanel(Color.LIGHT_GRAY);
         buyAssetPanel.setLayout(new GridLayout(0, 2, 2, 2));
 
         quantityBuyField = new JTextField(4);
@@ -203,11 +237,18 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             String price = priceBuyField.getText();
             try {
                 int quantityInt = Integer.parseInt(quantity);
-                int priceInt = Integer.parseInt(price);
-                loggedInUser.listBuyOrderNoResolve(assetName, quantityInt, priceInt);
-                JOptionPane.showMessageDialog(null,
-                        "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
-                this.dispose();
+                double priceInt = Integer.parseInt(price);
+                if ((double) quantityInt * priceInt > creditsAvailable) {
+                    JOptionPane.showMessageDialog(null,
+                            "Not enough credits to buy", "Warning",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+                else {
+                    loggedInUser.listBuyOrderNoResolve(assetName, quantityInt, priceInt);
+                    JOptionPane.showMessageDialog(null,
+                            "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
+                    this.dispose();
+                }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
                         "Please enter a valid number for quantity and price", "Warning",
@@ -221,11 +262,14 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
 
     // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool
     public void displaySellAssetPanel() {
-        sellAssetPanel = Helper.createPanel(Color.WHITE);
-        sellAssetPanel.setLayout(new GridLayout(0, 2, 2, 2));
+        sellAssetPanel = Helper.createPanel(Color.LIGHT_GRAY);
+        sellAssetPanel.setLayout(new GridLayout(0, 2, 3, 2));
 
         quantitySellField = new JTextField(4);
         priceSellField = new JTextField(4);
+
+        sellAssetPanel.add( Helper.createLabel(assetOwnedToString(), 12));
+        sellAssetPanel.add(Helper.createLabel("", 12));
 
         sellAssetPanel.add(new JLabel("Quantity to sell"));
         sellAssetPanel.add(quantitySellField);
@@ -244,11 +288,18 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             String price = priceSellField.getText();
             try {
                 int quantityInt = Integer.parseInt(quantity);
-                int priceInt = Integer.parseInt(price);
-                loggedInUser.listSellOrderNoResolve(assetName, quantityInt, priceInt);
-                JOptionPane.showMessageDialog(null,
-                        "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price );
-                this.dispose();
+                double priceInt = Integer.parseInt(price);
+                if (quantityInt > amountOwned) {
+                    JOptionPane.showMessageDialog(null,
+                            "Not enough assets to sell", "Warning",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+                else {
+                    loggedInUser.listSellOrderNoResolve(assetName, quantityInt, priceInt);
+                    JOptionPane.showMessageDialog(null,
+                            "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price );
+                    this.dispose();
+                }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
                         "Please enter a valid number for quantity and price", "Warning",

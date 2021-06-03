@@ -178,6 +178,15 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
+     * Gets the quantity of an asset the org unit owns
+     * @return Returns the number the org owns
+     */
+    public int getQuantityAsset(NetworkDataSource source, String assetName) throws DatabaseException {
+        HashMap<String, Integer> unitAssets = getUnitAssets(source);
+        return unitAssets.get(assetName);
+    }
+
+    /**
      * Gets the amount of credits this user's organisational unit owns
      *
      * @return Returns the quantity of credits
