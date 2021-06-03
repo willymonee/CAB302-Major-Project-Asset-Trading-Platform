@@ -77,7 +77,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         contentPane.add(makeMarketPlaceHistoryGraph());
 
         // Decorate the frame and make it visible
-        setTitle("Asset Detail");
+        setTitle(assetName + " Details");
         setMinimumSize(new Dimension(850, 400));
         pack();
         setVisible(true);
