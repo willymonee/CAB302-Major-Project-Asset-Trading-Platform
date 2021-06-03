@@ -65,6 +65,17 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         welcomeMessage.setHorizontalAlignment(JLabel.CENTER);
         welcomeMessage.setBorder(new EmptyBorder(10, 0, 10, 0));
         wrapper.add(welcomeMessage);
+
+        // add org buy offer's panel to wrapper
+        orgBuyOfferPanel = createOrgBuyOfferPanel(member);
+        wrapper.add(orgBuyOfferPanel);
+        // add market buy offer panel
+        marketBuyOffersPanel = createMarketBuyOfferPanel();
+        // add market buy offers panel to wrapper
+        wrapper.add(marketBuyOffersPanel);
+    }
+
+    private JPanel createOrgBuyOfferPanel(OrganisationalUnitMembers member) {
         // add org buy offer panel
         orgBuyOfferPanel = Helper.createPanel(Color.WHITE);
         orgBuyOfferLabel = Helper.createLabel(member.getUnitName() + "'s Buy Offers:", 20);
@@ -74,19 +85,20 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         orgBuyOfferPanel.add(orgBuyOfferLabel);
         // add a table to the org buy offer panel
         orgBuyOffersTable = unitBuyOffersTable();
-        scrollPanelOrgBuyOffers = createScrollPane(orgBuyOffersTable, orgBuyOfferPanel);
+        scrollPanelOrgBuyOffers = Helper.createScrollPane(orgBuyOffersTable, orgBuyOfferPanel);
         // add the scroll panel to the org buy offer's panel
         orgBuyOfferPanel.add(scrollPanelOrgBuyOffers);
         // add remove and edit offer buttons to org buy offer panel
         orgBuyButtonPanel = Helper.createPanel(Color.WHITE);
         removeOfferButton = createButton("Remove Buy Offer");
-        removeOfferButton.setEnabled(false);
         editOfferButton = createButton("Edit Buy Offer");
         orgBuyButtonPanel.add(removeOfferButton, BorderLayout.WEST);
         orgBuyButtonPanel.add(editOfferButton, BorderLayout.EAST);
         orgBuyOfferPanel.add(orgBuyButtonPanel);
-        // add org buy offer's panel to wrapper
-        wrapper.add(orgBuyOfferPanel);
+        return orgBuyOfferPanel;
+    }
+
+    private JPanel createMarketBuyOfferPanel() {
         // add market buy offer panel
         marketBuyOffersPanel = Helper.createPanel(Color.WHITE);
         marketBuyOffersLabel = Helper.createLabel("Market Buy Offers", 20);
@@ -94,36 +106,13 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         marketBuyOffersPanel.add(marketBuyOffersLabel);
         // add a table to the market buy offers panel
         marketBuyOffersTable = marketBuyOffersTable();
-        scrollPanelMarketBuyOffers = createScrollPane(marketBuyOffersTable, marketBuyOffersPanel);
+        scrollPanelMarketBuyOffers = Helper.createScrollPane(marketBuyOffersTable, marketBuyOffersPanel);
         marketBuyOffersPanel.add(scrollPanelMarketBuyOffers);
         // add view asset button to market buy offers panel
         viewAssetButton = createButton("View Asset");
-        viewAssetButton.setEnabled(false);
         marketBuyOffersPanel.add(viewAssetButton);
-        // add market buy offers panel to wrapper
-        wrapper.add(marketBuyOffersPanel);
-    }
+        return marketBuyOffersPanel;
 
-
-    /**
-     * Method that takes a table and places it into a scroll pane
-     * Additionally formats the JPanel containing the scroll pane
-     * @param table
-     * @param panel
-     * @return a scroll pane containing the table
-     */
-    private JScrollPane createScrollPane(JTable table, JPanel panel) {
-        JScrollPane scrollPane;
-        // create scroll panel with table inside
-        scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        // set the org buy offer panel to a FIXED 325
-        panel.setPreferredSize(new Dimension(825, 375));
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 375));
-        // set the scroll panel to a FIXED 250
-        scrollPane.setPreferredSize(new Dimension(850, 250));
-        scrollPane.setMaximumSize(new Dimension(850, 250));
-        scrollPane.getViewport().setBackground(Color.WHITE);
-        return scrollPane;
     }
 
     /**
@@ -150,6 +139,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         // Set the button text to that passed in String buttonText
         button.setText(buttonText);
         button.addActionListener(this);
+        button.setEnabled(false);
         // Return the JButton
         return button;
     }
@@ -269,46 +259,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         return data;
     }
 
-    /**
-     * Given a table, resize the column widths automatically to fit data inside
-     * @param table to be resized
-     */
-    // https://stackoverflow.com/questions/17627431/auto-resizing-the-jtable-column-widths by Paul Vargas
-    private void resizeColumnWidth(JTable table) {
-        final TableColumnModel columnModel = table.getColumnModel();
-        for (int column = 0; column < table.getColumnCount(); column++) {
-            int width = 15; // Min width
-            for (int row = 0; row < table.getRowCount(); row++) {
-                TableCellRenderer renderer = table.getCellRenderer(row, column);
-                Component comp = table.prepareRenderer(renderer, row, column);
-                width = Math.max(comp.getPreferredSize().width +1 , width);
-            }
-            if(width > 300)
-                width=300;
-            columnModel.getColumn(column).setPreferredWidth(width);
-        }
-    }
-
-    /**
-     * Create and format a table
-     */
-    public void formatTable(JTable table) {
-        // format the table
-        resizeColumnWidth(table);
-        table.setRowHeight(25);
-        table.setFont(new Font ( "Dialog", Font.PLAIN, 14));
-        table.getTableHeader().setPreferredSize(new Dimension(150,25));
-        table.getTableHeader().setFont(new Font ( "Dialog", Font.BOLD, 14));
-        table.getTableHeader().setReorderingAllowed(false);
-        table.setDefaultEditor(Object.class, null);
-
-        // center table cells
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-        for(int x = 0; x < table.getColumnCount(); x++){
-            table.getColumnModel().getColumn(x).setCellRenderer( centerRenderer );
-        }
-    }
 
     /**
      * Create the org unit's buy offers table
@@ -320,7 +270,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
         model = new DefaultTableModel(data, columns);
         JTable table = new JTable(model);
-        formatTable(table);
+        Helper.formatTable(table);
         // add listener to the table
         table.addMouseListener(this);
 
@@ -334,7 +284,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
         marketModel = new DefaultTableModel(data, columns);
         JTable table = new JTable(marketModel);
-        formatTable(table);
+        Helper.formatTable(table);
         table.addMouseListener(this);
         table.getSelectionModel().addListSelectionListener(this);
         return table;

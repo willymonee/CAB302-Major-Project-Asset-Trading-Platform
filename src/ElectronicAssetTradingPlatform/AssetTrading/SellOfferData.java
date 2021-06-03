@@ -53,9 +53,9 @@ public class SellOfferData extends OfferData {
      * Update SellOfferData's MarketSellOffers field and then return it
      * @return Unmodifiable Map of the current market sell orders
      */
-    public Map<Integer, SellOffer> getMarketSellOffers() {
+    public TreeMap<Integer, SellOffer> getMarketSellOffers() {
         getOffersFromDB();
-        return unmodifiableMap(MarketSellOffers) ;
+        return MarketSellOffers;
     }
 
     /**
