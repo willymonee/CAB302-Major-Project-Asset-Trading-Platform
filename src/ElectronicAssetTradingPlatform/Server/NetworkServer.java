@@ -511,8 +511,9 @@ public class NetworkServer {
                 objectOutputStream.flush();
             }
             case GET_UNIT_TRADEHISTORY -> {
-                int unitID = (int) objectInputStream.readObject();
+                String unitName = (String) objectInputStream.readObject();
                 synchronized (database) {
+                    int unitID = Integer.parseInt(UnitDataSource.getInstance().executeGetUnitID(unitName));
                     TreeMap<Integer, TradeHistory> unitTradeHistory = MarketplaceHistoryDataSource.getInstance().getUnitTradeHistory(unitID);
                     objectOutputStream.writeObject(unitTradeHistory);
                 }
