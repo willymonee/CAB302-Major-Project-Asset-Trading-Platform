@@ -7,6 +7,8 @@ import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
@@ -19,7 +21,7 @@ import java.util.TreeMap;
  * BuyTabGUI class is responsible for displaying the organisational unit's buy offers and all the market buy offers
  * Enables user to remove their org's offers and view assets on the market
  */
-public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, ListSelectionListener {
+public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, ListSelectionListener, ChangeListener {
     // Global variables
     private OrganisationalUnitMembers loggedInMember;
     private NetworkDataSource data;
@@ -375,6 +377,14 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                 viewAssetButton.setEnabled(true);
             }
         }
+    }
+
+
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        System.out.println("updating table");
+        updateTables();
     }
 }
 

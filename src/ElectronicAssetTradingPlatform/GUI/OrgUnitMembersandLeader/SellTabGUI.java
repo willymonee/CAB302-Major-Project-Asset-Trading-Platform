@@ -9,6 +9,8 @@ import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
@@ -22,7 +24,7 @@ import java.util.TreeMap;
  * SellTabGUI class is responsible for displaying the organisational unit's sell offers and all the market sell offers
  * Enables user to remove their org's offers and view assets on the market
  */
-public class SellTabGUI extends JPanel implements ActionListener, MouseListener, ListSelectionListener {
+public class SellTabGUI extends JPanel implements ActionListener, MouseListener, ListSelectionListener, ChangeListener {
     // Global variables
     private OrganisationalUnitMembers loggedInMember;
     private NetworkDataSource data;
@@ -374,5 +376,12 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                 viewAssetButton.setEnabled(true);
             }
         }
+    }
+
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        System.out.println("updating table");
+        updateTables();
     }
 }
