@@ -2,7 +2,9 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Database.MarketplaceHistoryDataSource;
 
-public class TradeHistory {
+import java.io.Serializable;
+
+public class TradeHistory implements Serializable {
     String buyOrSell;
     String assetName;
     int tradedQuantity;

@@ -104,7 +104,7 @@ public class MarketplaceHistoryDataSource {
      * @param unitID    The ID of the organisational Unit
      * @return          The trade history of the queried organisational unit
      */
-    public TreeMap<Integer, TradeHistory> getUnitTradeHistory(int unitID) {
+    public TreeMap<Integer, TradeHistory> getUnitTradeHistory(int unitID) throws LessThanZeroException{
         TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
         ResultSet rs = null;
         try {
@@ -158,7 +158,7 @@ public class MarketplaceHistoryDataSource {
                 float total = price * quantity;
 
                 if (total < 0) {
-                    throw new LessThanZeroException("");
+                    throw new LessThanZeroException("Total cannot be below 0 credits.");
                 }
 
                 String dateFulfilled = rs.getString(7);
