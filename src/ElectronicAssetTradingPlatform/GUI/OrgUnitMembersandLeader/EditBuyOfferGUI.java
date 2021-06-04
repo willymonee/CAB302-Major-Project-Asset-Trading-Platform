@@ -5,7 +5,6 @@ import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +15,8 @@ public class EditBuyOfferGUI extends JFrame {
     private OrganisationalUnitMembers loggedInMember;
     private NetworkDataSource net;
     private Asset asset;
+    private int quantity;
+    private double price;
 
     private JTextField listQuantity;
     private JTextField listPrice;
@@ -31,10 +32,13 @@ public class EditBuyOfferGUI extends JFrame {
      */
 
     // Maybe param is also previous quantity/ price
-    public EditBuyOfferGUI(NetworkDataSource data, OrganisationalUnitMembers member, Asset asset) {
+    public EditBuyOfferGUI(NetworkDataSource data, OrganisationalUnitMembers member, Asset asset,
+                           int currentQuant, double currentPrice) {
         net = data;
         loggedInMember = member;
         this.asset = asset;
+        quantity = currentQuant;
+        price = currentPrice;
 
         initUI();
 
@@ -87,14 +91,17 @@ public class EditBuyOfferGUI extends JFrame {
         JLabel priceLabel = Helper.createLabel("Price:", 12);
         JLabel totalPriceLabel = Helper.createLabel("Total Price: ", 12);
         // TODO: Add asset price = quantity * price
-        JLabel displayPrice = Helper.createLabel("", 10);
+        double total = quantity * price;
+        String totalasString = Double.toString(total);
+
+        JLabel displayPrice = Helper.createLabel(totalasString, 10);
         // TODO: Add current order listing price information
         //JLabel currentOrdersInfo = Helper.createLabel("Current sell orders : ", 9);
         //JLabel currentOrdersInfoTwo = Helper.createLabel("x for sale starting at x credits or higher ", 7);
 
 
-        listQuantity = new JTextField(10);
-        listPrice = new JTextField(10);
+        listQuantity = new JTextField(Integer.toString(quantity), 10);
+        listPrice = new JTextField(Double.toString(price),10);
         messaging = new JTextArea();
         messaging.setEditable(false);
         messaging.setLineWrap(true);

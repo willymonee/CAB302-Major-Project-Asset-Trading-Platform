@@ -43,6 +43,9 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
     private JPanel orgBuyButtonPanel;
     private JButton viewAssetButton;
     private String selectedAsset;
+    private String selectedAssetTableOne;
+    private int editTabCurrentQuantity;
+    private double editTabCurrentPrice;
     private final int OFFER_ID_COLUMN = 0;
     private final int ASSET_NAME_COLUMN = 1;
 
@@ -154,7 +157,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         // Set the button text to that passed in String buttonText
         button.setText(buttonText);
         button.addActionListener(this);
-        button.setEnabled(false);
+        button.setEnabled(true); // TODO: CHange this back to false
         // Return the JButton
         return button;
     }
@@ -194,6 +197,11 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                     e.getWindow().dispose();
                 }
             });
+        }
+
+        else if (src == this.editOfferButton) {
+            EditBuyOfferGUI editGUI = new EditBuyOfferGUI(data, loggedInMember, new Asset(selectedAssetTableOne)
+                                                         ,editTabCurrentQuantity, editTabCurrentPrice);
         }
     }
 
@@ -318,6 +326,9 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                 try {
                     String value = orgBuyOffersTable.getModel().getValueAt(row, column).toString();
                     selectedOrgOfferID = Integer.parseInt(value);
+                    selectedAssetTableOne = BuyOfferData.getInstance().getOffer(selectedOrgOfferID).getAssetName();
+                    editTabCurrentQuantity = BuyOfferData.getInstance().getOffer(selectedOrgOfferID).getQuantity();
+                    editTabCurrentPrice = BuyOfferData.getInstance().getOffer(selectedOrgOfferID).getPricePerUnit();
                 } catch (ArrayIndexOutOfBoundsException p) {
                     // do nothing
                 }
