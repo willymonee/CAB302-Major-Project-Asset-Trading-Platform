@@ -2,6 +2,8 @@ package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
 import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
+import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
@@ -430,6 +432,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
             price = currentPrice;
             this.listingID = listingID;
 
+
             initUI();
 
             // add window close listener
@@ -525,6 +528,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
             return displayPanel;
         }
 
+
         private class ButtonListener implements ActionListener {
             /**
              * When an action is performed
@@ -534,7 +538,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                 JButton source = (JButton) e.getSource();
 
                 if (source == relistBtn) {
-                    System.out.println("button relist was pressed: call function here"); // TODO DELETE THIS
                     relistAsset();
                 }
             }
@@ -544,24 +547,48 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
              * A different trade ID will be issued however
              */
             private void relistAsset() {
+
                 // Get user input for price and quantity
                 String quantityString = listQuantity.getText();
-                int quantity = Integer.valueOf(quantityString);
                 String priceString = listPrice.getText();
-                double price = Double.parseDouble(priceString);
+                try {
+                    GUI.checkInputEmpty(quantityString);
+                    GUI.checkInputEmpty(priceString);
+                    int quantity = Integer.parseInt(quantityString);
+                    double price = Double.parseDouble(priceString);
+                    double total = quantity * price;
+                    double unitCredits = loggedInMember.getUnitCredits(data);
 
-                // Error handling
+                    if (quantity > 0 && price > 0) {
+                        if (total < unitCredits) {
+                            BuyOffer oldOffer = BuyOfferData.getInstance().getOffer(listingID);
+                            BuyOfferData.getInstance().removeOffer(listingID);
+                            BuyOffer relist = new BuyOffer(oldOffer.getAssetName(), quantity, price,
+                                    oldOffer.getUsername(), oldOffer.getUnitName());
+                            System.out.println(relist);
+                            BuyOfferData.getInstance().addOffer(relist);
+                            updateTables();
+                            dispose();
+                        }
+
+                        else {
+                            messaging.setText("Insufficiency credits to create buy offer, you have "
+                                    + unitCredits + "credits available");
+                        }
+                    }
+
+                    else {
+                        messaging.setText("Please enter a non-zero positive value for price & quantity.");
+                    }
 
 
-                // Duplicate oldOffer in order to create New relisted offer
-                BuyOffer oldOffer = BuyOfferData.getInstance().getOffer(listingID);
-                BuyOfferData.getInstance().removeOffer(listingID);
-                BuyOffer relist = new BuyOffer(oldOffer.getAssetName(), quantity, price,
-                        oldOffer.getUsername(), oldOffer.getUnitName());
-                System.out.println(relist);
-                BuyOfferData.getInstance().addOffer(relist);
-                updateTables();
-                dispose();
+                } catch (EmptyFieldException e) {
+                    messaging.setText("Price/ Quantity cannot be empty");
+                } catch (DatabaseException e) {
+                    e.printStackTrace();
+                } catch (NumberFormatException errorMessage) {
+                    messaging.setText("Please enter a number value");
+                }
             }
 
 
