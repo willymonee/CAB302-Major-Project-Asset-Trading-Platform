@@ -1,6 +1,6 @@
 package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
-import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
+import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.AssetTrading.TradeHistory;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
@@ -11,7 +11,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +26,8 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
     private OrganisationalUnitMembers member;
 
     private JPanel content;
+    private JButton detailButton;
+    private JTable assetTable;
 
     public OrgUnitTabGUI(OrganisationalUnitMembers member, NetworkDataSource dataSource) {
         this.member = member;
@@ -48,25 +54,36 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
         }
 
         JLabel unitCreditsLabel = Helper.createLabel(creditsText, 16);
-        unitCreditsLabel.setBorder(new EmptyBorder(10, 550, 10, 0));
+        unitCreditsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        unitCreditsLabel.setBorder(new EmptyBorder(0, 500, 0, 0));
         wrapper.add(unitCreditsLabel);
 
         JLabel tradeHistoryLabel = Helper.createLabel(member.getUnitName() + "\'s Trade History", 20);
-        tradeHistoryLabel.setBorder(new EmptyBorder(10, 30, 10, 0));
+        tradeHistoryLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         wrapper.add(tradeHistoryLabel);
         JPanel tradeTable = unitTradeHistoryTable();
         tradeTable.setBackground(Color.WHITE);
         wrapper.add(tradeTable);
 
         JLabel unitAssetsLabel = Helper.createLabel(member.getUnitName() + "\'s Assets", 20);
-        unitAssetsLabel.setBorder(new EmptyBorder(10, 220, 10, 0));
+        unitAssetsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         wrapper.add(unitAssetsLabel);
         JPanel assetTable = unitAssetTable();
         assetTable.setBackground(Color.WHITE);
         wrapper.add(assetTable);
 
+        JPanel buttonPanel = new JPanel();
+        detailButton = new JButton("View Asset");
+        detailButton.addActionListener(new ButtonListener());
+        detailButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        detailButton.setEnabled(false);
+        buttonPanel.add(detailButton);
+        buttonPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+        buttonPanel.setBackground(Color.WHITE);
+        wrapper.add(buttonPanel);
+
         JLabel unitMembersLabel = Helper.createLabel(member.getUnitName() + "\'s Members", 20);
-        unitMembersLabel.setBorder(new EmptyBorder(10, 220, 10, 0));
+        unitMembersLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         wrapper.add(unitMembersLabel);
         JPanel memTable = unitMemberTable();
         memTable.setBackground(Color.WHITE);
@@ -129,6 +146,7 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
      */
     public JPanel unitAssetTable() {
         JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         try {
             // Table
@@ -149,9 +167,11 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
                 };
             }
 
-            JTable assetTable = new JTable(tableData, columnNames);
+            assetTable = new JTable(tableData, columnNames);
             Helper.formatTable(assetTable);
             assetTable.setPreferredScrollableViewportSize(new Dimension(400, assetTable.getRowHeight() * 3));
+            assetTable.getSelectionModel().addListSelectionListener(new TableSelectionListener());
+
             JScrollPane tablePane = new JScrollPane(assetTable);
             tablePane.setVisible(true);
 
@@ -164,7 +184,7 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
         }
 
 
-        panel.setBorder(new EmptyBorder(10, -10, 10, -10));
+        panel.setBorder(new EmptyBorder(10, -10, 20, -10));
 
         return panel;
     }
@@ -223,5 +243,52 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
         this.remove(content);
         content = makeContent();
         this.add(content);
+    }
+
+    /**
+     * List selection listener
+     */
+    private class TableSelectionListener implements ListSelectionListener {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            int row = assetTable.getSelectedRow();
+            // if no row is selected then disable the view asset button
+            if (row == -1) {
+                detailButton.setEnabled(false);
+            }
+            // if a row is selected then enable it
+            else {
+                detailButton.setEnabled(true);
+            }
+        }
+    }
+
+    /**
+     * Event handling for button presses
+     */
+    private class ButtonListener implements ActionListener {
+
+        /**
+         * Any action is performed
+         */
+        public void actionPerformed(ActionEvent e) {
+            JButton source = (JButton) e.getSource();
+            if (source == detailButton) {
+                openDetailPressed();
+            }
+        }
+
+        /**
+         * Create user
+         */
+        private void openDetailPressed() {
+            // Get selected asset name
+            int row = assetTable.getSelectedRow();
+
+            // Open appropriate detail page, or error
+            String assetName = (String) assetTable.getValueAt(row, 0);
+
+            new AssetDetailGUI(member, dataSource, new Asset(assetName));
+        }
     }
 }

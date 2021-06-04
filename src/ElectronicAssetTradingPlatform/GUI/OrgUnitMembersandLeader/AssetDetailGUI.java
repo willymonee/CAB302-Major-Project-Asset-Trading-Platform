@@ -46,13 +46,14 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         this.selectedAsset = selectedAsset;
         assetName = selectedAsset.getAssetName();
 
-        Container contentPane = this.getContentPane();
-        contentPane.setPreferredSize(new Dimension(850, 850));
+        Container contentPane = new Container();
+        contentPane.setPreferredSize(new Dimension(850, 1100));
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
         contentPane.add(Box.createVerticalStrut(20));
         assetBuyOffersPanel = Helper.createPanel(Color.WHITE);
         assetBuyOffersTable = assetBuyOffersTable();
+//        table.setPreferredScrollableViewportSize(new Dimension(850, 100));
         assetBuyOffersScrollPane = Helper.createScrollPane(assetBuyOffersTable, assetBuyOffersPanel);
         assetBuyOffersPanel.add(Helper.createLabel(assetName + " Buy Offers", 20));
         assetBuyOffersPanel.add(assetBuyOffersScrollPane);
@@ -75,6 +76,10 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         contentPane.add(assetSellOffersPanel);
 
         contentPane.add(makeMarketPlaceHistoryGraph());
+
+        JScrollPane scrPane = new JScrollPane(contentPane);
+        scrPane.setPreferredSize(new Dimension(850, 850));
+        add(scrPane);
 
         // Decorate the frame and make it visible
         setTitle(assetName + " Details");
@@ -271,6 +276,9 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             data = new ArrayList<>();
         }
 
+        JLabel title = Helper.createLabel("Asset Price History", 20);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(title, BorderLayout.NORTH);
         if (data.size() > 1) {
             // Sort by date
             data.sort(Comparator.comparingLong(a -> ((Date) a.get(0)).getTime()));
@@ -288,12 +296,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             graphContainer.add(graph);
             graphContainer.setBorder(new EmptyBorder(20, -10, 10, -10));
 
-            JLabel title = new JLabel("Asset Price History", SwingConstants.CENTER);
-            panel.add(title, BorderLayout.NORTH);
             panel.add(graphContainer, BorderLayout.CENTER);
         } else {
-            JLabel title = new JLabel("Asset Price History", SwingConstants.CENTER);
-            panel.add(title, BorderLayout.NORTH);
             JLabel text = new JLabel("Data not found");
             JPanel textContainer = new JPanel();
             textContainer.add(text);
