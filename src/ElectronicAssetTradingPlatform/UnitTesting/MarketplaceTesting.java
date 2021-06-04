@@ -5,6 +5,7 @@ import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
+import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.jupiter.api.*;
@@ -52,13 +53,13 @@ public class MarketplaceTesting {
      */
 
     @Test
-    public void testInsertBuyOffer() {
+    public void testInsertBuyOffer() throws SQLException, LessThanZeroException {
         // creating a buy offer and adding it into the database through the user
 
         // remove all buy offers
         MarketplaceDataSource.getInstance().removeAllOffers();
         // set Human Resources to have 1000 credits
-        dataSource.editOrgUnitCredits(humanResources, 1002);
+        UnitDataSource.getInstance().editOrgUnitCredits("Human Resources", 1002);
         dataSource.editOrgUnitCredits(management, 1000);
         // reset org assets
         dataSource.editOrgUnitAssets(humanResources, "iPhone 10", 1);
