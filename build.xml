@@ -80,7 +80,7 @@
 
     <target name="compileTests" depends="compileClient" description="Compile tests" >
         <javac srcdir="src/${topPackage}/UnitTesting" classpath="${baseServer}:${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" destdir="utestclasses" includeantruntime="false">
-            <include name="*.java" />
+            <include name="HistoryTesting.java" />
         </javac>
     </target>
 
