@@ -159,7 +159,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         // Set the button text to that passed in String buttonText
         button.setText(buttonText);
         button.addActionListener(this);
-        button.setEnabled(true); // TODO: CHange this back to false
+        button.setEnabled(false);
         // Return the JButton
         return button;
     }
@@ -573,7 +573,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
 
                         else {
                             messaging.setText("Insufficiency credits to create buy offer, you have "
-                                    + unitCredits + "credits available");
+                                    + unitCredits + " credits available.");
                         }
                     }
 
