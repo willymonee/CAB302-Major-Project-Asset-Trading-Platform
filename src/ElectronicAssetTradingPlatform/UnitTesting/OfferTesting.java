@@ -33,6 +33,11 @@ public class OfferTesting {
 
 
 
+    @BeforeAll @Test
+    public static void Start() {
+        System.out.println("Offer");
+    }
+
     @BeforeEach
     @Test
     public void setUp() {

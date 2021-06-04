@@ -155,8 +155,16 @@ class CreateUserGUI extends JFrame {
                     GUI.checkInputEmpty(unitNameIn);
                 }
 
-                User user = loggedInUser.createUser(usernameIn, unitNameIn, userTypeIn);
+                Object[] map = loggedInUser.createUser(usernameIn, unitNameIn, userTypeIn);
+                User user = (User) map[0];
+                String passwordRaw = (String) map[1];
+
                 output = data.storeUser(user);
+
+                // Display the raw password for the admin to copy
+                JTextArea text = new JTextArea("Please copy this newly generated password: " + passwordRaw);
+                text.setBackground(null);
+                JOptionPane.showMessageDialog(null, text);
             } catch (EmptyFieldException | UserTypeException e) {
                 // Empty input error
                 output = "Input is empty or invalid, please enter correct details into all fields.";

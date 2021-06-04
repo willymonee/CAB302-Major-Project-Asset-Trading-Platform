@@ -10,6 +10,11 @@ public class HashingTesting {
     String salt;
     String storedPwd;
 
+    @BeforeAll @Test
+    public static void Start() {
+        System.out.println("HashingTesting");
+    }
+
     @BeforeEach @Test
     public void setUpInputStr() {
         // Create mock data
