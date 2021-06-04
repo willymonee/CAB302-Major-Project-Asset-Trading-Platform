@@ -146,7 +146,6 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
      */
     public JPanel unitAssetTable() {
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         try {
             // Table
@@ -184,7 +183,7 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
         }
 
 
-        panel.setBorder(new EmptyBorder(10, -10, 20, -10));
+        panel.setBorder(new EmptyBorder(10, -10, 0, -10));
 
         return panel;
     }

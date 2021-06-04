@@ -96,7 +96,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         contentPane.add(makeMarketPlaceHistoryGraph());
 
         JScrollPane scrPane = new JScrollPane(contentPane);
-        scrPane.setPreferredSize(new Dimension(850, 850));
+        scrPane.setPreferredSize(new Dimension(900, 850));
         add(scrPane);
 
         // Decorate the frame and make it visible
