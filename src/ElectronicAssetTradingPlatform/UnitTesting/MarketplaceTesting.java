@@ -5,7 +5,6 @@ import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
-import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,9 +49,9 @@ public class MarketplaceTesting {
 //        userA.listSellOrderNoResolve("iPhone 10", 2, 100);
 //        userA.listBuyOrderNoResolve("Table", 2, 50);
 
-        userB.listBuyOrderNoResolve("iPhone 10", 2, 5);
-        userB.listBuyOrderNoResolve("iPhone 10", 2, 5);
-        userB.listBuyOrderNoResolve("iPhone 10", 2, 5);
+//        userB.listBuyOrderNoResolve("iPhone 10", 2, 5);
+//        userB.listBuyOrderNoResolve("iPhone 10", 2, 5);
+//        userB.listBuyOrderNoResolve("iPhone 10", 2, 5);
 
     }
 
@@ -197,11 +196,5 @@ public class MarketplaceTesting {
         //SellOffer sellOffer = SellOfferData.getInstance().getOffer(40);
         //int matchingID = sellOffer.getMatchedPriceOffer();
         //sellOffer.reduceMatchingOfferQuantities(matchingID);
-    }
-
-
-    @AfterAll
-    public static void closeDB() throws SQLException {
-        MarketplaceDataSource.getInstance().close();
     }
 }

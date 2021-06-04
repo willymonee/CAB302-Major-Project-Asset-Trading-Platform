@@ -2,7 +2,9 @@ package ElectronicAssetTradingPlatform.UnitTesting;
 
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
-import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.Database.ETPDataSource;
+import ElectronicAssetTradingPlatform.Database.UnitDataSource;
+import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Exceptions.MissingAssetException;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
@@ -12,6 +14,8 @@ import ElectronicAssetTradingPlatform.Users.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
+
+import java.sql.SQLException;
 
 public class ITAdminTesting {
     // Exception codes: https://sqlite.org/rescode.html
@@ -27,17 +31,25 @@ public class ITAdminTesting {
     OrganisationalUnit uneditedOrgUnit;
     Asset asset;
     Asset uneditedAsset;
-//    static UsersDataSource db;
+    static UsersDataSource db;
+    static UnitDataSource dbUnit;
 
     @BeforeEach
     @Test
     public void setUpITAdmin() {
         // Recreate db
-//        ETPDataSource etp = new ETPDataSource();
-//        db = UsersDataSource.getInstance();
+        ETPDataSource etp = new ETPDataSource();
+        db = UsersDataSource.getInstance();
+        dbUnit = UnitDataSource.getInstance();
         // create an organisational unit member
         itAdmin = new ITAdmin("adminGuy", "pass123", "salt");
 
+        // Pre-test inserts
+        try {
+            dbUnit.insertOrgUnit(new OrganisationalUnit("unit1", 5));
+            dbUnit.insertOrgUnit(new OrganisationalUnit("unit2", 6));
+        } catch (SQLException ignore) {
+        }
     }
 
     @BeforeEach
@@ -68,19 +80,19 @@ public class ITAdminTesting {
             itAdmin.createUser("newSysAdmin2", "asdf", "ITAdmin");
         });
 
-        assertEquals(itAdmin.createUser("newSysAdmin2", "asdf", "ITAdmin").getClass(), ITAdmin.class);
+        assertEquals("ITAdmin", ((User)itAdmin.createUser("newSysAdmin2", "asdf", "ITAdmin")[0]).getUserType());
     }
     @Test
     public void validOrgLeader() throws Exception {
         assertDoesNotThrow(() -> itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader"));
 
-        assertEquals(itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader").getClass(), OrganisationalUnitLeader.class);
+        assertEquals("OrganisationalUnitLeader", ((User)itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader")[0]).getUserType());
     }
     @Test
     public void validOrgMember() throws Exception {
         assertDoesNotThrow(() -> itAdmin.createUser("newMember", "unit1", "OrganisationalUnitMembers"));
 
-        assertEquals(itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader").getClass(), OrganisationalUnitLeader.class);
+        assertEquals("OrganisationalUnitLeader", ((User)itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader")[0]).getUserType());
     }
     @Test
     public void validSystemsAdmin() throws Exception {
@@ -89,136 +101,108 @@ public class ITAdminTesting {
             itAdmin.createUser("newSysAdmin2", "asdf", "SystemsAdmin");
         });
 
-        assertEquals(itAdmin.createUser("newSysAdmin2", "asdf", "SystemsAdmin").getClass(), SystemsAdmin.class);
+        assertEquals("SystemsAdmin", ((User)itAdmin.createUser("newSysAdmin2", "asdf", "SystemsAdmin")[0]).getUserType());
     }
     @Test
     public void notDuplicatePassword() throws Exception {
         ITAdmin itAdmin1 = new ITAdmin("adminGuy1", "pass123", "salt");
         ITAdmin itAdmin2 = new ITAdmin("adminGuy2", "pass123", "salt");
 
-        String user1 = itAdmin1.createUser("bob1", "", "ITAdmin").getPassword();
-        String user2 = itAdmin2.createUser("bob2", "", "ITAdmin").getPassword();
-        String user3 = itAdmin2.createUser("bob3", "", "ITAdmin").getPassword();
-        String user4 = itAdmin1.createUser("bob4", "", "ITAdmin").getPassword();
+        String user1 = ((User)itAdmin1.createUser("bob1", "", "ITAdmin")[0]).getPassword();
+        String user2 = ((User)itAdmin2.createUser("bob2", "", "ITAdmin")[0]).getPassword();
+        String user3 = ((User)itAdmin2.createUser("bob3", "", "ITAdmin")[0]).getPassword();
+        String user4 = ((User)itAdmin1.createUser("bob4", "", "ITAdmin")[0]).getPassword();
 
         assertNotEquals(user1, user2);
         assertNotEquals(user2, user3);
         assertNotEquals(user1, user4);
     }
-/*
+
     // START DB TESTS
     @Test
     public void insertLeader() {
-        try {
-            User user = itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader");
-            db.insertUser(user);
+        assertDoesNotThrow(() -> {
+            try {
+                User user = (User) itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader")[0];
+                db.insertUser(user);
 
-            User dbUser = db.getUser("newLeader");
+                User dbUser = db.getUser("newLeader");
 
-            assertEquals(user.getUsername(), dbUser.getUsername());
-        }
-        catch (SQLException e) {
-            if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
-                System.out.println("User maybe already exist? - insertLeader()");
-            } else {
-                System.out.println("Error with ITAdminTesting, will fix later");
-                System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
-                e.printStackTrace();
-                assert false;
+                assertEquals(user.getUsername(), dbUser.getUsername());
+
+                db.editUser("newLeader","OrganisationalUnitMembers","unit1");
+                User check = UsersDataSource.getInstance().getUser("newLeader");
+                assertEquals("OrganisationalUnitMembers", check.getUserType());
+                assertEquals("unit2", ((OrganisationalUnitMembers) check).getUnitName());
+            } catch (SQLException e) {
+                if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
+                    System.out.println("User maybe already exist? - insertLeader()");
+                } else {
+                    throw e;
+                }
             }
-        }
-        catch (User.UserTypeException | User.EmptyFieldException e) {
-            e.printStackTrace();
-            assert false;
-        }
+        });
     }
     @Test
     public void insertSysAdmin() {
-        try {
-            User user = itAdmin.createUser("newSysAdmin1", "", "SystemsAdmin");
-            db.insertUser(user);
+        assertDoesNotThrow(() -> {
+            try {
+                User user = (User) itAdmin.createUser("newSysAdmin1", "", "SystemsAdmin")[0];
+                db.insertUser(user);
 
-            User dbUser = db.getUser("newSysAdmin1");
+                User dbUser = db.getUser("newSysAdmin1");
 
-            assertEquals(user.getUsername(), dbUser.getUsername());
-        }
-        catch (SQLException e) {
-            if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
-                System.out.println("User maybe already exist? - insertSysAdmin()");
-            } else {
-                e.printStackTrace();
-                System.out.println("Error with ITAdminTesting, will fix later");
-                System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
-                assert false;
+                assertEquals(user.getUsername(), dbUser.getUsername());
+            } catch (SQLException e) {
+                if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
+                    System.out.println("User maybe already exist? - insertSysAdmin()");
+                } else {
+                    throw e;
+                }
             }
-        }
-        catch (User.UserTypeException | User.EmptyFieldException e) {
-            e.printStackTrace();
-            assert false;
-        }
+        });
     }
     @Test
     public void insertITAdmin() {
-        try {
-            User user = itAdmin.createUser("newITAdmin1", "", "ITAdmin");
-            db.insertUser(user);
+        assertDoesNotThrow(() -> {
+            try {
+                User user = (User) itAdmin.createUser("newITAdmin1", "", "ITAdmin")[0];
+                db.insertUser(user);
 
-            User dbUser = db.getUser("newITAdmin1");
+                User dbUser = db.getUser("newITAdmin1");
 
-            assertEquals(user.getUsername(), dbUser.getUsername());
-        }
-        catch (SQLException e) {
-            if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
-                System.out.println("User maybe already exist? - insertITAdmin()");
-            } else {
-                e.printStackTrace();
-                System.out.println("Error with ITAdminTesting, will fix later");
-                System.out.println("Error is likely due to db not updated with the changes I manually made to the tables. I had to delete the ETP..db file and run the DBTester again to get it right.");
-                assert false;
+                assertEquals(user.getUsername(), dbUser.getUsername());
+
+                UsersDataSource.getInstance().editUser("newITAdmin1", "SystemsAdmin", "");
+                User check = UsersDataSource.getInstance().getUser("newITAdmin1");
+                assertEquals("SystemsAdmin", check.getUserType());
+            } catch (SQLException e) {
+                if (e.getErrorCode() == CONSTRAINT_EXCEPTION_CODE) {
+                    System.out.println("User maybe already exist? - insertITAdmin()");
+                } else {
+                    throw e;
+                }
             }
-        }
-        catch (User.UserTypeException | User.EmptyFieldException e) {
-            e.printStackTrace();
-            assert false;
-        }
-    }
-
-    // Edit user tests
-    @Test
-    public void checkMemberEdit() throws User.UserTypeException, SQLException {
-        User check = UsersDataSource.getInstance().getUser("newLeader");
-        assertEquals("OrganisationalUnitMembers", check.getUserType());
-        assertEquals("unit2", ((OrganisationalUnitMembers)check).getUnitName());
-    }
-    @Test
-    public void checkITAdminEdit() throws SQLException, User.UserTypeException {
-        User check = UsersDataSource.getInstance().getUser("newITAdmin1");
-        assertEquals("SystemsAdmin", check.getUserType());
+        });
     }
     // END DB TESTS
-*/
+
     // Edit user tests
     @Test
     public void editMemberCheckUnitName() {
-        try {
+        assertDoesNotThrow(() -> {
             ITAdmin user = new ITAdmin("newLeader", "pass", "salt");
             OrganisationalUnitMembers out = (OrganisationalUnitMembers)itAdmin.editUser(user, "OrganisationalUnitMembers", "unit2");
             assertEquals("unit2", out.getUnitName());
-        } catch (Exception e) {
-            e.printStackTrace();
-            assert false;
-        }
+        });
 
     }
     @Test
     public void editITAdminCheckUnitName() {
-        try {
+        assertDoesNotThrow(() -> {
             ITAdmin user = new ITAdmin("newITAdmin1", "pass", "salt");
             SystemsAdmin out = (SystemsAdmin) itAdmin.editUser(user, "SystemsAdmin", "unit1");
-        } catch (Exception e) {
-            e.printStackTrace();
-            assert false;
-        }
+        });
     }
 
 
@@ -249,11 +233,6 @@ public class ITAdminTesting {
         itAdmin.changePassword("newPassword");
         assertFalse(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword1", itAdmin.getPassword()));
     }
-
-//    @AfterAll
-//    public static void dbClose() throws SQLException {
-//        db.close();
-//    }
 
     @Test
     public void createValidOrgUnit() {

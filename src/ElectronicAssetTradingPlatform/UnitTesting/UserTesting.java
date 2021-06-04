@@ -15,20 +15,13 @@ import java.sql.SQLException;
 public class UserTesting {
     // Exception codes: https://sqlite.org/rescode.html
     private static final int CONSTRAINT_EXCEPTION_CODE = 19;
-    /*
-    INSERT INTO User_Accounts (Username, Password_hash, Salt, User_Type, Unit_ID) VALUES ('adminGuy', 'pass123', 'salt', 'ITAdmin', null);
-     */
 
     ITAdmin itAdmin;
-//    static UsersDataSource db;
 
     @BeforeEach
     @Test
     public void setUpUser() {
         // Recreate db
-//        ETPDataSource etp = new ETPDataSource();
-//        db = UsersDataSource.getInstance();
-        // create an organisational unit member
         itAdmin = new ITAdmin("adminGuy", "pass123", "salt");
 
     }
@@ -43,9 +36,4 @@ public class UserTesting {
         // Test password checking works
         assertTrue(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword", itAdmin.getPassword()));
     }
-
-//    @AfterAll
-//    public static void close() throws SQLException {
-//        db.close();
-//    }
 }

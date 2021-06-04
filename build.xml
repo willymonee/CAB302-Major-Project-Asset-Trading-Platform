@@ -52,21 +52,17 @@
         <javac srcdir="src/${topPackage}" classpath="${base}:${junitpath}" destdir="${base}" includeantruntime="false">
             <include name="AssetTrading/*.java" />
 
-            <include name="Database/MockDBs/*.java" />
-
             <include name="Exceptions/*.java" />
 
-            <include name="GUI/GUI.java" />
-            <include name="GUI/ChangePasswordGUI.java" />
-            <include name="GUI/SystemsAdminGUI.java" />
+            <include name="GUI/*.java" />
+            <exclude name="GUI/ServerGUI.java" />
             <include name="GUI/ITAdmin/*.java" />
             <include name="GUI/OrgUnitMembersandLeader/*.java" />
 
             <include name="Passwords/*.java" />
 
-            <include name="Server/NetworkCommands.java" />
-            <include name="Server/ReadConfig.java" />
-            <include name="Server/NetworkDataSource.java" />
+            <include name="Server/*.java" />
+            <exclude name="Server/NetworkServer.java" />
 
             <include name="Users/*.java" />
 
@@ -79,8 +75,13 @@
     </target>
 
     <target name="compileTests" depends="compileClient" description="Compile tests" >
+        <fileset dir="./">
+            <include name="ETP.db"/>
+            <include name="db.props"/>
+        </fileset>
         <javac srcdir="src/${topPackage}/UnitTesting" classpath="${baseServer}:${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" destdir="utestclasses" includeantruntime="false">
-            <include name="HistoryTesting.java" />
+            <include name="*.java" />
+            <exclude name="ServerDataTesting.java" />
         </javac>
     </target>
 

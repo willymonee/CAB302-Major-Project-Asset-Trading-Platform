@@ -7,7 +7,6 @@ import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
-import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,26 +47,26 @@ public class HistoryTesting {
         System.out.println(assetPriceHistory);
     }
 
-    @Test
-    public void testNetworkInsert() {
-        NetworkDataSource net = new NetworkDataSource();
-        net.run();
-        BuyOffer buyOffer = new BuyOffer("iPhone 10", 2, 33.0, "そら", "Human Resources");
-        SellOffer sellOffer = new SellOffer("iPhone 10", 2, 33.0, "willymon", "Human Resources");
-        net.addAssetHistory(buyOffer, sellOffer, 2);
-    }
-
-    @Test
-    public void testNetworkGetAssetHistory() {
-        NetworkDataSource net = new NetworkDataSource();
-        net.run();
-        try {
-            net.getAssetHistory("iPhone 10");
-            System.out.println(net.getAssetHistory("iPhone 10"));
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Test
+//    public void testNetworkInsert() {
+//        NetworkDataSource net = new NetworkDataSource();
+//        net.run();
+//        BuyOffer buyOffer = new BuyOffer("iPhone 10", 2, 33.0, "そら", "Human Resources");
+//        SellOffer sellOffer = new SellOffer("iPhone 10", 2, 33.0, "willymon", "Human Resources");
+//        net.addAssetHistory(buyOffer, sellOffer, 2);
+//    }
+//
+//    @Test
+//    public void testNetworkGetAssetHistory() {
+//        NetworkDataSource net = new NetworkDataSource();
+//        net.run();
+//        try {
+//            net.getAssetHistory("iPhone 10");
+//            System.out.println(net.getAssetHistory("iPhone 10"));
+//        } catch (DatabaseException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Test
     public void testUnitHistory() {
@@ -93,28 +92,28 @@ public class HistoryTesting {
         }
     }
 
-    @Test
-    public void testNetworkGetUnitTradeHistory() throws LessThanZeroException{
-        NetworkDataSource net = new NetworkDataSource();
-        net.run();
-        TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
-        try {
-            unitTradeHistory = net.getUnitTradeHistory("Human Resources");
-
-            for(Map.Entry<Integer, TradeHistory> entry : unitTradeHistory.entrySet()) {
-                Integer key = entry.getKey();
-                TradeHistory value = entry.getValue();
-
-                System.out.println("Key: " + key + ", " + "Buy/Sell: " + value.getBuyOrSell() + ", Asset Name: "
-                        + value.getAssetName() + ", Quantity: " + value.getTradedQuantity() + ", Price: "
-                        + value.getPrice() + ", Total: " + value.getTotal() + ", Date: "
-                        + value.getDateFulfilled() + ", To/From: " + value.getunitNameOfTrader());
-            }
-        }
-        catch (LessThanZeroException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(net.getUnitTradeHistory("Human Resources"));
-    }
+//    @Test
+//    public void testNetworkGetUnitTradeHistory() throws LessThanZeroException{
+//        NetworkDataSource net = new NetworkDataSource();
+//        net.run();
+//        TreeMap<Integer, TradeHistory> unitTradeHistory = new TreeMap<>();
+//        try {
+//            unitTradeHistory = net.getUnitTradeHistory("Human Resources");
+//
+//            for(Map.Entry<Integer, TradeHistory> entry : unitTradeHistory.entrySet()) {
+//                Integer key = entry.getKey();
+//                TradeHistory value = entry.getValue();
+//
+//                System.out.println("Key: " + key + ", " + "Buy/Sell: " + value.getBuyOrSell() + ", Asset Name: "
+//                        + value.getAssetName() + ", Quantity: " + value.getTradedQuantity() + ", Price: "
+//                        + value.getPrice() + ", Total: " + value.getTotal() + ", Date: "
+//                        + value.getDateFulfilled() + ", To/From: " + value.getunitNameOfTrader());
+//            }
+//        }
+//        catch (LessThanZeroException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println(net.getUnitTradeHistory("Human Resources"));
+//    }
 }
