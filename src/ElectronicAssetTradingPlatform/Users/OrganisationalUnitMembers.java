@@ -3,7 +3,6 @@ package ElectronicAssetTradingPlatform.Users;
 import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
-import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 

@@ -20,14 +20,14 @@ public class UserTesting {
      */
 
     ITAdmin itAdmin;
-    static UsersDataSource db;
+//    static UsersDataSource db;
 
     @BeforeEach
     @Test
     public void setUpUser() {
         // Recreate db
-        ETPDataSource etp = new ETPDataSource();
-        db = UsersDataSource.getInstance();
+//        ETPDataSource etp = new ETPDataSource();
+//        db = UsersDataSource.getInstance();
         // create an organisational unit member
         itAdmin = new ITAdmin("adminGuy", "pass123", "salt");
 
@@ -44,8 +44,8 @@ public class UserTesting {
         assertTrue(Hashing.compareHashPass(itAdmin.getSalt(), "newPassword", itAdmin.getPassword()));
     }
 
-    @AfterAll
-    public static void close() throws SQLException {
-        db.close();
-    }
+//    @AfterAll
+//    public static void close() throws SQLException {
+//        db.close();
+//    }
 }

@@ -1,7 +1,5 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
-import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
-import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.util.Iterator;

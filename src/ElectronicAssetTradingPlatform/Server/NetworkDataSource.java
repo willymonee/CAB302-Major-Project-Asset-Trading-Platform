@@ -1,14 +1,11 @@
 package ElectronicAssetTradingPlatform.Server;
 
 import ElectronicAssetTradingPlatform.AssetTrading.*;
-import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
-import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 
 import javax.swing.JOptionPane;
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

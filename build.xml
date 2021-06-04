@@ -1,0 +1,175 @@
+<project name="ElectronicAssetTradingPlatform" default="clientBuild" basedir=".">
+    <property name="base" value="artifacts" />
+    <property name="baseServer" value="artifactsServer" />
+    <property name="testBase" value="testFiles" />
+    <property name="topPackage" value="ElectronicAssetTradingPlatform" />
+
+    <property name="junitJar" value="lib/junit-jupiter-api-5.7.0.jar" />
+    <property name="junitPlatformJar" value="lib/junit-platform-commons-1.7.0.jar" />
+    <property name="opentestJar" value="lib/opentest4j-1.2.0.jar" />
+    <property name="apiguardianJar" value="lib/apiguardian-api-1.1.0.jar" />
+    <property name="sqliteJar" value="sqlite-jdbc-3.34.0.jar" />
+    <property name="hamcrestJar" value="hamcrest-core-1.3.jar" />
+
+    <property name="junitpath" value="${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" />
+
+
+    <target name="prepare" description="Create target directories">
+        <mkdir dir="${testBase}" />
+        <mkdir dir="${base}" />
+        <mkdir dir="${baseServer}" />
+        <mkdir dir="doc" />
+        <mkdir dir="utestclasses" />
+    </target>
+
+    <target name="compileServer" depends="prepare" description="Compile all source files (Server)" >
+        <javac srcdir="src/${topPackage}" classpath="${baseServer}:${junitpath}" destdir="${baseServer}" includeantruntime="false">
+            <include name="AssetTrading/*.java" />
+
+            <include name="Database/*.java" />
+            <include name="Database/MockDBs/*.java" />
+
+            <include name="Exceptions/*.java" />
+
+            <include name="GUI/ServerGUI.java" />
+
+            <include name="Passwords/*.java" />
+
+            <include name="Server/*.java" />
+
+            <include name="Users/*.java" />
+
+            <classpath>
+                <fileset dir="lib">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Limit what client sees -->
+    <target name="compileClient" depends="compileServer" description="Compile all source files (Client)" >
+        <javac srcdir="src/${topPackage}" classpath="${base}:${junitpath}" destdir="${base}" includeantruntime="false">
+            <include name="AssetTrading/*.java" />
+
+            <include name="Database/MockDBs/*.java" />
+
+            <include name="Exceptions/*.java" />
+
+            <include name="GUI/GUI.java" />
+            <include name="GUI/ChangePasswordGUI.java" />
+            <include name="GUI/SystemsAdminGUI.java" />
+            <include name="GUI/ITAdmin/*.java" />
+            <include name="GUI/OrgUnitMembersandLeader/*.java" />
+
+            <include name="Passwords/*.java" />
+
+            <include name="Server/NetworkCommands.java" />
+            <include name="Server/ReadConfig.java" />
+            <include name="Server/NetworkDataSource.java" />
+
+            <include name="Users/*.java" />
+
+            <classpath>
+                <fileset dir="lib">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="compileTests" depends="compileClient" description="Compile tests" >
+        <javac srcdir="src/${topPackage}/UnitTesting" classpath="${baseServer}:${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" destdir="utestclasses" includeantruntime="false">
+            <include name="*.java" />
+        </javac>
+    </target>
+
+    <target name="utest" depends="compileTests" description="Run JUnit">
+        <junitlauncher printSummary="true" failureProperty="junit.failure">
+            <classpath>
+                <pathelement path="utestclasses:${baseServer}" />
+                <pathelement path="${junitpath}" />
+            </classpath>
+            <testclasses outputDir="${testBase}">
+                <fileset dir="utestclasses"/>
+                <listener type="legacy-xml"/>
+            </testclasses>
+        </junitlauncher>
+        <fail if="junit.failure" message="junit tests failed - aborting"/>
+    </target>
+
+    <target name="serverBuild" depends="utest" >
+        <jar destfile="ElectronicAssetTrading-Server.jar" basedir="${baseServer}">
+            <fileset dir="./">
+                <include name="ETP.db"/>
+                <include name="ipconfig.props"/>
+                <include name="db.props"/>
+            </fileset>
+            <manifest>
+                <!-- Main destination -->
+                <attribute name="Main-Class"
+                           value="ElectronicAssetTradingPlatform.GUI.ServerGUI"/>
+                <!-- Who is building this jar? -->
+                <attribute name="Built-By" value="${user.name}"/>
+                <!-- Information about the program itself -->
+                <attribute name="Implementation-Vendor" value="QUT"/>
+                <attribute name="Implementation-Title" value="CAB302 Exercise"/>
+                <attribute name="Implementation-Version" value="1.0.0"/>
+            </manifest>
+            <zipgroupfileset dir="lib" includes="**/*.jar"/>
+        </jar>
+    </target>
+
+    <target name="clientBuild" depends="serverBuild" >
+        <fileset dir="./">
+            <include name="ipconfig.props"/>
+            <include name="db.props"/>
+        </fileset>
+        <jar destfile="ElectronicAssetTrading-Client.jar" basedir="${base}">
+            <manifest>
+                <!-- Main destination -->
+                <attribute name="Main-Class"
+                           value="ElectronicAssetTradingPlatform.GUI.GUI"/>
+                <!-- Who is building this jar? -->
+                <attribute name="Built-By" value="${user.name}"/>
+                <!-- Information about the program itself -->
+                <attribute name="Implementation-Vendor" value="QUT"/>
+                <attribute name="Implementation-Title" value="CAB302 Exercise"/>
+                <attribute name="Implementation-Version" value="1.0.0"/>
+            </manifest>
+            <zipgroupfileset dir="lib" includes="**/*.jar"/>
+        </jar>
+    </target>
+
+    <target name="doc">
+        <javadoc packagenames="ElectronicAssetTradingPlatform.AssetTrading, ElectronicAssetTradingPlatform.Database, ElectronicAssetTradingPlatform.Database.MockDBs, ElectronicAssetTradingPlatform.Exceptions, ElectronicAssetTradingPlatform.GUI, ElectronicAssetTradingPlatform.GUI.ITAdmin, ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader, ElectronicAssetTradingPlatform.Passwords, ElectronicAssetTradingPlatform.Server, ElectronicAssetTradingPlatform.Users"
+                 sourcepath="src"
+                 destdir="doc"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="Electronic Asset Trading Platform API">
+            <doctitle><![CDATA[<h1>Electronic Asset Trading Platform</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169;  QUT. All Rights Reserved.</i>]]></bottom>
+        </javadoc>
+    </target>
+
+
+    <target name="clean">
+        <delete file="./ElectronicAssetTrading-Server.jar"/>
+        <delete file="./ElectronicAssetTrading-Client.jar"/>
+        <delete file="./electronicAssetTradingSrc.zip"/>
+        <delete dir="${base}"/>
+        <delete dir="doc"/>
+        <delete dir="${testBase}"/>
+        <delete dir="utestclasses"/>
+    </target>
+
+    <target name="src" depends="doc">
+        <zip destfile="electronicAssetTradingSrc.zip"
+             basedir="src"
+             update="true"
+        />
+    </target>
+
+</project>
