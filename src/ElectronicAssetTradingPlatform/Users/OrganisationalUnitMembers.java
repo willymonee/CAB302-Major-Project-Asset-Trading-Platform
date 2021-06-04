@@ -77,9 +77,9 @@ public class OrganisationalUnitMembers extends User {
      */
     public void listSellOrder(String assetType, int quantity, double price) {
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        // using the actual database
+        // add sell offer to the database via server
         SellOfferData.getInstance().addSellOffer(offer);
-        // retrieve the sell offer's ID from the database and set the sell offer's ID
+        // retrieve the sell offer's ID from the database and set the sell offer's ID via server
         int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(sellOfferID);
         // resolve the offer
@@ -96,7 +96,7 @@ public class OrganisationalUnitMembers extends User {
         offer.setOfferID(sellOfferID);
     }
 
-    // tesmp function for testing without resolving
+    // temp function for testing without resolving
     public void listBuyOrderNoResolve(String assetType, int quantity, double price) {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
