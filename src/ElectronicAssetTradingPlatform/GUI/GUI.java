@@ -186,7 +186,8 @@ public class GUI extends JFrame {
                 // 'Close' this window
                 dispose();
             } else {
-                messaging.setText("Login error");
+                if (output == "") output = "Login error";
+                messaging.setText(output);
             }
         }
     }
