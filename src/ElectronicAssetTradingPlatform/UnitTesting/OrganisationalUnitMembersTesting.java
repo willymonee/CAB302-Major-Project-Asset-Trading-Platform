@@ -3,7 +3,6 @@ package ElectronicAssetTradingPlatform.UnitTesting;
 import ElectronicAssetTradingPlatform.Database.ETPDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
-import org.junit.AfterClass;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;

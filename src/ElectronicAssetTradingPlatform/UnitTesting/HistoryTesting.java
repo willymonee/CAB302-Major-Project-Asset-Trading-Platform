@@ -9,7 +9,6 @@ import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
-import org.junit.Test;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
