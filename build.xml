@@ -1,5 +1,6 @@
 <project name="ElectronicAssetTradingPlatform" default="clientBuild" basedir=".">
     <property name="base" value="artifacts" />
+    <property name="baseServer" value="artifactsServer" />
     <property name="testBase" value="testFiles" />
     <property name="topPackage" value="ElectronicAssetTradingPlatform" />
 
@@ -12,15 +13,17 @@
 
     <property name="junitpath" value="${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" />
 
+
     <target name="prepare" description="Create target directories">
         <mkdir dir="${testBase}" />
         <mkdir dir="${base}" />
+        <mkdir dir="${baseServer}" />
         <mkdir dir="doc" />
         <mkdir dir="utestclasses" />
     </target>
 
-    <target name="compile" depends="prepare" description="Compile all source files" >
-        <javac srcdir="src/${topPackage}" classpath="${base}:${junitpath}" destdir="${base}" includeantruntime="false">
+    <target name="compileServer" depends="prepare" description="Compile all source files (Server)" >
+        <javac srcdir="src/${topPackage}" classpath="${baseServer}:${junitpath}" destdir="${baseServer}" includeantruntime="false">
             <include name="AssetTrading/*.java" />
 
             <include name="Database/*.java" />
@@ -28,9 +31,7 @@
 
             <include name="Exceptions/*.java" />
 
-            <include name="GUI/*.java" />
-            <include name="GUI/ITAdmin/*.java" />
-            <include name="GUI/OrgUnitMembersandLeader/*.java" />
+            <include name="GUI/ServerGUI.java" />
 
             <include name="Passwords/*.java" />
 
@@ -46,14 +47,59 @@
         </javac>
     </target>
 
-    <target name="compileTests" depends="compile" description="Compile tests" >
-        <javac srcdir="src/${topPackage}/UnitTesting" classpath="${base}:${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" destdir="utestclasses" includeantruntime="false">
-            <include name="HashingTesting.java" />
+    <!-- Limit what client sees -->
+    <target name="compileClient" depends="compileServer" description="Compile all source files (Client)" >
+        <javac srcdir="src/${topPackage}" classpath="${base}:${junitpath}" destdir="${base}" includeantruntime="false">
+            <include name="AssetTrading/*.java" />
+
+            <include name="Database/MockDBs/*.java" />
+
+            <include name="Exceptions/*.java" />
+
+            <include name="GUI/GUI.java" />
+            <include name="GUI/ChangePasswordGUI.java" />
+            <include name="GUI/SystemsAdminGUI.java" />
+            <include name="GUI/ITAdmin/*.java" />
+            <include name="GUI/OrgUnitMembersandLeader/*.java" />
+
+            <include name="Passwords/*.java" />
+
+            <include name="Server/NetworkCommands.java" />
+            <include name="Server/ReadConfig.java" />
+            <include name="Server/NetworkDataSource.java" />
+
+            <include name="Users/*.java" />
+
+            <classpath>
+                <fileset dir="lib">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
         </javac>
     </target>
 
-    <target name="serverBuild" depends="compileTests" >
-        <jar destfile="ElectronicAssetTrading-Server.jar" basedir="${base}">
+    <target name="compileTests" depends="compileClient" description="Compile tests" >
+        <javac srcdir="src/${topPackage}/UnitTesting" classpath="${baseServer}:${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" destdir="utestclasses" includeantruntime="false">
+            <include name="*.java" />
+        </javac>
+    </target>
+
+    <target name="utest" depends="compileTests" description="Run JUnit">
+        <junitlauncher printSummary="true" failureProperty="junit.failure">
+            <classpath>
+                <pathelement path="utestclasses:${baseServer}" />
+                <pathelement path="${junitpath}" />
+            </classpath>
+            <testclasses outputDir="${testBase}">
+                <fileset dir="utestclasses"/>
+                <listener type="legacy-xml"/>
+            </testclasses>
+        </junitlauncher>
+        <fail if="junit.failure" message="junit tests failed - aborting"/>
+    </target>
+
+    <target name="serverBuild" depends="utest" >
+        <jar destfile="ElectronicAssetTrading-Server.jar" basedir="${baseServer}">
             <fileset dir="./">
                 <include name="ETP.db"/>
                 <include name="ipconfig.props"/>
@@ -76,7 +122,6 @@
 
     <target name="clientBuild" depends="serverBuild" >
         <fileset dir="./">
-            <include name="ETP.db"/>
             <include name="ipconfig.props"/>
             <include name="db.props"/>
         </fileset>

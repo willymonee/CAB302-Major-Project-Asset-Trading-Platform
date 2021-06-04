@@ -112,8 +112,7 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
 
         JTable table = new JTable(tableData, columnNames);
         Helper.formatTable(table);
-        table.setPreferredScrollableViewportSize(new Dimension(840, table.getRowHeight() * table.getRowCount()));
-        table.setMaximumSize(new Dimension(840, table.getRowHeight()*4));
+        table.setPreferredScrollableViewportSize(new Dimension(840, table.getRowHeight() * 6));
         JScrollPane tablePane = new JScrollPane(table);
         tablePane.setVisible(true);
 
@@ -152,8 +151,7 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
 
             JTable assetTable = new JTable(tableData, columnNames);
             Helper.formatTable(assetTable);
-            assetTable.setPreferredScrollableViewportSize(new Dimension(400, assetTable.getRowCount() * assetTable.getRowHeight()));
-            assetTable.setMaximumSize(new Dimension(400,300));
+            assetTable.setPreferredScrollableViewportSize(new Dimension(400, assetTable.getRowHeight() * 3));
             JScrollPane tablePane = new JScrollPane(assetTable);
             tablePane.setVisible(true);
 
@@ -197,7 +195,7 @@ public class OrgUnitTabGUI extends JPanel implements ChangeListener {
 
             JTable table = new JTable(tableData, columnNames);
             Helper.formatTable(table);
-            table.setPreferredScrollableViewportSize(new Dimension(400, table.getRowCount() * table.getRowHeight()));
+            table.setPreferredScrollableViewportSize(new Dimension(400, table.getRowHeight() * 4));
             table.setMaximumSize(new Dimension(400,400));
             JScrollPane tablePane = new JScrollPane(table);
             tablePane.setVisible(true);
