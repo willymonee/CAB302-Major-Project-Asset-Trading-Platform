@@ -86,18 +86,10 @@ public class EditBuyOfferGUI extends JFrame {
         layout.setAutoCreateContainerGaps(true);
 
 
-        // TODO : add current quantity and price in JTextArea for respective comp
         JLabel quantityLabel = Helper.createLabel("Quantity:", 12);
         JLabel priceLabel = Helper.createLabel("Price:", 12);
         JLabel totalPriceLabel = Helper.createLabel("Total Price: ", 12);
-        // TODO: Add asset price = quantity * price
-        double total = quantity * price;
-        String totalasString = Double.toString(total);
 
-        JLabel displayPrice = Helper.createLabel(totalasString, 10);
-        // TODO: Add current order listing price information
-        //JLabel currentOrdersInfo = Helper.createLabel("Current sell orders : ", 9);
-        //JLabel currentOrdersInfoTwo = Helper.createLabel("x for sale starting at x credits or higher ", 7);
 
 
         listQuantity = new JTextField(Integer.toString(quantity), 10);
@@ -113,14 +105,11 @@ public class EditBuyOfferGUI extends JFrame {
         GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
         hGroup.addGroup(layout.createParallelGroup()
                 .addComponent(quantityLabel)
-                .addComponent(priceLabel)
-                .addComponent(totalPriceLabel));
+                .addComponent(priceLabel));
 
         hGroup.addGroup(layout.createParallelGroup()
                 .addComponent(listQuantity)
                 .addComponent(listPrice)
-                .addComponent(totalPriceLabel)
-                .addComponent(displayPrice)
                 .addComponent(relistBtn, GroupLayout.Alignment.CENTER)
                 .addComponent(messaging, GroupLayout.Alignment.CENTER));
         layout.setHorizontalGroup(hGroup);
@@ -134,9 +123,7 @@ public class EditBuyOfferGUI extends JFrame {
         vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(priceLabel)
                 .addComponent(listPrice));
-        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE))
-                .addComponent(totalPriceLabel)
-                .addComponent(displayPrice);
+
 
         vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(relistBtn));
