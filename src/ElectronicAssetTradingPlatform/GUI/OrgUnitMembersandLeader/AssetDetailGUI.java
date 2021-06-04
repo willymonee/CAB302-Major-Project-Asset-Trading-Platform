@@ -223,7 +223,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
 
     // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool
     public void displayBuyAssetPanel() {
-        buyAssetPanel = Helper.createPanel(Color.LIGHT_GRAY);
+        buyAssetPanel = Helper.createPanel(Color.WHITE);
         buyAssetPanel.setLayout(new GridLayout(0, 2, 2, 2));
 
         quantityBuyField = new JTextField(4);
@@ -273,7 +273,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
 
     // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool
     public void displaySellAssetPanel() {
-        sellAssetPanel = Helper.createPanel(Color.LIGHT_GRAY);
+        sellAssetPanel = Helper.createPanel(Color.WHITE);
         sellAssetPanel.setLayout(new GridLayout(0, 2, 3, 2));
 
         quantitySellField = new JTextField(4);

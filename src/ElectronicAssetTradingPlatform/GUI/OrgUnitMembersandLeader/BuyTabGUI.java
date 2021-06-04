@@ -191,6 +191,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                 {
                     System.out.println("Closed");
                     updateTables();
+                    welcomeMessage.setText(memberTextDisplay());
                     e.getWindow().dispose();
                 }
             });
@@ -379,11 +380,10 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         }
     }
 
-
-
     @Override
     public void stateChanged(ChangeEvent e) {
         System.out.println("updating table");
+        welcomeMessage.setText(memberTextDisplay());
         updateTables();
     }
 }

@@ -158,7 +158,7 @@ public class BuyOffer extends Offer  {
         // if the buy org unit does not own the asset yet, add that asset to their unit with quantity 0 initially
         if (!orgOwnsAsset()) {
             OrganisationalUnit unit = new OrganisationalUnit(this.getUnitName(), 0);
-            dataSource.editOrgUnitAssets(unit, this.getAssetName());
+            dataSource.editOrgUnitAssets(unit, this.getAssetName(), 0);
         }
         // add assets to the buy unit
         dataSource.editAssets(quantity, this.getUnitName(), this.getAssetName());
@@ -176,7 +176,7 @@ public class BuyOffer extends Offer  {
                 Map.Entry element = (Map.Entry) orgAssetsIter.next();
                 if (element.getKey().equals(this.getAssetName())) {
                     return true;
-                };
+                }
             }
 
         } catch (DatabaseException e) {

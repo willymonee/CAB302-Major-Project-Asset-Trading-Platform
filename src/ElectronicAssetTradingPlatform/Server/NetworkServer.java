@@ -396,15 +396,18 @@ public class NetworkServer {
             case EDIT_ORG_UNIT_CREDITS -> {
                 // Get input
                 OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
+                float newCredits = (float) objectInputStream.readObject();
 
                 synchronized (database) {
 //                    String unitName = null;
 //                    try {
 //                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
 //                    } catch (ClassCastException ignored) {}
+                    System.out.println(orgUnit.getUnitName());
+                    System.out.println(newCredits);
 
                     // Save to db
-                    UnitDataSource.getInstance().editOrgUnitCredits(orgUnit.getUnitName(), orgUnit.getCredits());
+                    UnitDataSource.getInstance().editOrgUnitCredits(orgUnit.getUnitName(), newCredits);
 
                     // Write success output
                     objectOutputStream.writeObject("Edited Organisational Unit Credits.");
@@ -416,6 +419,7 @@ public class NetworkServer {
                 // Get input
                 OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
                 String assetName = (String) objectInputStream.readObject();
+                int newQuantity = (int) objectInputStream.readObject();
 
 
                 synchronized (database) {
@@ -425,12 +429,13 @@ public class NetworkServer {
 //                    } catch (ClassCastException ignored) {}
 
                     // Save to db
-                    UnitDataSource.getInstance().editOrgUnitAssets(orgUnit.getUnitName(), assetName, orgUnit.getAssetQuantity(assetName));
+                    UnitDataSource.getInstance().editOrgUnitAssets(orgUnit.getUnitName(), assetName, newQuantity);
 
                     // Write success output
                     objectOutputStream.writeObject("Edited Organisational Unit Assets.");
                     System.out.println("Wrote to socket: " + socket.toString());
                 }
+
                 objectOutputStream.flush();
             }
             case GET_ALL_ASSETS -> {
