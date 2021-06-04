@@ -119,6 +119,21 @@ public class SellOfferData extends OfferData {
     }
 
     /**
+     * Return the quantity of a particular asset being used in sell offers
+     */
+    public int quantityAssetInSellOffer(String unitName, String assetName) {
+        int quantity = 0;
+        TreeMap<Integer, SellOffer> orgOffersMap = getOrgOffersMap(unitName);
+        for (Map.Entry<Integer, SellOffer> sellOffer : orgOffersMap.entrySet()) {
+            String sellOfferAssetName = sellOffer.getValue().getAssetName();
+            if (sameOrgUnitName(assetName, sellOfferAssetName)) {
+                quantity += sellOffer.getValue().getQuantity();
+            }
+        }
+        return quantity;
+    }
+
+    /**
      * Return the sell offers of a particular asset as a TreeMap
      */
     public TreeMap<Integer, SellOffer> getAssetOffers(String assetName) {

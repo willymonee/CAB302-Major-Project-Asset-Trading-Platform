@@ -2,6 +2,8 @@ package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
 import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
+import ElectronicAssetTradingPlatform.Exceptions.InsufficientAssetsException;
+import ElectronicAssetTradingPlatform.Exceptions.InsufficientCreditsException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
@@ -44,6 +46,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     private double creditsAvailable;
     private double credits;
     private double creditsInBuyOffers;
+    private int quantityAvailable;
+    private int quantityInSellOffers;
 
 
     public AssetDetailGUI(OrganisationalUnitMembers loggedInUser, NetworkDataSource data, Asset selectedAsset) {
@@ -194,13 +198,15 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         String assetOwned = assetName + "s owned: ";
         try {
             amountOwned = loggedInUser.getQuantityAsset(dataSource, assetName);
-            assetOwned += amountOwned;
         } catch (DatabaseException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
             assetOwned += 0;
             amountOwned = 0;
         }
+        quantityInSellOffers = SellOfferData.getInstance().quantityAssetInSellOffer(loggedInUser.getUnitName(), assetName);
+        quantityAvailable = amountOwned - quantityInSellOffers;
+        assetOwned += quantityAvailable + " (" + amountOwned + " - " + quantityInSellOffers + ")";
         return assetOwned;
     }
 
@@ -242,22 +248,24 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 int quantityInt = Integer.parseInt(quantity);
                 double priceInt = Integer.parseInt(price);
                 if ((double) quantityInt * priceInt > creditsAvailable) {
-                    JOptionPane.showMessageDialog(null,
-                            "Not enough credits to buy", "Warning",
-                            JOptionPane.WARNING_MESSAGE);
+                    throw new InsufficientCreditsException("Not enough credits to create buy offer");
                 }
-                else {
-                    loggedInUser.listBuyOrder(assetName, quantityInt, priceInt);
-                    JOptionPane.showMessageDialog(null,
-                            "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
-                    this.dispose();
-                }
+                loggedInUser.listBuyOrder(assetName, quantityInt, priceInt);
+                JOptionPane.showMessageDialog(null,
+                        "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
+                this.dispose();
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
                         "Please enter a valid number for quantity and price", "Warning",
                         JOptionPane.WARNING_MESSAGE);
             } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            } catch (InsufficientCreditsException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Failed to insert buy offer", "Warning",
                         JOptionPane.WARNING_MESSAGE);
             }
         }
@@ -271,7 +279,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         quantitySellField = new JTextField(4);
         priceSellField = new JTextField(4);
 
-        sellAssetPanel.add( Helper.createLabel(assetOwnedToString(), 12));
+        sellAssetPanel.add(Helper.createLabel(assetOwnedToString(), 12));
         sellAssetPanel.add(Helper.createLabel("", 12));
 
         sellAssetPanel.add(new JLabel("Quantity to sell"));
@@ -292,23 +300,28 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             try {
                 int quantityInt = Integer.parseInt(quantity);
                 double priceInt = Integer.parseInt(price);
-                if (quantityInt > amountOwned) {
-                    JOptionPane.showMessageDialog(null,
-                            "Not enough assets to sell", "Warning",
-                            JOptionPane.WARNING_MESSAGE);
+                if (quantityInt > quantityAvailable) {
+                    throw new InsufficientAssetsException("Not enough assets to sell");
                 }
-                else {
-                    loggedInUser.listSellOrder(assetName, quantityInt, priceInt);
-                    JOptionPane.showMessageDialog(null,
-                            "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price );
-                    this.dispose();
-                }
+                loggedInUser.listSellOrder(assetName, quantityInt, priceInt);
+                JOptionPane.showMessageDialog(null,
+                        "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price);
+                this.dispose();
+
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
                         "Please enter a valid number for quantity and price", "Warning",
                         JOptionPane.WARNING_MESSAGE);
             } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            } catch (InsufficientAssetsException e) {
+                JOptionPane.showMessageDialog(null,
+                        e.getMessage(), "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+            catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Failed to insert sell offer", "Warning",
                         JOptionPane.WARNING_MESSAGE);
             }
         }
