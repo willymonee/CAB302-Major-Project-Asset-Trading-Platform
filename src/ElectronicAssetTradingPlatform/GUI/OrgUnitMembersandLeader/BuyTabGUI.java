@@ -201,7 +201,8 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
 
         else if (src == this.editOfferButton) {
             EditBuyOfferGUI editGUI = new EditBuyOfferGUI(data, loggedInMember, new Asset(selectedAssetTableOne)
-                                                         ,editTabCurrentQuantity, editTabCurrentPrice);
+                                                         ,editTabCurrentQuantity, editTabCurrentPrice, selectedOrgOfferID);
+            updateTables();
         }
     }
 
@@ -397,5 +398,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         System.out.println("updating table");
         updateTables();
     }
+
+    
 }
 

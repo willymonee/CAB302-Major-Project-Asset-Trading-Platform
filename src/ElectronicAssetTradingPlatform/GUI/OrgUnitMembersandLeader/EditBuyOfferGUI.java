@@ -1,6 +1,8 @@
 package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.BuyOfferData;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
@@ -17,6 +19,7 @@ public class EditBuyOfferGUI extends JFrame {
     private Asset asset;
     private int quantity;
     private double price;
+    private int listingID;
 
     private JTextField listQuantity;
     private JTextField listPrice;
@@ -33,12 +36,13 @@ public class EditBuyOfferGUI extends JFrame {
 
     // Maybe param is also previous quantity/ price
     public EditBuyOfferGUI(NetworkDataSource data, OrganisationalUnitMembers member, Asset asset,
-                           int currentQuant, double currentPrice) {
+                           int currentQuant, double currentPrice, int listingID) {
         net = data;
         loggedInMember = member;
         this.asset = asset;
         quantity = currentQuant;
         price = currentPrice;
+        this.listingID = listingID;
 
         initUI();
 
@@ -100,6 +104,7 @@ public class EditBuyOfferGUI extends JFrame {
         messaging.setWrapStyleWord(true);
 
         relistBtn = new JButton("RELIST");
+        relistBtn.addActionListener(new ButtonListener());
 
         // Group for Horizontal Axis
         GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
@@ -144,16 +149,43 @@ public class EditBuyOfferGUI extends JFrame {
             JButton source = (JButton) e.getSource();
 
             if (source == relistBtn) {
-                System.out.println("button relist was pressed: call function here");
-                // relistAsset();
+                System.out.println("button relist was pressed: call function here"); // TODO DELETE THIS
+                relistAsset();
             }
         }
 
+        /**
+         * Relist the Buy Offer with a new quantity and/or price
+         * A different trade ID will be issued however
+         */
         private void relistAsset() {
-            String quantity = listQuantity.getText();
-            String price = listPrice.getText();
+            // Get user input for price and quantity
+            String quantityString = listQuantity.getText();
+            int quantity = Integer.valueOf(quantityString);
+            String priceString = listPrice.getText();
+            double price = Double.parseDouble(priceString);
 
-            // functionality
+            // Error handling
+
+
+            // Duplicate oldOffer in order to create New relisted offer
+            BuyOffer oldOffer = BuyOfferData.getInstance().getOffer(listingID);
+            BuyOfferData.getInstance().removeOffer(listingID);
+            BuyOffer relist = new BuyOffer(oldOffer.getAssetName(), quantity, price,
+                    oldOffer.getUsername(), oldOffer.getUnitName());
+            System.out.println(relist);
+            BuyOfferData.getInstance().addOffer(relist);
+            dispose();
+
+
+
+        }
+
+
+
+        private BuyOffer getOldOffer(int listingID) {
+            BuyOffer oldOffer = BuyOfferData.getInstance().getOffer(listingID);
+            return oldOffer;
         }
     }
 
