@@ -563,16 +563,18 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                         if (total < unitCredits) {
                             BuyOffer oldOffer = BuyOfferData.getInstance().getOffer(listingID);
                             BuyOfferData.getInstance().removeOffer(listingID);
-                            BuyOffer relist = new BuyOffer(oldOffer.getAssetName(), quantity, price,
-                                    oldOffer.getUsername(), oldOffer.getUnitName());
-                            System.out.println(relist);
-                            BuyOfferData.getInstance().addOffer(relist);
+                            int resolveStatus = loggedInMember.listBuyOrder(oldOffer.getAssetName(), quantity, price);
+
+                            JOptionPane.showMessageDialog(null,
+                                    "Successfully relisted offer: " + oldOffer.getAssetName() + " quantity: " + quantity + " price: " + price);
+                            Helper.displayNotification(resolveStatus);
                             updateTables();
                             dispose();
+
                         }
 
                         else {
-                            messaging.setText("Insufficiency credits to create buy offer, you have "
+                            messaging.setText("Insufficient credits to create buy offer, you have "
                                     + unitCredits + " credits available.");
                         }
                     }

@@ -56,7 +56,7 @@ public class MarketplaceTesting {
         // creating a buy offer and adding it into the database through the user
 
         // remove all buy offers
-        //MarketplaceDataSource.getInstance().removeAllOffers();
+        MarketplaceDataSource.getInstance().removeAllOffers();
         // set Human Resources to have 1000 credits
         dataSource.editOrgUnitCredits(humanResources, 1002);
         dataSource.editOrgUnitCredits(management, 1000);
