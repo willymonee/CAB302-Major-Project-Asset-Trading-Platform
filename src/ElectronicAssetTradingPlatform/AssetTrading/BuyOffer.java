@@ -1,11 +1,8 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
-import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
-import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.*;
 
 import java.sql.Date;
@@ -158,7 +155,7 @@ public class BuyOffer extends Offer  {
         // if the buy org unit does not own the asset yet, add that asset to their unit with quantity 0 initially
         if (!orgOwnsAsset()) {
             OrganisationalUnit unit = new OrganisationalUnit(this.getUnitName(), 0);
-            dataSource.editOrgUnitAssets(unit, this.getAssetName());
+            dataSource.editOrgUnitAssets(unit, this.getAssetName(), 0);
         }
         // add assets to the buy unit
         dataSource.editAssets(quantity, this.getUnitName(), this.getAssetName());
@@ -176,7 +173,7 @@ public class BuyOffer extends Offer  {
                 Map.Entry element = (Map.Entry) orgAssetsIter.next();
                 if (element.getKey().equals(this.getAssetName())) {
                     return true;
-                };
+                }
             }
 
         } catch (DatabaseException e) {
@@ -215,22 +212,27 @@ public class BuyOffer extends Offer  {
      * Compares the created buy offer with all sell offers, finding offers with the same asset name and appropriate price
      * Then proceeds to trade assets and credits, whilst updating the offer quantities or removing them (if fully resolved)
      * Repeats this process until the buy offer has been fully resolved OR there are no more matching sell offers
+     * @return
      */
-    public void resolveOffer() {
+    public int resolveOffer() {
         // loop if there is a matching offer and if the offer has not been fully resolved
         boolean buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
         int matchingID = getMatchedPriceOffer();
+        if (!isMatching(matchingID)) {
+            return NOT_RESOLVED;
+        }
         while (isMatching(matchingID) && buyOfferNotResolved) {
             matchingID = getMatchedPriceOffer();
             // trade assets and credits of the matching offers
             tradeAssetsAndCredits(matchingID);
             // edit the quantity of the offers
             reduceMatchingOfferQuantities(matchingID);
-            // probably create a match offer history here whenever assets are traded @Daniel
             // check if offer has been fully resolved
             buyOfferNotResolved = BuyOfferData.getInstance().offerExists(this.getOfferID());
-            System.out.println("Matching offer" + matchingID);
-            System.out.println(buyOfferNotResolved);
+            if (!buyOfferNotResolved) {
+                return FULLY_RESOLVED;
+            }
         }
+        return PARTIALLY_RESOLVED;
     }
 }

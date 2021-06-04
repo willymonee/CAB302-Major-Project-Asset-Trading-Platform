@@ -188,6 +188,7 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                 {
                     System.out.println("Closed");
                     updateTables();
+                    welcomeMessage.setText(memberTextDisplay());
                     e.getWindow().dispose();
                 }
             });
@@ -358,10 +359,13 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
             // if a row is not selected turn off the remove and edit offer buttons
             if (row == -1) {
                 removeOfferButton.setEnabled(false);
+                editOfferButton.setEnabled(false);
+
             }
             // enable the buttons once a row is selected
             else {
                 removeOfferButton.setEnabled(true);
+                editOfferButton.setEnabled(true);
             }
         }
         // if selected value changed in the market sell offers table
@@ -382,6 +386,7 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
     @Override
     public void stateChanged(ChangeEvent e) {
         System.out.println("updating table");
+        welcomeMessage.setText(memberTextDisplay());
         updateTables();
     }
 }
