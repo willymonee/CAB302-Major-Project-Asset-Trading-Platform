@@ -142,7 +142,7 @@
     </target>
 
     <target name="doc">
-        <javadoc packagenames="answer, question"
+        <javadoc packagenames="ElectronicAssetTradingPlatform.AssetTrading, ElectronicAssetTradingPlatform.Database, ElectronicAssetTradingPlatform.Database.MockDBs, ElectronicAssetTradingPlatform.Exceptions, ElectronicAssetTradingPlatform.GUI, ElectronicAssetTradingPlatform.GUI.ITAdmin, ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader, ElectronicAssetTradingPlatform.Passwords, ElectronicAssetTradingPlatform.Server, ElectronicAssetTradingPlatform.Users"
                  sourcepath="src"
                  destdir="doc"
                  author="true"
