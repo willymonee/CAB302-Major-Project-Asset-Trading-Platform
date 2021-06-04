@@ -67,17 +67,18 @@ public class MarketplaceHistoryDataSource {
             UnitDataSource unitDB = new UnitDataSource();
             String buyerID = unitDB.executeGetUnitID(buyOffer.getUnitName());
             insertCompletedTrade.setString(1, buyerID);
+
             String sellerID = unitDB.executeGetUnitID(sellOffer.getUnitName());
             insertCompletedTrade.setString(2, sellerID);
-            if (buyOffer.getAssetName() == sellOffer.getAssetName()) {
+
+            if (buyOffer.getAssetName().equals(sellOffer.getAssetName())) {
                 int assetID = unitDB.executeGetAssetID(buyOffer.getAssetName());
                 insertCompletedTrade.setInt(3, assetID);
             }
 
+
             else
                 execute = false;
-
-
             insertCompletedTrade.setString(4, String.valueOf(sellOffer.getPricePerUnit()));
             insertCompletedTrade.setString(5, String.valueOf(quantity));
 
@@ -91,6 +92,7 @@ public class MarketplaceHistoryDataSource {
             }
 
             else
+
                 throw new SQLException();
 
         } catch (SQLException e) {

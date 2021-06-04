@@ -102,6 +102,8 @@ public class BuyOffer extends Offer  {
      */
     private void reduceMatchingOfferQuantities(int matchingID) {
         if (isMatching(matchingID)) {
+            NetworkDataSource data = new NetworkDataSource();
+            data.run();
             SellOffer matchingSellOffer = SellOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = matchingSellOffer.getQuantity();
             int buyOfferQuantity = this.getQuantity();
@@ -109,7 +111,7 @@ public class BuyOffer extends Offer  {
             if (buyOfferQuantity == sellOfferQuantity) {
                 BuyOfferData.getInstance().removeOffer(this.getOfferID());
                 SellOfferData.getInstance().removeOffer(matchingID);
-                System.out.println("removing buy and sell offer");
+                data.addAssetHistory(this, matchingSellOffer, sellOfferQuantity);
                 this.setQuantity(0);
             }
             // if the quantity specified by the buy offer is greater than the sell offer, remove the sell offer from DB
@@ -118,8 +120,9 @@ public class BuyOffer extends Offer  {
                 int updatedBuyQuantity = buyOfferQuantity - sellOfferQuantity;
                 BuyOfferData.getInstance().updateOfferQuantity(updatedBuyQuantity, this.getOfferID());
                 SellOfferData.getInstance().removeOffer(matchingID);
-                System.out.println("reducing buy and removing sell offer");
+                data.addAssetHistory(this, matchingSellOffer, sellOfferQuantity);
                 this.setQuantity(updatedBuyQuantity);
+
             }
             // if the quantity specified by the buy offers is less than the sell offers, remove the buy offer from DB
             // and reduce the quantity of the sell offer by the quantity of the buy offer
@@ -127,7 +130,7 @@ public class BuyOffer extends Offer  {
                 int updatedSellQuantity = sellOfferQuantity - buyOfferQuantity;
                 SellOfferData.getInstance().updateOfferQuantity(updatedSellQuantity, matchingID);
                 BuyOfferData.getInstance().removeOffer(this.getOfferID());
-                System.out.println("removing buy and reducing sell offer");
+                data.addAssetHistory(this, matchingSellOffer, buyOfferQuantity);
                 this.setQuantity(0);
             }
         }

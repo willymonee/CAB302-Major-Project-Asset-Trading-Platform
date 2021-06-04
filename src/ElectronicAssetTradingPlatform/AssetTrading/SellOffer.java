@@ -93,6 +93,8 @@ public class SellOffer extends Offer {
      * Then it reduces the 'quantities' of both offers
      */
     public void reduceMatchingOfferQuantities(int matchingID) {
+        NetworkDataSource data = new NetworkDataSource();
+        data.run();
         if (isMatching(matchingID)) {
             BuyOffer matchingBuyOffer = BuyOfferData.getInstance().getOffer(matchingID);
             int sellOfferQuantity = this.getQuantity();
@@ -102,6 +104,7 @@ public class SellOffer extends Offer {
                 BuyOfferData.getInstance().removeOffer(this.getOfferID());
                 SellOfferData.getInstance().removeOffer(matchingID);
                 this.setQuantity(0);
+                data.addAssetHistory(matchingBuyOffer, this, sellOfferQuantity);
             }
             // if the quantity specified by the buy offer is greater than the sell offer, remove the sell offer from DB
             // and reduce the quantity of the buy offer by the quantity of the sell offer
@@ -111,6 +114,7 @@ public class SellOffer extends Offer {
                 SellOfferData.getInstance().updateOfferQuantity(updatedSellQuantity, this.getOfferID());
                 BuyOfferData.getInstance().removeOffer(matchingID);
                 this.setQuantity(updatedSellQuantity);
+                data.addAssetHistory(matchingBuyOffer, this, buyOfferQuantity);
             }
             // if the quantity specified by the buy offers is less than the sell offers, remove the buy offer from DB
             // and reduce the quantity of the sell offer by the quantity of the buy offer
@@ -119,9 +123,11 @@ public class SellOffer extends Offer {
                 BuyOfferData.getInstance().updateOfferQuantity(updatedBuyQuantity, matchingID);
                 SellOfferData.getInstance().removeOffer(this.getOfferID());
                 this.setQuantity(0);
+                data.addAssetHistory(matchingBuyOffer, this, sellOfferQuantity);
             }
         }
     }
+
 
     /**
      * Remove credits from the buy org and add credits the sell org

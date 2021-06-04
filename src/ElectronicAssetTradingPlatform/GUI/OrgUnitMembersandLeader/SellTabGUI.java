@@ -1,6 +1,8 @@
 package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
 import ElectronicAssetTradingPlatform.AssetTrading.*;
+import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
@@ -46,6 +48,9 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
     private JPanel orgSellButtonPanel;
     private JButton viewAssetButton;
     private String selectedAsset;
+    private String selectedAssetTableOne;
+    private int editTabCurrentQuantity;
+    private double editTabCurrentPrice;
     private final int OFFER_ID_COLUMN = 0;
     private final int ASSET_NAME_COLUMN = 1;
 
@@ -193,6 +198,12 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                 }
             });
         }
+
+        else if (src == this.editOfferButton) {
+            EditSellOfferGUI editGui = new EditSellOfferGUI(data, loggedInMember, new Asset(selectedAssetTableOne),
+                                                            editTabCurrentQuantity, editTabCurrentPrice, selectedOrgOfferID);
+            updateTables();
+        }
     }
 
 
@@ -320,6 +331,9 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                 try {
                     String value = orgSellOffersTable.getModel().getValueAt(row, column).toString();
                     selectedOrgOfferID = Integer.parseInt(value);
+                    selectedAssetTableOne = SellOfferData.getInstance().getOffer(selectedOrgOfferID).getAssetName();
+                    editTabCurrentQuantity = SellOfferData.getInstance().getOffer(selectedOrgOfferID).getQuantity();
+                    editTabCurrentPrice = SellOfferData.getInstance().getOffer(selectedOrgOfferID).getPricePerUnit();
                 } catch (ArrayIndexOutOfBoundsException p) {
                     // do nothing
                 }
@@ -388,5 +402,195 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
         System.out.println("updating table");
         welcomeMessage.setText(memberTextDisplay());
         updateTables();
+    }
+
+    private class EditSellOfferGUI extends JFrame {
+        private OrganisationalUnitMembers loggedInMember;
+        private NetworkDataSource net;
+        private Asset asset;
+        private int quantity;
+        private double price;
+        private int listingID;
+
+        private JTextField listQuantity;
+        private JTextField listPrice;
+        private JButton relistBtn;
+        private JTextArea messaging;
+
+
+        /**
+         * Constructor for Editing a SellOffer
+         * @param data          The network connection
+         * @param member        The logged in org unit member
+         * @param asset         The specified asset to edit the listing for
+         * @param currentQuant  The unedited quantity the sell offer is listed at
+         * @param currentPrice  The unedited price the sell offer is listed at
+         * @param listingID     The id for the listing
+         */
+
+        // Maybe param is also previous quantity/ price
+        public EditSellOfferGUI(NetworkDataSource data, OrganisationalUnitMembers member, Asset asset,
+                               int currentQuant, double currentPrice, int listingID) {
+            net = data;
+            loggedInMember = member;
+            this.asset = asset;
+            quantity = currentQuant;
+            price = currentPrice;
+            this.listingID = listingID;
+
+
+            initUI();
+
+            // add window close listener
+            addWindowListener(new ClosingListener());
+
+            setTitle("Edit Sell Listing");
+            setMinimumSize(new Dimension(400, 300));
+            pack();
+            setVisible(true);
+        }
+
+        private void initUI() {
+            Container contentPane = this.getContentPane();
+            contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+
+            contentPane.add(Box.createVerticalStrut(20));
+            contentPane.add(panelText());
+            contentPane.add(editAssetPanel());
+
+
+        }
+
+        public JPanel panelText() {
+            JPanel panel = new JPanel();
+            FlowLayout layout = new FlowLayout(5);
+            panel.setLayout(layout);
+            JLabel titleLabel = Helper.createLabel("Edit Sell Order - " + asset.getAssetName(), 18);
+            panel.add(titleLabel);
+            return panel;
+
+
+        }
+
+        public JPanel editAssetPanel() {
+            JPanel displayPanel = new JPanel();
+            GroupLayout layout = new GroupLayout(displayPanel);
+            displayPanel.setLayout(layout);
+
+            // Turn on automatically adding gaps between components
+            layout.setAutoCreateGaps(true);
+
+            // Turn on automatically creating gaps between components that touch
+            // the edge of the container and the container.
+            layout.setAutoCreateContainerGaps(true);
+
+
+            JLabel quantityLabel = Helper.createLabel("Quantity:", 12);
+            JLabel priceLabel = Helper.createLabel("Price:", 12);
+
+
+
+            listQuantity = new JTextField(Integer.toString(quantity), 10);
+            listPrice = new JTextField(Double.toString(price),10);
+            messaging = new JTextArea();
+            messaging.setEditable(false);
+            messaging.setLineWrap(true);
+            messaging.setWrapStyleWord(true);
+
+            relistBtn = new JButton("RELIST");
+            relistBtn.addActionListener(new ButtonListener());
+
+            // Group for Horizontal Axis
+            GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
+            hGroup.addGroup(layout.createParallelGroup()
+                    .addComponent(quantityLabel)
+                    .addComponent(priceLabel));
+
+            hGroup.addGroup(layout.createParallelGroup()
+                    .addComponent(listQuantity)
+                    .addComponent(listPrice)
+                    .addComponent(relistBtn, GroupLayout.Alignment.CENTER)
+                    .addComponent(messaging, GroupLayout.Alignment.CENTER));
+            layout.setHorizontalGroup(hGroup);
+
+            // Group for Vertical Axis
+            GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
+
+            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(quantityLabel)
+                    .addComponent(listQuantity));
+            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(priceLabel)
+                    .addComponent(listPrice));
+
+
+            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(relistBtn));
+            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(messaging));
+            layout.setVerticalGroup(vGroup);
+
+            displayPanel.add(relistBtn);
+            return displayPanel;
+        }
+
+
+        private class ButtonListener implements ActionListener {
+            /**
+             * When an action is performed
+             */
+
+            public void actionPerformed(ActionEvent e) {
+                JButton source = (JButton) e.getSource();
+
+                if (source == relistBtn) {
+                    relistAsset();
+                }
+            }
+
+            /**
+             * Relist the Sell Offer with a new quantity and/or price
+             * A different trade ID will be issued however
+             */
+            private void relistAsset() {
+
+                // Get user input for price and quantity
+                String quantityString = listQuantity.getText();
+                String priceString = listPrice.getText();
+                try {
+                    GUI.checkInputEmpty(quantityString);
+                    GUI.checkInputEmpty(priceString);
+                    int quantity = Integer.parseInt(quantityString);
+                    double price = Double.parseDouble(priceString);
+                    int quantityAvailable = loggedInMember.getQuantityAsset(data, selectedAssetTableOne);
+                    if (quantity < quantityAvailable) {
+                        SellOffer oldOffer = SellOfferData.getInstance().getOffer(listingID);
+                        SellOfferData.getInstance().removeOffer(listingID);
+                        SellOffer relist = new SellOffer(oldOffer.getAssetName(), quantity, price,
+                                oldOffer.getUsername(), oldOffer.getUnitName());
+                        SellOfferData.getInstance().addSellOffer(relist);
+                        updateTables();
+                        dispose();
+
+                    }
+
+                    else {
+                        messaging.setText("Insufficient assets to list for selling.");
+                    }
+
+
+                } catch (EmptyFieldException e) {
+                    messaging.setText("Price/ Quantity cannot be empty");
+                } catch (DatabaseException e) {
+                    e.printStackTrace();
+                } catch (NumberFormatException errorMessage) {
+                    messaging.setText("Please enter a number value");
+                }
+            }
+        }
+
+        public class ClosingListener extends WindowAdapter {
+            public void windowClosing(WindowEvent e) { dispose(); }
+        }
     }
 }

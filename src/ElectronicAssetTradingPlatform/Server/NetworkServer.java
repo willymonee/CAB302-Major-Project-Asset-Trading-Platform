@@ -403,8 +403,7 @@ public class NetworkServer {
 //                    try {
 //                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
 //                    } catch (ClassCastException ignored) {}
-                    System.out.println(orgUnit.getUnitName());
-                    System.out.println(newCredits);
+
 
                     // Save to db
                     UnitDataSource.getInstance().editOrgUnitCredits(orgUnit.getUnitName(), newCredits);

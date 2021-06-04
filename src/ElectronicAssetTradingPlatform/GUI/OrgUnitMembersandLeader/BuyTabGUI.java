@@ -394,6 +394,8 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         }
     }
 
+
+
     @Override
     public void stateChanged(ChangeEvent e) {
         System.out.println("updating table");
@@ -420,6 +422,9 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
          * @param data          The network connection
          * @param member        The logged in org unit member
          * @param asset         The specified asset to edit the listing for
+         * @param currentQuant  The unedited quantity the buy offer is listed at
+         * @param currentPrice  The unedited price the buy offer is listed at
+         * @param listingID     The id for the listing
          */
 
         // Maybe param is also previous quantity/ price
