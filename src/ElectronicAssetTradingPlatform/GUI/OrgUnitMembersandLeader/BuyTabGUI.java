@@ -420,6 +420,9 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
          * @param data          The network connection
          * @param member        The logged in org unit member
          * @param asset         The specified asset to edit the listing for
+         * @param currentQuant  The unedited quantity the buy offer is listed at
+         * @param currentPrice  The unedited price the buy offer is listed at
+         * @param listingID     The id for the listing
          */
 
         // Maybe param is also previous quantity/ price
@@ -565,7 +568,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                             BuyOfferData.getInstance().removeOffer(listingID);
                             BuyOffer relist = new BuyOffer(oldOffer.getAssetName(), quantity, price,
                                     oldOffer.getUsername(), oldOffer.getUnitName());
-                            System.out.println(relist);
                             BuyOfferData.getInstance().addOffer(relist);
                             updateTables();
                             dispose();
