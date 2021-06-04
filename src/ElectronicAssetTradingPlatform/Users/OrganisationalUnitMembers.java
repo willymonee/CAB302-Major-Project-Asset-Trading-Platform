@@ -56,7 +56,7 @@ public class OrganisationalUnitMembers extends User {
      * @param quantity int amount of assets placed for buy order
      * @param price int price of asset requested for buy order
      */
-    public void listBuyOrder(String assetType, int quantity, double price) {
+    public int listBuyOrder(String assetType, int quantity, double price) {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // add offer into database
@@ -65,7 +65,7 @@ public class OrganisationalUnitMembers extends User {
         int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(buyOfferID);
         // look to resolve the offer
-        offer.resolveOffer();
+        return offer.resolveOffer();
     }
 
     /**
@@ -74,7 +74,7 @@ public class OrganisationalUnitMembers extends User {
      * @param quantity int amount of assets placed for sell order
      * @param price int price of asset set for sell order
      */
-    public void listSellOrder(String assetType, int quantity, double price) {
+    public int listSellOrder(String assetType, int quantity, double price) {
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // add sell offer to the database via server
         SellOfferData.getInstance().addSellOffer(offer);
@@ -82,7 +82,7 @@ public class OrganisationalUnitMembers extends User {
         int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(sellOfferID);
         // resolve the offer
-        offer.resolveOffer();
+        return offer.resolveOffer();
     }
 
     // temp function for testing without resolving

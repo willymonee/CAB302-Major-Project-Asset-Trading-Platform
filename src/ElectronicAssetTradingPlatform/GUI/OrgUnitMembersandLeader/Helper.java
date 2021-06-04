@@ -7,6 +7,10 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 
 public class Helper {
+
+    private static final int FULLY_RESOLVED = 2;
+    private static final int PARTIALLY_RESOLVED = 1;
+
     public static JPanel createPanel(Color c) {
         // Create a JPanel object and store it in a local var
         JPanel panel = new JPanel();
@@ -85,5 +89,16 @@ public class Helper {
         scrollPane.setMaximumSize(new Dimension(850, 225));
         scrollPane.getViewport().setBackground(Color.WHITE);
         return scrollPane;
+    }
+
+    public static void displayNotification(int resolveStatus) {
+        if (resolveStatus == PARTIALLY_RESOLVED) {
+            JOptionPane.showMessageDialog(null,
+                    "Your placed offer has been partially resolved ");
+        }
+        else if (resolveStatus == FULLY_RESOLVED) {
+            JOptionPane.showMessageDialog(null,
+                    "Your placed offer has been fully resolved ");
+        }
     }
 }

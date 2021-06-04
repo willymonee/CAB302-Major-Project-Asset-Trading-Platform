@@ -3,7 +3,6 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -180,20 +179,26 @@ public class SellOffer extends Offer {
      * Compares the created sell offer with all buy offers, finding offers with the same asset name and appropriate price
      * Then proceeds to trade assets and credits, whilst updating the offer quantities or removing them (if fully resolved)
      * Repeats this process until the sell offer has been fully resolved OR there are no more matching buy offers
+     * @return
      */
-    public void resolveOffer() {
+    public int resolveOffer() {
         // loop until there is no matching offer OR this.quantity == 0
         boolean sellOfferNotResolved = SellOfferData.getInstance().offerExists(this.getOfferID());
         int matchingID = getMatchedPriceOffer();
+        if (!isMatching(matchingID)) {
+            return NOT_RESOLVED;
+        }
         while (isMatching(matchingID) && sellOfferNotResolved) {
             matchingID = getMatchedPriceOffer();
             // reduce the quantities of matching buy and sell offers + deleting offers if they've been fully resolved
             tradeAssetsAndCredits(matchingID);
             reduceMatchingOfferQuantities(matchingID);
-            // probably create a match offer history here whenever assets are traded @Daniel @and notifcation etc.
-
+            // probably create a match offer history here whenever assets are traded
             sellOfferNotResolved = SellOfferData.getInstance().offerExists(this.getOfferID());
-
+            if (!sellOfferNotResolved) {
+                return FULLY_RESOLVED;
+            }
         }
+        return PARTIALLY_RESOLVED;
     }
 }

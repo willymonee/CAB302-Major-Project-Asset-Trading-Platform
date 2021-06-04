@@ -24,6 +24,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     private final OrganisationalUnitMembers loggedInUser;
     private final NetworkDataSource dataSource;
     private final Asset selectedAsset;
+    private final int FULLY_RESOLVED = 2;
+    private final int PARTIALLY_RESOLVED =1;
     private JTable assetBuyOffersTable;
     private JTable assetSellOffersTable;
     private TableModel assetBuyOfferModel;
@@ -255,9 +257,10 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 if ((double) quantityInt * priceInt > creditsAvailable) {
                     throw new InsufficientCreditsException("Not enough credits to create buy offer");
                 }
-                loggedInUser.listBuyOrder(assetName, quantityInt, priceInt);
+                int resolveStatus = loggedInUser.listBuyOrder(assetName, quantityInt, priceInt);
                 JOptionPane.showMessageDialog(null,
                         "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
+                Helper.displayNotification(resolveStatus);
                 this.dispose();
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
@@ -308,10 +311,11 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 if (quantityInt > quantityAvailable) {
                     throw new InsufficientAssetsException("Not enough assets to sell");
                 }
-                loggedInUser.listSellOrder(assetName, quantityInt, priceInt);
+                int resolveStatus = loggedInUser.listSellOrder(assetName, quantityInt, priceInt);
                 JOptionPane.showMessageDialog(null,
                         "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price);
                 this.dispose();
+                Helper.displayNotification(resolveStatus);
 
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
@@ -331,6 +335,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             }
         }
     }
+
+
 
     private JPanel makeMarketPlaceHistoryGraph() {
         JPanel panel = new JPanel(new BorderLayout());
