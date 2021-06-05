@@ -5,6 +5,10 @@ import ElectronicAssetTradingPlatform.Passwords.Hashing;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.*;
 
+/**
+ * Class for testing functionality with regards to hashing a password
+ * and storing in the database
+ */
 public class HashingTesting {
 
     String salt;

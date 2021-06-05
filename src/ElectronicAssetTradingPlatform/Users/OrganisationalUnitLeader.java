@@ -20,7 +20,7 @@ public class OrganisationalUnitLeader extends OrganisationalUnitMembers {
     }
 
     /**
-     *
+     *im gunna
      * @param memberName Username of the member to be kicked
      */
     public void kickMember(String memberName) {

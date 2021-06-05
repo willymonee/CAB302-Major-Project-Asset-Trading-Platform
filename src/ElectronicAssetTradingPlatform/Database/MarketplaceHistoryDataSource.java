@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+/**
+ * Class to interact with the Marketplace_history table in the database
+ * These consists of querying and inserts
+ */
 public class MarketplaceHistoryDataSource {
 
     private static final String INSERT_COMPLETED_TRADE = "INSERT INTO Marketplace_history (Buyer_ID, Seller_ID, Asset_type_ID,"
@@ -57,8 +61,8 @@ public class MarketplaceHistoryDataSource {
 
     /**
      * Inserts the relevant data into the Marketplace_history database given a completed trade
-     * @param buyOffer      A buy offer
-     * @param sellOffer     A sell offer
+     * @param buyOffer      A buy offer which was created by an Org Unit (Mem/Leader)
+     * @param sellOffer     A sell offer which was created by an Org Unit (Mem/Leader)
      * @param quantity      The quantity of assets traded
      */
     public void insertCompletedTrade(BuyOffer buyOffer, SellOffer sellOffer, int quantity) {
@@ -180,7 +184,7 @@ public class MarketplaceHistoryDataSource {
 
     /**
      * Gets the price history of an asset
-     * @param assetName       String name of the asset's history which is being queried
+     * @param assetName     String name of the asset's history which is being queried
      * @return              A HashMap of the asset's previously sold price as
      *                      float and date a trade for this asset was completed
      */
