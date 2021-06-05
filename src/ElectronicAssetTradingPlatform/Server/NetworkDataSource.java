@@ -361,6 +361,16 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.SET_ORG_UNIT_CREDITS, orgUnit, newCredits);
     }
 
+    /**
+     * Set the a particular organisational unit's assets to a particular value
+     * Different from editUnitAssets as this method sets the asset value, rather than increasing or decreasing
+     * the existing asset value
+     *
+     * @param orgUnit whose assetss will be set
+     * @param assetName to set
+     * @param newQuantity to be set to
+     *
+     */
     public String setOrgUnitAssets(OrganisationalUnit orgUnit, String assetName, int newQuantity) {
         return (String) sendCommand(NetworkCommands.SET_ORG_UNIT_ASSETS, orgUnit, assetName, newQuantity);
     }

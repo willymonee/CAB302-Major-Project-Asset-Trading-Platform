@@ -98,7 +98,7 @@ public class OrgUnitMemGUI extends JFrame implements ChangeListener {
     }
 
     /**
-     * Send notification/state changed event to listener's that the tab has been changed
+     * Send notification/state changed event to listeners that the tab has been changed
      */
     protected void fireStateChanged() {
         ListIterator<ChangeListener> iter = listeners.listIterator();

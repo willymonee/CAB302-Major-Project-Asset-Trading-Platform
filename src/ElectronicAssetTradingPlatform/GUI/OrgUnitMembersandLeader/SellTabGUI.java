@@ -207,33 +207,6 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
         }
     }
 
-
-    /**
-     * Method which will re-update the data in the tables with data from the database
-     */
-    private void updateTables() {
-        int rowCount = orgModel.getRowCount();
-        // remove all rows
-        for (int i = rowCount - 1; i >= 0; i--) {
-            orgModel.removeRow(i);
-        }
-        // add all the offers back using updated data
-        String [][] rowData = getOrgSellOffersData();
-        for (int i = 0; i < rowData.length; i++) {
-            orgModel.addRow(rowData[i]);
-        }
-        // remove all rows
-        rowCount = marketModel.getRowCount();
-        for (int i = rowCount - 1; i >= 0; i--) {
-            marketModel.removeRow(i);
-        }
-        // add all the offers back using updated data
-        rowData = getMarketSellOffersData();
-        for (int i = 0; i < rowData.length; i++) {
-            marketModel.addRow(rowData[i]);
-        }
-    }
-
     /**
      * Retrieve all the current market sell offers
      * @return a two-dimensional array containing these sell offers
@@ -397,11 +370,43 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
         }
     }
 
-
+    /**
+     * Update/refresh the welcome message
+     */
     private void updateMemberTextDisplay() {
         welcomeMessage.setText(memberTextDisplay());
     }
 
+    /**
+     * Method which will re-update the data in the tables with data from the database
+     */
+    private void updateTables() {
+        int rowCount = orgModel.getRowCount();
+        // remove all rows
+        for (int i = rowCount - 1; i >= 0; i--) {
+            orgModel.removeRow(i);
+        }
+        // add all the offers back using updated data
+        String [][] rowData = getOrgSellOffersData();
+        for (int i = 0; i < rowData.length; i++) {
+            orgModel.addRow(rowData[i]);
+        }
+        // remove all rows
+        rowCount = marketModel.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            marketModel.removeRow(i);
+        }
+        // add all the offers back using updated data
+        rowData = getMarketSellOffersData();
+        for (int i = 0; i < rowData.length; i++) {
+            marketModel.addRow(rowData[i]);
+        }
+    }
+
+    /**
+     * State changed listener - occurs whenever a tab in the OrgMemGUI is changed e.g. switching from the Buy to Sell tab
+     * Updates the tables and welcome message
+     */
     @Override
     public void stateChanged(ChangeEvent e) {
         updateMemberTextDisplay();

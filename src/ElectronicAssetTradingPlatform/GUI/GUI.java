@@ -125,7 +125,7 @@ public class GUI extends JFrame {
     }
 
     public void memberGUI(OrganisationalUnitLeader member) {
-
+        new OrgUnitMemGUI(member, data);
     }
 
     public void systemAdminGUI(SystemsAdmin user) {
