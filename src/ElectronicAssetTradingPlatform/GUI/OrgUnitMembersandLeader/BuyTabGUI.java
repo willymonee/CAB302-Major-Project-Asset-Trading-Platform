@@ -39,7 +39,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
     private int selectedOrgOfferID;
     private JTable orgBuyOffersTable;
     private JTable marketBuyOffersTable;
-    private DefaultTableModel model;
+    private DefaultTableModel orgModel;
     private DefaultTableModel marketModel;
     private JButton removeOfferButton;
     private JButton editOfferButton;
@@ -51,8 +51,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
     private double editTabCurrentPrice;
     private final int OFFER_ID_COLUMN = 0;
     private final int ASSET_NAME_COLUMN = 1;
-
-
 
     /**
      * Construct the BuyTab GUI which will display the organisational unit buy offers & market buy offers
@@ -133,7 +131,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
 
     /**
      * A welcome message once in the BuyTab GUI
-     * @return String welcome message including the user's username
+     * @return String welcome message including the user's username and org's credits
      */
     private String memberTextDisplay() {
         String memberTextDisplay = "";
@@ -202,40 +200,13 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                 }
             });
         }
-
+        // when the edit offer button is pressed
         else if (src == this.editOfferButton) {
             EditBuyOfferGUI editGUI = new EditBuyOfferGUI(data, loggedInMember, new Asset(selectedAssetTableOne)
                                                          ,editTabCurrentQuantity, editTabCurrentPrice, selectedOrgOfferID);
             updateTables();
         }
     }
-
-    /**
-     * Method which will re-update the data in the tables with data from the database
-     */
-    private void updateTables() {
-        int rowCount = model.getRowCount();
-        // remove all rows
-        for (int i = rowCount - 1; i >= 0; i--) {
-            model.removeRow(i);
-        }
-        // add all the offers back using updated data
-        String [][] rowData = getOrgUnitBuyOffersRowData();
-        for (int i = 0; i < rowData.length; i++) {
-            model.addRow(rowData[i]);
-        }
-        // remove all rows
-        rowCount = marketModel.getRowCount();
-        for (int i = rowCount - 1; i >= 0; i--) {
-            marketModel.removeRow(i);
-        }
-        // add all the offers back using updated data
-        rowData = getMarketBuyOffersRowData();
-        for (int i = 0; i < rowData.length; i++) {
-            marketModel.addRow(rowData[i]);
-        }
-    }
-
 
     /**
      * Retrieve all the current market buy offers
@@ -259,7 +230,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         return data;
     }
 
-
     /**
      * Extract the organisational unit's buy offers from the TreeMap and return it as an array of strings
      * @return Array of org buy offers to be used as input for JTable
@@ -282,25 +252,27 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         return data;
     }
 
-
     /**
      * Create the org unit's buy offers table
-     * @return
+     * @return unitBuyOffersTable
      */
     private JTable unitBuyOffersTable() {
         // create a table
         String data[][] = getOrgUnitBuyOffersRowData();
         String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
-        model = new DefaultTableModel(data, columns);
-        JTable table = new JTable(model);
+        orgModel = new DefaultTableModel(data, columns);
+        JTable table = new JTable(orgModel);
         Helper.formatTable(table);
-        // add listener to the table
+        // add listeners to the table
         table.addMouseListener(this);
-
         table.getSelectionModel().addListSelectionListener(this);
         return table;
     }
 
+    /**
+     * Create the market buy offers table
+     * @return marketBuyOffersTable
+     */
     private JTable marketBuyOffersTable() {
         // create a table
         String data[][] = getMarketBuyOffersRowData();
@@ -335,7 +307,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                     editTabCurrentQuantity = BuyOfferData.getInstance().getOffer(selectedOrgOfferID).getQuantity();
                     editTabCurrentPrice = BuyOfferData.getInstance().getOffer(selectedOrgOfferID).getPricePerUnit();
                 } catch (ArrayIndexOutOfBoundsException p) {
-                    // do nothing
+                    // do nothing this is when an empty row is pressed
                 }
             }
         }
@@ -348,7 +320,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                 try {
                     selectedAsset = marketBuyOffersTable.getModel().getValueAt(row, column).toString();
                 } catch (ArrayIndexOutOfBoundsException p) {
-                    // do nothing
+                    // do nothing this is when an empty row is pressed
                 }
             }
         }
@@ -395,11 +367,43 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         }
     }
 
-
+    /**
+     * Update/refresh the welcome message
+     */
     private void updateMemberTextDisplay() {
         welcomeMessage.setText(memberTextDisplay());
     }
 
+    /**
+     * Method which will re-update the data in the tables with data from the database
+     */
+    private void updateTables() {
+        int rowCount = orgModel.getRowCount();
+        // remove all rows
+        for (int i = rowCount - 1; i >= 0; i--) {
+            orgModel.removeRow(i);
+        }
+        // add all the offers back using updated data
+        String [][] rowData = getOrgUnitBuyOffersRowData();
+        for (int i = 0; i < rowData.length; i++) {
+            orgModel.addRow(rowData[i]);
+        }
+        // remove all rows
+        rowCount = marketModel.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            marketModel.removeRow(i);
+        }
+        // add all the offers back using updated data
+        rowData = getMarketBuyOffersRowData();
+        for (int i = 0; i < rowData.length; i++) {
+            marketModel.addRow(rowData[i]);
+        }
+    }
+
+    /**
+     * State changed listener - occurs whenever a tab in the OrgMemGUI is changed e.g. switching from the Buy to Sell tab
+     * Updates the tables and welcome message
+     */
     @Override
     public void stateChanged(ChangeEvent e) {
         updateMemberTextDisplay();

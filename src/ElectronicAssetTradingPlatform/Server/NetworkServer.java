@@ -216,6 +216,7 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
             }
+            // add a buy offer to the database
             case ADD_BUY_OFFER -> {
                 // Get input
                 BuyOffer offer =  (BuyOffer) objectInputStream.readObject();
@@ -229,6 +230,7 @@ public class NetworkServer {
                 System.out.println("Wrote to socket: " + socket.toString());
 
             }
+            // add a sell offer to the database
             case ADD_SELL_OFFER -> {
                 SellOffer offer = (SellOffer) objectInputStream.readObject();
                 synchronized (database) {
@@ -240,6 +242,7 @@ public class NetworkServer {
                 objectOutputStream.flush();
                 System.out.println("Wrote to socket: " + socket.toString());
             }
+            // remove a buy offer from the database
             case REMOVE_OFFER -> {
                 int ID = (int) objectInputStream.readObject();
                 synchronized (database) {
@@ -250,6 +253,7 @@ public class NetworkServer {
                 objectOutputStream.flush();
                 System.out.println("Removed offer on behalf of client");
             }
+            // retrieve all buy offers from the database
             case GET_BUY_OFFERS -> {
                 synchronized (database) {
                     final TreeMap<Integer, BuyOffer> buyOffers = MarketplaceDataSource.getInstance().getBuyOffers();
@@ -258,6 +262,7 @@ public class NetworkServer {
                 objectOutputStream.flush();
                 System.out.println("Retrieved buy offers and sent to client" + socket.toString());
             }
+            // retrieve all sell offers from the database
             case GET_SELL_OFFERS -> {
                 synchronized (database) {
                     objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getSellOffers());
@@ -265,6 +270,7 @@ public class NetworkServer {
                 objectOutputStream.flush();
                 System.out.println("Retrieved sell offers and sent to client" + socket.toString());
             }
+            // retrieve the most recently placed offer in the database
             case GET_PLACED_OFFER -> {
                 synchronized (database) {
                     objectOutputStream.writeObject(MarketplaceDataSource.getInstance().getPlacedOfferID());
@@ -272,6 +278,7 @@ public class NetworkServer {
                 objectOutputStream.flush();
                 System.out.println("Retrieved placed offer ID and sent to client");
             }
+            // change the quantity a particular offer has
             case UPDATE_OFFER -> {
                 int newQuantity = (int) objectInputStream.readObject();
                 int ID = (int) objectInputStream.readObject();
@@ -296,6 +303,7 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
             }
+            // increase/decrease the credits of a particular unit
             case UPDATE_CREDITS -> {
                 double credits = (double) objectInputStream.readObject();
                 String orgName = (String) objectInputStream.readObject();
@@ -308,6 +316,7 @@ public class NetworkServer {
 
                 System.out.println("Updated unit credits");
             }
+            // increase/decrease the assets of a particular unit
             case UPDATE_ASSETS -> {
                 int quantity = (int) objectInputStream.readObject();
                 String orgName = (String) objectInputStream.readObject();
@@ -400,6 +409,7 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
             }
+            // set a particular org unit's credits to a selected value
             case SET_ORG_UNIT_CREDITS -> {
                 // Get input
                 OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
@@ -415,6 +425,7 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
             }
+            // set a particular org asset quantity to a selected value
             case SET_ORG_UNIT_ASSETS -> {
                 // Get input
                 OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();

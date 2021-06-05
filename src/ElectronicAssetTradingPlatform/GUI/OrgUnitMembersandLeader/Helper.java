@@ -6,11 +6,19 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 
+/**
+ * Helper Class for creating certain JComponents
+ */
 public class Helper {
 
     private static final int FULLY_RESOLVED = 2;
     private static final int PARTIALLY_RESOLVED = 1;
 
+    /**
+     * Create a JPanel component
+     * @param c colour to set the panel
+     * @return JPanel component
+     */
     public static JPanel createPanel(Color c) {
         // Create a JPanel object and store it in a local var
         JPanel panel = new JPanel();
@@ -20,6 +28,12 @@ public class Helper {
         return panel;
     }
 
+    /**
+     * Create a JLabel
+     * @param text for the label
+     * @param fontSize for the label
+     * @return JLabel component
+     */
     public static JLabel createLabel(String text, int fontSize) {
         // Create a JLabel object
         JLabel label = new JLabel(text);
@@ -91,6 +105,11 @@ public class Helper {
         return scrollPane;
     }
 
+    /**
+     * Method that displays a message notification depending on the resolve status - used after resolving an offer
+     * Doesn't display anything if the inserted offer was not resolved whatsoever
+     * @param resolveStatus after attempting to resolve an offer
+     */
     public static void displayNotification(int resolveStatus) {
         if (resolveStatus == PARTIALLY_RESOLVED) {
             JOptionPane.showMessageDialog(null,

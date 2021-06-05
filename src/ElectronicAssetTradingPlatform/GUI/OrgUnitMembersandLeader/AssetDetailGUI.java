@@ -21,9 +21,12 @@ import java.util.*;
 import java.util.List;
 
 /**
- * GUI for displaying the buy/sell offers, and trade history graph of a given asset
+ * AssetDetailGUI is opened whenever an asset is selected and the view asset button is pressed
+ * It displays buy and sell offers for that particular asset, allows the user to make buy and sell offers for that asset
+ * and also displays a price history chart for it
  */
 public class AssetDetailGUI extends JFrame implements ActionListener {
+    // global variable
     private final OrganisationalUnitMembers loggedInUser;
     private final NetworkDataSource dataSource;
     private final Asset selectedAsset;
@@ -48,30 +51,33 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     private double creditsAvailable;
     private int quantityAvailable;
 
-
-
+    /**
+     * Constructor for the GUI
+     * @param loggedInUser - user who is logged in
+     * @param data - network data source
+     * @param selectedAsset - asset that is being displayed
+     */
     public AssetDetailGUI(OrganisationalUnitMembers loggedInUser, NetworkDataSource data, Asset selectedAsset) {
         this.loggedInUser = loggedInUser;
         this.dataSource = data;
         this.selectedAsset = selectedAsset;
         assetName = selectedAsset.getAssetName();
-
+        // set the container
         Container contentPane = new Container();
         contentPane.setPreferredSize(new Dimension(850, 1100));
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-
         contentPane.add(Box.createVerticalStrut(20));
-        JLabel assetsOwned = Helper.createLabel(assetOwnedToString(), 16);
+        // display the assets and credits available to be used for sell and buy offers
+        JLabel assetsOwned = Helper.createLabel(assetsAvailableToString(), 16);
         JLabel creditsAvailable = Helper.createLabel(creditsAvailableToString(), 16);
         assetsCreditsOwnedPanel = Helper.createPanel(Color.WHITE);
         assetsCreditsOwnedPanel.setLayout(new BorderLayout());
         assetsCreditsOwnedPanel.add(assetsOwned, BorderLayout.WEST);
         assetsCreditsOwnedPanel.add(creditsAvailable, BorderLayout.EAST);
         contentPane.add(assetsCreditsOwnedPanel);
-
+        // display the asset's buy offers - with a sell button to list a corresponding sell offer
         assetBuyOffersPanel = Helper.createPanel(Color.WHITE);
         assetBuyOffersTable = assetBuyOffersTable();
-//        table.setPreferredScrollableViewportSize(new Dimension(850, 100));
         assetBuyOffersScrollPane = Helper.createScrollPane(assetBuyOffersTable, assetBuyOffersPanel);
         assetBuyOffersPanel.add(Helper.createLabel(assetName + " Buy Offers", 20));
         assetBuyOffersPanel.add(assetBuyOffersScrollPane);
@@ -79,7 +85,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 + " requests to buy at " + getBestBuyPrice() + " credits or lower", 14));
         sellButton = createButton("SELL");
         assetBuyOffersPanel.add(sellButton);
-
+        // display the asset's sell offers - with a buy button to list a corresponding buy offer
         assetSellOffersPanel = Helper.createPanel(Color.WHITE);
         assetSellOffersTable = assetSellOffersTable();
         assetSellOffersScrollPane = Helper.createScrollPane(assetSellOffersTable, assetSellOffersPanel);
@@ -89,16 +95,13 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 + " for sale starting at " + getBestSellPrice() + " credits", 14));
         buyButton = createButton("BUY");
         assetSellOffersPanel.add(buyButton);
-
         contentPane.add(assetBuyOffersPanel);
         contentPane.add(assetSellOffersPanel);
-
+        // add the market place history graph
         contentPane.add(makeMarketPlaceHistoryGraph());
-
         JScrollPane scrPane = new JScrollPane(contentPane);
         scrPane.setPreferredSize(new Dimension(900, 850));
         add(scrPane);
-
         // Decorate the frame and make it visible
         setTitle(assetName + " Details");
         setMinimumSize(new Dimension(850, 400));
@@ -107,22 +110,79 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         addWindowListener(new ClosingListener());
     }
 
+    // retrieve the highest buy price for the asset
     private double getBestBuyPrice() {
         return BuyOfferData.getInstance().getHighestPrice(assetName);
     }
 
+    // retrieve the quantity of buy offers for the asset
     private int getBuyQuantity() {
         return BuyOfferData.getInstance().assetQuantity(assetName);
     }
 
+    // retrieve the lowest sell price for the asset
     private double getBestSellPrice() {
         return SellOfferData.getInstance().getLowestPricedSellOffer(assetName);
     }
 
+    // retrieve the quantity of sell offers for the asset
     private int getSellQuantity() {
         return SellOfferData.getInstance().assetQuantity(assetName);
     }
 
+    // return a string containing the amount of assets available for use in sell offers
+    private String assetsAvailableToString() {
+        String assetOwned = assetName + "s owned: ";
+        int totalAssetOwned = getTotalAssetOwned(); // amount the org actually owns
+        int quantityInSellOffers = getQuantityInSellOffers(); // amount that is already in current sell offers
+        quantityAvailable = totalAssetOwned - quantityInSellOffers;
+        assetOwned += quantityAvailable + " (" + totalAssetOwned + " - " + quantityInSellOffers + ")";
+        return assetOwned;
+    }
+
+    // return the total amount of an asset the org owns
+    private int getTotalAssetOwned() {
+        try {
+            return loggedInUser.getQuantityAsset(dataSource, assetName);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            return 0;
+        }
+        return 0;
+    }
+
+    // return the total amount of an asset that the org has placed in current sell offers
+    private int getQuantityInSellOffers() {
+        return SellOfferData.getInstance().quantityAssetInSellOffer(loggedInUser.getUnitName(), assetName);
+    }
+
+    // return as a string the amount of credits available to be made for buy offesr
+    private String creditsAvailableToString() {
+        double totalCredits = getCredits();
+        double creditsInBuyOffers = getCreditsInBuyOffers();
+        creditsAvailable = totalCredits - creditsInBuyOffers;
+        return "Credits Available: " + creditsAvailable + " (" + totalCredits + " - " + creditsInBuyOffers+ ")";
+    }
+
+    // return the amount of credits used in existing buy offers made by the org unit
+    private double getCreditsInBuyOffers() {
+        return BuyOfferData.getInstance().creditsInBuyOffers(loggedInUser.getUnitName());
+    }
+
+    // return the amount of credits the org actually owns
+    private double getCredits() {
+        try {
+            return dataSource.getCredits(loggedInUser.getUnitName());
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            return 0;
+        }
+        return 0;
+    }
+
+    // retrieve buy offers for the asset as row data for the tables
     private String[][] getAssetBuyOffersRowData() {
         TreeMap<Integer, BuyOffer> assetBuyOffers =  BuyOfferData.getInstance().getAssetOffers(selectedAsset.getAssetName());
         String[][] data = new String[assetBuyOffers.size()][];
@@ -140,6 +200,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         return data;
     }
 
+    // retrieve sell offers for the asset as row data for the tables
     private String[][] getAssetSellOffersRowData() {
         TreeMap<Integer, SellOffer> assetSellOffers =  SellOfferData.getInstance().getAssetOffers(selectedAsset.getAssetName());
         String[][] data = new String[assetSellOffers.size()][];
@@ -157,6 +218,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         return data;
     }
 
+    // create an buy offers table for the asset
     private JTable assetBuyOffersTable() {
         // create a table
         String[][] data = getAssetBuyOffersRowData();
@@ -167,6 +229,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         return table;
     }
 
+    // create a sell offers table for the asset
     private JTable assetSellOffersTable() {
         // create a table
         String[][] data = getAssetSellOffersRowData();
@@ -177,6 +240,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         return table;
     }
 
+    // create a button
     private JButton createButton(String buttonText) {
         // create a JButton object and store it in a local var
         JButton button = new JButton();
@@ -186,7 +250,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         // Return the JButton
         return button;
     }
-
+    // action listener for created buttons
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
@@ -199,94 +263,52 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         }
     }
 
-    private String assetOwnedToString() {
-        String assetOwned = assetName + "s owned: ";
-        int totalAssetOwned = getTotalAssetOwned();
-        int quantityInSellOffers = getQuantityInSellOffers();
-        quantityAvailable = totalAssetOwned - quantityInSellOffers;
-        assetOwned += quantityAvailable + " (" + totalAssetOwned + " - " + quantityInSellOffers + ")";
-        return assetOwned;
-    }
-
-    private int getTotalAssetOwned() {
-        try {
-            return loggedInUser.getQuantityAsset(dataSource, assetName);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            return 0;
-        }
-        return 0;
-    }
-
-    private int getQuantityInSellOffers() {
-        return SellOfferData.getInstance().quantityAssetInSellOffer(loggedInUser.getUnitName(), assetName);
-    }
-
-    private String creditsAvailableToString() {
-        double totalCredits = getCredits();
-        double creditsInBuyOffers = getCreditsInBuyOffers();
-        creditsAvailable = totalCredits - creditsInBuyOffers;
-        return "Credits Available: " + creditsAvailable + " (" + totalCredits + " - " + creditsInBuyOffers+ ")";
-    }
-
-    private double getCreditsInBuyOffers() {
-        return BuyOfferData.getInstance().creditsInBuyOffers(loggedInUser.getUnitName());
-    }
-
-    private double getCredits() {
-        try {
-            return dataSource.getCredits(loggedInUser.getUnitName());
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            return 0;
-        }
-        return 0;
-    }
-
     // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool
+    // open a panel for buying the asset
     public void displayBuyAssetPanel() {
         buyAssetPanel = Helper.createPanel(Color.WHITE);
         buyAssetPanel.setLayout(new GridLayout(0, 2, 2, 2));
-
+        // text fields and labels
         quantityBuyField = new JTextField(4);
         priceBuyField = new JTextField(4);
-
         buyAssetPanel.add(new JLabel("Quantity to buy"));
         buyAssetPanel.add(quantityBuyField);
-
         buyAssetPanel.add(new JLabel("Price"));
         buyAssetPanel.add(priceBuyField);
-
+        // confirmation pane
         int option = JOptionPane.showConfirmDialog(null,
                 buyAssetPanel,
                 "Buy Asset" + selectedAsset.getAssetName(),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null);
-
+        // if OK button selected attempt to place the offer for the inputted quantity and price
         if (option == JOptionPane.OK_OPTION) {
             String quantity = quantityBuyField.getText();
             String price = priceBuyField.getText();
             try {
                 int quantityInt = Integer.parseInt(quantity);
                 float priceFloat = Float.parseFloat(price);
+                // if the total cost of the offer is greater than the credits available thrown an InsufficientCreditsException
                 if ((float) quantityInt * priceFloat > creditsAvailable) {
                     throw new InsufficientCreditsException("Not enough credits to create buy offer");
                 }
+                // otherwise attempt to list the offer
                 int resolveStatus = loggedInUser.listBuyOrder(assetName, quantityInt, priceFloat);
+                // display a success message
                 JOptionPane.showMessageDialog(null,
                         "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
+                // display a notification of the resolve status of the offer
                 Helper.displayNotification(resolveStatus);
+                // close the AssetDetailGUI window
                 this.dispose();
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException e) { // if no number was entered/format incorrect
                 JOptionPane.showMessageDialog(null,
                         "Please enter a valid number for quantity and price", "Warning",
                         JOptionPane.WARNING_MESSAGE);
-            } catch (IllegalArgumentException | InsufficientCreditsException e) {
+            } catch (IllegalArgumentException | InsufficientCreditsException e) { // if a value less than 1 or insufficient credits
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
                         JOptionPane.WARNING_MESSAGE);
-            } catch (Exception e) {
+            } catch (Exception e) { // all other exceptions
                 JOptionPane.showMessageDialog(null, "Failed to insert buy offer", "Warning",
                         JOptionPane.WARNING_MESSAGE);
             }
@@ -297,48 +319,49 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     public void displaySellAssetPanel() {
         sellAssetPanel = Helper.createPanel(Color.WHITE);
         sellAssetPanel.setLayout(new GridLayout(0, 2, 3, 2));
-
+        // text fields and labels
         quantitySellField = new JTextField(4);
         priceSellField = new JTextField(4);
-
-        sellAssetPanel.add(Helper.createLabel(assetOwnedToString(), 12));
+        sellAssetPanel.add(Helper.createLabel(assetsAvailableToString(), 12));
         sellAssetPanel.add(Helper.createLabel("", 12));
-
         sellAssetPanel.add(new JLabel("Quantity to sell"));
         sellAssetPanel.add(quantitySellField);
-
         sellAssetPanel.add(new JLabel("Price"));
         sellAssetPanel.add(priceSellField);
-
+        // confirmation dialog buttons
         int option = JOptionPane.showConfirmDialog(null,
                 sellAssetPanel,
                 "Sell Asset " + selectedAsset.getAssetName(),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null);
-
+        // if pressed OK attempt to insert a sell offer given the text inputs
         if (option == JOptionPane.OK_OPTION) {
             String quantity = quantitySellField.getText();
             String price = priceSellField.getText();
             try {
                 int quantityInt = Integer.parseInt(quantity);
                 float priceFloat = Float.parseFloat(price);
+                // if the quantity selected is greater than the quantity available for selling throw an insufficient assets exception
                 if (quantityInt > quantityAvailable) {
                     throw new InsufficientAssetsException("Not enough assets to sell");
                 }
+                // otherwise continue attempting to list a sell offer
                 int resolveStatus = loggedInUser.listSellOrder(assetName, quantityInt, priceFloat);
+                // display a success message for placing offer
                 JOptionPane.showMessageDialog(null,
                         "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price);
-                this.dispose();
+                // display a notification describing the resolve status of the offer
                 Helper.displayNotification(resolveStatus);
-
-            } catch (NumberFormatException e) {
+                // close the AssetDetailGUI
+                this.dispose();
+            } catch (NumberFormatException e) { // if invalid format
                 JOptionPane.showMessageDialog(null,
                         "Please enter a valid number for quantity and price", "Warning",
                         JOptionPane.WARNING_MESSAGE);
-            } catch (IllegalArgumentException | InsufficientAssetsException e) {
+            } catch (IllegalArgumentException | InsufficientAssetsException e) { // if input is less than one or insufficent assets
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
                         JOptionPane.WARNING_MESSAGE);
-            } catch (Exception e) {
+            } catch (Exception e) { // all other exceptions
                 JOptionPane.showMessageDialog(null, "Failed to insert sell offer", "Warning",
                         JOptionPane.WARNING_MESSAGE);
             }
