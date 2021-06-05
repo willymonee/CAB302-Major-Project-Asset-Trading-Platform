@@ -12,6 +12,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
+/**
+ * Server GUI for displaying the port number used, and to shutdown the server
+ */
 public class ServerGUI extends JFrame {
     private JTextField serverInfo;
     private JButton shutdownBtn;

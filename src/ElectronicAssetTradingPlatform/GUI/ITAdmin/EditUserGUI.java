@@ -15,6 +15,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
 
+/**
+ * GUI for editing an existing user
+ */
 class EditUserGUI extends JFrame {
     private final ITAdmin loggedInUser;
     private final NetworkDataSource data;

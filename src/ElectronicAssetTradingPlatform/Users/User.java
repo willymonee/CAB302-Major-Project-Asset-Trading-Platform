@@ -44,9 +44,28 @@ public class User implements Serializable {
         this.salt = Hashing.bytesToString(saltBytes);
     }
 
+    /**
+     * Get Username of the User
+     * @return  String of the username
+     */
     public String getUsername() {return username;}
+
+    /**
+     * Get password of the User
+     * @return  String matched password for User
+     */
     public String getPassword() {return password;}
+
+    /**
+     * Gets the salt value for the password
+     * @return String salt value
+     */
     public String getSalt() {return salt;}
+
+    /**
+     * Gets the User Type of the User
+     * @return  String of type of User
+     */
     public String getUserType() {return userType;}
 
 

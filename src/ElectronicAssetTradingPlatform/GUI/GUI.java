@@ -16,6 +16,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * Login page GUI of the client
+ */
 public class GUI extends JFrame {
     private JTextField username;
     private JTextField password;

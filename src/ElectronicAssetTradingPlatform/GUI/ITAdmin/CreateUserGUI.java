@@ -14,6 +14,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
 
+/**
+ * The GUI for creating a new user
+ */
 class CreateUserGUI extends JFrame {
     private final ITAdmin loggedInUser;
     private final NetworkDataSource data;
