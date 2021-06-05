@@ -165,6 +165,7 @@
         <delete file="./ElectronicAssetTrading-Client.jar"/>
         <delete file="./electronicAssetTradingSrc.zip"/>
         <delete dir="${base}"/>
+        <delete dir="${baseServer}"/>
         <delete dir="doc"/>
         <delete dir="${testBase}"/>
         <delete dir="utestclasses"/>
