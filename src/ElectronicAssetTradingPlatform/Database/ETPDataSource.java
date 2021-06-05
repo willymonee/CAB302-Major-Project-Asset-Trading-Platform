@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.SQLException;
 
+/**
+ * Class to initiate the database schema via JDBC for SQLite
+ */
 public class ETPDataSource {
     // DB Instance
     private Connection connection;
