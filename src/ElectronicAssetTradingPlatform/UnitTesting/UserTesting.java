@@ -22,6 +22,12 @@ public class UserTesting {
     ITAdmin itAdmin;
 //    static UsersDataSource db;
 
+
+    @BeforeAll @Test
+    public static void Start() {
+        System.out.println("User");
+    }
+
     @BeforeEach
     @Test
     public void setUpUser() {

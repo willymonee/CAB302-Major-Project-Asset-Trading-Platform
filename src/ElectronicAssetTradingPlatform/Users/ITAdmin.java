@@ -148,10 +148,10 @@ public class ITAdmin extends User {
      * @param name string for name of new user
      * @param unitName string organisational unit name for new user to be associated with
      * @param userType user type for new user's access level
-     * @return the newly created user object
+     * @return [0]: the newly created user object, [1]: the generated raw password
      * @throws UserTypeException Throws exception when an inputed user type is invalid
      */
-    public User createUser(String name, String unitName, String userType) throws UserTypeException {
+    public Object[] createUser(String name, String unitName, String userType) throws UserTypeException {
         // Create password - length 8
         // Hash password
         byte[] saltBytes = Hashing.newRngBytes(Hashing.SALT_SIZE);
@@ -162,11 +162,6 @@ public class ITAdmin extends User {
         String salt = Hashing.bytesToString(saltBytes);
         String password = Hashing.bytesToString(passwordBytes);
 
-        // Display the raw password for the admin to copy
-        JTextArea text = new JTextArea("Please copy this password down: " + passwordRaw);
-        text.setBackground(null);
-        JOptionPane.showMessageDialog(null, text);
-
         // Try get type
         UsersFactory.UserType type;
         try {
@@ -176,7 +171,7 @@ public class ITAdmin extends User {
             throw new UserTypeException("Invalid user type");
         }
 
-        return UsersFactory.CreateUser(name, password, salt, unitName, type);
+        return new Object[] {UsersFactory.CreateUser(name, password, salt, unitName, type), passwordRaw};
     }
 
     /**
