@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Deprecated Unit Testing used for early implementation of Offers --> See MarketplaceTesting for updated
  */
-public class OfferTesting {
+public class OfferTestingDeprecated {
     // declare a member object
     OrganisationalUnitMembers member;
     OrganisationalUnitMembers otherMember;
