@@ -193,7 +193,7 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                 {
                     System.out.println("Closed");
                     updateTables();
-                    welcomeMessage.setText(memberTextDisplay());
+                    updateMemberTextDisplay();
                     e.getWindow().dispose();
                 }
             });
@@ -397,10 +397,14 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
     }
 
 
+    private void updateMemberTextDisplay() {
+        welcomeMessage.setText(memberTextDisplay());
+    }
+
     @Override
     public void stateChanged(ChangeEvent e) {
         System.out.println("updating table");
-        welcomeMessage.setText(memberTextDisplay());
+        updateMemberTextDisplay();
         updateTables();
     }
 
@@ -569,16 +573,18 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                         SellOffer relist = new SellOffer(oldOffer.getAssetName(), quantity, price,
                                 oldOffer.getUsername(), oldOffer.getUnitName());
                         SellOfferData.getInstance().addSellOffer(relist);
+                        int resolveStatus = loggedInMember.listSellOrder(oldOffer.getAssetName(), quantity,price);
+                        JOptionPane.showMessageDialog(null,
+                                "Successfully relisted offer: " + oldOffer.getAssetName() + " quantity: " + quantity + " price: " + price);
+                        Helper.displayNotification(resolveStatus);
                         updateTables();
+                        updateMemberTextDisplay();
                         dispose();
 
                     }
-
                     else {
                         messaging.setText("Insufficient assets to list for selling.");
                     }
-
-
                 } catch (EmptyFieldException e) {
                     messaging.setText("Price/ Quantity cannot be empty");
                 } catch (DatabaseException e) {

@@ -196,7 +196,7 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                 {
                     System.out.println("Closed");
                     updateTables();
-                    welcomeMessage.setText(memberTextDisplay());
+                    updateMemberTextDisplay();
                     e.getWindow().dispose();
                 }
             });
@@ -395,11 +395,14 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
     }
 
 
+    private void updateMemberTextDisplay() {
+        welcomeMessage.setText(memberTextDisplay());
+    }
 
     @Override
     public void stateChanged(ChangeEvent e) {
         System.out.println("updating table");
-        welcomeMessage.setText(memberTextDisplay());
+        updateMemberTextDisplay();
         updateTables();
     }
 
@@ -574,6 +577,8 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                                     "Successfully relisted offer: " + oldOffer.getAssetName() + " quantity: " + quantity + " price: " + price);
                             Helper.displayNotification(resolveStatus);
                             updateTables();
+                            updateMemberTextDisplay();
+
                             dispose();
 
                         }

@@ -253,11 +253,11 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             String price = priceBuyField.getText();
             try {
                 int quantityInt = Integer.parseInt(quantity);
-                double priceInt = Integer.parseInt(price);
-                if ((double) quantityInt * priceInt > creditsAvailable) {
+                float priceFloat = Float.valueOf(price);
+                if ((float) quantityInt * priceFloat > creditsAvailable) {
                     throw new InsufficientCreditsException("Not enough credits to create buy offer");
                 }
-                int resolveStatus = loggedInUser.listBuyOrder(assetName, quantityInt, priceInt);
+                int resolveStatus = loggedInUser.listBuyOrder(assetName, quantityInt, priceFloat);
                 JOptionPane.showMessageDialog(null,
                         "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
                 Helper.displayNotification(resolveStatus);
@@ -307,11 +307,11 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             String price = priceSellField.getText();
             try {
                 int quantityInt = Integer.parseInt(quantity);
-                double priceInt = Integer.parseInt(price);
+                float priceFloat = Float.valueOf(price);
                 if (quantityInt > quantityAvailable) {
                     throw new InsufficientAssetsException("Not enough assets to sell");
                 }
-                int resolveStatus = loggedInUser.listSellOrder(assetName, quantityInt, priceInt);
+                int resolveStatus = loggedInUser.listSellOrder(assetName, quantityInt, priceFloat);
                 JOptionPane.showMessageDialog(null,
                         "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price);
                 this.dispose();
