@@ -169,14 +169,16 @@ public class MarketplaceHistoryDataSource {
                 unitTradeHistory.put(tradeID, hist);
             }
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            //throwables.printStackTrace();
+            return null;
         } catch (LessThanZeroException e) {
             e.printStackTrace();
+            return null;
         }
         return unitTradeHistory;
     }
 
-        /**
+    /**
      * Gets the price history of an asset
      * @param assetName       String name of the asset's history which is being queried
      * @return              A HashMap of the asset's previously sold price as
@@ -205,7 +207,7 @@ public class MarketplaceHistoryDataSource {
             }
 
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            return null;
         }
         return assetPriceHistory;
     }
