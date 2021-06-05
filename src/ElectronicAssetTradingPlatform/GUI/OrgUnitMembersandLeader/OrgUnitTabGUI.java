@@ -21,6 +21,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+/**
+ * GUI for displaying details about the organisational unit: its trade history, assets it owns, and members of the unit
+ */
 public class OrgUnitTabGUI extends JPanel implements ChangeListener {
     private NetworkDataSource dataSource;
     private OrganisationalUnitMembers member;

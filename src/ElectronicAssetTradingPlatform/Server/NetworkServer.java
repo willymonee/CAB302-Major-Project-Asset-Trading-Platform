@@ -3,9 +3,12 @@ package ElectronicAssetTradingPlatform.Server;
 import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Database.*;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
+import ElectronicAssetTradingPlatform.Passwords.Hashing;
+import ElectronicAssetTradingPlatform.Users.ITAdmin;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 import ElectronicAssetTradingPlatform.Users.User;
 import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
+import ElectronicAssetTradingPlatform.Users.UsersFactory;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -62,6 +65,16 @@ public class NetworkServer {
     public void start() throws IOException {
         // Connect to the database
         database = DBConnectivity.getInstance();
+
+        // Create initial ITAdmin user
+        byte[] salt = Hashing.newRngBytes(Hashing.SALT_SIZE);
+        byte[] hash = Hashing.createHash(salt, "admin123");
+        ITAdmin admin = (ITAdmin) UsersFactory.CreateUser("itadmin", Hashing.bytesToString(hash), Hashing.bytesToString(salt), null, UsersFactory.UserType.ITAdmin);
+        try {
+            UsersDataSource.getInstance().insertUser(admin);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         HashMap<String, String> file = ReadConfig.readConfigFile();
         PORT = ReadConfig.getPort(file);

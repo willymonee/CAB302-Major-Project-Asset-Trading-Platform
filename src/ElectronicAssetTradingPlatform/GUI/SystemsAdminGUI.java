@@ -10,6 +10,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 
+/**
+ * GUI for the Systems Admin, allowing them to backup the database
+ */
 public class SystemsAdminGUI extends JFrame {
     private SystemsAdmin loggedInUser;
 

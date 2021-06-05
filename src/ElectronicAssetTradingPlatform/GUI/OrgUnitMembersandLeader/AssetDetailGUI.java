@@ -20,6 +20,9 @@ import java.sql.Date;
 import java.util.*;
 import java.util.List;
 
+/**
+ * GUI for displaying the buy/sell offers, and trade history graph of a given asset
+ */
 public class AssetDetailGUI extends JFrame implements ActionListener {
     private final OrganisationalUnitMembers loggedInUser;
     private final NetworkDataSource dataSource;
