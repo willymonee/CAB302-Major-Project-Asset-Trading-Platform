@@ -1,16 +1,12 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
-import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
-
 import java.util.*;
 
-import java.sql.Date;
-
+/**
+ * Class for creating a buy offer and resolving the buy offer after it has been created
+ */
 public class BuyOffer extends Offer  {
-    private Date dateResolved;
-
-
     /**
      * Constructor for trade offer
      * @param asset                  Name of the asset to be bought or sold
@@ -23,9 +19,8 @@ public class BuyOffer extends Offer  {
         super(asset, quantity, pricePerUnit, username, organisationalUnitName);
     }
 
-
     /**
-     * Overloaded Constructor for trade offer - used when retrieving offer from DB
+     * Overloaded Constructor for trade offer - used when retrieving offer from DB which includes the orderID
      * @param orderID                The ID of the offer
      * @param asset                  Name of the asset to be bought or sold
      * @param quantity               Quantity of asset
@@ -36,7 +31,6 @@ public class BuyOffer extends Offer  {
     public BuyOffer(int orderID, String asset, int quantity, double pricePerUnit, String username, String organisationalUnitName) {
         super(orderID, asset, quantity, pricePerUnit, username, organisationalUnitName);
     }
-
 
     /**
      * Returns an array list of all sell offers which are offering the same asset (asset name's are the same)
@@ -99,6 +93,9 @@ public class BuyOffer extends Offer  {
     /**
      * Takes a matching sell offer ID and compares it to the buy offer
      * Then it reduces the 'quantities' of both offers
+     * Also inserts into the asset history the buy and sell offer as well as the quantity traded
+     *
+     * @param matchingID matching sell offer ID
      */
     private void reduceMatchingOfferQuantities(int matchingID) {
         if (isMatching(matchingID)) {
@@ -138,6 +135,9 @@ public class BuyOffer extends Offer  {
 
     /**
      * Remove credits from the buy org and add credits the sell org
+     *
+     * @param credit amount of credits to increase/decrease
+     * @param sellOrgName sell organisational unit to insert credits into
      */
     private void tradeCredits(double credit, String sellOrgName) {
         NetworkDataSource dataSource = new NetworkDataSource();
@@ -150,39 +150,20 @@ public class BuyOffer extends Offer  {
 
     /**
      * Remove assets from the sell org and add them to the buy org
-     * TODO add asset to buy org unit if they don't have that asset yet
+     * Also will insert the asset into the org unit if they do not own any copies yet in the DB
      */
     private void tradeAssets(int quantity, SellOffer sellOffer)  {
         NetworkDataSource dataSource = new NetworkDataSource();
         dataSource.run();
         // if the buy org unit does not own the asset yet, add that asset to their unit with quantity 0 initially
-        if (!orgOwnsAsset()) {
+        if (!orgOwnsAsset(this)) {
             OrganisationalUnit unit = new OrganisationalUnit(this.getUnitName(), 0);
-            dataSource.editOrgUnitAssets(unit, this.getAssetName(), 0);
+            dataSource.setOrgUnitAssets(unit, this.getAssetName(), 0);
         }
         // add assets to the buy unit
         dataSource.editAssets(quantity, this.getUnitName(), this.getAssetName());
         // remove assets from the sell unit
         dataSource.editAssets(-(quantity), sellOffer.getUnitName(), sellOffer.getAssetName());
-    }
-
-    private boolean orgOwnsAsset() {
-        NetworkDataSource dataSource = new NetworkDataSource();
-        dataSource.run();
-        try {
-            HashMap<String, Integer> orgAssets = dataSource.getAssets(this.getUnitName());
-            Iterator orgAssetsIter = orgAssets.entrySet().iterator();
-            while (orgAssetsIter.hasNext()) {
-                Map.Entry element = (Map.Entry) orgAssetsIter.next();
-                if (element.getKey().equals(this.getAssetName())) {
-                    return true;
-                }
-            }
-
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     /**
@@ -215,7 +196,9 @@ public class BuyOffer extends Offer  {
      * Compares the created buy offer with all sell offers, finding offers with the same asset name and appropriate price
      * Then proceeds to trade assets and credits, whilst updating the offer quantities or removing them (if fully resolved)
      * Repeats this process until the buy offer has been fully resolved OR there are no more matching sell offers
-     * @return
+     *
+     * @return NOT_RESOLVED if no trades occured, PARTIALLY resolved if part of the offer was resolved, and
+     * FULLY_RESOLVED if the buy offer is fully resolved
      */
     public int resolveOffer() {
         // loop if there is a matching offer and if the offer has not been fully resolved
