@@ -20,7 +20,6 @@ public class UnitDataSource {
     private static final String GET_UNIT_ID = "SELECT Unit_ID FROM Organisational_Units WHERE Name =?";
     private static final String GET_USER_ID = "SELECT USER_ID FROM User_Accounts WHERE Username =?";
     private static final String GET_USERNAME = "SELECT Username FROM User_Accounts WHERE User_ID =?";
-    // delete this statement later just here for testing
     private static final String GET_ASSET_NAME = "SELECT Name FROM Asset_Types WHERE Type_ID =?";
     private static final String GET_ASSET_ID = "SELECT Type_ID FROM Asset_Types WHERE Name=?";
     private static final String UPDATE_CREDITS = "UPDATE Organisational_Units SET Credits= Credits + ? WHERE Name=?";
@@ -39,7 +38,6 @@ public class UnitDataSource {
     PreparedStatement getUnitIDQuery;
     PreparedStatement getUserIDQuery;
     PreparedStatement getUserNameQuery;
-    //delete this statement later
     PreparedStatement getAssetNameQuery;
     PreparedStatement getAssetIDQuery;
     PreparedStatement updateUnitCredits;
@@ -64,6 +62,7 @@ public class UnitDataSource {
     }
     public static UnitDataSource getInstance() { return UnitDataSource.SingletonHolder.INSTANCE; }
 
+    // Establish database connections through initialising prepared statements
     public UnitDataSource() {
         connection = DBConnectivity.getInstance();
         try {
@@ -91,6 +90,7 @@ public class UnitDataSource {
         }
     }
 
+    // Return the unit name given the unit ID
     public String executeGetUnitName(int unitID) throws SQLException {
         // Prepare
         getUnitNameQuery.setInt(1, unitID);
@@ -110,6 +110,7 @@ public class UnitDataSource {
         return unitName;
     }
 
+    // Update database data for organisational unit credits
     public void updateUnitCredits(float credits, String orgName) {
         try {
             updateUnitCredits.setFloat(1, credits);
@@ -120,16 +121,7 @@ public class UnitDataSource {
         }
     }
 
-    public void updateUnitCredits(float credits, int ID) {
-        try {
-            updateUnitCredits.setFloat(1, credits);
-            updateUnitCredits.setInt(2, ID);
-            updateUnitCredits.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
+    // Update database data for organisational unit assets
     public void updateUnitAssets(int quantity, String unitName, String assetName ) {
         try {
             updateUnitAssets.setInt(1, quantity);
@@ -143,17 +135,7 @@ public class UnitDataSource {
         }
     }
 
-    public void updateUnitAssets(int quantity, int unitID,int assetID ) {
-        try {
-            updateUnitAssets.setInt(1, quantity);
-            updateUnitAssets.setInt(2, unitID);
-            updateUnitAssets.setInt(3, assetID);
-            updateUnitAssets.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
+    // Return unit ID given the unit name
     public String executeGetUnitID(String unitName) throws SQLException {
         // Prepare
         getUnitIDQuery.setString(1, unitName);
@@ -174,10 +156,13 @@ public class UnitDataSource {
         return unitID;
     }
 
+    // Return user ID given username input
     public String executeGetUserID(String username) throws SQLException{
-        getUserIDQuery.setString(1, username);
         ResultSet rs = null;
         String userID;
+
+        getUserIDQuery.setString(1, username);
+
         try {
             rs = getUserIDQuery.executeQuery();
             rs.next();
@@ -188,11 +173,11 @@ public class UnitDataSource {
         return userID;
     }
 
-    // get user's username from their ID
+    // Return user name given the user's ID
     public String executeGetUsername(int userID) throws SQLException{
-
         ResultSet rs = null;
         String username;
+
         try {
             getUserNameQuery.setInt(1, userID);
             rs = getUserNameQuery.executeQuery();
@@ -204,11 +189,11 @@ public class UnitDataSource {
         return username;
     }
 
-    // get asset name from asset ID
+    // Return asset name given the asset ID
     public String executeGetAssetName(int assetID) throws SQLException {
-
         String assetName;
         ResultSet rs = null;
+
         try {
             getAssetNameQuery.setInt(1, assetID);
             rs = getAssetNameQuery.executeQuery();
@@ -220,10 +205,12 @@ public class UnitDataSource {
         return assetName;
     }
 
-    // get asset name from asset ID
+    // Return the asset ID integer given the asset name
     public int executeGetAssetID(String assetName) throws SQLException {
         int assetID;
+
         getAssetIDQuery.setString(1, assetName);
+
         try (ResultSet rs = getAssetIDQuery.executeQuery()) {
             if (!rs.isBeforeFirst()) {
                 throw new SQLException("Asset: " + assetName + " is not in the system");
@@ -234,6 +221,7 @@ public class UnitDataSource {
         return assetID;
     }
 
+    // Insert the given organisational unit into the database
     public void insertOrgUnit(OrganisationalUnit orgUnit) throws SQLException {
         addOrgUnitQuery.setString(1, orgUnit.getUnitName());
         addOrgUnitQuery.setFloat(2, orgUnit.getCredits());
@@ -241,17 +229,20 @@ public class UnitDataSource {
         addOrgUnitQuery.execute();
     }
 
+    // Insert the given asset into the database
     public void insertAsset(Asset asset) throws SQLException {
         addAssetQuery.setString(1, asset.getAssetName());
 
         addAssetQuery.execute();
     }
 
+    // Return the matching OrganisationalUnit object given the unit name input
     public OrganisationalUnit getOrgUnit(String unitName) throws SQLException {
-        getUnitCreditsQuery.setString(1, unitName);
-
         ResultSet rs = null;
         float credits;
+        HashMap<String, Integer> assets = UsersDataSource.getInstance().getUnitAssets(unitName); // Get assets
+
+        getUnitCreditsQuery.setString(1, unitName);
 
         try {
             rs = getUnitCreditsQuery.executeQuery();
@@ -259,17 +250,14 @@ public class UnitDataSource {
             rs.next();
 
             credits = rs.getFloat("Credits");
-
         }
         finally {
             if (rs != null) rs.close();
         }
-
-        HashMap<String, Integer> assets = UsersDataSource.getInstance().getUnitAssets(unitName);
-
         return UnitFactory.CreateOrgUnit(unitName, credits, assets);
     }
 
+    // Edit the number of unit credits in the database
     public void editOrgUnitCredits(String unitName, float credits) throws SQLException, LessThanZeroException {
         getOrgUnit(unitName); // Check unit exists
 
@@ -277,14 +265,14 @@ public class UnitDataSource {
         editUnitCreditsQuery.setString(2, unitName);
 
         editUnitCreditsQuery.execute();
-
     }
 
+    // Edit the number of assets in the database
     public void editOrgUnitAssets(String unitName, String assetName, int amount) throws SQLException, LessThanZeroException {
         getOrgUnit(unitName); // Check unit exists
-        String unitID = executeGetUnitID(unitName);
         int unitIDToInteger;
 
+        String unitID = executeGetUnitID(unitName);
         unitIDToInteger = Integer.parseInt(unitID);
 
         editUnitAssetsQuery.setInt(1, unitIDToInteger);
@@ -292,9 +280,9 @@ public class UnitDataSource {
         editUnitAssetsQuery.setInt(3, amount);
 
         editUnitAssetsQuery.execute();
-
     }
 
+    // Edit the name of a unit given the old name of the unit to change and the new name to change to
     public void editOrgUnitName(String newName, String oldUnitName) throws SQLException {
         String unitID = executeGetUnitID(oldUnitName);
         int unitIDToInteger;
@@ -307,36 +295,33 @@ public class UnitDataSource {
         editUnitNameQuery.execute();
     }
 
+    // Return the matching Asset object given the asset name
     public Asset getAsset(String assetName) throws SQLException {
         int assetID = executeGetAssetID(assetName);
+        ResultSet rs = null;
 
         getAssetQuery.setInt(1, assetID);
-
-        ResultSet rs = null;
 
         try {
             rs = getAssetQuery.executeQuery();
             if (rs.isClosed()) throw new SQLException("Asset not found: " + assetName);
             rs.next();
-
         }
         finally {
             if (rs != null) rs.close();
         }
-
         return AssetFactory.CreateAsset(assetName);
     }
 
+    // Edit the asset name in the database
     public void editAssetName(String newName, String oldUnitName) throws SQLException {
         int assetID;
 
         assetID = executeGetAssetID(oldUnitName);
-
 
         editAssetNameQuery.setString(1, newName);
         editAssetNameQuery.setInt(2, assetID);
 
         editAssetNameQuery.execute();
     }
-
 }

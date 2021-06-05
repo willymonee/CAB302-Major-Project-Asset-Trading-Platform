@@ -1,17 +1,17 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
 /**
- * Factory class to create an Asset Object
+ * A factory class to create static Asset objects
  */
 public class AssetFactory {
-
     /**
-     * Create an asset object given an assetName
-     * @param assetName     The name of the asset to be created within the Factory
-     * @return
+     * Constructor for creating a static Asset object provided an asset name is given
+     *
+     * @param assetName A string name of the asset to be created
+     *
+     * @return The Asset object created
      */
     public static Asset CreateAsset(String assetName) {
         return new Asset(assetName);
     }
-
 }

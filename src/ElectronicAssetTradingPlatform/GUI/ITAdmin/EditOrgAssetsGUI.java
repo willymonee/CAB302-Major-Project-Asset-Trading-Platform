@@ -187,10 +187,10 @@ class EditOrgAssetsGUI extends JFrame {
             }
             catch (NumberFormatException e) {
                 // Wrong input error
-                output = "Credits input is invalid, please enter correct input format into credits field.";
+                output = "Asset input is invalid, please enter correct input format into credits field.";
             } catch (LessThanZeroException e) {
                 // LessThanZero input error
-                output = "Cannot remove more credits than owned, please enter a valid credit amount. ";
+                output = "Cannot remove more assets than owned, please enter a valid credit amount. ";
             } catch (MissingAssetException e) {
                 // Wrong asset input error
                 output = "The asset specified is not owned by the unit or does not exist, please input a valid asset. ";

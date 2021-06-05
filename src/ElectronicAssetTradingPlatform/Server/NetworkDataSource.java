@@ -312,11 +312,24 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.ADD_HISTORY, buyOffer, sellOffer, quantity);
     }
 
-
+    /**
+     * Send a command through the network to store the organisational unit in the database
+     *
+     * @param orgUnit The OrganisationalUnit object to store in the database
+     *
+     * @return String
+     */
     public String storeOrgUnit(OrganisationalUnit orgUnit) {
         return (String) sendCommand(NetworkCommands.STORE_ORG_UNIT, orgUnit);
     }
 
+    /**
+     * Store the given asset by sending a command through the network to keep the data in the database
+     *
+     * @param asset The Asset object to store in the database
+     *
+     * @return String
+     */
     public String storeAsset(Asset asset) {
         return (String) sendCommand(NetworkCommands.STORE_ASSET, asset);
     }
@@ -337,6 +350,15 @@ public class NetworkDataSource extends Thread {
         }
     }
 
+    /**
+     * Send a command through the network to retrieve a queried organisational unit in the database given the unit name
+     *
+     * @param unitName A string of the unit name to be retrieved
+     *
+     * @return The organisational unit queried
+     *
+     * @throws DatabaseException Catch any database exceptions that may occur
+     */
     public OrganisationalUnit retrieveOrgUnit(String unitName) throws DatabaseException {
         Object out = sendCommand(NetworkCommands.RETRIEVE_ORG_UNIT, unitName);
 
@@ -397,10 +419,28 @@ public class NetworkDataSource extends Thread {
         }
     }
 
+    /**
+     * Edit the organisational unit name by sending a command through the network to the database given the
+     * OrganisationalUnit object and the unit's old name
+     *
+     * @param orgUnit The OrganisationalUnit object in which the name has been changed
+     * @param oldUnitName A string of the unit's old name
+     *
+     * @return String
+     */
     public String editOrgUnitName(OrganisationalUnit orgUnit, String oldUnitName) {
         return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_NAME, orgUnit, oldUnitName);
     }
 
+    /**
+     * Retrieve the asset from the database given an Asset object
+     *
+     * @param assetName The string name of the asset to retrieve
+     *
+     * @return The queried Asset object
+     *
+     * @throws DatabaseException Catch any database exceptions that may occur
+     */
     public Asset retrieveAsset(String assetName) throws DatabaseException {
         Object out = sendCommand(NetworkCommands.RETRIEVE_ASSET, assetName);
 
@@ -412,6 +452,14 @@ public class NetworkDataSource extends Thread {
         }
     }
 
+    /**
+     * Sends command through to network to edit the asset name in the database
+     *
+     * @param asset The Asset object in which the name has already been changed
+     * @param oldAssetName A string of the asset's previous name
+     *
+     * @return String
+     */
     public String editAssetName(Asset asset, String oldAssetName) {
         return (String) sendCommand(NetworkCommands.EDIT_ASSET_NAME, asset, oldAssetName);
     }

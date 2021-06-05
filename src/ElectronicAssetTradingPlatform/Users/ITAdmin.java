@@ -8,8 +8,6 @@ import ElectronicAssetTradingPlatform.AssetTrading.OrganisationalUnit;
 import ElectronicAssetTradingPlatform.AssetTrading.Asset;
 
 import java.security.SecureRandom;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 
 /**
  * ITAdmin class which extends the user class. This class is for the IT administration team

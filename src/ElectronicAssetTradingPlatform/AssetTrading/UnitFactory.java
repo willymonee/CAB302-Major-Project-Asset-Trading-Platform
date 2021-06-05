@@ -3,42 +3,32 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 import java.util.HashMap;
 
 /**
- * Factory class to create a new Organisational Unit Object
+ * A factory class to create static OrganisationalUnit objects.
  */
 public class UnitFactory {
-
     /**
-     * Options (in GUI) to edit a unit's credits
+     * An enum class holding constants to help distinguish the edit type for credits.
      */
     public enum EditCreditType {
         addCredits, removeCredits
     }
 
     /**
-     * Options (in GUI) to edit a unit's assets
+     * An enum class holding constants to help distinguish the edit type for assets.
      */
     public enum EditAssetType {
         addAssets, removeAssets
     }
 
     /**
-     * Creates a new Organisational Unit Object with credits
-     * @param unitName      Name of the Organisational Unit
-     * @param credits       Initialised credits for the Organisational Unit
-     *                      being created
-     * @return              OrganisationalUnit Object
-     */
-    public static OrganisationalUnit CreateOrgUnit(String unitName, float credits) {
-        return new OrganisationalUnit(unitName, credits);
-    }
-
-    /**
-     * Creates a new Organisational Unit Object with credits and existing assets
-     * @param unitName      Name of the Organisational Unit
-     * @param credits       Initialised credits for the Organisational Unit
-     *                      being created
-     * @param assets        List of assets the Organisational Unit owns
-     * @return              OrganisationalUnit Object
+     * Constructor for creating a new static OrganisationalUnit object given the name for the unit, credits to be
+     * initialised, and the hashmap of assets owned by the organisational unit.
+     *
+     * @param unitName A string name for the organisatioanl unit to be created
+     * @param credits A float amount of credits to be initialised with the created organisational unit
+     * @param assets A hashmap of string and integer values of the asset and its amount owned by the organisational unit
+     *
+     * @return The OrganisationalUnit object created
      */
     public static OrganisationalUnit CreateOrgUnit(String unitName, float credits, HashMap<String, Integer> assets) {
         return new OrganisationalUnit(unitName, credits, assets);
