@@ -176,7 +176,7 @@ class EditOrgAssetsGUI extends JFrame {
                     outOrgUnit = loggedInUser.removeOrganisationalUnitAssets(orgUnitToBeEdited, assetNameIn, amountInToInteger);
                 }
 
-                output = data.editOrgUnitAssets(outOrgUnit, assetNameIn, outOrgUnit.getAssetQuantity(assetNameIn));
+                output = data.setOrgUnitAssets(outOrgUnit, assetNameIn, outOrgUnit.getAssetQuantity(assetNameIn));
 
             }
             catch (DatabaseException e) {

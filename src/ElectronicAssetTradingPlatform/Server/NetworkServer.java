@@ -106,10 +106,7 @@ public class NetworkServer {
             e.printStackTrace();
             System.exit(1);
         }
-
-        // The server is no longer running
-
-        // Close down the server and db
+        // The server is no longer running - Close down the server and db
         try {
             DBConnectivity.getInstance().close();
         } catch (SQLException e) {
@@ -124,10 +121,8 @@ public class NetworkServer {
      */
     private void handleConnection(Socket socket) {
         try {
-
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-
             while (true) {
                 try {
                     // Reads Command and parameter object
@@ -281,7 +276,6 @@ public class NetworkServer {
                 int newQuantity = (int) objectInputStream.readObject();
                 int ID = (int) objectInputStream.readObject();
                 synchronized (database) {
-                    MarketplaceDataSource.getInstance().open();
                     MarketplaceDataSource.getInstance().updateOfferQuantity(newQuantity ,ID);
                     objectOutputStream.writeObject("Updated offer quantity");
                 }
@@ -406,18 +400,12 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
             }
-            case EDIT_ORG_UNIT_CREDITS -> {
+            case SET_ORG_UNIT_CREDITS -> {
                 // Get input
                 OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
                 float newCredits = (float) objectInputStream.readObject();
 
                 synchronized (database) {
-//                    String unitName = null;
-//                    try {
-//                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
-//                    } catch (ClassCastException ignored) {}
-
-
                     // Save to db
                     UnitDataSource.getInstance().editOrgUnitCredits(orgUnit.getUnitName(), newCredits);
 
@@ -427,19 +415,13 @@ public class NetworkServer {
                 }
                 objectOutputStream.flush();
             }
-            case EDIT_ORG_UNIT_ASSETS -> {
+            case SET_ORG_UNIT_ASSETS -> {
                 // Get input
                 OrganisationalUnit orgUnit = (OrganisationalUnit) objectInputStream.readObject();
                 String assetName = (String) objectInputStream.readObject();
                 int newQuantity = (int) objectInputStream.readObject();
 
-
                 synchronized (database) {
-//                    String unitName = null;
-//                    try {
-//                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
-//                    } catch (ClassCastException ignored) {}
-
                     // Save to db
                     UnitDataSource.getInstance().editOrgUnitAssets(orgUnit.getUnitName(), assetName, newQuantity);
 
@@ -479,11 +461,6 @@ public class NetworkServer {
                 String oldUnitName = (String) objectInputStream.readObject();
 
                 synchronized (database) {
-//                    String unitName = null;
-//                    try {
-//                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
-//                    } catch (ClassCastException ignored) {}
-
                     // Save to db
                     UnitDataSource.getInstance().editOrgUnitName(orgUnit.getUnitName(), oldUnitName);
 
@@ -513,11 +490,6 @@ public class NetworkServer {
                 String oldAssetName = (String) objectInputStream.readObject();
 
                 synchronized (database) {
-//                    String unitName = null;
-//                    try {
-//                        unitName = ((OrganisationalUnitMembers) orgUnit).getUnitName();
-//                    } catch (ClassCastException ignored) {}
-
                     // Save to db
                     UnitDataSource.getInstance().editAssetName(asset.getAssetName(), oldAssetName);
 

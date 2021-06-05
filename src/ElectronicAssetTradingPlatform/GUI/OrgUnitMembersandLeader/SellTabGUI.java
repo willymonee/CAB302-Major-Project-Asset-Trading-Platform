@@ -2,6 +2,7 @@ package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 
 import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.Exceptions.InsufficientAssetsException;
 import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
 
@@ -193,7 +194,7 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                 {
                     System.out.println("Closed");
                     updateTables();
-                    welcomeMessage.setText(memberTextDisplay());
+                    updateMemberTextDisplay();
                     e.getWindow().dispose();
                 }
             });
@@ -397,10 +398,13 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
     }
 
 
+    private void updateMemberTextDisplay() {
+        welcomeMessage.setText(memberTextDisplay());
+    }
+
     @Override
     public void stateChanged(ChangeEvent e) {
-        System.out.println("updating table");
-        welcomeMessage.setText(memberTextDisplay());
+        updateMemberTextDisplay();
         updateTables();
     }
 
@@ -565,26 +569,29 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                     int quantityAvailable = loggedInMember.getQuantityAsset(data, selectedAssetTableOne);
                     if (quantity < quantityAvailable) {
                         SellOffer oldOffer = SellOfferData.getInstance().getOffer(listingID);
+                        int resolveStatus = loggedInMember.listSellOrder(oldOffer.getAssetName(), quantity,price);
                         SellOfferData.getInstance().removeOffer(listingID);
-                        SellOffer relist = new SellOffer(oldOffer.getAssetName(), quantity, price,
-                                oldOffer.getUsername(), oldOffer.getUnitName());
-                        SellOfferData.getInstance().addSellOffer(relist);
+                        JOptionPane.showMessageDialog(null,
+                                "Successfully relisted offer: " + oldOffer.getAssetName() + " quantity: " + quantity + " price: " + price);
+                        Helper.displayNotification(resolveStatus);
                         updateTables();
+                        updateMemberTextDisplay();
                         dispose();
 
                     }
-
                     else {
-                        messaging.setText("Insufficient assets to list for selling.");
+                        throw new InsufficientAssetsException("Insufficient assets to list for selling.");
                     }
-
-
                 } catch (EmptyFieldException e) {
                     messaging.setText("Price/ Quantity cannot be empty");
                 } catch (DatabaseException e) {
                     e.printStackTrace();
                 } catch (NumberFormatException errorMessage) {
                     messaging.setText("Please enter a number value");
+                } catch (IllegalArgumentException e) {
+                    messaging.setText(e.getMessage());
+                } catch (InsufficientAssetsException e) {
+                    messaging.setText(e.getMessage());
                 }
             }
         }
