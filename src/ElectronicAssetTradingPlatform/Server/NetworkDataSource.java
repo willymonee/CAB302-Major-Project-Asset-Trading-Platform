@@ -56,7 +56,7 @@ public class NetworkDataSource extends Thread {
     }
 
     /**
-     * Query the database through the server
+     * Query the database through the server with 1 param
      */
     private Object sendCommand(NetworkCommands command, Object param) {
         try {
@@ -152,7 +152,7 @@ public class NetworkDataSource extends Thread {
     /**
      * Sends command for server to get user
      * Returns queried user
-     *  If an error string was sent instead, throw the error
+     * If an error string was sent instead, throw the error
      */
     public User retrieveUser(String username) throws DatabaseException {
         Object out = sendCommand(NetworkCommands.RETRIEVE_USER, username);
@@ -214,15 +214,27 @@ public class NetworkDataSource extends Thread {
      */
     public TreeMap<Integer, BuyOffer> getBuyOffers() {
         Object out = sendCommand(NetworkCommands.GET_BUY_OFFERS);
-        return (TreeMap<Integer, BuyOffer>) out;
+        try {
+            return (TreeMap<Integer, BuyOffer>) out;
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            TreeMap<Integer, BuyOffer> empty = new TreeMap<>();
+            return empty;
+        }
     }
 
     /**
      * Sends command to server to retrieve all sell offers from the database
      */
-    public TreeMap<Integer, SellOffer> getSellOffers() {
+    public TreeMap<Integer, SellOffer> getSellOffers()  {
         Object out = sendCommand(NetworkCommands.GET_SELL_OFFERS);
-        return (TreeMap<Integer, SellOffer>) out;
+        try {
+            return (TreeMap<Integer, SellOffer>) out;
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            TreeMap<Integer, SellOffer> empty = new TreeMap<>();
+            return empty;
+        }
     }
 
     /** Sends command to server to retrieve the ID of the most recently placed offer from the DB
@@ -243,6 +255,8 @@ public class NetworkDataSource extends Thread {
 
     /**
      * Sends command to update the credits an organisation unit has
+     * @param credits to increase or decrease by
+     * @param orgName to edit credits for
      */
     public String editCredits(double credits, String orgName) {
         return (String) sendCommand(NetworkCommands.UPDATE_CREDITS, credits,orgName);
@@ -250,6 +264,9 @@ public class NetworkDataSource extends Thread {
 
     /**
      * Sends command to update the assets of an organisational unit
+     * @param quantity to increase/decrease by
+     * @param orgName whose asset's quantity will be affectd
+     * @param assetName to increase the quantity of
      */
     public String editAssets(int quantity, String orgName, String assetName) {
         return (String) sendCommand(NetworkCommands.UPDATE_ASSETS, quantity, orgName, assetName );
@@ -325,12 +342,21 @@ public class NetworkDataSource extends Thread {
         }
     }
 
-    public String editOrgUnitCredits(OrganisationalUnit orgUnit, float newCredits) {
-        return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_CREDITS, orgUnit, newCredits);
+    /**
+     * Set the a particular organisational unit's credits to a particular value
+     * Different from editUnitCredits as this method sets the credit value, rather than increasing or decreasing
+     * the existing credit value
+     *
+     * @param orgUnit whose credits will be set
+     * @param newCredits value to be set to
+     *
+     */
+    public String setOrgUnitCredits(OrganisationalUnit orgUnit, float newCredits) {
+        return (String) sendCommand(NetworkCommands.SET_ORG_UNIT_CREDITS, orgUnit, newCredits);
     }
 
-    public String editOrgUnitAssets(OrganisationalUnit orgUnit, String assetName, int newQuantity) {
-        return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_ASSETS, orgUnit, assetName, newQuantity);
+    public String setOrgUnitAssets(OrganisationalUnit orgUnit, String assetName, int newQuantity) {
+        return (String) sendCommand(NetworkCommands.SET_ORG_UNIT_ASSETS, orgUnit, assetName, newQuantity);
     }
 
     public ArrayList<String> retrieveAllAssets() throws DatabaseException {

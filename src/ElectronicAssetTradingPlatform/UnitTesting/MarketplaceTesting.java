@@ -6,11 +6,9 @@ import ElectronicAssetTradingPlatform.Database.MarketplaceDataSource;
 import ElectronicAssetTradingPlatform.Database.UnitDataSource;
 import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 
+import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.sql.SQLException;
 
 
 public class MarketplaceTesting {
@@ -22,7 +20,7 @@ public class MarketplaceTesting {
     OrganisationalUnit humanResources;
     OrganisationalUnit management;
     UnitDataSource unitDataSource;
-//    NetworkDataSource dataSource;
+    NetworkDataSource dataSource;
 
 
     @BeforeAll @Test
@@ -40,8 +38,8 @@ public class MarketplaceTesting {
         humanResources = new OrganisationalUnit("Human Resources", 1000);
         management = new OrganisationalUnit("Management", 1000);
 
-//        dataSource = new NetworkDataSource();
-//        dataSource.run();
+        dataSource = new NetworkDataSource();
+        dataSource.run();
 
     }
 
@@ -63,17 +61,17 @@ public class MarketplaceTesting {
         // remove all buy offers
         MarketplaceDataSource.getInstance().removeAllOffers();
         // set Human Resources to have 1000 credits
-//        dataSource.editOrgUnitCredits(humanResources, 1002);
-//        dataSource.editOrgUnitCredits(management, 1000);
-//        // reset org assets
-//        dataSource.editOrgUnitAssets(humanResources, "iPhone 10", 1);
-//        dataSource.editOrgUnitAssets(humanResources, "Pencils", 100);
-//        dataSource.editOrgUnitAssets(humanResources, "Coffee Machine", 5);
-//        dataSource.editOrgUnitAssets(humanResources, "Chair", 0);
-//        dataSource.editOrgUnitAssets(management, "Coffee Machine", 1);
-//        dataSource.editOrgUnitAssets(management, "Chair", 20);
-//        dataSource.editOrgUnitAssets(management, "iPhone 10", 10);
-//        dataSource.editOrgUnitAssets(management, "Pencils", 0);
+        dataSource.setOrgUnitCredits(humanResources, 1002);
+        dataSource.setOrgUnitCredits(management, 1000);
+        // reset org assets
+        dataSource.setOrgUnitAssets(humanResources, "iPhone 10", 1);
+        dataSource.setOrgUnitAssets(humanResources, "Pencils", 100);
+        dataSource.setOrgUnitAssets(humanResources, "Coffee Machine", 5);
+        dataSource.setOrgUnitAssets(humanResources, "Chair", 0);
+        dataSource.setOrgUnitAssets(management, "Coffee Machine", 1);
+        dataSource.setOrgUnitAssets(management, "Chair", 20);
+        dataSource.setOrgUnitAssets(management, "iPhone 10", 10);
+        dataSource.setOrgUnitAssets(management, "Pencils", 0);
 
         // base sell offers
 //        userA.listSellOrder("Pencils", 10, 20);

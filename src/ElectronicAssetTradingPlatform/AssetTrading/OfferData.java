@@ -1,7 +1,13 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
+
+/**
+ * Abstract class for BuyOfferData and SellOfferData
+ * Describes and implements methods related to inserting and retrieving offers, and manipulating retrieved offer data
+ */
 public abstract class OfferData {
     /**
      * Retrieve the respective offers from the database
@@ -20,6 +26,13 @@ public abstract class OfferData {
      * @return String of offers
      */
     public abstract String getOrgOffers(String unitName);
+
+    /**
+     * Calculate the total quantity requested/for sale for a particular offer
+     * @param assetName of queried asset
+     * @return the total quantity requested for a particular asset
+     */
+    public abstract int assetQuantity(String assetName);
 
     /**
      * Remove an offer from the DB

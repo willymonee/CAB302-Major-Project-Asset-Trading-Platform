@@ -117,7 +117,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     }
 
     private int getSellQuantity() {
-        return SellOfferData.getInstance().quantityAsset(assetName);
+        return SellOfferData.getInstance().assetQuantity(assetName);
     }
 
     private String[][] getAssetBuyOffersRowData() {
@@ -228,7 +228,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     }
 
     private double getCreditsInBuyOffers() {
-        return BuyOfferData.getInstance().creditsInUse(loggedInUser.getUnitName());
+        return BuyOfferData.getInstance().creditsInBuyOffers(loggedInUser.getUnitName());
     }
 
     private double getCredits() {
@@ -267,7 +267,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             String price = priceBuyField.getText();
             try {
                 int quantityInt = Integer.parseInt(quantity);
-                float priceFloat = Float.valueOf(price);
+                float priceFloat = Float.parseFloat(price);
                 if ((float) quantityInt * priceFloat > creditsAvailable) {
                     throw new InsufficientCreditsException("Not enough credits to create buy offer");
                 }
@@ -280,10 +280,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null,
                         "Please enter a valid number for quantity and price", "Warning",
                         JOptionPane.WARNING_MESSAGE);
-            } catch (IllegalArgumentException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
-                        JOptionPane.WARNING_MESSAGE);
-            } catch (InsufficientCreditsException e) {
+            } catch (IllegalArgumentException | InsufficientCreditsException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
                         JOptionPane.WARNING_MESSAGE);
             } catch (Exception e) {
@@ -321,7 +318,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             String price = priceSellField.getText();
             try {
                 int quantityInt = Integer.parseInt(quantity);
-                float priceFloat = Float.valueOf(price);
+                float priceFloat = Float.parseFloat(price);
                 if (quantityInt > quantityAvailable) {
                     throw new InsufficientAssetsException("Not enough assets to sell");
                 }
@@ -335,15 +332,10 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null,
                         "Please enter a valid number for quantity and price", "Warning",
                         JOptionPane.WARNING_MESSAGE);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | InsufficientAssetsException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Warning",
                         JOptionPane.WARNING_MESSAGE);
-            } catch (InsufficientAssetsException e) {
-                JOptionPane.showMessageDialog(null,
-                        e.getMessage(), "Warning",
-                        JOptionPane.WARNING_MESSAGE);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Failed to insert sell offer", "Warning",
                         JOptionPane.WARNING_MESSAGE);
             }

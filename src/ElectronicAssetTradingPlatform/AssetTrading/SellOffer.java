@@ -2,14 +2,14 @@ package ElectronicAssetTradingPlatform.AssetTrading;
 
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
-
+/**
+ * Class for creating a sell offer and resolving the sell offer after it has been created
+ */
 public class SellOffer extends Offer {
-    private Date dateResolved;
 
     /**
      * Constructor for trade offer
@@ -25,7 +25,7 @@ public class SellOffer extends Offer {
     }
 
     /**
-     * Overloaded Constructor for trade offer - used when retrieving offer from DB
+     * Overloaded Constructor for trade offer - used when retrieving offer from DB including the sell order ID
      * @param orderID                The ID of the offer
      * @param asset                  Name of the asset to be bought or sold
      * @param quantity               Quantity of asset
@@ -82,15 +82,18 @@ public class SellOffer extends Offer {
             }
         }
         else { // if no buy offer with matching asset name return 0
-            return 0;
+            return NO_MATCHING_OFFERS;
         }
-        return 0; // if no matching buy offer with equal or greater price than sell offer return 0
+        return NO_MATCHING_OFFERS; // if no matching buy offer with equal or greater price than sell offer return 0
     }
 
 
     /**
      * Takes a matching buy offer ID and compares it to the sell offer
      * Then it reduces the 'quantities' of both offers
+     * Also inserts into the asset history the buy and sell offer as well as the quantity traded
+     *
+     * @param matchingID matching buy offer ID
      */
     public void reduceMatchingOfferQuantities(int matchingID) {
         NetworkDataSource data = new NetworkDataSource();
@@ -128,9 +131,9 @@ public class SellOffer extends Offer {
         }
     }
 
-
     /**
      * Remove credits from the buy org and add credits the sell org
+     *
      * @param credit amount of credits to be removed or added
      * @param buyOrgName the matching buy offer's org unit name
      */
@@ -151,6 +154,10 @@ public class SellOffer extends Offer {
     private void tradeAssets(int quantity, BuyOffer buyOffer)  {
         NetworkDataSource dataSource = new NetworkDataSource();
         dataSource.run();
+        if (!orgOwnsAsset(buyOffer)) {
+            OrganisationalUnit unit = new OrganisationalUnit(buyOffer.getUnitName(), 0);
+            dataSource.setOrgUnitAssets(unit, buyOffer.getAssetName(), 0);
+        }
         dataSource.editAssets(-(quantity), this.getUnitName(), this.getAssetName());
         dataSource.editAssets(quantity, buyOffer.getUnitName(), buyOffer.getAssetName());
     }
@@ -185,7 +192,9 @@ public class SellOffer extends Offer {
      * Compares the created sell offer with all buy offers, finding offers with the same asset name and appropriate price
      * Then proceeds to trade assets and credits, whilst updating the offer quantities or removing them (if fully resolved)
      * Repeats this process until the sell offer has been fully resolved OR there are no more matching buy offers
-     * @return
+     *
+     * @return NOT_RESOLVED if no trades occured, PARTIALLY resolved if part of the offer was resolved, and
+     * FULLY_RESOLVED if the sell offer is fully resolved
      */
     public int resolveOffer() {
         // loop until there is no matching offer OR this.quantity == 0

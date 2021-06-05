@@ -5,12 +5,9 @@ import ElectronicAssetTradingPlatform.AssetTrading.UnitFactory;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
 import ElectronicAssetTradingPlatform.Exceptions.LessThanZeroException;
-import ElectronicAssetTradingPlatform.Exceptions.UserTypeException;
 import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.ITAdmin;
-import ElectronicAssetTradingPlatform.Users.User;
-import ElectronicAssetTradingPlatform.Users.UsersFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -169,7 +166,7 @@ class EditOrgCreditsGUI extends JFrame {
                 }
 
 
-                output = data.editOrgUnitCredits(outOrgUnit, outOrgUnit.getCredits());
+                output = data.setOrgUnitCredits(outOrgUnit, outOrgUnit.getCredits());
             }
             catch (DatabaseException e) {
                 output = e.getMessage();
