@@ -9,6 +9,9 @@ import ElectronicAssetTradingPlatform.Database.UsersDataSource;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.*;
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.TreeMap;
 
 
 public class MarketplaceTesting {
@@ -38,40 +41,23 @@ public class MarketplaceTesting {
         humanResources = new OrganisationalUnit("Human Resources", 1000);
         management = new OrganisationalUnit("Management", 1000);
 
-        dataSource = new NetworkDataSource();
-        dataSource.run();
-
-    }
-
-    /*
-    Preconditions
-    INSERT INTO Organisational_Units VALUES(1, "UnitX", 300.00);
-    INSERT INTO USER_Accounts VALUES(1, "userN", "pw", "salt", "Organisational Unit Member", 1);
-
-    Delete insertions/ mock db entries
-    DELETE FROM Organisational_Units WHERE Unit_ID = 1;
-    DELETE FROM USER_Accounts WHERE Username = "userN";
-    DELETE FROM Marketplace WHERE Unit_ID = 1;
-     */
-
-    @Test
-    public void testInsertBuyOffer() {
-        // creating a buy offer and adding it into the database through the user
+//        dataSource = new NetworkDataSource();
+//        dataSource.run();
 
         // remove all buy offers
         MarketplaceDataSource.getInstance().removeAllOffers();
         // set Human Resources to have 1000 credits
-        dataSource.setOrgUnitCredits(humanResources, 1002);
-        dataSource.setOrgUnitCredits(management, 1000);
-        // reset org assets
-        dataSource.setOrgUnitAssets(humanResources, "iPhone 10", 1);
-        dataSource.setOrgUnitAssets(humanResources, "Pencils", 100);
-        dataSource.setOrgUnitAssets(humanResources, "Coffee Machine", 5);
-        dataSource.setOrgUnitAssets(humanResources, "Chair", 0);
-        dataSource.setOrgUnitAssets(management, "Coffee Machine", 1);
-        dataSource.setOrgUnitAssets(management, "Chair", 20);
-        dataSource.setOrgUnitAssets(management, "iPhone 10", 10);
-        dataSource.setOrgUnitAssets(management, "Pencils", 0);
+//        dataSource.setOrgUnitCredits(humanResources, 1002);
+//        dataSource.setOrgUnitCredits(management, 1000);
+//        // reset org assets
+//        dataSource.setOrgUnitAssets(humanResources, "iPhone 10", 1);
+//        dataSource.setOrgUnitAssets(humanResources, "Pencils", 100);
+//        dataSource.setOrgUnitAssets(humanResources, "Coffee Machine", 5);
+//        dataSource.setOrgUnitAssets(humanResources, "Chair", 0);
+//        dataSource.setOrgUnitAssets(management, "Coffee Machine", 1);
+//        dataSource.setOrgUnitAssets(management, "Chair", 20);
+//        dataSource.setOrgUnitAssets(management, "iPhone 10", 10);
+//        dataSource.setOrgUnitAssets(management, "Pencils", 0);
 
         // base sell offers
 //        userA.listSellOrder("Pencils", 10, 20);
@@ -85,39 +71,75 @@ public class MarketplaceTesting {
 //        userB.listBuyOrder("Coffee Machine", 2, 40);
 //        userA.listBuyOrder("iPhone 10", 1, 10);
 //        userA.listBuyOrder("Chair", 1, 5);
+
+    }
+
+    @Test
+    public void testInsertBuyOffer() {
+        // create buy offer object and  insert it into the database
+        BuyOffer buyOffer = new BuyOffer("Chair", 5, 20, "hana", "Management");
+        MarketplaceDataSource.getInstance().insertBuyOffer(buyOffer);
+        // retrieve all offers and find the placed offer
+        TreeMap<Integer, BuyOffer > buyOffers = MarketplaceDataSource.getInstance().getBuyOffers();
+        int ID = MarketplaceDataSource.getInstance().getPlacedOfferID();
+        // asserting that the placed offer should have these properties
+        assertEquals("Chair\t5\t $20.0\thana\tManagement", buyOffers.get(ID).toString(),
+                "Listing Buy Offer Failed");
     }
 
     @Test
     public void testInsertSellOffer() {
-        // creating a buy offer and adding it into the database through the user
-        //BuyOfferData.getInstance().removeOffer(216);
-    }
-
-    @Test
-    public void testRetrieveBuyOffers() {
-        // print them out from BuyOfferData
-        //System.out.println(BuyOfferData.getInstance());
-    }
-
-    @Test
-    public void testRetrieveSellOffers() {
-        // print them out from SellOfferData
-        //System.out.println(SellOfferData.getInstance());
+        // create sell offer object and insert it into the database
+        SellOffer sellOffer = new SellOffer("iPhone 10", 1, 100, "willymon", "Human Resources");
+        MarketplaceDataSource.getInstance().insertSellOffer(sellOffer);
+        // retrieve all offers and find the placed offer
+        TreeMap<Integer, SellOffer> sellOffers = MarketplaceDataSource.getInstance().getSellOffers();
+        int ID = MarketplaceDataSource.getInstance().getPlacedOfferID();
+        // asserting that the placed offer should have these properties
+        assertEquals("iPhone 10\t1\t $100.0\twillymon\tHuman Resources", sellOffers.get(ID).toString(),
+                "Listing Sell Offer Failed");
     }
 
     @Test
     public void removeBuyOffer() {
-//        userA.removeBuyOffer(128);
-//        userA.removeBuyOffer(127);
-//        userA.removeBuyOffer(126);
-//        userA.removeBuyOffer(125);
-//        userA.removeBuyOffer(124);
+        // create buy offer object and  insert it into the database
+        BuyOffer buyOffer = new BuyOffer("Chair", 5, 20, "hana", "Management");
+        MarketplaceDataSource.getInstance().insertBuyOffer(buyOffer);
+        // remove it
+        int ID = MarketplaceDataSource.getInstance().getPlacedOfferID();
+        MarketplaceDataSource.getInstance().removeOffer(ID);
+        // check that there are no buy offers
+        TreeMap<Integer, BuyOffer > buyOffers = MarketplaceDataSource.getInstance().getBuyOffers();
+        assertTrue(buyOffers.isEmpty(), "Failed to remove buy offer");
     }
 
     @Test
     public void removeSellOffer() {
-        //userA.removeSellOffer(36);
+        // create sell offer object and  insert it into the database
+        SellOffer sellOffer = new SellOffer("iPhone 10", 1, 100, "willymon", "Human Resources");
+        MarketplaceDataSource.getInstance().insertSellOffer(sellOffer);
+        // remove it
+        int ID = MarketplaceDataSource.getInstance().getPlacedOfferID();
+        MarketplaceDataSource.getInstance().removeOffer(ID);
+        // check that there are no buy offers
+        TreeMap<Integer, SellOffer> sellOffers = MarketplaceDataSource.getInstance().getSellOffers();
+        assertTrue(sellOffers.isEmpty(), "Failed to remove sell offer");
     }
+
+    // test failing to insert an offer when offer quantity is negative
+    @Test
+    public void testFailInsertOfferNegativeQuantity() {
+        assertThrows(IllegalArgumentException.class, () ->  new SellOffer("iPhone 10", -1, 100,
+                "willymon", "Human Resources"));
+    }
+
+    // test failing to insert an offer when offer price is negative
+    @Test
+    public void testFailInsertOfferNegativePrice() {
+        assertThrows(IllegalArgumentException.class, () ->  new BuyOffer("iPhone 10", 1, -100,
+                "willymon", "Human Resources"));
+    }
+
 
     // retrieve buy offers from a user's organisational unit
     @Test
@@ -152,83 +174,11 @@ public class MarketplaceTesting {
     }
 
 
-    // test failing to insert a offer when offer quantity is negative
-    @Test
-    public void testFailInsertOfferNegativeQuantity() {
-        //assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", -1, 50));
-    }
-
-    // test failing to insert a buy offer when offer price is negative
-    @Test
-    public void testFailInsertOfferNegativePrice() {
-        //assertThrows(IllegalArgumentException.class, () -> userA.listBuyOrder("Table", 1, -50));
-    }
-
-    // test failing to insert a buy offer for an asset not in the system
-    // test fails because exception is caught at an earlier stage
-    @Test
-    public void testFailInsertOfferAssetNotInSystem() {
-        //assertThrows(SQLException.class, () -> userA.listBuyOrder("Robodog", 1,10000));
-    }
 
 
 
-    /**
-     * Deprecated tests (methods are private)
-     */
-    // Temp test to see if return matching sell orders to a particular buy order if they are orders for the same asset
-    // will become deprecated once getMatchingSellOffers() becomes a private method
-    @Test
-    public void matchBuyOfferAssetToSell() {
-        //BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(21);
-        //System.out.println(buyOffer.getMatchingSellOffers());
-    }
 
-    // Temp test to see if return matching buy orders to a particular sell order if they are orders for the same asset
-    // will become deprecated once getMatchingBuyOffers() becomes a private method
-    @Test
-    public void matchSellOfferAssetToBuy() {
-        //SellOffer sellOffer = SellOfferData.getInstance().getOffer(25);
-        //System.out.println(sellOffer.matchingBuyOffers());
-    }
 
-    // Temp test to return the ID of a matching sell offer with the lowest price but whose price is equal or less than
-    // a particular buy order,
-    @Test
-    public void matchBuyOfferAssetPriceToSell() {
-        //BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(26);
-        //System.out.println("A matching sell offer with the best price is: #"+ buyOffer.getMatchedPriceOffer());
-    }
-
-    // Temp test to return the ID of a matching buy offer whose price is equal or higher than the sell offer prioritising
-    // whichever offer was added into the database first
-    @Test
-    public void matchSellOfferAssetPriceToBuy() {
-        //SellOffer sellOffer = SellOfferData.getInstance().getOffer(24);
-        //System.out.println("The first buy offer with equal or greater price is: #"+ sellOffer.getMatchedPriceOffer());
-    }
-
-    // Test updating the quantity of a buy offer when it matches against a sell offer
-    @Test
-    public void updateBuyOfferQuantity() {
-        //userA.listBuyOrder("iPhone 10", 3, 20);
-
-        //BuyOffer buyOffer = BuyOfferData.getInstance().getOffer(29);
-        //int matchingID = buyOffer.getMatchedPriceOffer();
-        //buyOffer.reduceMatchingOfferQuantities(matchingID);
-
-    }
-
-    // Test updating the quantity of a sell offer
-    @Test
-    public void updateSellOfferQuantity() {
-        //SellOfferData.getInstance().updateOfferQuantity(4, 23);
-        //userA.listSellOrder("Table", 3, 1);
-        //doing it manually
-        //SellOffer sellOffer = SellOfferData.getInstance().getOffer(40);
-        //int matchingID = sellOffer.getMatchedPriceOffer();
-        //sellOffer.reduceMatchingOfferQuantities(matchingID);
-    }
 
 
 //    @AfterAll
