@@ -304,6 +304,12 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.STORE_ASSET, asset);
     }
 
+    /**
+     * Sends command to get the buy/sell trade history
+     * given an asset name from the Marketplace_history table in the database
+     * Stores the date the traded was completed and price the asset
+     * was traded at into an List<List<>>
+     */
     public List<List<Object>> getAssetHistory(String assetName) throws DatabaseException {
         Object out = sendCommand(NetworkCommands.GET_ASSET_HISTORY, assetName);
         try {
@@ -374,6 +380,10 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.EDIT_ASSET_NAME, asset, oldAssetName);
     }
 
+    /**
+     * Sends command for the network to fetch the trade history
+     * Given a Unit ID to query for (from the Marketplace_history database table)
+     */
     public TreeMap<Integer, TradeHistory> getUnitTradeHistory(String unitName) throws LessThanZeroException {
         Object out = sendCommand(NetworkCommands.GET_UNIT_TRADEHISTORY, unitName);
         return (TreeMap<Integer, TradeHistory>) out;
