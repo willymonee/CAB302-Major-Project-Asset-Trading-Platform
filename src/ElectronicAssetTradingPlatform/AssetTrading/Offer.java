@@ -86,7 +86,7 @@ public abstract class Offer implements Serializable {
      */
     @Override
     public String toString() {
-        return this.orderID + "\t" + getAssetName() + "\t" + getQuantity()+ "\t $"
+        return  getAssetName() + "\t" + getQuantity()+ "\t $"
                 + getPricePerUnit() + "\t" + getUsername() + "\t" + getUnitName();
     }
 
