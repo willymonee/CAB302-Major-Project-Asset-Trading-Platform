@@ -169,7 +169,7 @@ class EditOrgCreditsGUI extends JFrame {
                 }
 
 
-                output = data.editOrgUnitCredits(outOrgUnit);
+                output = data.editOrgUnitCredits(outOrgUnit, outOrgUnit.getCredits());
             }
             catch (DatabaseException e) {
                 output = e.getMessage();

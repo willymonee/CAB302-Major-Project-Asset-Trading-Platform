@@ -13,6 +13,9 @@ public abstract class Offer implements Serializable {
     private String organisationalUnitName;
     private int orderID;
     protected static final int NO_MATCHING_OFFERS = 0;
+    protected final int FULLY_RESOLVED = 2;
+    protected final int PARTIALLY_RESOLVED = 1;
+    protected final int NOT_RESOLVED = 0;
 
     /**
      * Constructor for trade offer
@@ -65,8 +68,9 @@ public abstract class Offer implements Serializable {
      * Also add/remove the correct amount of assets bought or sold to the organisational units
      * Also update the offer's quantities or alternatively delete the offer when it has been fully resolved
      * Repeat this process until the offer has been fully resolved or there are no matching offers
+     * @return
      */
-    public abstract void resolveOffer();
+    public abstract int resolveOffer();
 
     // Concrete methods
     @Override

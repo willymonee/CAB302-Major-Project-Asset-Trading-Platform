@@ -24,6 +24,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     private final OrganisationalUnitMembers loggedInUser;
     private final NetworkDataSource dataSource;
     private final Asset selectedAsset;
+    private final int FULLY_RESOLVED = 2;
+    private final int PARTIALLY_RESOLVED =1;
     private JTable assetBuyOffersTable;
     private JTable assetSellOffersTable;
     private TableModel assetBuyOfferModel;
@@ -228,7 +230,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
 
     // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool
     public void displayBuyAssetPanel() {
-        buyAssetPanel = Helper.createPanel(Color.LIGHT_GRAY);
+        buyAssetPanel = Helper.createPanel(Color.WHITE);
         buyAssetPanel.setLayout(new GridLayout(0, 2, 2, 2));
 
         quantityBuyField = new JTextField(4);
@@ -255,9 +257,10 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 if ((double) quantityInt * priceInt > creditsAvailable) {
                     throw new InsufficientCreditsException("Not enough credits to create buy offer");
                 }
-                loggedInUser.listBuyOrder(assetName, quantityInt, priceInt);
+                int resolveStatus = loggedInUser.listBuyOrder(assetName, quantityInt, priceInt);
                 JOptionPane.showMessageDialog(null,
                         "Successfully placed buy order for: " + assetName + " quantity: " + quantity + " price: " + price );
+                Helper.displayNotification(resolveStatus);
                 this.dispose();
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
@@ -278,7 +281,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
 
     // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool
     public void displaySellAssetPanel() {
-        sellAssetPanel = Helper.createPanel(Color.LIGHT_GRAY);
+        sellAssetPanel = Helper.createPanel(Color.WHITE);
         sellAssetPanel.setLayout(new GridLayout(0, 2, 3, 2));
 
         quantitySellField = new JTextField(4);
@@ -308,10 +311,11 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
                 if (quantityInt > quantityAvailable) {
                     throw new InsufficientAssetsException("Not enough assets to sell");
                 }
-                loggedInUser.listSellOrder(assetName, quantityInt, priceInt);
+                int resolveStatus = loggedInUser.listSellOrder(assetName, quantityInt, priceInt);
                 JOptionPane.showMessageDialog(null,
                         "Successfully placed sell order for: " + assetName + " quantity: " + quantity + " price: " + price);
                 this.dispose();
+                Helper.displayNotification(resolveStatus);
 
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
@@ -331,6 +335,8 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
             }
         }
     }
+
+
 
     private JPanel makeMarketPlaceHistoryGraph() {
         JPanel panel = new JPanel(new BorderLayout());

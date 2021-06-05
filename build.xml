@@ -79,8 +79,13 @@
     </target>
 
     <target name="compileTests" depends="compileClient" description="Compile tests" >
+        <fileset dir="./">
+            <include name="ETP.db"/>
+            <include name="db.props"/>
+        </fileset>
         <javac srcdir="src/${topPackage}/UnitTesting" classpath="${baseServer}:${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" destdir="utestclasses" includeantruntime="false">
             <include name="*.java" />
+            <exclude name="ServerDataTesting.java" />
         </javac>
     </target>
 

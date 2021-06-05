@@ -32,6 +32,7 @@ public enum NetworkCommands {
     EDIT_ORG_UNIT_NAME,
     RETRIEVE_ASSET,
     EDIT_ASSET_NAME,
-    GET_UNIT_TRADEHISTORY
+    GET_UNIT_TRADEHISTORY,
+
 
 }

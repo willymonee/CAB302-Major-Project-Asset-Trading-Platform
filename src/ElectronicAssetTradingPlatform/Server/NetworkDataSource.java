@@ -325,12 +325,12 @@ public class NetworkDataSource extends Thread {
         }
     }
 
-    public String editOrgUnitCredits(OrganisationalUnit orgUnit) {
-        return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_CREDITS, orgUnit);
+    public String editOrgUnitCredits(OrganisationalUnit orgUnit, float newCredits) {
+        return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_CREDITS, orgUnit, newCredits);
     }
 
-    public String editOrgUnitAssets(OrganisationalUnit orgUnit, String assetName) {
-        return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_ASSETS, orgUnit, assetName);
+    public String editOrgUnitAssets(OrganisationalUnit orgUnit, String assetName, int newQuantity) {
+        return (String) sendCommand(NetworkCommands.EDIT_ORG_UNIT_ASSETS, orgUnit, assetName, newQuantity);
     }
 
     public ArrayList<String> retrieveAllAssets() throws DatabaseException {
