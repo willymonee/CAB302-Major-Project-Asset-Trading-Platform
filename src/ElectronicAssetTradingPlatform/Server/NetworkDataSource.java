@@ -397,6 +397,11 @@ public class NetworkDataSource extends Thread {
         return (String) sendCommand(NetworkCommands.SET_ORG_UNIT_ASSETS, orgUnit, assetName, newQuantity);
     }
 
+    /**
+     * Gets all the assets in the database
+     * @return List of asset names
+     * @throws DatabaseException throws any exceptions occurred while the server was handling the request
+     */
     public ArrayList<String> retrieveAllAssets() throws DatabaseException {
         Object out = sendCommand(NetworkCommands.GET_ALL_ASSETS);
 
@@ -408,6 +413,12 @@ public class NetworkDataSource extends Thread {
         }
     }
 
+    /**
+     * Gets all the members of a given unit in the database
+     * @param unitName The input String unit name
+     * @return List of String arrays [...][0]: is the username, [...][1]: is the user type
+     * @throws DatabaseException throws any exceptions occurred while the server was handling the request
+     */
     public ArrayList<String[]> retrieveAllMembers(String unitName) throws DatabaseException {
         Object out = sendCommand(NetworkCommands.GET_ALL_MEMBERS, unitName);
 
