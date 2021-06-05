@@ -24,8 +24,6 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     private final OrganisationalUnitMembers loggedInUser;
     private final NetworkDataSource dataSource;
     private final Asset selectedAsset;
-    private final int FULLY_RESOLVED = 2;
-    private final int PARTIALLY_RESOLVED =1;
     private JTable assetBuyOffersTable;
     private JTable assetSellOffersTable;
     private TableModel assetBuyOfferModel;
@@ -44,12 +42,9 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     private JTextField quantitySellField;
     private JTextField priceSellField;
     private JPanel assetsCreditsOwnedPanel;
-    private int amountOwned;
     private double creditsAvailable;
-    private double credits;
-    private double creditsInBuyOffers;
     private int quantityAvailable;
-    private int quantityInSellOffers;
+
 
 
     public AssetDetailGUI(OrganisationalUnitMembers loggedInUser, NetworkDataSource data, Asset selectedAsset) {
@@ -203,29 +198,48 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
 
     private String assetOwnedToString() {
         String assetOwned = assetName + "s owned: ";
-        try {
-            amountOwned = loggedInUser.getQuantityAsset(dataSource, assetName);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            assetOwned += 0;
-            amountOwned = 0;
-        }
-        quantityInSellOffers = SellOfferData.getInstance().quantityAssetInSellOffer(loggedInUser.getUnitName(), assetName);
-        quantityAvailable = amountOwned - quantityInSellOffers;
-        assetOwned += quantityAvailable + " (" + amountOwned + " - " + quantityInSellOffers + ")";
+        int totalAssetOwned = getTotalAssetOwned();
+        int quantityInSellOffers = getQuantityInSellOffers();
+        quantityAvailable = totalAssetOwned - quantityInSellOffers;
+        assetOwned += quantityAvailable + " (" + totalAssetOwned + " - " + quantityInSellOffers + ")";
         return assetOwned;
     }
 
-    private String creditsAvailableToString() {
+    private int getTotalAssetOwned() {
         try {
-            credits = dataSource.getCredits(loggedInUser.getUnitName());
+            return loggedInUser.getQuantityAsset(dataSource, assetName);
         } catch (DatabaseException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            return 0;
         }
-        creditsInBuyOffers = BuyOfferData.getInstance().creditsInUse(loggedInUser.getUnitName());
-        creditsAvailable = credits - creditsInBuyOffers;
-        return "Credits Available: " + creditsAvailable + " (" + credits + " - " + creditsInBuyOffers+ ")";
+        return 0;
+    }
+
+    private int getQuantityInSellOffers() {
+        return SellOfferData.getInstance().quantityAssetInSellOffer(loggedInUser.getUnitName(), assetName);
+    }
+
+    private String creditsAvailableToString() {
+        double totalCredits = getCredits();
+        double creditsInBuyOffers = getCreditsInBuyOffers();
+        creditsAvailable = totalCredits - creditsInBuyOffers;
+        return "Credits Available: " + creditsAvailable + " (" + totalCredits + " - " + creditsInBuyOffers+ ")";
+    }
+
+    private double getCreditsInBuyOffers() {
+        return BuyOfferData.getInstance().creditsInUse(loggedInUser.getUnitName());
+    }
+
+    private double getCredits() {
+        try {
+            return dataSource.getCredits(loggedInUser.getUnitName());
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            return 0;
+        }
+        return 0;
     }
 
     // https://stackoverflow.com/questions/41904362/multiple-joptionpane-input-dialogs by: Frakcool

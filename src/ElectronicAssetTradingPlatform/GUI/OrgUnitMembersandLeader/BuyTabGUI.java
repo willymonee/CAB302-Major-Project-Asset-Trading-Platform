@@ -3,6 +3,7 @@ package ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader;
 import ElectronicAssetTradingPlatform.AssetTrading.*;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Exceptions.EmptyFieldException;
+import ElectronicAssetTradingPlatform.Exceptions.InsufficientCreditsException;
 import ElectronicAssetTradingPlatform.GUI.GUI;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 import ElectronicAssetTradingPlatform.Users.OrganisationalUnitMembers;
@@ -401,7 +402,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        System.out.println("updating table");
         updateMemberTextDisplay();
         updateTables();
     }
@@ -567,39 +567,35 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                     double total = quantity * price;
                     double unitCredits = loggedInMember.getUnitCredits(data);
 
-                    if (quantity > 0 && price > 0) {
-                        if (total < unitCredits) {
-                            BuyOffer oldOffer = BuyOfferData.getInstance().getOffer(listingID);
-                            BuyOfferData.getInstance().removeOffer(listingID);
-                            int resolveStatus = loggedInMember.listBuyOrder(oldOffer.getAssetName(), quantity, price);
+                    if (total < unitCredits) {
+                        BuyOffer oldOffer = BuyOfferData.getInstance().getOffer(listingID);
 
-                            JOptionPane.showMessageDialog(null,
-                                    "Successfully relisted offer: " + oldOffer.getAssetName() + " quantity: " + quantity + " price: " + price);
-                            Helper.displayNotification(resolveStatus);
-                            updateTables();
-                            updateMemberTextDisplay();
+                        int resolveStatus = loggedInMember.listBuyOrder(oldOffer.getAssetName(), quantity, price);
+                        BuyOfferData.getInstance().removeOffer(listingID);
+                        JOptionPane.showMessageDialog(null,
+                                "Successfully relisted offer: " + oldOffer.getAssetName() + " quantity: " + quantity + " price: " + price);
+                        Helper.displayNotification(resolveStatus);
+                        updateTables();
+                        updateMemberTextDisplay();
 
-                            dispose();
+                        dispose();
 
-                        }
-
-                        else {
-                            messaging.setText("Insufficient credits to create buy offer, you have "
-                                    + unitCredits + " credits available.");
-                        }
                     }
-
                     else {
-                        messaging.setText("Please enter a non-zero positive value for price & quantity.");
+                        throw new InsufficientCreditsException("Insufficient credits to create buy offer, you have "
+                                + unitCredits + " credits available.");
                     }
-
-
                 } catch (EmptyFieldException e) {
                     messaging.setText("Price/ Quantity cannot be empty");
                 } catch (DatabaseException e) {
                     e.printStackTrace();
+                    messaging.setText("Database error");
                 } catch (NumberFormatException errorMessage) {
                     messaging.setText("Please enter a number value");
+                } catch (IllegalArgumentException e) {
+                    messaging.setText(e.getMessage());
+                } catch (InsufficientCreditsException e) {
+                    messaging.setText(e.getMessage());
                 }
             }
 
