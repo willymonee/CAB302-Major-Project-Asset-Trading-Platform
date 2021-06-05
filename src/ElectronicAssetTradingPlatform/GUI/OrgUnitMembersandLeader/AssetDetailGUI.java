@@ -258,7 +258,6 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
            displayBuyAssetPanel();
         }
         else if (src == this.sellButton) {
-            System.out.println("pressed sell button");
             displaySellAssetPanel();
         }
     }
@@ -278,7 +277,7 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
         // confirmation pane
         int option = JOptionPane.showConfirmDialog(null,
                 buyAssetPanel,
-                "Buy Asset" + selectedAsset.getAssetName(),
+                "Buy Asset " + selectedAsset.getAssetName(),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null);
         // if OK button selected attempt to place the offer for the inputted quantity and price
@@ -419,17 +418,5 @@ public class AssetDetailGUI extends JFrame implements ActionListener {
     private class ClosingListener extends WindowAdapter {
         public void windowClosed(WindowEvent e) { dispose(); }
         public void windowClosing(WindowEvent e) { dispose(); }
-    }
-
-    public static void main(String[] args) {
-        // TODO: remove main done
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                NetworkDataSource net = new NetworkDataSource();
-                net.start();
-                new AssetDetailGUI(new OrganisationalUnitMembers("a", "a", "a", "a"), net, new Asset("iPhone 10"));
-            }
-        });
     }
 }

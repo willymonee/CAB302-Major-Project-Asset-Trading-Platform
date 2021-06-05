@@ -192,7 +192,6 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                 @Override
                 public void windowClosed(WindowEvent e)
                 {
-                    System.out.println("Closed");
                     updateTables();
                     updateMemberTextDisplay();
                     e.getWindow().dispose();
@@ -257,8 +256,8 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
      */
     private JTable unitSellOffersTable() {
         // create a table
-        String data[][] = getOrgSellOffersData();
-        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
+        String[][] data = getOrgSellOffersData();
+        String[] columns = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
         orgModel = new DefaultTableModel(data, columns);
         JTable table = new JTable(orgModel);
         // format table
@@ -275,8 +274,8 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
      */
     private JTable marketSellOffersTable() {
         // create a table
-        String data[][] = getMarketSellOffersData();
-        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
+        String[][] data = getMarketSellOffersData();
+        String[] columns = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
         marketModel = new DefaultTableModel(data, columns);
         JTable table = new JTable(marketModel);
         // format table
@@ -388,8 +387,8 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
         }
         // add all the offers back using updated data
         String [][] rowData = getOrgSellOffersData();
-        for (int i = 0; i < rowData.length; i++) {
-            orgModel.addRow(rowData[i]);
+        for (String[] datum : rowData) {
+            orgModel.addRow(datum);
         }
         // remove all rows
         rowCount = marketModel.getRowCount();
@@ -398,8 +397,8 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
         }
         // add all the offers back using updated data
         rowData = getMarketSellOffersData();
-        for (int i = 0; i < rowData.length; i++) {
-            marketModel.addRow(rowData[i]);
+        for (String[] rowDatum : rowData) {
+            marketModel.addRow(rowDatum);
         }
     }
 
@@ -593,9 +592,7 @@ public class SellTabGUI extends JPanel implements ActionListener, MouseListener,
                     e.printStackTrace();
                 } catch (NumberFormatException errorMessage) {
                     messaging.setText("Please enter a number value");
-                } catch (IllegalArgumentException e) {
-                    messaging.setText(e.getMessage());
-                } catch (InsufficientAssetsException e) {
+                } catch (IllegalArgumentException | InsufficientAssetsException e) {
                     messaging.setText(e.getMessage());
                 }
             }

@@ -193,7 +193,6 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                 @Override
                 public void windowClosed(WindowEvent e)
                 {
-                    System.out.println("Closed");
                     updateTables();
                     updateMemberTextDisplay();
                     e.getWindow().dispose();
@@ -258,8 +257,8 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
      */
     private JTable unitBuyOffersTable() {
         // create a table
-        String data[][] = getOrgUnitBuyOffersRowData();
-        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
+        String[][] data = getOrgUnitBuyOffersRowData();
+        String[] columns = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
         orgModel = new DefaultTableModel(data, columns);
         JTable table = new JTable(orgModel);
         Helper.formatTable(table);
@@ -275,8 +274,8 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
      */
     private JTable marketBuyOffersTable() {
         // create a table
-        String data[][] = getMarketBuyOffersRowData();
-        String columns[] = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
+        String[][] data = getMarketBuyOffersRowData();
+        String[] columns = { "Offer ID", "Asset Name", "Quantity", "Price", "Offer Creator"};
         marketModel = new DefaultTableModel(data, columns);
         JTable table = new JTable(marketModel);
         Helper.formatTable(table);
@@ -385,8 +384,8 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         }
         // add all the offers back using updated data
         String [][] rowData = getOrgUnitBuyOffersRowData();
-        for (int i = 0; i < rowData.length; i++) {
-            orgModel.addRow(rowData[i]);
+        for (String[] rowDatum : rowData) {
+            orgModel.addRow(rowDatum);
         }
         // remove all rows
         rowCount = marketModel.getRowCount();
@@ -395,8 +394,8 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
         }
         // add all the offers back using updated data
         rowData = getMarketBuyOffersRowData();
-        for (int i = 0; i < rowData.length; i++) {
-            marketModel.addRow(rowData[i]);
+        for (String[] rowDatum : rowData) {
+            marketModel.addRow(rowDatum);
         }
     }
 
@@ -596,18 +595,9 @@ public class BuyTabGUI extends JPanel implements ActionListener, MouseListener, 
                     messaging.setText("Database error");
                 } catch (NumberFormatException errorMessage) {
                     messaging.setText("Please enter a number value");
-                } catch (IllegalArgumentException e) {
-                    messaging.setText(e.getMessage());
-                } catch (InsufficientCreditsException e) {
+                } catch (IllegalArgumentException | InsufficientCreditsException e) {
                     messaging.setText(e.getMessage());
                 }
-            }
-
-
-
-            private BuyOffer getOldOffer(int listingID) {
-                BuyOffer oldOffer = BuyOfferData.getInstance().getOffer(listingID);
-                return oldOffer;
             }
         }
 

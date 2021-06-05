@@ -1,7 +1,7 @@
 package ElectronicAssetTradingPlatform.Database.MockDBs;
 
 
-import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
+import ElectronicAssetTradingPlatform.AssetTrading.Deprecated.SellOffer;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -75,15 +75,15 @@ public class SellOffersDB {
     @Override
     public String toString() {
         Iterator<Map.Entry<Integer, SellOffer>> entries = MarketSellOffers.entrySet().iterator();
-        String MarketOffers = "";
+        StringBuilder MarketOffers = new StringBuilder();
         while (entries.hasNext()) {
             Map.Entry<Integer, SellOffer> entry = entries.next();
-            MarketOffers +=  String.format(entry.getValue().toString());
+            MarketOffers.append(entry.getValue().toString());
             if (entries.hasNext()) {
-                MarketOffers += "\n";
+                MarketOffers.append("\n");
             }
         }
-        return MarketOffers;
+        return MarketOffers.toString();
     }
 
 
@@ -93,16 +93,16 @@ public class SellOffersDB {
      */
     public String getOrgSellOffers(String orgName) {
         Iterator<Map.Entry<Integer, SellOffer>> entries = MarketSellOffers.entrySet().iterator();
-        String OrgMarketOffers = "";
+        StringBuilder OrgMarketOffers = new StringBuilder();
         while (entries.hasNext()) {
             Map.Entry<Integer, SellOffer> entry = entries.next();
-            if (entry.getValue().getUnitName() == orgName) {
-                OrgMarketOffers += entry.getValue().toString();
+            if (entry.getValue().getUnitName().equals(orgName)) {
+                OrgMarketOffers.append(entry.getValue().toString());
                 if (entries.hasNext()) {
-                    OrgMarketOffers += "\n";
+                    OrgMarketOffers.append("\n");
                 }
             }
         }
-        return OrgMarketOffers;
+        return OrgMarketOffers.toString();
     }
 }
