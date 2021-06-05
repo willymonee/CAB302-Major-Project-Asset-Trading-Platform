@@ -7,10 +7,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
+/**
+ * Class for creating a graph for the marketplace history, x-axis is the date, y-axis is the float price
+ */
 public class MarketplaceHistoryGraph extends JComponent {
     private ArrayList<String> y2values = new ArrayList<>();
     private String firsty1value;
 
+    /**
+     * Creates the graph
+     * @param data History data: [...][0] are the dates, [...][1] are the prices
+     * @param width Width of the graph
+     * @param height Height of the graph
+     */
     public MarketplaceHistoryGraph(Object[][] data, int width, int height) {
         ArrayList<Float> y_values = new ArrayList<>();
         ArrayList<Date> x_values = new ArrayList<>();

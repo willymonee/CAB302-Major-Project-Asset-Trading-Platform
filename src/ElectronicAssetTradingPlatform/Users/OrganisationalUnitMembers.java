@@ -1,12 +1,9 @@
 package ElectronicAssetTradingPlatform.Users;
 
 import ElectronicAssetTradingPlatform.AssetTrading.*;
-import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
-import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 
 /**
@@ -50,17 +47,17 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Set up buy order for an organisational unit using ones own
-     * organisational unit's credits [M]
+     * Set up buy order for an organisational unit using ones own organisational unit's credits [M]
      * @param assetType asset name for buy order
      * @param quantity int amount of assets placed for buy order
      * @param price int price of asset requested for buy order
+     * @return an int determining whether the added offer was fully, partially or not resolved
      */
     public int listBuyOrder(String assetType, int quantity, double price) {
         // create offer
         BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // add offer into database
-        BuyOfferData.getInstance().addOffer(offer);
+        BuyOfferData.getInstance().addBuyOffer(offer);
         // retrieve the buy offer's ID from the database and set the buy offer's ID
         int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
         offer.setOfferID(buyOfferID);
@@ -69,12 +66,13 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Set up sell order for own organisational unit's asset using credits [M]
-     *  @param assetType asset name for sell order
+     * Set up sell order for own organisational unit's asset using credits
+     * @param assetType asset name for sell order
      * @param quantity int amount of assets placed for sell order
      * @param price int price of asset set for sell order
+     * @return an int determining whether the added offer was fully, partially or not resolved
      */
-    public int listSellOrder(String assetType, int quantity, double price) {
+    public int listSellOrder(String assetType, int quantity, double price) throws DatabaseException {
         SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
         // add sell offer to the database via server
         SellOfferData.getInstance().addSellOffer(offer);
@@ -83,27 +81,6 @@ public class OrganisationalUnitMembers extends User {
         offer.setOfferID(sellOfferID);
         // resolve the offer
         return offer.resolveOffer();
-    }
-
-    // temp function for testing without resolving
-    public void listSellOrderNoResolve(String assetType, int quantity, double price) {
-        SellOffer offer = new SellOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        // using the actual database
-        SellOfferData.getInstance().addSellOffer(offer);
-        // retrieve the sell offer's ID from the database and set the sell offer's ID
-        int sellOfferID = SellOfferData.getInstance().getPlacedOfferID();
-        offer.setOfferID(sellOfferID);
-    }
-
-    // temp function for testing without resolving
-    public void listBuyOrderNoResolve(String assetType, int quantity, double price) {
-        // create offer
-        BuyOffer offer = new BuyOffer(assetType, quantity, price, this.getUsername(), this.organisationalUnitName);
-        // add offer into database
-         BuyOfferData.getInstance().addOffer(offer);
-        // retrieve the buy offer's ID from the database and set the buy offer's ID
-        int buyOfferID = BuyOfferData.getInstance().getPlacedOfferID();
-        offer.setOfferID(buyOfferID);
     }
 
     /**
@@ -122,44 +99,6 @@ public class OrganisationalUnitMembers extends User {
      */
     public void removeSellOffer(int listingID) {
         SellOfferData.getInstance().removeOffer(listingID);
-    }
-
-    /**
-     * Relist currently listed buy/sell offer for different amount and/or price [C]
-     *
-     * @param listingID int ID for asset listing to relist
-     * @param quantity int amount of assets for listing to be relisted for
-     * @param price int price of asset requested for listing to relist for
-     */
-    public void relist(int listingID, int quantity, int price) {
-
-    }
-
-    /**
-     * Get unit history for own organisational unit [C]
-     *
-     * @param listingID int ID for listing to get the history of the
-     *                  organisational unit
-     */
-    public void getUnitHistory(int listingID) {
-        // getUnitHistory method
-    }
-
-    /**
-     * Get all currently listed prices for specified asset name [S]
-     *
-     * @param assetType asset name to get asset price list for
-     */
-    public void getAssetPriceList(Asset assetType) {
-        // getAssetPriceList method
-    }
-
-    /**
-     * Create a graph of all prices offers were resolved at for the asset [C]
-     *
-     */
-    public void assetPriceGraph() {
-        // assetPriceListToGraph method
     }
 
     /**
@@ -189,5 +128,9 @@ public class OrganisationalUnitMembers extends User {
         return source.getCredits(organisationalUnitName);
     }
 
+    /**
+     * Getter for user's unit name
+     * @return unit name of the user as a string
+     */
     public String getUnitName() { return organisationalUnitName; }
 }

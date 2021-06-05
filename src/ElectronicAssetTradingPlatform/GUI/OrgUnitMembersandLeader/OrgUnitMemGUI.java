@@ -18,14 +18,9 @@ public class OrgUnitMemGUI extends JFrame implements ChangeListener {
 
     public static final int WIDTH = 900;
     public static final int HEIGHT = 400;
-    final static int extraWindowWidth = 100;
 
-    private final static String buyTab = "BUY";
-    private final static String sellTab = "SELL";
-    private final static String orgUnitTab = "ORG UNIT";
-    private final static String accountTab = "ACCOUNT";
 
-    private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
+    private List<ChangeListener> listeners = new ArrayList<>();
 
 
     OrganisationalUnitMembers loggedInUser;
@@ -117,14 +112,4 @@ public class OrgUnitMemGUI extends JFrame implements ChangeListener {
         public void windowClosing(WindowEvent e) { dispose(); }
     }
 
-    // TODO: remove
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                //new OrgUnitMemGUI();
-            }
-        });
-        JFrame.setDefaultLookAndFeelDecorated(true);
-    }
 }

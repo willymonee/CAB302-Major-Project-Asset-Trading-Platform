@@ -11,6 +11,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * Landing page GUI for the IT Admin
+ */
 public class ITAdminGUI extends JFrame {
     private ITAdmin loggedInUser;
     private NetworkDataSource data;

@@ -1,12 +1,17 @@
 package ElectronicAssetTradingPlatform.AssetTrading;
 
+import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.Server.NetworkDataSource;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-import static java.util.Collections.unmodifiableMap;
 
+/**
+ * Retrieves and inserts data relating to sell offers to/from the database via network.
+ * Also contains methods which operate on the data retrieved from the database
+ * Singleton class
+ */
 public class SellOfferData extends OfferData {
     private static TreeMap<Integer, SellOffer> MarketSellOffers = new TreeMap<>();
     private NetworkDataSource dataSource;
@@ -38,9 +43,10 @@ public class SellOfferData extends OfferData {
     /**
      * Retrieve market sell offers from the database and insert them into the TreeMap
      */
-    protected void getOffersFromDB() {
+    protected void getOffersFromDB()  {
         TreeMap<Integer, SellOffer> sellOffers = dataSource.getSellOffers();
         MarketSellOffers.clear();
+        // add all retrieved offers from the db into the treemap
         for (Map.Entry<Integer, SellOffer> sellOffer : sellOffers.entrySet()) {
             SellOffer nextOffer = sellOffer.getValue();
             MarketSellOffers.put(nextOffer.getOfferID(), nextOffer);
@@ -49,33 +55,35 @@ public class SellOfferData extends OfferData {
 
     /**
      * Update SellOfferData's MarketSellOffers field and then return it
-     * @return Unmodifiable Map of the current market sell orders
+     * @return TreeMap of the current market sell orders
      */
-    public TreeMap<Integer, SellOffer> getMarketSellOffers() {
+    public TreeMap<Integer, SellOffer> getMarketSellOffers()  {
         getOffersFromDB();
         return MarketSellOffers;
     }
 
     /**
      * Checks if sell offer with that ID exists
+     * @return true if the offer exists, false if the offer is no longer there e.g. if it was removed
      */
     @Override
-    public boolean offerExists(int ID) {
+    public boolean offerExists(int ID)  {
         getOffersFromDB();
         return MarketSellOffers.containsKey(ID);
     }
 
     /**
-     * Return a sell offer from the DB based on its ID
+     * @param ID of the sell offer to be retrieved
+     * @return Sell offer from the DB based on its ID
      */
-    public SellOffer getOffer(int ID) {
+    public SellOffer getOffer(int ID)  {
         getOffersFromDB();
         return MarketSellOffers.get(ID);
     }
 
-
     /**
      * Add a sell offer to the DB
+     * @param offer to be added
      */
     public void addSellOffer(SellOffer offer) {
         dataSource.addSellOffer(offer);
@@ -83,7 +91,7 @@ public class SellOfferData extends OfferData {
 
 
     /**
-     * Update the market sell offers stored in SellOfferData MarketSellOffers field and return them all as a string
+     * Retrieve all market sell offers as a string
      * @return String of all market sell offers stored in SellOfferData MarketSellOffers field
      */
     @Override
@@ -102,11 +110,14 @@ public class SellOfferData extends OfferData {
     }
 
     /**
-     * Return the sell offers of an organisational unit as a TreeMap
+     * Retrieve all sell offers from a particular organisational unit
+     * @param unitName Selected organisational unit
+     * @return TreeMap containing the ID and SellOffers of an organisational unit
      */
-    public TreeMap<Integer, SellOffer> getOrgOffersMap(String unitName) {
+    public TreeMap<Integer, SellOffer> getOrgOffersMap(String unitName)  {
         getOffersFromDB();
         TreeMap<Integer, SellOffer> orgOffers = new TreeMap<>();
+        // add all offers where the offer unit name is the same as the queried unit name
         for (Map.Entry<Integer, SellOffer> sellOffer : MarketSellOffers.entrySet()) {
             String sellOfferUnitName = sellOffer.getValue().getUnitName();
             if (sameOrgUnitName(unitName, sellOfferUnitName)) {
@@ -117,22 +128,10 @@ public class SellOfferData extends OfferData {
     }
 
     /**
-     * Return the quantity of a particular asset being used in sell offers
-     */
-    public int quantityAssetInSellOffer(String unitName, String assetName) {
-        int quantity = 0;
-        TreeMap<Integer, SellOffer> orgOffersMap = getOrgOffersMap(unitName);
-        for (Map.Entry<Integer, SellOffer> sellOffer : orgOffersMap.entrySet()) {
-            String sellOfferAssetName = sellOffer.getValue().getAssetName();
-            if (sameOrgUnitName(assetName, sellOfferAssetName)) {
-                quantity += sellOffer.getValue().getQuantity();
-            }
-        }
-        return quantity;
-    }
-
-    /**
-     * Return the sell offers of a particular asset as a TreeMap
+     * Retrieve all sell offers for a particular asset
+     *
+     * @param assetName of queried asset
+     * @return the sell offers of a queried asset as a treemap
      */
     public TreeMap<Integer, SellOffer> getAssetOffers(String assetName) {
         getOffersFromDB();
@@ -147,15 +146,20 @@ public class SellOfferData extends OfferData {
     }
 
     /**
-     * Return the price of the highest priced buy offer for a particular asset
+     * Return the price of the lowest priced sell offer for a particular asset
+     *
+     * @param assetName of queried asset
+     * @return the price of the lowest priced sell offer for a particular asset as a double
      */
     public double getLowestPricedSellOffer(String assetName) {
         TreeMap<Integer, SellOffer> assetOffers = getAssetOffers(assetName);
         Iterator<Map.Entry<Integer, SellOffer>> sellOffersIter = assetOffers.entrySet().iterator();
         double lowestPrice = 0;
+        // set the first sell offer as the lowest price
         if (sellOffersIter.hasNext()) {
             lowestPrice = sellOffersIter.next().getValue().getPricePerUnit();
         }
+        // iterate through the rest looking for lower prices
         while (sellOffersIter.hasNext()) {
             double nextPrice = sellOffersIter.next().getValue().getPricePerUnit();
             if (nextPrice < lowestPrice) {
@@ -166,14 +170,37 @@ public class SellOfferData extends OfferData {
     }
 
     /**
-     * Return the quantity of an asset for sale
+     * Calculate the total quantity for sale in sell offers for a particular asset
+     * @param assetName of queried asset
+     * @return the total quantity for sale for a particular asset
      */
-    public int quantityAsset(String assetName) {
+    public int assetQuantity(String assetName) {
         TreeMap<Integer, SellOffer> assetOffers = getAssetOffers(assetName);
         int quantity = 0;
+        // sum the quantities of offers with a particular asset name
         for (Map.Entry<Integer, SellOffer> integerSellOfferEntry : assetOffers.entrySet()) {
             int offerQuantity = integerSellOfferEntry.getValue().getQuantity();
             quantity += offerQuantity;
+        }
+        return quantity;
+    }
+
+    /**
+     * Calculate the total quantity for sale in sell offers for a particular asset for a particular organisational unit
+     *
+     *  @param unitName of queried unit
+     *  @param assetName of queried asset
+     *  @return the total quantity for sale for a particular asset
+     */
+    public int quantityAssetInSellOffer(String unitName, String assetName) {
+        int quantity = 0;
+        TreeMap<Integer, SellOffer> orgOffersMap = getOrgOffersMap(unitName);
+        // sum the quantities of offers with a particular asset name and unit name
+        for (Map.Entry<Integer, SellOffer> sellOffer : orgOffersMap.entrySet()) {
+            String sellOfferAssetName = sellOffer.getValue().getAssetName();
+            if (sameOrgUnitName(assetName, sellOfferAssetName)) {
+                quantity += sellOffer.getValue().getQuantity();
+            }
         }
         return quantity;
     }

@@ -8,7 +8,15 @@ import ElectronicAssetTradingPlatform.Users.User;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Components used in multiple GUI classes
+ */
 public class CommonComponents {
+    /**
+     * Displays the user with inputted username in the database
+     * @param username The inputted username
+     * @param dataSource Client's network connection
+     */
     public static void displayDBUser(String username, NetworkDataSource dataSource) {
         try {
             User outUser = dataSource.retrieveUser(username);

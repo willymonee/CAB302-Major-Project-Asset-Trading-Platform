@@ -1,10 +1,6 @@
 package ElectronicAssetTradingPlatform.Database;
-
-
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
 import ElectronicAssetTradingPlatform.AssetTrading.SellOffer;
-
-
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,12 +10,11 @@ import java.util.TreeMap;
 
 
 /**
- * Class to handle the Marketplace table in the database, such as insertions, deletions,querying and resolving trades
+ * Class to handle the Marketplace table in the database, such as insertions, deletions, and retrieval of offers
  */
 public class MarketplaceDataSource {
     private static final String BUY_OFFER = "b";
     private static final String SELL_OFFER = "s";
-
     private static final String INSERT_BUYOFFER = "INSERT INTO Marketplace (Buy_or_Sell, "
             + "Unit_ID, User_ID, Asset_type_ID, Price_per_unit, Quantity)"
             + "VALUES (?, ?, ?, ?, ?, ?);";
@@ -93,10 +88,11 @@ public class MarketplaceDataSource {
 
     /**
      * Insert a buy offer into the database
-     * @param buyOffer buy offer to be added
+     * @param buyOffer object to be added
      */
     public void insertBuyOffer(BuyOffer buyOffer) {
         try {
+            // inputting unitID, userID, assetID, price and quantity into the statement
             insertBuyOffer.setString(1, BUY_OFFER);
             UnitDataSource unitDB = new UnitDataSource();
             String unitID = unitDB.executeGetUnitID(buyOffer.getUnitName());
@@ -115,10 +111,11 @@ public class MarketplaceDataSource {
 
     /**
      * Insert a sell offer into the database
-     * @param sellOffer to be added
+     * @param sellOffer object to be added
      */
     public void insertSellOffer(SellOffer sellOffer) {
         try {
+            // inputting unitID, userID, assetID, price and quantity into the statement
             insertSellOffer.setString(1, SELL_OFFER);
             UnitDataSource unitDB = new UnitDataSource();
             String unitID = unitDB.executeGetUnitID(sellOffer.getUnitName());
@@ -156,7 +153,7 @@ public class MarketplaceDataSource {
      */
     public int getPlacedOfferID() {
         int offerID = 0;
-        ResultSet rs = null;
+        ResultSet rs;
         try {
             rs = getPlacedOfferID.executeQuery();
             rs.next();
@@ -167,18 +164,19 @@ public class MarketplaceDataSource {
         return offerID;
     }
 
-
     /**
      * Retrieve buy offers from the database and return them as a TreeMap
+     * @return TreeMap of all buy offers
      */
     public TreeMap<Integer, BuyOffer> getBuyOffers() {
         TreeMap<Integer, BuyOffer> buyOffers = new TreeMap<>();
-        ResultSet rs = null;
+        ResultSet rs;
         try {
             getOffers.setString(1, BUY_OFFER);
             rs = getOffers.executeQuery();
             UnitDataSource unitDB = new UnitDataSource();
             while(rs.next()) {
+                // retrieving unitID, userID, assetID, price and quantity into the statement
                 int orderID = rs.getInt(1);
                 int unitID = rs.getInt(3);
                 int userID = rs.getInt(4);
@@ -188,6 +186,7 @@ public class MarketplaceDataSource {
                 String username = unitDB.executeGetUsername(userID);
                 String unitName = unitDB.executeGetUnitName(unitID);
                 String assetName = unitDB.executeGetAssetName(assetID);
+                // creating an offer using retrieved values and inputting them into a treemap
                 BuyOffer offer = new BuyOffer(orderID, assetName, quantity, price, username, unitName);
                 buyOffers.put(orderID, offer);
             }
@@ -200,15 +199,17 @@ public class MarketplaceDataSource {
 
     /**
      * Retrieve sell offers from the database and return them as a TreeMap
+     * @return TreeMap of all buy offers
      */
     public TreeMap<Integer, SellOffer> getSellOffers() {
         TreeMap<Integer, SellOffer> sellOffers = new TreeMap<>();
-        ResultSet rs = null;
+        ResultSet rs;
         try {
             getOffers.setString(1, SELL_OFFER);
             rs = getOffers.executeQuery();
             UnitDataSource unitDB = new UnitDataSource();
             while(rs.next()) {
+                // retrieving unitID, userID, assetID, price and quantity into the statement
                 int orderID = rs.getInt(1);
                 int unitID = rs.getInt(3);
                 int userID = rs.getInt(4);
@@ -218,6 +219,7 @@ public class MarketplaceDataSource {
                 String username = unitDB.executeGetUsername(userID);
                 String unitName = unitDB.executeGetUnitName(unitID);
                 String assetName = unitDB.executeGetAssetName(assetID);
+                // creating an offer using retrieved values and inputting them into a treemap
                 SellOffer offer = new SellOffer(orderID, assetName, quantity, price, username, unitName);
                 sellOffers.put(orderID, offer);
             }
@@ -225,23 +227,6 @@ public class MarketplaceDataSource {
             throwables.printStackTrace();
         }
         return sellOffers;
-    }
-
-    /**
-     * Re-opens the connection to the db
-     */
-    public void open() {
-        connection = DBConnectivity.getInstance();
-        try {
-            insertBuyOffer = connection.prepareStatement(INSERT_BUYOFFER);
-            insertSellOffer = connection.prepareStatement(INSERT_SELLOFFER);
-            getOffers = connection.prepareStatement(GET_OFFERS);
-            removeOffer = connection.prepareStatement(REMOVE_OFFER);
-            updateOfferQuantity = connection.prepareStatement(UPDATE_OFFER_QUANTITY);
-            getPlacedOfferID = connection.prepareStatement(GET_PLACED_OFFER_ID);
-        } catch (SQLException error) {
-            error.printStackTrace();
-        }
     }
 
     /**
