@@ -7,14 +7,13 @@ import ElectronicAssetTradingPlatform.Database.MockDBs.BuyOffersDB;
 import ElectronicAssetTradingPlatform.Database.MockDBs.SellOffersDB;
 import ElectronicAssetTradingPlatform.AssetTrading.Deprecated.OrganisationalUnitMembers;
 import org.junit.jupiter.api.*;
-
 import java.sql.Date;
-import java.sql.SQLException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Deprecated Unit Testing used for early implementation of Offers --> See MarketplaceTesting for updated
+ * Unit Testing used for early implementation of Offers in @Deprecated packaged (without DB and Network Protocol)
+ * Makes use of MockDBs @BuyOffersDB and @SellOffersDB
+ * Includes more rigorous testing related to resolving offers
  */
 public class OfferTestingDeprecated {
     // declare a member object
@@ -25,11 +24,8 @@ public class OfferTestingDeprecated {
     OrganisationalUnit humanResources;
     OrganisationalUnit management;
 
-
     // declare date object
     Date date;
-
-
 
     @BeforeAll @Test
     public static void Start() {
@@ -359,12 +355,6 @@ public class OfferTestingDeprecated {
      * Reduce order quantities AND trade assets between buy and sell org
      */
 
-    /*
-        System.out.println("Buyer owns: " + management.getAssetsOwned());
-        System.out.println("Seller owns: " + humanResources.getAssetsOwned());
-        System.out.println("Buyer credits: " + management.getCredits());
-        System.out.println("Seller credits: " + humanResources.getCredits());
-     */
 
     // test trading assets between two organisations - equal quantity buy and sell offers
     @Test
