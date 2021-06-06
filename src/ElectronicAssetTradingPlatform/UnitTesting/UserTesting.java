@@ -12,6 +12,9 @@ import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
 
+/**
+ * Testing the edit password functionality of all users
+ */
 public class UserTesting {
     // Exception codes: https://sqlite.org/rescode.html
     private static final int CONSTRAINT_EXCEPTION_CODE = 19;

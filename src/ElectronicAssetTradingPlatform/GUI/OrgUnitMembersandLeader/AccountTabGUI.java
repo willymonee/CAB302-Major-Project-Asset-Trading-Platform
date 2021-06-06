@@ -9,6 +9,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Tab panel for the OrgUnitMemGUI, displaying account information
+ */
 public class AccountTabGUI extends JPanel{
 
     OrganisationalUnitMembers loggedInUser;

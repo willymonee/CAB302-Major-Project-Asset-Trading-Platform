@@ -13,6 +13,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * GUI for creating a new organisational unit
+ */
 class CreateOrgUnitGUI extends JFrame {
     private final ITAdmin loggedInUser;
     private final NetworkDataSource data;
