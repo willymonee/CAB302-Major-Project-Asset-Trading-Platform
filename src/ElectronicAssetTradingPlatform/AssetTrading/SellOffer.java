@@ -64,7 +64,7 @@ public class SellOffer extends Offer {
      *
      * @return int of the buy offer, int >= 0
      */
-    public int getMatchedPriceOffer() {
+    private int getMatchedPriceOffer() {
         ArrayList<BuyOffer> matchingBuyOffers = matchingBuyOffers();
         double sellOfferPrice = getPricePerUnit();
         Iterator<BuyOffer> buyOffersIter = matchingBuyOffers.iterator();
@@ -95,7 +95,7 @@ public class SellOffer extends Offer {
      *
      * @param matchingID matching buy offer ID
      */
-    public void reduceMatchingOfferQuantities(int matchingID) {
+    private void reduceMatchingOfferQuantities(int matchingID) {
         NetworkDataSource data = new NetworkDataSource();
         data.run();
         if (isMatching(matchingID)) {

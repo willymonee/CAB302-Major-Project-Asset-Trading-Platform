@@ -29,24 +29,6 @@ public class OrganisationalUnitMembers extends User {
     }
 
     /**
-     * Display current sell offers made by the organisational unit [M]
-     * @return String of the unit's sell offers
-     */
-    public String getOrgSellOffers() {
-
-        return SellOfferData.getInstance().getOrgOffers(this.organisationalUnitName);
-
-    }
-
-    /**
-     * Display current buy offers made by the organisational unit [M]
-     * @return String of the unit's buy offers
-     */
-    public String getOrgBuyOffers() {
-        return BuyOfferData.getInstance().getOrgOffers(this.organisationalUnitName);
-    }
-
-    /**
      * Set up buy order for an organisational unit using ones own organisational unit's credits [M]
      * @param assetType asset name for buy order
      * @param quantity int amount of assets placed for buy order
