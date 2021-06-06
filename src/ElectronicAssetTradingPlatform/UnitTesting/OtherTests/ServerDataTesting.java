@@ -1,4 +1,4 @@
-package ElectronicAssetTradingPlatform.AssetTrading.Deprecated;
+package ElectronicAssetTradingPlatform.UnitTesting.OtherTests;
 
 import ElectronicAssetTradingPlatform.Exceptions.DatabaseException;
 import ElectronicAssetTradingPlatform.AssetTrading.BuyOffer;
@@ -14,6 +14,9 @@ import org.junit.jupiter.api.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Tests the server's functionality
+ */
 public class ServerDataTesting {
     static NetworkDataSource data;
     static NetworkDataSource data2;
@@ -76,6 +79,9 @@ public class ServerDataTesting {
         test2.join();
     }
 
+    /**
+     * The threads used to connect and execute commands with the server
+     */
     private static class ThreadedServerRunnable extends Thread {
         private volatile boolean stopFlag;
         private volatile NetworkDataSource data;
@@ -98,7 +104,7 @@ public class ServerDataTesting {
                     e.printStackTrace();
                 }
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -18,7 +18,7 @@
         <mkdir dir="${testBase}" />
         <mkdir dir="${base}" />
         <mkdir dir="${baseServer}" />
-        <mkdir dir="doc" />
+        <mkdir dir="JavaDoc" />
         <mkdir dir="utestclasses" />
     </target>
 
@@ -84,7 +84,6 @@
         </fileset>
         <javac srcdir="src/${topPackage}/UnitTesting" classpath="${baseServer}:${junitJar}:${junitPlatformJar}:${opentestJar}:${apiguardianJar}" destdir="utestclasses" includeantruntime="false">
             <include name="*.java" />
-            <exclude name="ServerDataTesting.java" />
         </javac>
     </target>
 
@@ -146,9 +145,9 @@
     </target>
 
     <target name="doc">
-        <javadoc packagenames="ElectronicAssetTradingPlatform.AssetTrading.Deprecated, ElectronicAssetTradingPlatform.AssetTrading, ElectronicAssetTradingPlatform.Database, ElectronicAssetTradingPlatform.Database.MockDBs, ElectronicAssetTradingPlatform.Exceptions, ElectronicAssetTradingPlatform.GUI, ElectronicAssetTradingPlatform.GUI.ITAdmin, ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader, ElectronicAssetTradingPlatform.Passwords, ElectronicAssetTradingPlatform.Server, ElectronicAssetTradingPlatform.Users"
+        <javadoc packagenames="ElectronicAssetTradingPlatform.AssetTrading.Deprecated, ElectronicAssetTradingPlatform.AssetTrading, ElectronicAssetTradingPlatform.Database, ElectronicAssetTradingPlatform.Database.MockDBs, ElectronicAssetTradingPlatform.Exceptions, ElectronicAssetTradingPlatform.GUI, ElectronicAssetTradingPlatform.GUI.ITAdmin, ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader, ElectronicAssetTradingPlatform.Passwords, ElectronicAssetTradingPlatform.Server, ElectronicAssetTradingPlatform.Unit, ElectronicAssetTradingPlatform.Users"
                  sourcepath="src"
-                 destdir="doc"
+                 destdir="JavaDoc"
                  author="true"
                  version="true"
                  use="true"
@@ -165,7 +164,7 @@
         <delete file="./electronicAssetTradingSrc.zip"/>
         <delete dir="${base}"/>
         <delete dir="${baseServer}"/>
-        <delete dir="doc"/>
+        <delete dir="JavaDoc"/>
         <delete dir="${testBase}"/>
         <delete dir="utestclasses"/>
     </target>

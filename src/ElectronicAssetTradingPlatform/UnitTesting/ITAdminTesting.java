@@ -17,6 +17,9 @@ import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
 
+/**
+ * Testing for the ITAdmin user functionality
+ */
 public class ITAdminTesting {
     // Exception codes: https://sqlite.org/rescode.html
     private static final int CONSTRAINT_EXCEPTION_CODE = 19;

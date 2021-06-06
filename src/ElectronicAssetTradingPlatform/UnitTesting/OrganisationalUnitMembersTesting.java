@@ -13,6 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+/**
+ * Testing for the organisational unit member functionality
+ */
 public class OrganisationalUnitMembersTesting {
 
     /*
