@@ -137,7 +137,7 @@ public class HistoryTesting {
             e.printStackTrace();
         }
 
-        assertEquals(unitTradeHistory.size(), 1);
+        assertEquals(2, unitTradeHistory.size());
     }
 
     /**
@@ -158,16 +158,21 @@ public class HistoryTesting {
             Integer key = entry.getKey();
             TradeHistory value = entry.getValue();
 
-            assertEquals(key, 3);
-            assertEquals(value.getBuyOrSell(), "-");
-            assertEquals(value.getAssetName(), "iPhone 10");
-            assertEquals(value.getTradedQuantity(), 2);
-            assertEquals(value.getPrice(), 33.0);
-            assertEquals(value.getTotal(), 66.0 );
-            assertEquals(value.getDateFulfilled(), "2021-05-31");
-            assertEquals(value.getunitNameOfTrader(), "Management");
-
+            if ((key == 3) &&
+            (value.getBuyOrSell().equals("-")) &&
+            (value.getAssetName().equals("iPhone 10")) &&
+            (value.getTradedQuantity() == 2) &&
+            (value.getPrice() == 33.0) &&
+            (value.getTotal() == 66.0 ) &&
+            (value.getDateFulfilled().equals("2021-05-31")) &&
+            (value.getunitNameOfTrader().equals("Management"))) {
+                // Found at least 1
+                assert true;
+                return;
+            }
         }
+
+        assert false;
     }
 
     /**

@@ -25,6 +25,7 @@
     <target name="compileServer" depends="prepare" description="Compile all source files (Server)" >
         <javac srcdir="src/${topPackage}" classpath="${baseServer}:${junitpath}" destdir="${baseServer}" includeantruntime="false">
             <include name="AssetTrading/*.java" />
+            <include name="AssetTrading/Deprecated/*.java" />
 
             <include name="Database/*.java" />
             <include name="Database/MockDBs/*.java" />
@@ -51,8 +52,6 @@
     <target name="compileClient" depends="compileServer" description="Compile all source files (Client)" >
         <javac srcdir="src/${topPackage}" classpath="${base}:${junitpath}" destdir="${base}" includeantruntime="false">
             <include name="AssetTrading/*.java" />
-
-            <include name="Database/MockDBs/*.java" />
 
             <include name="Exceptions/*.java" />
 
@@ -147,7 +146,7 @@
     </target>
 
     <target name="doc">
-        <javadoc packagenames="ElectronicAssetTradingPlatform.AssetTrading, ElectronicAssetTradingPlatform.Database, ElectronicAssetTradingPlatform.Database.MockDBs, ElectronicAssetTradingPlatform.Exceptions, ElectronicAssetTradingPlatform.GUI, ElectronicAssetTradingPlatform.GUI.ITAdmin, ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader, ElectronicAssetTradingPlatform.Passwords, ElectronicAssetTradingPlatform.Server, ElectronicAssetTradingPlatform.Users"
+        <javadoc packagenames="ElectronicAssetTradingPlatform.AssetTrading.Deprecated, ElectronicAssetTradingPlatform.AssetTrading, ElectronicAssetTradingPlatform.Database, ElectronicAssetTradingPlatform.Database.MockDBs, ElectronicAssetTradingPlatform.Exceptions, ElectronicAssetTradingPlatform.GUI, ElectronicAssetTradingPlatform.GUI.ITAdmin, ElectronicAssetTradingPlatform.GUI.OrgUnitMembersandLeader, ElectronicAssetTradingPlatform.Passwords, ElectronicAssetTradingPlatform.Server, ElectronicAssetTradingPlatform.Users"
                  sourcepath="src"
                  destdir="doc"
                  author="true"

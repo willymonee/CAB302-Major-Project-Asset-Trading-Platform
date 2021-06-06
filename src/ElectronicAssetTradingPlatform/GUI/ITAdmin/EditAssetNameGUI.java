@@ -15,6 +15,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * GUI for editing an existing asset's name
+ */
 class EditAssetNameGUI extends JFrame {
     private final ITAdmin loggedInUser;
     private final NetworkDataSource data;

@@ -123,9 +123,6 @@ public class ITAdminTesting {
     public void insertLeader() {
         assertDoesNotThrow(() -> {
             try {
-                User user = (User) itAdmin.createUser("newLeader", "unit1", "OrganisationalUnitLeader")[0];
-                db.insertUser(user);
-
                 User dbUser = db.getUser("newLeader");
 
                 assertEquals(user.getUsername(), dbUser.getUsername());

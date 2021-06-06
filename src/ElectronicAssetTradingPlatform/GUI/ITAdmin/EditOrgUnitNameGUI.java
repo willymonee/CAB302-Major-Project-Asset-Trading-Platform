@@ -14,6 +14,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * GUI for editing the organisational unit's name
+ */
 class EditOrgUnitNameGUI extends JFrame {
     private final ITAdmin loggedInUser;
     private final NetworkDataSource data;

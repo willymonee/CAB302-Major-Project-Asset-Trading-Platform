@@ -14,6 +14,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * A new window for changing the supplied user's GUI
+ */
 public class ChangePasswordGUI extends JFrame {
     User loggedInUser;
     NetworkDataSource data;
@@ -25,6 +28,8 @@ public class ChangePasswordGUI extends JFrame {
 
     /**
      * Constructor sets up user interface, adds listeners and displays.
+     * @param dataSource The network connection
+     * @param user The user to be edited
      */
     public ChangePasswordGUI(NetworkDataSource dataSource, User user) {
         data = dataSource;

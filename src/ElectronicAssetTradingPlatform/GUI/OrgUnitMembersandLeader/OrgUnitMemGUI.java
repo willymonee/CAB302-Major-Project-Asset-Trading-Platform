@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * The container with the buy, sell, org unit, and account tabs for the organisational unit member GUI
+ */
 public class OrgUnitMemGUI extends JFrame implements ChangeListener {
 
     public static final int WIDTH = 900;
