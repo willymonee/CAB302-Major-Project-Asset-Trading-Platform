@@ -1,5 +1,5 @@
 # CAB302-Major-Project
-2021 QUT CAB302 Major Project: Electronic Asset Trading Platform - Group Assessment
+2021 QUT CAB302 (Software Development) Major Project: Electronic Asset Trading Platform - Group Assessment
 
 **Description**
 Created a client-server system for electronic trading of assets within the Client's organisation using Java. The system has organisational units/departments which will be assigned a certain amount of electronic credits which they can use to buy resources from other units. Members part of an organisational unit can place sell offers and buy offers for particular assets on behalf of their organisational unit. IT admins would be responsible for facilitating the user's ability to trade e.g. creating users, organisational units and adding new assets to the system. This was done through a client-server model where the client will request to edit, remove, insert or read information from the database, the server will receive this request and then perform the database queries and return a response back to the client. 
