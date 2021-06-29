@@ -9,6 +9,9 @@ Created a client-server system for electronic trading of assets within the Clien
 2) Members/Traders: change password, list buy/sell offers, remove/edit buy/sell offers, reconcile trade offers, view offers made by the organisational unit, view offers made by other units, view organisational unit trade history
 3) Systems Admins: initialise DB, salt and hash passwords, establish client server communication
 
+**Video Demo**
+https://youtu.be/R4IdAV5xnHM?t=264
+
 **Process**
 1) Gather requirements from project description and user stories
 2) Produce a detailed design of the system to meet these requirements e.g. UML diagram, database schema, GUI design and Network Protocol
